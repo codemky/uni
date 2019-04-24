@@ -8,7 +8,7 @@ package edu.uni.userBaseInfo1.bean;
 
 import java.util.Date;
 /*
-picture实体类 学生主要信息
+student实体类 学生主要信息
 （如果有需要说明，可以放在这里）
 */
 public class Student {
