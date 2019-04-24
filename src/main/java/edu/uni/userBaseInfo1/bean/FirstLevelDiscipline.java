@@ -1,38 +1,18 @@
+/*
+author: caiguangqian
+create:  2019.4.24
+modified:  2019.4.24
+description：一级学科的实体类
+*/
 package edu.uni.userBaseInfo1.bean;
 
-/**
- *  一级学科
- */
 public class FirstLevelDiscipline {
-    private Long id;//一级学科表id
-
-    private Long categoryId;//关联到学科类别表id
-
-    private String discipline;//具体的一级学科名称
-    //一级学科表id的get方法
-    public Long getId() {
-        return id;
-    }
-    //一级学科表id的set方法
-    public void setId(Long id) {
-        this.id = id;
-    }
-    //关联到学科类别表id的get方法
-    public Long getCategoryId() {
-        return categoryId;
-    }
-    //关联到学科类别表id的set方法
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-    //具体的一级学科名称的get方法
-    public String getDiscipline() {
-        return discipline;
-    }
-    //具体的一级学科名称的set方法
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline == null ? null : discipline.trim();
-    }
+    //一级学科表id
+    private Long id;
+    //关联到学科类别表id
+    private Long categoryId;
+    //具体的一级学科名称
+    private String discipline;
 
     @Override
     public String toString() {
@@ -41,5 +21,29 @@ public class FirstLevelDiscipline {
                 ", categoryId=" + categoryId +
                 ", discipline='" + discipline + '\'' +
                 '}';
+    }
+    //获取一级学科表id
+    public Long getId() {
+        return id;
+    }
+    //写一级学科表id
+    public void setId(Long id) {
+        this.id = id;
+    }
+    //获取关联到学科类别表id
+    public Long getCategoryId() {
+        return categoryId;
+    }
+    //写入关联到学科类别表id
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getDiscipline() {
+        return discipline;
+    }
+
+    public void setDiscipline(String discipline) {
+        this.discipline = discipline == null ? null : discipline.trim();
     }
 }
