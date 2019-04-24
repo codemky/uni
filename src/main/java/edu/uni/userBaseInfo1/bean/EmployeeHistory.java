@@ -1,36 +1,57 @@
+/*
+author: caiguangqian
+create:  2019.4.24
+modified:  2019.4.24
+description：雇员简历的实体类
+*/
 package edu.uni.userBaseInfo1.bean;
 
 import java.util.Date;
 
 public class EmployeeHistory {
+    //简历表ID
     private Long id;
-
+    //用户ID
     private Long userId;
-
+    //开始时间
     private Date beginTime;
-
+    //结束时间
     private Date endTime;
-
+    //描述
     private String descript;
-
+    //本记录的创建时间
     private Date datetime;
-
+    //本记录的写入者
     private Long byWho;
-
+    //本记录是否有效 0:有效 1:无效
     private Boolean deleted;
 
+    @Override
+    public String toString() {
+        return "EmployeeHistory{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", beginTime=" + beginTime +
+                ", endTime=" + endTime +
+                ", descript='" + descript + '\'' +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
+    //读简历表ID
     public Long getId() {
         return id;
     }
-
+    //写简历表ID
     public void setId(Long id) {
         this.id = id;
     }
-
+    //读用户ID
     public Long getUserId() {
         return userId;
     }
-
+    //写用户ID
     public void setUserId(Long userId) {
         this.userId = userId;
     }
