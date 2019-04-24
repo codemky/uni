@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.uni.userBaseInfo1.mapper.StudentMapper" >
+  <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.Student" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="stu_no" property="stuNo" jdbcType="VARCHAR" />
+    <result column="begin_learn_date" property="beginLearnDate" jdbcType="TIMESTAMP" />
+    <result column="grade" property="grade" jdbcType="CHAR" />
+    <result column="major_id" property="majorId" jdbcType="BIGINT" />
+    <result column="class_id" property="classId" jdbcType="BIGINT" />
+    <result column="political_id" property="politicalId" jdbcType="BIGINT" />
+    <result column="live_room" property="liveRoom" jdbcType="BIGINT" />
+    <result column="home_address" property="homeAddress" jdbcType="BIGINT" />
+    <result column="mail_address" property="mailAddress" jdbcType="BIGINT" />
+    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
+    <result column="by_who" property="byWho" jdbcType="BIGINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, stu_no, begin_learn_date, grade, major_id, class_id, political_id, live_room, 
+    home_address, mail_address, datetime, by_who, deleted
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.StudentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from student
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from student
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from student
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.userBaseInfo1.bean.StudentExample" >
+    delete from student
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.Student" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student (stu_no, begin_learn_date, grade, 
+      major_id, class_id, political_id, 
+      live_room, home_address, mail_address, 
+      datetime, by_who, deleted
+      )
+    values (#{stuNo,jdbcType=VARCHAR}, #{beginLearnDate,jdbcType=TIMESTAMP}, #{grade,jdbcType=CHAR}, 
+      #{majorId,jdbcType=BIGINT}, #{classId,jdbcType=BIGINT}, #{politicalId,jdbcType=BIGINT}, 
+      #{liveRoom,jdbcType=BIGINT}, #{homeAddress,jdbcType=BIGINT}, #{mailAddress,jdbcType=BIGINT}, 
+      #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Student" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="stuNo != null" >
+        stu_no,
+      </if>
+      <if test="beginLearnDate != null" >
+        begin_learn_date,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="majorId != null" >
+        major_id,
+      </if>
+      <if test="classId != null" >
+        class_id,
+      </if>
+      <if test="politicalId != null" >
+        political_id,
+      </if>
+      <if test="liveRoom != null" >
+        live_room,
+      </if>
+      <if test="homeAddress != null" >
+        home_address,
+      </if>
+      <if test="mailAddress != null" >
+        mail_address,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="byWho != null" >
+        by_who,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="stuNo != null" >
+        #{stuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="beginLearnDate != null" >
+        #{beginLearnDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=CHAR},
+      </if>
+      <if test="majorId != null" >
+        #{majorId,jdbcType=BIGINT},
+      </if>
+      <if test="classId != null" >
+        #{classId,jdbcType=BIGINT},
+      </if>
+      <if test="politicalId != null" >
+        #{politicalId,jdbcType=BIGINT},
+      </if>
+      <if test="liveRoom != null" >
+        #{liveRoom,jdbcType=BIGINT},
+      </if>
+      <if test="homeAddress != null" >
+        #{homeAddress,jdbcType=BIGINT},
+      </if>
+      <if test="mailAddress != null" >
+        #{mailAddress,jdbcType=BIGINT},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.userBaseInfo1.bean.StudentExample" resultType="java.lang.Integer" >
+    select count(*) from student
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update student
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.stuNo != null" >
+        stu_no = #{record.stuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.beginLearnDate != null" >
+        begin_learn_date = #{record.beginLearnDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.grade != null" >
+        grade = #{record.grade,jdbcType=CHAR},
+      </if>
+      <if test="record.majorId != null" >
+        major_id = #{record.majorId,jdbcType=BIGINT},
+      </if>
+      <if test="record.classId != null" >
+        class_id = #{record.classId,jdbcType=BIGINT},
+      </if>
+      <if test="record.politicalId != null" >
+        political_id = #{record.politicalId,jdbcType=BIGINT},
+      </if>
+      <if test="record.liveRoom != null" >
+        live_room = #{record.liveRoom,jdbcType=BIGINT},
+      </if>
+      <if test="record.homeAddress != null" >
+        home_address = #{record.homeAddress,jdbcType=BIGINT},
+      </if>
+      <if test="record.mailAddress != null" >
+        mail_address = #{record.mailAddress,jdbcType=BIGINT},
+      </if>
+      <if test="record.datetime != null" >
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null" >
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null" >
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update student
+    set id = #{record.id,jdbcType=BIGINT},
+      stu_no = #{record.stuNo,jdbcType=VARCHAR},
+      begin_learn_date = #{record.beginLearnDate,jdbcType=TIMESTAMP},
+      grade = #{record.grade,jdbcType=CHAR},
+      major_id = #{record.majorId,jdbcType=BIGINT},
+      class_id = #{record.classId,jdbcType=BIGINT},
+      political_id = #{record.politicalId,jdbcType=BIGINT},
+      live_room = #{record.liveRoom,jdbcType=BIGINT},
+      home_address = #{record.homeAddress,jdbcType=BIGINT},
+      mail_address = #{record.mailAddress,jdbcType=BIGINT},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.Student" >
+    update student
+    <set >
+      <if test="stuNo != null" >
+        stu_no = #{stuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="beginLearnDate != null" >
+        begin_learn_date = #{beginLearnDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=CHAR},
+      </if>
+      <if test="majorId != null" >
+        major_id = #{majorId,jdbcType=BIGINT},
+      </if>
+      <if test="classId != null" >
+        class_id = #{classId,jdbcType=BIGINT},
+      </if>
+      <if test="politicalId != null" >
+        political_id = #{politicalId,jdbcType=BIGINT},
+      </if>
+      <if test="liveRoom != null" >
+        live_room = #{liveRoom,jdbcType=BIGINT},
+      </if>
+      <if test="homeAddress != null" >
+        home_address = #{homeAddress,jdbcType=BIGINT},
+      </if>
+      <if test="mailAddress != null" >
+        mail_address = #{mailAddress,jdbcType=BIGINT},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.Student" >
+    update student
+    set stu_no = #{stuNo,jdbcType=VARCHAR},
+      begin_learn_date = #{beginLearnDate,jdbcType=TIMESTAMP},
+      grade = #{grade,jdbcType=CHAR},
+      major_id = #{majorId,jdbcType=BIGINT},
+      class_id = #{classId,jdbcType=BIGINT},
+      political_id = #{politicalId,jdbcType=BIGINT},
+      live_room = #{liveRoom,jdbcType=BIGINT},
+      home_address = #{homeAddress,jdbcType=BIGINT},
+      mail_address = #{mailAddress,jdbcType=BIGINT},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

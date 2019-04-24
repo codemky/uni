@@ -1,0 +1,5 @@
+swagger2 : http://localhost:8080/swagger-ui.html
+
+druid: http://localhost:8080/druid/index.html
+    账户：root
+    密码：123456
