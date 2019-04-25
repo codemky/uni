@@ -19,6 +19,7 @@ public class EcommController {
     EcommService ecommService;
 
     public void tset(){
+        ecommService.delete(1);
 
     }
 
