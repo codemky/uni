@@ -2,7 +2,6 @@ package edu.uni.userBaseInfo1.bean;
 
 public class Academic {
     private Long id;
-
     private String academicInfo;
 
     public Long getId() {

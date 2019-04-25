@@ -1,6 +1,6 @@
 package edu.uni.userBaseInfo1.bean;
 /*
-author:  Arvin
+author:  laizhouhao
 create:  2019.4.5
 modified:  2019.4.24
 description：用户的实体类
