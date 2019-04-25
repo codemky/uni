@@ -149,4 +149,22 @@ public class LearningDegree {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public LearningDegree(Long id, Long userId, Date beginTime, Date endTime, Long countryId, Long cityId, Long schoolId, Long academicId, Long degreeId, Date datetime, Long byWho, Boolean deleted) {
+        this.id = id;
+        this.userId = userId;
+        this.beginTime = beginTime;
+        this.endTime = endTime;
+        this.countryId = countryId;
+        this.cityId = cityId;
+        this.schoolId = schoolId;
+        this.academicId = academicId;
+        this.degreeId = degreeId;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+    }
+
+    public LearningDegree() {
+    }
 }
