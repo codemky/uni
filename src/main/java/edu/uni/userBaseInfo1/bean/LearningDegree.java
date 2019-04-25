@@ -1,9 +1,9 @@
-/*
-author: caiguangqian
-create:  2019.4.24
-modified:  2019.4.24
-description：学历的实体类
-*/
+/**
+ * Author: caiguangqian 8:27 2019/4/25
+ * @param 
+ * @return 
+ * @apiNote:
+ */
 package edu.uni.userBaseInfo1.bean;
 
 import java.util.Date;
