@@ -48,4 +48,13 @@ public class FirstLevelDiscipline {
                 ", discipline='" + discipline + '\'' +
                 '}';
     }
+
+    public FirstLevelDiscipline(Long id, Long categoryId, String discipline) {
+        this.id = id;
+        this.categoryId = categoryId;
+        this.discipline = discipline;
+    }
+
+    public FirstLevelDiscipline() {
+    }
 }

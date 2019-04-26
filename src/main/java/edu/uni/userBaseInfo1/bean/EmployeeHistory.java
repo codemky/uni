@@ -108,4 +108,18 @@ public class EmployeeHistory {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public EmployeeHistory(Long id, Long userId, Date beginTime, Date endTime, String descript, Date datetime, Long byWho, Boolean deleted) {
+        this.id = id;
+        this.userId = userId;
+        this.beginTime = beginTime;
+        this.endTime = endTime;
+        this.descript = descript;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+    }
+
+    public EmployeeHistory() {
+    }
 }
