@@ -4,6 +4,7 @@ package edu.uni.userBaseInfo1.bean;
  * 学位表
  */
 public class AcademicDegree {
+
     //学位表id
     private Long id;
 
@@ -28,5 +29,21 @@ public class AcademicDegree {
     //具体内容的set方法
     public void setDegreeInfo(String degreeInfo) {
         this.degreeInfo = degreeInfo == null ? null : degreeInfo.trim();
+    }
+
+    @Override
+    public String toString() {
+        return "AcademicDegree{" +
+                "id=" + id +
+                ", degreeInfo='" + degreeInfo + '\'' +
+                '}';
+    }
+
+    public AcademicDegree(Long id, String degreeInfo) {
+        this.id = id;
+        this.degreeInfo = degreeInfo;
+    }
+
+    public AcademicDegree() {
     }
 }

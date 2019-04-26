@@ -6,9 +6,9 @@ import java.util.Date;
  * 地址表
  */
 public class Address {
+
     //地址ID
     private Long id;
-
     //用户ID
     private Long userId;
 
@@ -166,5 +166,45 @@ public class Address {
     //本记录是否有效 0:有效 1:无效的set方法
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", country=" + country +
+                ", state=" + state +
+                ", city=" + city +
+                ", area=" + area +
+                ", street=" + street +
+                ", detail='" + detail + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", flag=" + flag +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
+
+    public Address(Long id, Long userId, Long country, Long state, Long city, Long area, Long street, String detail, String zipCode, String telephone, Integer flag, Date datetime, Long byWho, Boolean deleted) {
+        this.id = id;
+        this.userId = userId;
+        this.country = country;
+        this.state = state;
+        this.city = city;
+        this.area = area;
+        this.street = street;
+        this.detail = detail;
+        this.zipCode = zipCode;
+        this.telephone = telephone;
+        this.flag = flag;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+    }
+
+    public Address() {
     }
 }
