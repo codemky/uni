@@ -2,20 +2,18 @@ package edu.uni.userBaseInfo1.bean;
 
 import java.util.Date;
 
-public class UserinfoApplyApproval {
+public class ApprovalStepIncharge {
     private Long id;
 
     private Long universityId;
 
-    private Long userinfoApplyId;
+    private Long approvalMainId;
+
+    private String name;
 
     private Integer step;
 
-    private Boolean result;
-
-    private Long checkWho;
-
-    private Date checkTime;
+    private Long roleId;
 
     private Date datetime;
 
@@ -39,12 +37,20 @@ public class UserinfoApplyApproval {
         this.universityId = universityId;
     }
 
-    public Long getUserinfoApplyId() {
-        return userinfoApplyId;
+    public Long getApprovalMainId() {
+        return approvalMainId;
     }
 
-    public void setUserinfoApplyId(Long userinfoApplyId) {
-        this.userinfoApplyId = userinfoApplyId;
+    public void setApprovalMainId(Long approvalMainId) {
+        this.approvalMainId = approvalMainId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
     public Integer getStep() {
@@ -55,28 +61,12 @@ public class UserinfoApplyApproval {
         this.step = step;
     }
 
-    public Boolean getResult() {
-        return result;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setResult(Boolean result) {
-        this.result = result;
-    }
-
-    public Long getCheckWho() {
-        return checkWho;
-    }
-
-    public void setCheckWho(Long checkWho) {
-        this.checkWho = checkWho;
-    }
-
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public Date getDatetime() {

@@ -6,6 +6,7 @@
 
 package edu.uni.userBaseInfo1.service;
 
+import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Ecomm;
 
 import java.util.List;
@@ -13,39 +14,42 @@ import java.util.List;
 public interface EcommService {
 
     /**
-     * @Author Mr.k
-     * @Description //搜索所有的Ecomm记录
-     * @Date 17:31 2019/4/24
-     * @Param null
-     * @return 所有的Ecomm记录，List类型
-     **/
+     * Author: mokuanyuan 10:13 2019/4/26
+     * @return List<Ecomm>
+     * @apiNote: 查询所有的电子通讯方式
+     */
     List<Ecomm> selectAll();
 
     /**
-     * @Author Mr.k
-     * @Description //以id查询单个Ecomm记录
-     * @Date 17:44 2019/4/24
-     * @Param id
-     * @return Ecomm对象
-     **/
+     * Author: mokuanyuan 10:15 2019/4/26
+     * @param id
+     * @return Ecomm
+     * @apiNote: 根据id查询电子通信记录
+     */
     Ecomm selectById(long id);
 
     /**
-     * @Author Mr.k
-     * @Description //在Ecomm表里插入一条数据
-     * @Date 17:33 2019/4/24
-     * @Param Ecomm对象
+     * Author: mokuanyuan 10:18 2019/4/26
+     * @param pageNum
+     * @return List<Ecomm>
+     * @apiNote: 分页查询电子通信记录
+     */
+    PageInfo<Ecomm> selectPage(int pageNum);
+
+    /**
+     * Author: mokuanyuan 21:08 2019/4/24
+     * @param ecomm
      * @return boolean
-     **/
+     * @apiNote : 用于增加Ecomm表的一个记录
+     */
     boolean insert(Ecomm ecomm);
 
     /**
-     * @Author Mr.k
-     * @Description //更新Ecomm表里更新一条数据
-     * @Date 17:36 2019/4/24
-     * @Param Ecomm对象
+     * Author: mokuanyuan 21:08 2019/4/24
+     * @param ecomm
      * @return boolean
-     **/
+     * @apiNote : 用于更新Ecomm表的某个记录（传一个新的对象）
+     */
     boolean update(Ecomm ecomm);
 
     /**

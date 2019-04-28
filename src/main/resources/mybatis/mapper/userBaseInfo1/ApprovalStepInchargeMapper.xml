@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="edu.uni.userBaseInfo1.mapper.UserinfoApplyMapper" >
-  <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.UserinfoApply" >
+<mapper namespace="edu.uni.userBaseInfo1.mapper.ApprovalStepInchargeMapper" >
+  <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.ApprovalStepIncharge" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="university_id" property="universityId" jdbcType="BIGINT" />
     <result column="approval_main_id" property="approvalMainId" jdbcType="BIGINT" />
-    <result column="info_type" property="infoType" jdbcType="INTEGER" />
-    <result column="old_info_id" property="oldInfoId" jdbcType="BIGINT" />
-    <result column="new_info_id" property="newInfoId" jdbcType="BIGINT" />
-    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
-    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
-    <result column="apply_reason" property="applyReason" jdbcType="VARCHAR" />
-    <result column="apply_result" property="applyResult" jdbcType="BIT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="step" property="step" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="BIGINT" />
     <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
     <result column="by_who" property="byWho" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
@@ -75,16 +71,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, university_id, approval_main_id, info_type, old_info_id, new_info_id, start_time, 
-    end_time, apply_reason, apply_result, datetime, by_who, deleted
+    id, university_id, approval_main_id, name, step, role_id, datetime, by_who, deleted
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApplyExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.ApprovalStepInchargeExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from userinfo_apply
+    from approval_step_incharge
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -95,39 +90,35 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from userinfo_apply
+    from approval_step_incharge
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from userinfo_apply
+    delete from approval_step_incharge
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApplyExample" >
-    delete from userinfo_apply
+  <delete id="deleteByExample" parameterType="edu.uni.userBaseInfo1.bean.ApprovalStepInchargeExample" >
+    delete from approval_step_incharge
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApply" >
+  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.ApprovalStepIncharge" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into userinfo_apply (university_id, approval_main_id, info_type, 
-      old_info_id, new_info_id, start_time, 
-      end_time, apply_reason, apply_result, 
-      datetime, by_who, deleted
-      )
-    values (#{universityId,jdbcType=BIGINT}, #{approvalMainId,jdbcType=BIGINT}, #{infoType,jdbcType=INTEGER}, 
-      #{oldInfoId,jdbcType=BIGINT}, #{newInfoId,jdbcType=BIGINT}, #{startTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP}, #{applyReason,jdbcType=VARCHAR}, #{applyResult,jdbcType=BIT}, 
-      #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}
-      )
+    insert into approval_step_incharge (university_id, approval_main_id, name, 
+      step, role_id, datetime, 
+      by_who, deleted)
+    values (#{universityId,jdbcType=BIGINT}, #{approvalMainId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{step,jdbcType=INTEGER}, #{roleId,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, 
+      #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApply" >
+  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.ApprovalStepIncharge" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into userinfo_apply
+    insert into approval_step_incharge
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="universityId != null" >
         university_id,
@@ -135,26 +126,14 @@
       <if test="approvalMainId != null" >
         approval_main_id,
       </if>
-      <if test="infoType != null" >
-        info_type,
+      <if test="name != null" >
+        name,
       </if>
-      <if test="oldInfoId != null" >
-        old_info_id,
+      <if test="step != null" >
+        step,
       </if>
-      <if test="newInfoId != null" >
-        new_info_id,
-      </if>
-      <if test="startTime != null" >
-        start_time,
-      </if>
-      <if test="endTime != null" >
-        end_time,
-      </if>
-      <if test="applyReason != null" >
-        apply_reason,
-      </if>
-      <if test="applyResult != null" >
-        apply_result,
+      <if test="roleId != null" >
+        role_id,
       </if>
       <if test="datetime != null" >
         datetime,
@@ -173,26 +152,14 @@
       <if test="approvalMainId != null" >
         #{approvalMainId,jdbcType=BIGINT},
       </if>
-      <if test="infoType != null" >
-        #{infoType,jdbcType=INTEGER},
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
       </if>
-      <if test="oldInfoId != null" >
-        #{oldInfoId,jdbcType=BIGINT},
+      <if test="step != null" >
+        #{step,jdbcType=INTEGER},
       </if>
-      <if test="newInfoId != null" >
-        #{newInfoId,jdbcType=BIGINT},
-      </if>
-      <if test="startTime != null" >
-        #{startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="endTime != null" >
-        #{endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="applyReason != null" >
-        #{applyReason,jdbcType=VARCHAR},
-      </if>
-      <if test="applyResult != null" >
-        #{applyResult,jdbcType=BIT},
+      <if test="roleId != null" >
+        #{roleId,jdbcType=BIGINT},
       </if>
       <if test="datetime != null" >
         #{datetime,jdbcType=TIMESTAMP},
@@ -205,14 +172,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApplyExample" resultType="java.lang.Integer" >
-    select count(*) from userinfo_apply
+  <select id="countByExample" parameterType="edu.uni.userBaseInfo1.bean.ApprovalStepInchargeExample" resultType="java.lang.Integer" >
+    select count(*) from approval_step_incharge
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update userinfo_apply
+    update approval_step_incharge
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
@@ -223,26 +190,14 @@
       <if test="record.approvalMainId != null" >
         approval_main_id = #{record.approvalMainId,jdbcType=BIGINT},
       </if>
-      <if test="record.infoType != null" >
-        info_type = #{record.infoType,jdbcType=INTEGER},
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
       </if>
-      <if test="record.oldInfoId != null" >
-        old_info_id = #{record.oldInfoId,jdbcType=BIGINT},
+      <if test="record.step != null" >
+        step = #{record.step,jdbcType=INTEGER},
       </if>
-      <if test="record.newInfoId != null" >
-        new_info_id = #{record.newInfoId,jdbcType=BIGINT},
-      </if>
-      <if test="record.startTime != null" >
-        start_time = #{record.startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.endTime != null" >
-        end_time = #{record.endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.applyReason != null" >
-        apply_reason = #{record.applyReason,jdbcType=VARCHAR},
-      </if>
-      <if test="record.applyResult != null" >
-        apply_result = #{record.applyResult,jdbcType=BIT},
+      <if test="record.roleId != null" >
+        role_id = #{record.roleId,jdbcType=BIGINT},
       </if>
       <if test="record.datetime != null" >
         datetime = #{record.datetime,jdbcType=TIMESTAMP},
@@ -259,17 +214,13 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update userinfo_apply
+    update approval_step_incharge
     set id = #{record.id,jdbcType=BIGINT},
       university_id = #{record.universityId,jdbcType=BIGINT},
       approval_main_id = #{record.approvalMainId,jdbcType=BIGINT},
-      info_type = #{record.infoType,jdbcType=INTEGER},
-      old_info_id = #{record.oldInfoId,jdbcType=BIGINT},
-      new_info_id = #{record.newInfoId,jdbcType=BIGINT},
-      start_time = #{record.startTime,jdbcType=TIMESTAMP},
-      end_time = #{record.endTime,jdbcType=TIMESTAMP},
-      apply_reason = #{record.applyReason,jdbcType=VARCHAR},
-      apply_result = #{record.applyResult,jdbcType=BIT},
+      name = #{record.name,jdbcType=VARCHAR},
+      step = #{record.step,jdbcType=INTEGER},
+      role_id = #{record.roleId,jdbcType=BIGINT},
       datetime = #{record.datetime,jdbcType=TIMESTAMP},
       by_who = #{record.byWho,jdbcType=BIGINT},
       deleted = #{record.deleted,jdbcType=BIT}
@@ -277,8 +228,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApply" >
-    update userinfo_apply
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.ApprovalStepIncharge" >
+    update approval_step_incharge
     <set >
       <if test="universityId != null" >
         university_id = #{universityId,jdbcType=BIGINT},
@@ -286,26 +237,14 @@
       <if test="approvalMainId != null" >
         approval_main_id = #{approvalMainId,jdbcType=BIGINT},
       </if>
-      <if test="infoType != null" >
-        info_type = #{infoType,jdbcType=INTEGER},
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="oldInfoId != null" >
-        old_info_id = #{oldInfoId,jdbcType=BIGINT},
+      <if test="step != null" >
+        step = #{step,jdbcType=INTEGER},
       </if>
-      <if test="newInfoId != null" >
-        new_info_id = #{newInfoId,jdbcType=BIGINT},
-      </if>
-      <if test="startTime != null" >
-        start_time = #{startTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="endTime != null" >
-        end_time = #{endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="applyReason != null" >
-        apply_reason = #{applyReason,jdbcType=VARCHAR},
-      </if>
-      <if test="applyResult != null" >
-        apply_result = #{applyResult,jdbcType=BIT},
+      <if test="roleId != null" >
+        role_id = #{roleId,jdbcType=BIGINT},
       </if>
       <if test="datetime != null" >
         datetime = #{datetime,jdbcType=TIMESTAMP},
@@ -319,17 +258,13 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApply" >
-    update userinfo_apply
+  <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.ApprovalStepIncharge" >
+    update approval_step_incharge
     set university_id = #{universityId,jdbcType=BIGINT},
       approval_main_id = #{approvalMainId,jdbcType=BIGINT},
-      info_type = #{infoType,jdbcType=INTEGER},
-      old_info_id = #{oldInfoId,jdbcType=BIGINT},
-      new_info_id = #{newInfoId,jdbcType=BIGINT},
-      start_time = #{startTime,jdbcType=TIMESTAMP},
-      end_time = #{endTime,jdbcType=TIMESTAMP},
-      apply_reason = #{applyReason,jdbcType=VARCHAR},
-      apply_result = #{applyResult,jdbcType=BIT},
+      name = #{name,jdbcType=VARCHAR},
+      step = #{step,jdbcType=INTEGER},
+      role_id = #{roleId,jdbcType=BIGINT},
       datetime = #{datetime,jdbcType=TIMESTAMP},
       by_who = #{byWho,jdbcType=BIGINT},
       deleted = #{deleted,jdbcType=BIT}

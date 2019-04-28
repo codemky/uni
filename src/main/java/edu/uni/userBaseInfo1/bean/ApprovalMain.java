@@ -2,20 +2,16 @@ package edu.uni.userBaseInfo1.bean;
 
 import java.util.Date;
 
-public class UserinfoApplyApproval {
+public class ApprovalMain {
     private Long id;
 
     private Long universityId;
 
-    private Long userinfoApplyId;
+    private String name;
 
-    private Integer step;
+    private Integer stepCnt;
 
-    private Boolean result;
-
-    private Long checkWho;
-
-    private Date checkTime;
+    private String type;
 
     private Date datetime;
 
@@ -39,44 +35,28 @@ public class UserinfoApplyApproval {
         this.universityId = universityId;
     }
 
-    public Long getUserinfoApplyId() {
-        return userinfoApplyId;
+    public String getName() {
+        return name;
     }
 
-    public void setUserinfoApplyId(Long userinfoApplyId) {
-        this.userinfoApplyId = userinfoApplyId;
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    public Integer getStep() {
-        return step;
+    public Integer getStepCnt() {
+        return stepCnt;
     }
 
-    public void setStep(Integer step) {
-        this.step = step;
+    public void setStepCnt(Integer stepCnt) {
+        this.stepCnt = stepCnt;
     }
 
-    public Boolean getResult() {
-        return result;
+    public String getType() {
+        return type;
     }
 
-    public void setResult(Boolean result) {
-        this.result = result;
-    }
-
-    public Long getCheckWho() {
-        return checkWho;
-    }
-
-    public void setCheckWho(Long checkWho) {
-        this.checkWho = checkWho;
-    }
-
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
+    public void setType(String type) {
+        this.type = type == null ? null : type.trim();
     }
 
     public Date getDatetime() {

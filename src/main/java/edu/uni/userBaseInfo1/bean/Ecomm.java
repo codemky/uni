@@ -1,5 +1,7 @@
 package edu.uni.userBaseInfo1.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -21,6 +23,7 @@ public class Ecomm {
     //4: 办公室号码 5: 家庭电话
     private Integer flag;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     //本记录的创建时间
     private Date datetime;
 
@@ -110,6 +113,4 @@ public class Ecomm {
         this.deleted = deleted;
     }
 
-    public Ecomm() {
-    }
 }
