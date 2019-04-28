@@ -5,7 +5,6 @@
 
 package edu.uni.userBaseInfo1.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.Ecomm;
@@ -14,7 +13,6 @@ import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import net.sf.ehcache.distribution.CachePeer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 //填写description内容可以在测试模块显示相应的文字和模块
 @Api(description = "电子通信模块")
@@ -40,6 +37,7 @@ public class EcommController {
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
+
 
 
     //内部类，专门用来管理每个get方法所对应缓存的名称。
@@ -62,7 +60,7 @@ public class EcommController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条Ecomm记录的内容",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条电子通信记录详情",notes = "未测试" )
     @GetMapping("ecomm/{id}")
     @ApiImplicitParam(name = "id", value = "Ecomm表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody

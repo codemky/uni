@@ -6,8 +6,11 @@ import java.util.Date;
  * 职员主要信息
  */
 public class Employee {
-    //同user.id一致
+    //职员表唯一id
     private Long id;
+
+    //用户表id
+    private Long userId;
 
     //员工编号
     private String empNo;
@@ -175,8 +178,17 @@ public class Employee {
         this.deleted = deleted;
     }
 
-    public Employee(Long id, String empNo, Long departmentId, Long subdepartmentId, Long employHistoryId, Long disciplineId, Long politicalId, Long positionId, Long homeAddressId, Long mailAddressId, Date datetime, Long byWho, Boolean deleted) {
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Employee(Long id, Long userId, String empNo, Long departmentId, Long subdepartmentId, Long employHistoryId, Long disciplineId, Long politicalId, Long positionId, Long homeAddressId, Long mailAddressId, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
+        this.userId = userId;
         this.empNo = empNo;
         this.departmentId = departmentId;
         this.subdepartmentId = subdepartmentId;
@@ -198,6 +210,7 @@ public class Employee {
     public String toString() {
         return "Employee{" +
                 "id=" + id +
+                ", userId=" + userId +
                 ", empNo='" + empNo + '\'' +
                 ", departmentId=" + departmentId +
                 ", subdepartmentId=" + subdepartmentId +

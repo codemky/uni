@@ -14,6 +14,8 @@ student实体类 学生主要信息
 public class Student {
     // Student数据表唯一编号ID
     private Long id;
+    //用户表id
+    private Long userId;
     // 学号
     private String stuNo;
     // 入学日期
@@ -143,10 +145,20 @@ public class Student {
         this.deleted = deleted;
     }
     //本实体类的toString()方法
-    @java.lang.Override
-    public java.lang.String toString() {
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
         return "Student{" +
                 "id=" + id +
+                ", userId=" + userId +
                 ", stuNo='" + stuNo + '\'' +
                 ", beginLearnDate=" + beginLearnDate +
                 ", grade='" + grade + '\'' +
@@ -160,5 +172,22 @@ public class Student {
                 ", byWho=" + byWho +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public Student(Long id, Long userId, String stuNo, Date beginLearnDate, String grade, Long majorId, Long classId, Long politicalId, Long liveRoom, Long homeAddress, Long mailAddress, Date datetime, Long byWho, Boolean deleted) {
+        this.id = id;
+        this.userId = userId;
+        this.stuNo = stuNo;
+        this.beginLearnDate = beginLearnDate;
+        this.grade = grade;
+        this.majorId = majorId;
+        this.classId = classId;
+        this.politicalId = politicalId;
+        this.liveRoom = liveRoom;
+        this.homeAddress = homeAddress;
+        this.mailAddress = mailAddress;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
     }
 }

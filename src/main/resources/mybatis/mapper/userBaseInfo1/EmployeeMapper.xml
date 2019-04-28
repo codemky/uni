@@ -3,6 +3,7 @@
 <mapper namespace="edu.uni.userBaseInfo1.mapper.EmployeeMapper" >
   <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.Employee" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="emp_no" property="empNo" jdbcType="VARCHAR" />
     <result column="department_id" property="departmentId" jdbcType="BIGINT" />
     <result column="subdepartment_id" property="subdepartmentId" jdbcType="BIGINT" />
@@ -75,8 +76,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, emp_no, department_id, subdepartment_id, employ_history_id, discipline_id, political_id, 
-    position_id, home_address_id, mail_address_id, datetime, by_who, deleted
+    id, user_id, emp_no, department_id, subdepartment_id, employ_history_id, discipline_id, 
+    political_id, position_id, home_address_id, mail_address_id, datetime, by_who, deleted
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample" >
     select
@@ -112,16 +113,16 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into employee (emp_no, department_id, subdepartment_id, 
-      employ_history_id, discipline_id, political_id, 
-      position_id, home_address_id, mail_address_id, 
-      datetime, by_who, deleted
-      )
-    values (#{empNo,jdbcType=VARCHAR}, #{departmentId,jdbcType=BIGINT}, #{subdepartmentId,jdbcType=BIGINT}, 
-      #{employHistoryId,jdbcType=BIGINT}, #{disciplineId,jdbcType=BIGINT}, #{politicalId,jdbcType=BIGINT}, 
-      #{positionId,jdbcType=BIGINT}, #{homeAddressId,jdbcType=BIGINT}, #{mailAddressId,jdbcType=BIGINT}, 
-      #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}
-      )
+    insert into employee (user_id, emp_no, department_id, 
+      subdepartment_id, employ_history_id, discipline_id, 
+      political_id, position_id, home_address_id, 
+      mail_address_id, datetime, by_who, 
+      deleted)
+    values (#{userId,jdbcType=BIGINT}, #{empNo,jdbcType=VARCHAR}, #{departmentId,jdbcType=BIGINT}, 
+      #{subdepartmentId,jdbcType=BIGINT}, #{employHistoryId,jdbcType=BIGINT}, #{disciplineId,jdbcType=BIGINT}, 
+      #{politicalId,jdbcType=BIGINT}, #{positionId,jdbcType=BIGINT}, #{homeAddressId,jdbcType=BIGINT}, 
+      #{mailAddressId,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, 
+      #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -129,6 +130,9 @@
     </selectKey>
     insert into employee
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
       <if test="empNo != null" >
         emp_no,
       </if>
@@ -167,6 +171,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
       <if test="empNo != null" >
         #{empNo,jdbcType=VARCHAR},
       </if>
@@ -217,6 +224,9 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
       <if test="record.empNo != null" >
         emp_no = #{record.empNo,jdbcType=VARCHAR},
       </if>
@@ -261,6 +271,7 @@
   <update id="updateByExample" parameterType="map" >
     update employee
     set id = #{record.id,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=BIGINT},
       emp_no = #{record.empNo,jdbcType=VARCHAR},
       department_id = #{record.departmentId,jdbcType=BIGINT},
       subdepartment_id = #{record.subdepartmentId,jdbcType=BIGINT},
@@ -280,6 +291,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
     update employee
     <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
       <if test="empNo != null" >
         emp_no = #{empNo,jdbcType=VARCHAR},
       </if>
@@ -321,7 +335,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
     update employee
-    set emp_no = #{empNo,jdbcType=VARCHAR},
+    set user_id = #{userId,jdbcType=BIGINT},
+      emp_no = #{empNo,jdbcType=VARCHAR},
       department_id = #{departmentId,jdbcType=BIGINT},
       subdepartment_id = #{subdepartmentId,jdbcType=BIGINT},
       employ_history_id = #{employHistoryId,jdbcType=BIGINT},
