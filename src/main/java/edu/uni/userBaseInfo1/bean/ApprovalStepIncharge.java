@@ -1,24 +1,32 @@
+/**
+ * Author: mokuanyuan 15:56 2019/4/30
+ * @apiNote: 审批步骤详情表的实体类
+ */
 package edu.uni.userBaseInfo1.bean;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
 public class ApprovalStepIncharge {
+//    审批步骤详情表id
     private Long id;
-
+//    学校id
     private Long universityId;
-
+//    审批步数规定表id
     private Long approvalMainId;
-
+//    步骤名称
     private String name;
-
+//    步骤编号
     private Integer step;
-
+//    角色表id  说明该申请的当前步骤需要什么角色审批
     private Long roleId;
-
+//    本记录创建时间
+@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
-
+//    本记录的写入者 用户id
     private Long byWho;
-
+//    本记录是否有效 0：有效  1：无效
     private Boolean deleted;
 
     public Long getId() {

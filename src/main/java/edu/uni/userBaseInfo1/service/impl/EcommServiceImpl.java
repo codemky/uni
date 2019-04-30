@@ -78,6 +78,7 @@ public class EcommServiceImpl implements EcommService {
      */
     public boolean insert(Ecomm ecomm) {
         return ecommMapper.insertSelective(ecomm) > 0 ? true : false;
+
     }
 
     /**
