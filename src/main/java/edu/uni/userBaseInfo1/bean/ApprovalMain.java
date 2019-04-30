@@ -3,6 +3,7 @@ package edu.uni.userBaseInfo1.bean;
 import java.util.Date;
 
 public class ApprovalMain {
+
     private Long id;
 
     private Long universityId;

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
+@SuppressWarnings("ALL")
 @Service
 public class EcommServiceImpl implements EcommService {
 

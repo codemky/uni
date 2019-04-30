@@ -14,7 +14,7 @@ public interface PictureMapper {
     int deleteByExample(PictureExample example);
 
     //按主键删除
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(long id);
 
     //插入数据（返回值为id)
     int insert(Picture record);

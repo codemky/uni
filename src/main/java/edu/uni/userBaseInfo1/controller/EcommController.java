@@ -5,23 +5,23 @@
 
 package edu.uni.userBaseInfo1.controller;
 
-import edu.uni.bean.Result;
-import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Ecomm;
-import edu.uni.userBaseInfo1.service.EcommService;
-import edu.uni.utils.RedisCache;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+        import edu.uni.bean.Result;
+        import edu.uni.bean.ResultType;
+        import edu.uni.userBaseInfo1.bean.Ecomm;
+        import edu.uni.userBaseInfo1.service.EcommService;
+        import edu.uni.utils.RedisCache;
+        import io.swagger.annotations.Api;
+        import io.swagger.annotations.ApiImplicitParam;
+        import io.swagger.annotations.ApiOperation;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Controller;
+        import org.springframework.web.bind.annotation.*;
+        import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
+        import javax.servlet.http.HttpServletResponse;
+        import java.io.File;
+        import java.io.IOException;
+        import java.time.LocalDateTime;
 
 //填写description内容可以在测试模块显示相应的文字和模块
 @Api(description = "电子通信模块")
@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
 public class EcommController {
 
     @Autowired  //把Ecomm的Service层接口所有的方法自动装配到该对象中
-    EcommService ecommService;
+            EcommService ecommService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
