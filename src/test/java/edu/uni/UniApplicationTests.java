@@ -25,7 +25,7 @@ public class UniApplicationTests {
 
         for(long i = 0 ; i < 10;i++){
             Ecomm ecomm = new Ecomm(null, i, "第" + i + "条数据“”“", 1, new Date(), i, false);
-            ecommMapper.insertSelective(ecomm);
+//            ecommMapper.insertSelective(ecomm);
 
         }
 
