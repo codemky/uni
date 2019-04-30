@@ -6,6 +6,8 @@ description：学生主要信息
 */
 package edu.uni.userBaseInfo1.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 /*
 student实体类 学生主要信息
@@ -19,6 +21,7 @@ public class Student {
     // 学号
     private String stuNo;
     // 入学日期
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date beginLearnDate;
     // 当前年级
     private String grade;
@@ -35,6 +38,7 @@ public class Student {
     // 当前通信地址 关联address.id
     private Long mailAddress;
     // 本记录的创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
     // 本记录的写入者
     private Long byWho;

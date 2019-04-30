@@ -6,6 +6,8 @@ description：照片表
 */
 package edu.uni.userBaseInfo1.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /*
@@ -23,6 +25,7 @@ public class Picture {
     private String pictureName;
     // 类型 0:证件照 1:生活照
     private Boolean flag;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     // 本记录的创建时间
     private Date datetime;
     // 本记录的写入者

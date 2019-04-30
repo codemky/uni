@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
      * Author: chenenru 23:25 2019/4/29
      * @param 
      * @return List<User>
-     * @apiNote: 查询所有通信记录，不分页
+     * @apiNote: 查询所有用户记录，不分页
      */
     @Override
     public List<User> selectAllUsers() {

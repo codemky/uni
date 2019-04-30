@@ -5,6 +5,8 @@ create:  2019.4.5
 modified:  2019.4.24
 description：用户的实体类
 */
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 /*
 用户实体类
@@ -23,6 +25,7 @@ public class User {
     private Integer userSex;
 
     //用户生日
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String userBirthday;
 
     //用户学号、教工号、邮箱、手机号
@@ -44,6 +47,7 @@ public class User {
     private Integer status;
 
     //注册时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date regist;
 
     //无参构造方法

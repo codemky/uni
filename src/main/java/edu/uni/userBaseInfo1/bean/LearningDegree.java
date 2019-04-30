@@ -6,6 +6,8 @@
  */
 package edu.uni.userBaseInfo1.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -16,8 +18,10 @@ public class LearningDegree {
 
     private Long userId;//用户ID
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date beginTime;//开始时间
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;//结束时间
 
     private Long countryId;//国家ID
@@ -30,6 +34,7 @@ public class LearningDegree {
 
     private Long degreeId;//academic_degree表id
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;//本记录的创建时间
 
     private Long byWho;//本记录的写入者

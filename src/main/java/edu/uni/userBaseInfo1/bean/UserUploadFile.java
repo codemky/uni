@@ -1,5 +1,7 @@
 package edu.uni.userBaseInfo1.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class UserUploadFile {
@@ -9,6 +11,7 @@ public class UserUploadFile {
 
     private String fileInfo;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
 
     private Long byWho;

@@ -32,7 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * Author: chenenru 0:10 2019/4/30
      * @param 
      * @return  List<Employee>
-     * @apiNote: 查询所有通信记录，不分页
+     * @apiNote: 查询所有职员记录，不分页
      */
     @Override
     public List<Employee> selectAllEmployees() {
