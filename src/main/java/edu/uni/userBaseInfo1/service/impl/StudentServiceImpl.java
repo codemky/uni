@@ -58,11 +58,11 @@ public class StudentServiceImpl implements StudentService {
         PageHelper.offsetPage(pageNum,config.getPageSize());
 
         //无条件查询（条件对象为null，即无条件），查询所有
-        List<Student> ecomms = studentMapper.selectByExample(null);
+        List<Student> students = studentMapper.selectByExample(null);
 
         //检验查询的结果
-        if(ecomms != null )
-            return new PageInfo<>(ecomms);
+        if(students != null )
+            return new PageInfo<>(students);
         else
             return null;
 

@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.*;
 import java.util.Date;
 
+@SuppressWarnings("ALL")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UniApplicationTests {
