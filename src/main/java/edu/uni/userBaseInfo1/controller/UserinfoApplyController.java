@@ -4,12 +4,12 @@ import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
 import edu.uni.userBaseInfo1.service.UserinfoApplyService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/userinfoApply")
 //标志这个类是一个controller类，用于被Spring扫描然后配置添加和配置相应的bean
-@RestController
+@Controller
 public class UserinfoApplyController {
 
     //把UserinfoApply的Service层接口所有的方法自动装配到该对象中
