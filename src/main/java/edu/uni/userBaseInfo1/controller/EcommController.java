@@ -7,7 +7,6 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Academic;
 import edu.uni.userBaseInfo1.bean.Ecomm;
 import edu.uni.userBaseInfo1.service.EcommService;
 import edu.uni.utils.RedisCache;
