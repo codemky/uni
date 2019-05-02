@@ -58,7 +58,7 @@ public class UserController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条用户记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条用户记录详情",notes = "2019-5-2 11:08:41已通过测试" )
     @GetMapping("user/{id}")
     @ApiImplicitParam(name = "id", value = "User表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody
@@ -90,7 +90,7 @@ public class UserController {
      * @return
      * @apiNote: 获取所有用户记录的内容
      */
-    @ApiOperation( value = "获取所有用户记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有用户记录的内容",notes = "2019-5-2 11:08:46已通过测试" )
     @GetMapping("users/listUserAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -110,7 +110,7 @@ public class UserController {
      * @return Result
      * @apiNote: 新增用户信息
      */
-    @ApiOperation(value="新增用户信息", notes="未测试")
+    @ApiOperation(value="新增用户信息", notes="2019-5-2 11:08:50已通过测试")
     @ApiImplicitParam(name = "user", value = "用户详情实体", required = true, dataType = "User")
     @PostMapping("/User")  //post请求方式
     @ResponseBody
@@ -134,7 +134,7 @@ public class UserController {
      * @return Result
      * @apiNote: 删除用户
      */
-    @ApiOperation(value="删除用户", notes="未测试")
+    @ApiOperation(value="删除用户", notes="2019-5-2 11:08:55已通过测试")
     @ApiImplicitParam(name = "id", value = "用户的id", required = true, dataType = "Integer", paramType = "path")
     @DeleteMapping("/user/{id}")   //delete请求
     @ResponseBody
@@ -154,7 +154,7 @@ public class UserController {
      * @return Result
      * @apiNote: 更新用户详情
      */
-    @ApiOperation(value="更新用户详情", notes="未测试")
+    @ApiOperation(value="更新用户详情", notes="2019-5-2 11:08:59已通过测试")
     @ApiImplicitParam(name = "user", value = "用户详情实体", required = true, dataType = "User")
     @PutMapping("/user")   //Put请求
     @ResponseBody

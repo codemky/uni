@@ -58,7 +58,7 @@ public class EmployeeController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条职员记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条职员记录详情",notes = "2019-5-2 11:05:35已通过测试" )
     @GetMapping("employee/{id}")
     @ApiImplicitParam(name = "id", value = "Employee表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody
@@ -90,7 +90,7 @@ public class EmployeeController {
      * @return
      * @apiNote: 获取所有职员记录的内容
      */
-    @ApiOperation( value = "获取所有职员记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有职员记录的内容",notes = "2019-5-2 11:05:41已通过测试" )
     @GetMapping("employees/listEmployeeAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -110,7 +110,7 @@ public class EmployeeController {
      * @return Result
      * @apiNote: 新增职员信息
      */
-    @ApiOperation(value="新增职员信息", notes="未测试")
+    @ApiOperation(value="新增职员信息", notes="2019-5-2 11:05:46已通过测试")
     @ApiImplicitParam(name = "employee", value = "职员详情实体", required = true, dataType = "Employee")
     @PostMapping("/employee")  //post请求方式
     @ResponseBody
@@ -134,7 +134,7 @@ public class EmployeeController {
      * @return Result
      * @apiNote: 删除职员
      */
-    @ApiOperation(value="删除职员", notes="未测试")
+    @ApiOperation(value="删除职员", notes="2019-5-2 11:05:51已通过测试")
     @ApiImplicitParam(name = "id", value = "职员的id", required = true, dataType = "Integer", paramType = "path")
     @DeleteMapping("/employee/{id}")   //delete请求
     @ResponseBody
@@ -154,7 +154,7 @@ public class EmployeeController {
      * @return Result
      * @apiNote: 更新职员详情
      */
-    @ApiOperation(value="更新职员详情", notes="未测试")
+    @ApiOperation(value="更新职员详情", notes="2019-5-2 11:05:55已通过测试")
     @ApiImplicitParam(name = "employee", value = "职员详情实体", required = true, dataType = "employee")
     @PutMapping("/employee")   //Put请求
     @ResponseBody

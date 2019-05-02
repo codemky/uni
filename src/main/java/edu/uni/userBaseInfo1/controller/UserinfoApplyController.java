@@ -59,7 +59,7 @@ public class UserinfoApplyController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条用户信息申请记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条用户信息申请记录详情",notes = "2019-5-2 11:09:42已通过测试" )
     @GetMapping("userinfoApply/{id}")
     @ApiImplicitParam(name = "id", value = "userinfoApply表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody
@@ -91,7 +91,7 @@ public class UserinfoApplyController {
      * @return
      * @apiNote: 获取所有用户信息申请记录的内容
      */
-    @ApiOperation( value = "获取所有用户信息申请记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有用户信息申请记录的内容",notes = "2019-5-2 11:09:47已通过测试" )
     @GetMapping("userinfoApplys/listUserinfoApplyAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -111,7 +111,7 @@ public class UserinfoApplyController {
      * @return Result
      * @apiNote: 新增用户信息申请信息
      */
-    @ApiOperation(value="新增用户信息申请信息", notes="未测试")
+    @ApiOperation(value="新增用户信息申请信息", notes="2019-5-2 11:09:51已通过测试")
     @ApiImplicitParam(name = "userinfoApply", value = "用户信息申请详情实体", required = true, dataType = "UserinfoApply")
     @PostMapping("/userinfoApply")  //post请求方式
     @ResponseBody
@@ -135,7 +135,7 @@ public class UserinfoApplyController {
      * @return Result
      * @apiNote: 删除用户信息申请
      */
-    @ApiOperation(value="删除用户信息申请", notes="未测试")
+    @ApiOperation(value="删除用户信息申请", notes="2019-5-2 11:09:56已通过测试")
     @ApiImplicitParam(name = "id", value = "用户信息申请的id", required = true, dataType = "Integer", paramType = "path")
     @DeleteMapping("/userinfoApply/{id}")   //delete请求
     @ResponseBody
@@ -155,7 +155,7 @@ public class UserinfoApplyController {
      * @return Result
      * @apiNote: 更新用户信息申请详情
      */
-    @ApiOperation(value="更新用户信息申请详情", notes="未测试")
+    @ApiOperation(value="更新用户信息申请详情", notes="2019-5-2 11:10:01已通过测试")
     @ApiImplicitParam(name = "userinfoApply", value = "用户信息申请详情实体", required = true, dataType = "UserinfoApply")
     @PutMapping("/userinfoApply")   //Put请求
     @ResponseBody

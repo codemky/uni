@@ -61,7 +61,7 @@ public class UserUploadFileController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条用户上传文件记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条用户上传文件记录详情",notes = "2019-5-2 11:10:10已通过测试" )
     @GetMapping("userUploadFile/{id}")
     @ApiImplicitParam(name = "id", value = "userUploadFile表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody
@@ -93,7 +93,7 @@ public class UserUploadFileController {
      * @return
      * @apiNote: 获取所有用户上传文件记录的内容
      */
-    @ApiOperation( value = "获取所有用户上传文件记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有用户上传文件记录的内容",notes = "2019-5-2 11:10:15已通过测试" )
     @GetMapping("userUploadFiles/listUserUploadFileAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -113,7 +113,7 @@ public class UserUploadFileController {
      * @return Result
      * @apiNote: 新增用户上传文件信息
      */
-    @ApiOperation(value="新增用户上传文件信息", notes="未测试")
+    @ApiOperation(value="新增用户上传文件信息", notes="2019-5-2 11:10:19已通过测试")
     @ApiImplicitParam(name = "userUploadFile", value = "用户上传文件详情实体", required = true, dataType = "UserUploadFile")
     @PostMapping("/userUploadFile")  //post请求方式
     @ResponseBody
@@ -137,7 +137,7 @@ public class UserUploadFileController {
      * @return Result
      * @apiNote: 删除用户上传文件
      */
-    @ApiOperation(value="删除用户上传文件", notes="未测试")
+    @ApiOperation(value="删除用户上传文件", notes="2019-5-2 11:10:24已通过测试")
     @ApiImplicitParam(name = "id", value = "用户上传文件的id", required = true, dataType = "Integer", paramType = "path")
     @DeleteMapping("/userUploadFile/{id}")   //delete请求
     @ResponseBody
@@ -157,7 +157,7 @@ public class UserUploadFileController {
      * @return Result
      * @apiNote: 更新用户上传文件详情
      */
-    @ApiOperation(value="更新用户上传文件详情", notes="未测试")
+    @ApiOperation(value="更新用户上传文件详情", notes="2019-5-2 11:10:28已通过测试")
     @ApiImplicitParam(name = "userUploadFile", value = "用户上传文件详情实体", required = true, dataType = "UserUploadFile")
     @PutMapping("/userUploadFile")   //Put请求
     @ResponseBody

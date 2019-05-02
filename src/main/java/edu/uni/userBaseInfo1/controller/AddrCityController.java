@@ -2,8 +2,8 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.SecondLevelDiscipline;
-import edu.uni.userBaseInfo1.service.SecondLevelDisciplineService;
+import edu.uni.userBaseInfo1.bean.AddrCity;
+import edu.uni.userBaseInfo1.service.AddrCityService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,64 +20,64 @@ import java.time.LocalDateTime;
 
 /**
  * @Author chenenru
- * @ClassName SecondLevelDisciplineController
+ * @ClassName AddrCityController
  * @Description
- * @Date 2019/4/30 15:51
+ * @Date 2019/5/2 10:03
  * @Version 1.0
  **/
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "二级学科信息模块")
+@Api(description = "城市信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
-@RequestMapping("json/secondLevelDiscipline")
+@RequestMapping("json/addrCity")
 //标志这个类是一个controller类，用于被Spring扫描然后配置添加和配置相应的bean
 @Controller
-public class SecondLevelDisciplineController {
+public class AddrCityController {
 
-    //把SecondLevelDiscipline的Service层接口所有的方法自动装配到该对象中
+    //把AddrCity的Service层接口所有的方法自动装配到该对象中
     @Autowired
-    SecondLevelDisciplineService secondLevelDisciplineService;
+    AddrCityService addrCityService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
-        // ub1_e_SecondLevelDiscipline_{二级学科记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_SecondLevelDiscipline_";
-        // ub1_e_SecondLevelDisciplines_listAll
-        public static final String ListAll_CacheName = "ub1_e_SecondLevelDisciplines_listAll";
+        // ub1_e_AddrCity_{城市记录id}
+        public static final String Receive_CacheNamePrefix = "ub1_e_AddrCity_";
+        // ub1_e_AddrCitys_listAll
+        public static final String ListAll_CacheName = "ub1_e_AddrCitys_listAll";
     }
 
     /**
      * Author: chenenru 23:41 2019/4/29
      * @param id response
      * @return response
-     * @apiNote: 获取二级学科详情
+     * @apiNote: 获取城市详情
      */
     //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
     //@ApiOperation：用于在swagger2页面显示方法的提示信息
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条二级学科记录详情",notes = "2019-5-2 11:08:06已通过测试" )
-    @GetMapping("secondLevelDiscipline/{id}")
-    @ApiImplicitParam(name = "id", value = "secondLevelDiscipline表的一个id", required = false, dataType = "Integer" , paramType = "path")
+    @ApiOperation( value = "以一个id获取一条城市记录详情",notes = "2019-5-2 11:01:55 已通过测试" )
+    @GetMapping("addrCity/{id}")
+    @ApiImplicitParam(name = "id", value = "AddrCity表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody
     public void receive(@PathVariable Integer id, HttpServletResponse response) throws IOException {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
-        String cacheName = SecondLevelDisciplineController.CacheNameHelper.Receive_CacheNamePrefix + id;
+        String cacheName = AddrCityController.CacheNameHelper.Receive_CacheNamePrefix + id;
         //尝试在缓存中通过键名获取相应的键值
         //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
         String json = cache.get(cacheName);
         //如果在缓存中找不到，那就从数据库里找
         if(json == null){
-            SecondLevelDiscipline secondLevelDiscipline = secondLevelDisciplineService.selectSecondLevelDisciplineById(id);
+            AddrCity addrCity = addrCityService.selectAddrCityById(id);
             //把查询到的结果用Result工具类转换成json格式的字符串
-            json = Result.build(ResultType.Success).appendData("secondLevelDiscipline",secondLevelDiscipline).convertIntoJSON();
+            json = Result.build(ResultType.Success).appendData("addrCity",addrCity).convertIntoJSON();
             //如果有查询到数据，就把在数据库查到的数据放到缓存中
-            if(secondLevelDiscipline != null){
+            if(addrCity != null){
                 cache.set(cacheName,json);
             }
         }
@@ -89,39 +89,39 @@ public class SecondLevelDisciplineController {
      * Author: chenenru 23:44 2019/4/29
      * @param response
      * @return
-     * @apiNote: 获取所有二级学科记录的内容
+     * @apiNote: 获取所有城市记录的内容
      */
-    @ApiOperation( value = "获取所有二级学科记录的内容",notes = "2019-5-2 11:08:10已通过测试" )
-    @GetMapping("secondLevelDisciplines/listSecondLevelDisciplineAll")
+    @ApiOperation( value = "获取所有城市记录的内容",notes = "2019-5-2 11:02:03 已通过测试" )
+    @GetMapping("addrCitys/listAddrCityAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
-        String cacheName = SecondLevelDisciplineController.CacheNameHelper.ListAll_CacheName;
+        String cacheName = AddrCityController.CacheNameHelper.ListAll_CacheName;
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
-                    .appendData("secondLevelDisciplines",secondLevelDisciplineService.selectAllSecondLevelDisciplines()).convertIntoJSON();
+                    .appendData("addrCitys",addrCityService.selectAllAddrCitys()).convertIntoJSON();
             cache.set(cacheName,json);
         }
         response.getWriter().write(json);
     }
     /**
      * Author: chenenru 23:47 2019/4/29
-     * @param  SecondLevelDiscipline
+     * @param  addrCity
      * @return Result
-     * @apiNote: 新增二级学科信息
+     * @apiNote: 新增城市信息
      */
-    @ApiOperation(value="新增二级学科信息", notes="2019-5-2 11:08:15已通过测试")
-    @ApiImplicitParam(name = "secondLevelDiscipline", value = "二级学科详情实体", required = true, dataType = "SecondLevelDiscipline")
-    @PostMapping("/secondLevelDiscipline")  //post请求方式
+    @ApiOperation(value="新增城市信息", notes="2019-5-2 11:02:09 已通过测试")
+    @ApiImplicitParam(name = "addrCity", value = "城市详情实体", required = true, dataType = "AddrCity")
+    @PostMapping("/AddrCity")  //post请求方式
     @ResponseBody
-    public Result create(@RequestBody(required = false) SecondLevelDiscipline SecondLevelDiscipline){
+    public Result create(@RequestBody(required = false) AddrCity addrCity){
         //检验页面传来的对象是否存在
-        if(SecondLevelDiscipline != null){
-            boolean success = secondLevelDisciplineService.insertSecondLevelDiscipline(SecondLevelDiscipline);
+        if(addrCity != null){
+            boolean success = addrCityService.insertAddrCity(addrCity);
             if(success){
                 // 清空相关缓存
-                cache.delete(SecondLevelDisciplineController.CacheNameHelper.ListAll_CacheName);
+                cache.delete(AddrCityController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
                 return Result.build(ResultType.Failed);
@@ -133,17 +133,17 @@ public class SecondLevelDisciplineController {
      * Author: chenenru 23:50 2019/4/29
      * @param id
      * @return Result
-     * @apiNote: 删除二级学科
+     * @apiNote: 删除城市
      */
-    @ApiOperation(value="删除二级学科", notes="2019-5-2 11:08:21已通过测试")
-    @ApiImplicitParam(name = "id", value = "二级学科的id", required = true, dataType = "Integer", paramType = "path")
-    @DeleteMapping("/secondLevelDiscipline/{id}")   //delete请求
+    @ApiOperation(value="删除城市", notes="2019-5-2 11:02:16 已通过测试")
+    @ApiImplicitParam(name = "id", value = "城市的id", required = true, dataType = "Integer", paramType = "path")
+    @DeleteMapping("/addrCity/{id}")   //delete请求
     @ResponseBody
     public Result destroy(@PathVariable Integer id){
-        boolean success = secondLevelDisciplineService.deleteSecondLevelDiscipline(id);
+        boolean success = addrCityService.deleteAddrCity(id);
         if(success){
             // 清空相关缓存
-            cache.delete(SecondLevelDisciplineController.CacheNameHelper.ListAll_CacheName);
+            cache.delete(AddrCityController.CacheNameHelper.ListAll_CacheName);
             return Result.build(ResultType.Success);
         }else{
             return Result.build(ResultType.Failed);
@@ -151,21 +151,21 @@ public class SecondLevelDisciplineController {
     }
     /**
      * Author: chenenru 23:52 2019/4/29
-     * @param SecondLevelDiscipline
+     * @param addrCity
      * @return Result
-     * @apiNote: 更新二级学科详情
+     * @apiNote: 更新城市详情
      */
-    @ApiOperation(value="更新二级学科详情", notes="2019-5-2 11:08:26已通过测试")
-    @ApiImplicitParam(name = "SecondLevelDiscipline", value = "二级学科详情实体", required = true, dataType = "SecondLevelDiscipline")
-    @PutMapping("/secondLevelDiscipline")   //Put请求
+    @ApiOperation(value="更新城市详情", notes="2019-5-2 11:02:22 已通过测试")
+    @ApiImplicitParam(name = "addrCity", value = "城市详情实体", required = true, dataType = "AddrCity")
+    @PutMapping("/addrCity")   //Put请求
     @ResponseBody
-    public Result update(@RequestBody(required = false) SecondLevelDiscipline SecondLevelDiscipline){
-        if(SecondLevelDiscipline != null && SecondLevelDiscipline.getId() != null){
-            boolean success = secondLevelDisciplineService.updateSecondLevelDiscipline(SecondLevelDiscipline);
+    public Result update(@RequestBody(required = false) AddrCity addrCity){
+        if(addrCity != null && addrCity.getId() != null){
+            boolean success = addrCityService.updateAddrCity(addrCity);
             if(success){
                 //清除相应的缓存
-                cache.delete(SecondLevelDisciplineController.CacheNameHelper.Receive_CacheNamePrefix + SecondLevelDiscipline.getId());
-                cache.delete(SecondLevelDisciplineController.CacheNameHelper.ListAll_CacheName);
+                cache.delete(AddrCityController.CacheNameHelper.Receive_CacheNamePrefix + addrCity.getId());
+                cache.delete(AddrCityController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
                 return Result.build(ResultType.Failed);

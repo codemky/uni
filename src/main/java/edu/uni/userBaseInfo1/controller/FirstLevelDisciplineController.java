@@ -59,7 +59,7 @@ public class FirstLevelDisciplineController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条一级学科记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条一级学科记录详情",notes = "2019-5-2 11:06:51已通过测试" )
     @GetMapping("firstLevelDiscipline/{id}")
     @ApiImplicitParam(name = "id", value = "firstLevelDiscipline表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody
@@ -91,7 +91,7 @@ public class FirstLevelDisciplineController {
      * @return
      * @apiNote: 获取所有一级学科记录的内容
      */
-    @ApiOperation( value = "获取所有一级学科记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有一级学科记录的内容",notes = "2019-5-2 11:06:46已通过测试" )
     @GetMapping("firstLevelDisciplines/listFirstLevelDisciplineAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -111,7 +111,7 @@ public class FirstLevelDisciplineController {
      * @return Result
      * @apiNote: 新增一级学科信息
      */
-    @ApiOperation(value="新增一级学科信息", notes="未测试")
+    @ApiOperation(value="新增一级学科信息", notes="2019-5-2 11:06:41已通过测试")
     @ApiImplicitParam(name = "firstLevelDiscipline", value = "一级学科详情实体", required = true, dataType = "FirstLevelDiscipline")
     @PostMapping("/FirstLevelDiscipline")  //post请求方式
     @ResponseBody
@@ -135,7 +135,7 @@ public class FirstLevelDisciplineController {
      * @return Result
      * @apiNote: 删除一级学科
      */
-    @ApiOperation(value="删除一级学科", notes="未测试")
+    @ApiOperation(value="删除一级学科", notes="2019-5-2 11:06:37已通过测试")
     @ApiImplicitParam(name = "id", value = "一级学科的id", required = true, dataType = "Integer", paramType = "path")
     @DeleteMapping("/firstLevelDiscipline/{id}")   //delete请求
     @ResponseBody
@@ -155,7 +155,7 @@ public class FirstLevelDisciplineController {
      * @return Result
      * @apiNote: 更新一级学科详情
      */
-    @ApiOperation(value="更新一级学科详情", notes="未测试")
+    @ApiOperation(value="更新一级学科详情", notes="2019-5-2 11:06:32已通过测试")
     @ApiImplicitParam(name = "firstLevelDiscipline", value = "一级学科详情实体", required = true, dataType = "FirstLevelDiscipline")
     @PutMapping("/FirstLevelDiscipline")   //Put请求
     @ResponseBody

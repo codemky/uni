@@ -59,7 +59,7 @@ public class EmployeeHistoryController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条简历信息记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条简历信息记录详情",notes = "2019-5-2 11:06:25已通过测试" )
     @GetMapping("EmployeeHistory/{id}")
     @ApiImplicitParam(name = "id", value = "EmployeeHistory表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -90,7 +90,7 @@ public class EmployeeHistoryController {
      * Author: laizhouhao 16:26 2019/4/29
      * @apiNote: 查询简历信息的所有记录
      */
-    @ApiOperation( value = "获取所有简历信息记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有简历信息记录的内容",notes = "2019-5-2 11:06:16已通过测试" )
     @GetMapping("employeeHistorys/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
@@ -109,7 +109,7 @@ public class EmployeeHistoryController {
      * @param employeeHistory
      * @return 新增简历信息信息结果
      */
-    @ApiOperation(value="新增简历信息记录", notes="未测试")
+    @ApiOperation(value="新增简历信息记录", notes="2019-5-2 11:06:11已通过测试")
     @ApiImplicitParam(name = "employeeHistory", value = "简历信息详情实体", required = true, dataType = "EmployeeHistory")
     @PostMapping("/EmployeeHistory")  //post请求方式
     @ResponseBody
@@ -131,7 +131,7 @@ public class EmployeeHistoryController {
      * @param id
      * @return 删除简历信息结果
      */
-    @ApiOperation(value="删除简历信息", notes="未测试")
+    @ApiOperation(value="删除简历信息", notes="2019-5-2 11:06:07已通过测试")
     @ApiImplicitParam(name = "id", value = "简历信息id", required = true, dataType = "Integer", paramType = "path")
     @DeleteMapping("/employeeHistory/{id}")   //delete请求
     @ResponseBody
@@ -151,7 +151,7 @@ public class EmployeeHistoryController {
      * @param employeeHistory
      * @return 更新操作结果
      */
-    @ApiOperation(value="更新简历信息", notes="未测试")
+    @ApiOperation(value="更新简历信息", notes="2019-5-2 11:06:03已通过测试")
     @ApiImplicitParam(name = "employeeHistory", value = "简历信息详情实体", required = true, dataType = "EmployeeHistory")
     @PutMapping("/employeeHistory")   //Put请求
     @ResponseBody

@@ -59,7 +59,7 @@ public class PoliticalAffiliationControlller {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条政治面貌记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条政治面貌记录详情",notes = "2019-5-2 11:07:37已通过测试" )
     @GetMapping("politicalAffiliation/{id}")
     @ApiImplicitParam(name = "id", value = "politicalAffiliation表的一个id", required = false, dataType = "Integer" , paramType = "path")
     @ResponseBody
@@ -91,7 +91,7 @@ public class PoliticalAffiliationControlller {
      * @return
      * @apiNote: 获取所有政治面貌记录的内容
      */
-    @ApiOperation( value = "获取所有政治面貌记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有政治面貌记录的内容",notes = "2019-5-2 11:07:42已通过测试" )
     @GetMapping("politicalAffiliations/listPoliticalAffiliationAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -111,7 +111,7 @@ public class PoliticalAffiliationControlller {
      * @return Result
      * @apiNote: 新增政治面貌信息
      */
-    @ApiOperation(value="新增政治面貌信息", notes="未测试")
+    @ApiOperation(value="新增政治面貌信息", notes="2019-5-2 11:07:46已通过测试")
     @ApiImplicitParam(name = "politicalAffiliation", value = "政治面貌详情实体", required = true, dataType = "PoliticalAffiliation")
     @PostMapping("/politicalAffiliation")  //post请求方式
     @ResponseBody
@@ -135,7 +135,7 @@ public class PoliticalAffiliationControlller {
      * @return Result
      * @apiNote: 删除政治面貌
      */
-    @ApiOperation(value="删除政治面貌", notes="未测试")
+    @ApiOperation(value="删除政治面貌", notes="2019-5-2 11:07:51已通过测试")
     @ApiImplicitParam(name = "id", value = "政治面貌的id", required = true, dataType = "Integer", paramType = "path")
     @DeleteMapping("/politicalAffiliation/{id}")   //delete请求
     @ResponseBody
@@ -155,7 +155,7 @@ public class PoliticalAffiliationControlller {
      * @return Result
      * @apiNote: 更新政治面貌详情
      */
-    @ApiOperation(value="更新政治面貌详情", notes="未测试")
+    @ApiOperation(value="更新政治面貌详情", notes="2019-5-2 11:07:56已通过测试")
     @ApiImplicitParam(name = "politicalAffiliation", value = "政治面貌详情实体", required = true, dataType = "PoliticalAffiliation")
     @PutMapping("/politicalAffiliation")   //Put请求
     @ResponseBody
