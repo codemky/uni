@@ -92,7 +92,7 @@ public class SecondLevelDisciplineController {
      * @apiNote: 获取所有二级学科记录的内容
      */
     @ApiOperation( value = "获取所有二级学科记录的内容",notes = "2019-5-2 11:08:10已通过测试" )
-    @GetMapping("secondLevelDisciplines/listSecondLevelDisciplineAll")
+    @GetMapping("secondLevelDisciplines/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");

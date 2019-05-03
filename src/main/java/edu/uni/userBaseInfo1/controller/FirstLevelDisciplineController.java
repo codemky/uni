@@ -92,7 +92,7 @@ public class FirstLevelDisciplineController {
      * @apiNote: 获取所有一级学科记录的内容
      */
     @ApiOperation( value = "获取所有一级学科记录的内容",notes = "2019-5-2 11:06:46已通过测试" )
-    @GetMapping("firstLevelDisciplines/listFirstLevelDisciplineAll")
+    @GetMapping("firstLevelDisciplines/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
@@ -113,7 +113,7 @@ public class FirstLevelDisciplineController {
      */
     @ApiOperation(value="新增一级学科信息", notes="2019-5-2 11:06:41已通过测试")
     @ApiImplicitParam(name = "firstLevelDiscipline", value = "一级学科详情实体", required = true, dataType = "FirstLevelDiscipline")
-    @PostMapping("/FirstLevelDiscipline")  //post请求方式
+    @PostMapping("/firstLevelDiscipline")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false) FirstLevelDiscipline firstLevelDiscipline){
         //检验页面传来的对象是否存在
@@ -157,7 +157,7 @@ public class FirstLevelDisciplineController {
      */
     @ApiOperation(value="更新一级学科详情", notes="2019-5-2 11:06:32已通过测试")
     @ApiImplicitParam(name = "firstLevelDiscipline", value = "一级学科详情实体", required = true, dataType = "FirstLevelDiscipline")
-    @PutMapping("/FirstLevelDiscipline")   //Put请求
+    @PutMapping("/firstLevelDiscipline")   //Put请求
     @ResponseBody
     public Result update(@RequestBody(required = false) FirstLevelDiscipline firstLevelDiscipline){
         if(firstLevelDiscipline != null && firstLevelDiscipline.getId() != null){

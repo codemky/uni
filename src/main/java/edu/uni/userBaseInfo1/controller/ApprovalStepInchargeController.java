@@ -59,7 +59,7 @@ public class ApprovalStepInchargeController {
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条每一种申请的每一个审批步骤的角色记录详情",notes = "未测试" )
-    @GetMapping("ApprovalStepIncharge/{id}")
+    @GetMapping("approvalStepIncharge/{id}")
     @ApiImplicitParam(name = "id", value = "ApprovalStepIncharge表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
     public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
@@ -90,7 +90,7 @@ public class ApprovalStepInchargeController {
      * @apiNote: 查询每一种申请的每一个审批步骤的角色的所有记录
      */
     @ApiOperation( value = "获取所有每一种申请的每一个审批步骤的角色记录的内容",notes = "未测试" )
-    @GetMapping("ApprovalStepIncharges/listAll")
+    @GetMapping("approvalStepIncharges/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
         response.setContentType("application/json;charset=utf-8");
@@ -110,7 +110,7 @@ public class ApprovalStepInchargeController {
      */
     @ApiOperation(value="新增每一种申请的每一个审批步骤的角色信息记录", notes="未测试")
     @ApiImplicitParam(name = "approvalStepIncharge", value = "每一种申请的每一个审批步骤的角色详情实体", required = true, dataType = "ApprovalStepIncharge")
-    @PostMapping("/ApprovalStepIncharge")  //post请求方式
+    @PostMapping("/approvalStepIncharge")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false)ApprovalStepIncharge approvalStepIncharge){
         if(approvalStepIncharge!=null){
@@ -132,7 +132,7 @@ public class ApprovalStepInchargeController {
      */
     @ApiOperation(value="删除每一种申请的每一个审批步骤的角色信息", notes="未测试")
     @ApiImplicitParam(name = "id", value = "每一种申请的每一个审批步骤的角色id", required = true, dataType = "Integer", paramType = "path")
-    @DeleteMapping("/ApprovalStepIncharge/{id}")   //delete请求
+    @DeleteMapping("/approvalStepIncharge/{id}")   //delete请求
     @ResponseBody
     public Result destroy(@PathVariable long id){
         boolean success = approvalStepInchargeService.delete(id);
@@ -152,7 +152,7 @@ public class ApprovalStepInchargeController {
      */
     @ApiOperation(value="更新每一种申请的每一个审批步骤的角色信息", notes="未测试")
     @ApiImplicitParam(name = "approvalStepIncharge", value = "每一种申请的每一个审批步骤的角色信息详情实体", required = true, dataType = "ApprovalStepIncharge")
-    @PutMapping("/ApprovalStepIncharge")   //Put请求
+    @PutMapping("/approvalStepIncharge")   //Put请求
     @ResponseBody
     public Result update(@RequestBody(required = false) ApprovalStepIncharge approvalStepIncharge){
         if(approvalStepIncharge != null && approvalStepIncharge.getId() != null){

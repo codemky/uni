@@ -91,7 +91,7 @@ public class EmployeeController {
      * @apiNote: 获取所有职员记录的内容
      */
     @ApiOperation( value = "获取所有职员记录的内容",notes = "2019-5-2 11:05:41已通过测试" )
-    @GetMapping("employees/listEmployeeAll")
+    @GetMapping("employees/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");

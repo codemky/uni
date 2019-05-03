@@ -117,7 +117,7 @@ public class EcommController {
      */
     @ApiOperation(value="新增电子通信方式", notes="未测试")
     @ApiImplicitParam(name = "ecomm", value = "电子通信方式详情实体", required = true, dataType = "Ecomm")
-    @PostMapping("/Ecomm")  //post请求方式
+    @PostMapping("/ecomm")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false) Ecomm ecomm){
         //检验页面传来的对象是否存在

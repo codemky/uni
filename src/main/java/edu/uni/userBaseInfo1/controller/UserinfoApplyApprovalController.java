@@ -92,7 +92,7 @@ public class UserinfoApplyApprovalController {
      * @apiNote: 获取所有用户信息审批流程记录的内容
      */
     @ApiOperation( value = "获取所有用户信息审批流程记录的内容",notes = "2019-5-2 11:09:21已通过测试" )
-    @GetMapping("userinfoApplyApprovals/listUserinfoApplyApprovalAll")
+    @GetMapping("userinfoApplyApprovals/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");

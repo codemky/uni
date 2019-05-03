@@ -92,7 +92,7 @@ public class LearningDegreeController {
      * @apiNote: 获取所有学历记录的内容
      */
     @ApiOperation( value = "获取所有学历记录的内容",notes = "2019-5-2 11:07:10已通过测试" )
-    @GetMapping("learningDegrees/listLearningDegreeAll")
+    @GetMapping("learningDegrees/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");

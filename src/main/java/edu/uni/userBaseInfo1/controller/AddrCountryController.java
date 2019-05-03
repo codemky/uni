@@ -91,7 +91,7 @@ public class AddrCountryController {
      * @apiNote: 获取所有国家记录的内容
      */
     @ApiOperation( value = "获取所有国家记录的内容",notes = "2019-5-2 11:02:39 已通过测试" )
-    @GetMapping("addrCountrys/listAddrCountryAll")
+    @GetMapping("addrCountrys/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
@@ -112,7 +112,7 @@ public class AddrCountryController {
      */
     @ApiOperation(value="新增国家信息", notes="2019-5-2 11:02:45 已通过测试")
     @ApiImplicitParam(name = "addrCountry", value = "国家详情实体", required = true, dataType = "AddrCountry")
-    @PostMapping("/AddrCountry")  //post请求方式
+    @PostMapping("/addrCountry")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false) AddrCountry addrCountry){
         //检验页面传来的对象是否存在

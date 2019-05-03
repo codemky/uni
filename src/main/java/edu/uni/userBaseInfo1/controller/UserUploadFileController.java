@@ -94,7 +94,7 @@ public class UserUploadFileController {
      * @apiNote: 获取所有用户上传文件记录的内容
      */
     @ApiOperation( value = "获取所有用户上传文件记录的内容",notes = "2019-5-2 11:10:15已通过测试" )
-    @GetMapping("userUploadFiles/listUserUploadFileAll")
+    @GetMapping("userUploadFiles/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");

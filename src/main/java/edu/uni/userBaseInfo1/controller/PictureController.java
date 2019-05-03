@@ -59,7 +59,7 @@ public class PictureController {
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条照片记录详情",notes = "未测试" )
-    @GetMapping("Picture/{id}")
+    @GetMapping("picture/{id}")
     @ApiImplicitParam(name = "id", value = "Picture表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
     public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
@@ -110,7 +110,7 @@ public class PictureController {
      */
     @ApiOperation(value="新增照片信息记录", notes="未测试")
     @ApiImplicitParam(name = "picture", value = "照片详情实体", required = true, dataType = "Picture")
-    @PostMapping("/Picture")  //post请求方式
+    @PostMapping("/picture")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false)Picture picture){
         if(picture!=null){

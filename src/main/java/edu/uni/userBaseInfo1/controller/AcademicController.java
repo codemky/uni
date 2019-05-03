@@ -118,7 +118,7 @@ public class AcademicController {
      */
     @ApiOperation(value="新增受教育信息结果", notes="未测试")
     @ApiImplicitParam(name = "academic", value = "受教育信息详情实体", required = true, dataType = "Academic")
-    @PostMapping("/Academic")  //post请求方式
+    @PostMapping("/academic")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false) Academic academic){
         //检验页面传来的对象是否存在

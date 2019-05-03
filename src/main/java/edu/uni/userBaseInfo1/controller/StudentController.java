@@ -121,7 +121,7 @@ public class StudentController {
          */
         @ApiOperation(value="新增电子通信方式", notes="未测试")
         @ApiImplicitParam(name = "student", value = "学生信息详情实体", required = true, dataType = "Student")
-        @PostMapping("/Student")  //post请求方式
+        @PostMapping("/student")  //post请求方式
         @ResponseBody
         public Result create(@RequestBody(required = false) Student student){
             //检验页面传来的对象是否存在

@@ -92,7 +92,7 @@ public class AddrCityController {
      * @apiNote: 获取所有城市记录的内容
      */
     @ApiOperation( value = "获取所有城市记录的内容",notes = "2019-5-2 11:02:03 已通过测试" )
-    @GetMapping("addrCitys/listAddrCityAll")
+    @GetMapping("addrCitys/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
@@ -113,7 +113,7 @@ public class AddrCityController {
      */
     @ApiOperation(value="新增城市信息", notes="2019-5-2 11:02:09 已通过测试")
     @ApiImplicitParam(name = "addrCity", value = "城市详情实体", required = true, dataType = "AddrCity")
-    @PostMapping("/AddrCity")  //post请求方式
+    @PostMapping("/addrCity")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false) AddrCity addrCity){
         //检验页面传来的对象是否存在

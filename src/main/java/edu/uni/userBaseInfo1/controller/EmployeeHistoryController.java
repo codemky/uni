@@ -60,7 +60,7 @@ public class EmployeeHistoryController {
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条简历信息记录详情",notes = "2019-5-2 11:06:25已通过测试" )
-    @GetMapping("EmployeeHistory/{id}")
+    @GetMapping("employeeHistory/{id}")
     @ApiImplicitParam(name = "id", value = "EmployeeHistory表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
     public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
@@ -111,7 +111,7 @@ public class EmployeeHistoryController {
      */
     @ApiOperation(value="新增简历信息记录", notes="2019-5-2 11:06:11已通过测试")
     @ApiImplicitParam(name = "employeeHistory", value = "简历信息详情实体", required = true, dataType = "EmployeeHistory")
-    @PostMapping("/EmployeeHistory")  //post请求方式
+    @PostMapping("/employeeHistory")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false)EmployeeHistory employeeHistory){
         if(employeeHistory!=null){

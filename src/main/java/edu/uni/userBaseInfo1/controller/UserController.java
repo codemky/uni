@@ -91,7 +91,7 @@ public class UserController {
      * @apiNote: 获取所有用户记录的内容
      */
     @ApiOperation( value = "获取所有用户记录的内容",notes = "2019-5-2 11:08:46已通过测试" )
-    @GetMapping("users/listUserAll")
+    @GetMapping("users/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
@@ -112,7 +112,7 @@ public class UserController {
      */
     @ApiOperation(value="新增用户信息", notes="2019-5-2 11:08:50已通过测试")
     @ApiImplicitParam(name = "user", value = "用户详情实体", required = true, dataType = "User")
-    @PostMapping("/User")  //post请求方式
+    @PostMapping("/user")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false) User user){
         //检验页面传来的对象是否存在
