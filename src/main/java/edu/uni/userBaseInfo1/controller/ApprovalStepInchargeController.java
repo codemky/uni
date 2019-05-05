@@ -131,7 +131,7 @@ public class ApprovalStepInchargeController {
      * @return 删除每一种申请的每一个审批步骤的角色信息结果
      */
     @ApiOperation(value="删除每一种申请的每一个审批步骤的角色信息", notes="未测试")
-    @ApiImplicitParam(name = "id", value = "每一种申请的每一个审批步骤的角色id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "每一种申请的每一个审批步骤的角色id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/approvalStepIncharge/{id}")   //delete请求
     @ResponseBody
     public Result destroy(@PathVariable long id){

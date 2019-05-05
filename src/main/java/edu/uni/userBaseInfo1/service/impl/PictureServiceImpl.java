@@ -48,6 +48,17 @@ public class PictureServiceImpl implements PictureService {
     }
 
     /**
+     * Author: chenenru 0:58 2019/5/5
+     * @param userId
+     * @return  Picture
+     * @apiNote: 根据用户的id查询出一条照片信息
+     */
+    @Override
+    public List<Picture> selectByUserId(Long userId) {
+        return pictureMapper.selectByUserId(userId);
+    }
+
+    /**
      * Author: laizhouhao 15:41 2019/4/29
      * @param pageNum
      * @return List<Picture>

@@ -26,6 +26,14 @@ public interface PictureService {
     Picture selectById(Long id);
 
     /**
+     * Author: chenenru 0:57 2019/5/5
+     * @param userId
+     * @return  Picture
+     * @apiNote: 根据用户的id查询图片
+     */
+    List<Picture> selectByUserId(Long userId);
+
+    /**
      * Author: laizhouhao 15:41 2019/4/29
      * @param pageNum
      * @return List<Picture>

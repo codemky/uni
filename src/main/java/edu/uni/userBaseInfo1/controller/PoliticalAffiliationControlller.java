@@ -61,9 +61,9 @@ public class PoliticalAffiliationControlller {
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条政治面貌记录详情",notes = "2019-5-2 11:07:37已通过测试" )
     @GetMapping("politicalAffiliation/{id}")
-    @ApiImplicitParam(name = "id", value = "politicalAffiliation表的一个id", required = false, dataType = "Integer" , paramType = "path")
+    @ApiImplicitParam(name = "id", value = "politicalAffiliation表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void receive(@PathVariable Integer id, HttpServletResponse response) throws IOException {
+    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
@@ -136,10 +136,10 @@ public class PoliticalAffiliationControlller {
      * @apiNote: 删除政治面貌
      */
     @ApiOperation(value="删除政治面貌", notes="2019-5-2 11:07:51已通过测试")
-    @ApiImplicitParam(name = "id", value = "政治面貌的id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "政治面貌的id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/politicalAffiliation/{id}")   //delete请求
     @ResponseBody
-    public Result destroy(@PathVariable Integer id){
+    public Result destroy(@PathVariable Long id){
         boolean success = politicalAffiliationService.deletePoliticalAffiliation(id);
         if(success){
             // 清空相关缓存

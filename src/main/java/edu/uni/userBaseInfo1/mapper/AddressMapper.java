@@ -31,6 +31,9 @@ public interface AddressMapper {
     //按主键查询单条数据
     Address selectByPrimaryKey(Long id);
 
+    //按用户id查询多条记录
+    List<Address> selectByUserId(Long userId);
+
     //按条件更新插入值不为null的字段，即将实体中不为null的属性更新到查询出的数据
     int updateByExampleSelective(@Param("record") Address record, @Param("example") AddressExample example);
 

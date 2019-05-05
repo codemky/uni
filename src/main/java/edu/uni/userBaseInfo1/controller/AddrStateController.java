@@ -61,9 +61,9 @@ public class AddrStateController {
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条省份记录详情",notes = "2019-5-2 11:03:05 已通过测试" )
     @GetMapping("addrState/{id}")
-    @ApiImplicitParam(name = "id", value = "AddrState表的一个id", required = false, dataType = "Integer" , paramType = "path")
+    @ApiImplicitParam(name = "id", value = "AddrState表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void receive(@PathVariable Integer id, HttpServletResponse response) throws IOException {
+    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
@@ -136,10 +136,10 @@ public class AddrStateController {
      * @apiNote: 删除省份
      */
     @ApiOperation(value="删除省份", notes="2019-5-2 11:03:22 已通过测试")
-    @ApiImplicitParam(name = "id", value = "省份的id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "省份的id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/addrState/{id}")   //delete请求
     @ResponseBody
-    public Result destroy(@PathVariable Integer id){
+    public Result destroy(@PathVariable Long id){
         boolean success = addrStateService.deleteAddrState(id);
         if(success){
             // 清空相关缓存

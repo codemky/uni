@@ -132,7 +132,7 @@ public class EmployeeHistoryController {
      * @return 删除简历信息结果
      */
     @ApiOperation(value="删除简历信息", notes="2019-5-2 11:06:07已通过测试")
-    @ApiImplicitParam(name = "id", value = "简历信息id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "简历信息id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/employeeHistory/{id}")   //delete请求
     @ResponseBody
     public Result destroy(@PathVariable long id){

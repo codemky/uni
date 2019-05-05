@@ -28,6 +28,9 @@ public interface PictureMapper {
     //按主键查询
     Picture selectByPrimaryKey(Long id);
 
+    //按用户的id查询
+    List<Picture> selectByUserId(Long userId);
+
     //按条件更新值不为null的字段
     int updateByExampleSelective(@Param("record") Picture record, @Param("example") PictureExample example);
 

@@ -26,6 +26,14 @@ public interface AddressService {
     Address selectById(Long id);
 
     /**
+     * Author: chenenru 1:23 2019/5/5
+     * @param userId
+     * @return  Address
+     * @apiNote: 根据用户的id查询地址
+     */
+    List<Address> selectByUserId(Long userId);
+
+    /**
      * Author: laizhouhao 15:41 2019/4/29
      * @param pageNum
      * @return List<Address>

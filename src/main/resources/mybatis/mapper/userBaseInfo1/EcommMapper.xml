@@ -164,6 +164,12 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from ecomm
+    where user_id = #{user_id,jdbcType=BIGINT}
+  </select>
   <update id="updateByExampleSelective" parameterType="map" >
     update ecomm
     <set >

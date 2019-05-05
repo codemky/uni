@@ -63,9 +63,9 @@ public class AcademicDegreeController {
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条学位信息记录详情",notes = "未测试" )
     @GetMapping("academicDegree/{id}")
-    @ApiImplicitParam(name = "id", value = "AcademicDegree表的一个id", required = false, dataType = "Integer" , paramType = "path")
+    @ApiImplicitParam(name = "id", value = "AcademicDegree表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void receive(@PathVariable Integer id, HttpServletResponse response) throws IOException {
+    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
@@ -139,10 +139,10 @@ public class AcademicDegreeController {
      * @return 删除操作结果
      */
     @ApiOperation(value="删除学位信息", notes="未测试")
-    @ApiImplicitParam(name = "id", value = "学位id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "学位id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/academicDegree/{id}")   //delete请求
     @ResponseBody
-    public Result destroy(@PathVariable Integer id){
+    public Result destroy(@PathVariable Long id){
         boolean success = academicDegreeService.delete(id);
         if(success){
             // 清空相关缓存

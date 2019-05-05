@@ -61,9 +61,9 @@ public class AddrStreetController {
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条街道记录详情",notes = "2019-5-2 11:04:06 已通过测试" )
     @GetMapping("addrStreet/{id}")
-    @ApiImplicitParam(name = "id", value = "AddrStreet表的一个id", required = false, dataType = "Integer" , paramType = "path")
+    @ApiImplicitParam(name = "id", value = "AddrStreet表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void receive(@PathVariable Integer id, HttpServletResponse response) throws IOException {
+    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
@@ -136,10 +136,10 @@ public class AddrStreetController {
      * @apiNote: 删除街道
      */
     @ApiOperation(value="删除街道", notes="2019-5-2 11:03:46 已通过测试")
-    @ApiImplicitParam(name = "id", value = "街道的id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "街道的id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/addrStreet/{id}")   //delete请求
     @ResponseBody
-    public Result destroy(@PathVariable Integer id){
+    public Result destroy(@PathVariable Long id){
         boolean success = addrStreetService.deleteAddrStreet(id);
         if(success){
             // 清空相关缓存

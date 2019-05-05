@@ -104,6 +104,25 @@ public class AddressController {
     }
 
     /**
+     * Author: chenenru 0:49 2019/5/5
+     * @apiNote: 根据用户的id查询对应的地址记录
+     */
+    @ApiOperation( value = "根据用户的id查询对应的地址的内容",notes = "未测试" )
+    @GetMapping("addressByUId/{userId}")
+    @ResponseBody
+    public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("addresss",addressService.selectByUserId(userId)).convertIntoJSON();
+            cache.set(cacheName,json);
+        }
+        response.getWriter().write(json);
+    }
+
+    /**
      * Author: laizhouhao 16:40 2019/4/29
      * @param address
      * @return 新增地址信息结果

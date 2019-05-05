@@ -50,6 +50,17 @@ public class EcommServiceImpl implements EcommService {
     }
 
     /**
+     * Author: chenenru 0:44 2019/5/5
+     * @param  userId
+     * @return List<Ecomm>
+     * @apiNote: 通过用户id查询一个通信记录
+     */
+    @Override
+    public List<Ecomm> selectByUserId(long userId) {
+        return ecommMapper.selectByUserId(userId);
+    }
+
+    /**
      * Author: mokuanyuan 10:39 2019/4/26
      * @param pageNum
      * @return pageInfo<Ecomm>

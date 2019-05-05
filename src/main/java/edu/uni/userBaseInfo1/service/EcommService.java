@@ -29,6 +29,14 @@ public interface EcommService {
     Ecomm selectById(long id);
 
     /**
+     * Author: chenenru 0:42 2019/5/5
+     * @param  userId
+     * @return  List<Ecomm>
+     * @apiNote: 根据用户的id查询电子通信记录
+     */
+    List<Ecomm> selectByUserId(long userId);
+
+    /**
      * Author: mokuanyuan 10:18 2019/4/26
      * @param pageNum
      * @return List<Ecomm>
@@ -59,7 +67,6 @@ public interface EcommService {
      * @apiNote : 用于删除Ecomm表的某个记录
      */
     boolean delete(long id);
-
 
 
 

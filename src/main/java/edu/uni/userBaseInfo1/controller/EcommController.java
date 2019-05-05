@@ -55,7 +55,7 @@ public class EcommController {
      * Author: mokuanyuan 10:58 2019/4/26
      * @param id
      * @return response
-     * @apiNote: 获取商品详情
+     * @apiNote: 获取电子通信记录详情
      */
     //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
     //@ApiOperation：用于在swagger2页面显示方法的提示信息
@@ -64,9 +64,9 @@ public class EcommController {
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条电子通信记录详情",notes = "未测试" )
     @GetMapping("ecomm/{id}")
-    @ApiImplicitParam(name = "id", value = "Ecomm表的一个id", required = false, dataType = "Integer" , paramType = "path")
+    @ApiImplicitParam(name = "id", value = "Ecomm表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void receive(@PathVariable Integer id, HttpServletResponse response) throws IOException {
+    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
@@ -109,6 +109,25 @@ public class EcommController {
         response.getWriter().write(json);
     }
 
+    /**
+     * Author: chenenru 0:49 2019/5/5
+     * @apiNote: 根据用户的id查询对应的电子通信记录
+     */
+    @ApiOperation( value = "根据用户的id查询对应的电子通信记录的内容",notes = "未测试" )
+    @GetMapping("ecommByUId/{userId}")
+    @ResponseBody
+    public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("ecomms",ecommService.selectByUserId(userId)).convertIntoJSON();
+            cache.set(cacheName,json);
+        }
+        response.getWriter().write(json);
+    }
+
 
     /**
      * 新增电子通信方式
@@ -143,10 +162,10 @@ public class EcommController {
      * @return 删除操作结果
      */
     @ApiOperation(value="删除电子通信方式", notes="未测试")
-    @ApiImplicitParam(name = "id", value = "电子通信方式id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "电子通信方式id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/ecomm/{id}")   //delete请求
     @ResponseBody
-    public Result destroy(@PathVariable Integer id){
+    public Result destroy(@PathVariable Long id){
         boolean success = ecommService.delete(id);
 
         if(success){
@@ -169,8 +188,9 @@ public class EcommController {
     @PutMapping("/ecomm")   //Put请求
     @ResponseBody
     public Result update(@RequestBody(required = false) Ecomm ecomm){
+
         if(ecomm != null && ecomm.getId() != null){
-            boolean success = ecommService.update(ecomm);
+            boolean success =ecommService.update(ecomm);
             if(success){
                 //清除相应的缓存
                 cache.delete(CacheNameHelper.Receive_CacheNamePrefix + ecomm.getId());

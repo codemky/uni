@@ -131,7 +131,7 @@ public class DisciplineCategoryController {
      * @return 删除学科类别信息信息结果
      */
     @ApiOperation(value="删除学科类别信息信息", notes="未测试")
-    @ApiImplicitParam(name = "id", value = "学科类别信息id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "学科类别信息id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/disciplineCategory/{id}")   //delete请求
     @ResponseBody
     public Result destroy(@PathVariable long id){

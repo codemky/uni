@@ -31,6 +31,9 @@ public interface EcommMapper {
     //按主键查询单条数据
     Ecomm selectByPrimaryKey(Long id);
 
+    //按用户的id查询多条记录
+    List<Ecomm> selectByUserId(Long userId);
+
     //按条件更新插入值不为null的字段，即将实体中不为null的属性更新到查询出的数据中
     int updateByExampleSelective(@Param("record") Ecomm record, @Param("example") EcommExample example);
 

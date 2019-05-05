@@ -104,6 +104,25 @@ public class PictureController {
     }
 
     /**
+     * Author: chenenru 0:49 2019/5/5
+     * @apiNote: 根据用户的id查询对应的照片
+     */
+    @ApiOperation( value = "根据用户的id查询对应的照片的内容",notes = "未测试" )
+    @GetMapping("pictureByUId/{userId}")
+    @ResponseBody
+    public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = PictureController.CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("pictures",pictureService.selectByUserId(userId)).convertIntoJSON();
+            cache.set(cacheName,json);
+        }
+        response.getWriter().write(json);
+    }
+
+    /**
      * Author: laizhouhao 16:40 2019/4/29
      * @param picture
      * @return 新增照片信息结果
@@ -131,7 +150,7 @@ public class PictureController {
      * @return 删除照片信息结果
      */
     @ApiOperation(value="删除照片信息", notes="未测试")
-    @ApiImplicitParam(name = "id", value = "照片id", required = true, dataType = "Integer", paramType = "path")
+    @ApiImplicitParam(name = "id", value = "照片id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/picture/{id}")   //delete请求
     @ResponseBody
     public Result destroy(@PathVariable long id){
