@@ -21,6 +21,8 @@ public interface StudentRelationMapper {
 
     StudentRelation selectByPrimaryKey(Long id);
 
+    List<StudentRelation> selectByUserId(Long userId);
+
     int updateByExampleSelective(@Param("record") StudentRelation record, @Param("example") StudentRelationExample example);
 
     int updateByExample(@Param("record") StudentRelation record, @Param("example") StudentRelationExample example);

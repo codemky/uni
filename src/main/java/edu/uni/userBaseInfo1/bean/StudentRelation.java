@@ -4,6 +4,8 @@
  */
 package edu.uni.userBaseInfo1.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class StudentRelation {
@@ -18,6 +20,7 @@ public class StudentRelation {
 //    关系0：母  1：父 2：兄  3：弟 4：姐  5：妹6: 其他
     private Integer relationship;
 //    本记录的创建时间
+@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
 //    本记录的写入者
     private Long byWho;

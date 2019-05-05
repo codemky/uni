@@ -62,7 +62,7 @@ public class EcommController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条电子通信记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条电子通信记录详情",notes = "2019-5-5 15:53:53已通过测试" )
     @GetMapping("ecomm/{id}")
     @ApiImplicitParam(name = "id", value = "Ecomm表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -94,7 +94,7 @@ public class EcommController {
      * Author: mokuanyuan 11:02 2019/4/26
      * @apiNote: 查询所有电子通信记录
      */
-    @ApiOperation( value = "获取所有通信记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有通信记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
     @GetMapping("ecomms/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -113,7 +113,7 @@ public class EcommController {
      * Author: chenenru 0:49 2019/5/5
      * @apiNote: 根据用户的id查询对应的电子通信记录
      */
-    @ApiOperation( value = "根据用户的id查询对应的电子通信记录的内容",notes = "未测试" )
+    @ApiOperation( value = "根据用户的id查询对应的电子通信记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
     @GetMapping("ecommByUId/{userId}")
     @ResponseBody
     public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
@@ -134,7 +134,7 @@ public class EcommController {
      * @param ecomm
      * @return  新增通信结果
      */
-    @ApiOperation(value="新增电子通信方式", notes="未测试")
+    @ApiOperation(value="新增电子通信方式", notes="2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "ecomm", value = "电子通信方式详情实体", required = true, dataType = "Ecomm")
     @PostMapping("/ecomm")  //post请求方式
     @ResponseBody
@@ -161,7 +161,7 @@ public class EcommController {
      * @param id
      * @return 删除操作结果
      */
-    @ApiOperation(value="删除电子通信方式", notes="未测试")
+    @ApiOperation(value="删除电子通信方式", notes="2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "id", value = "电子通信方式id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/ecomm/{id}")   //delete请求
     @ResponseBody
@@ -183,7 +183,7 @@ public class EcommController {
      * @param ecomm
      * @return 更新操作结果
      */
-    @ApiOperation(value="更新电子通信方式详情", notes="未测试")
+    @ApiOperation(value="更新电子通信方式详情", notes="2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "ecomm", value = "电子通信方式详情实体", required = true, dataType = "Ecomm")
     @PutMapping("/ecomm")   //Put请求
     @ResponseBody

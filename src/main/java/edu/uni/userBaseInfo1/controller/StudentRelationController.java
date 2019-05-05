@@ -2,8 +2,8 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Student;
-import edu.uni.userBaseInfo1.service.StudentService;
+import edu.uni.userBaseInfo1.bean.StudentRelation;
+import edu.uni.userBaseInfo1.service.StudentRelationService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,22 +19,22 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
- * @Author laizhouhao
- * @Description 关于学生信息模块的Controller层（Http URL请求）的具体实现方法
+ * @Author chenenru
+ * @Description 关于学生亲属信息模块的Controller层（Http URL请求）的具体实现方法
  * @Date 10:21 2019/4/30
  **/
 
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "学生信息模块")
+@Api(description = "学生亲属信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
-@RequestMapping("json/student")
+@RequestMapping("json/studentRelation")
 //标志这个类是一个controller类，用于被Spring扫描然后配置添加和配置相应的bean
 @Controller
-public class StudentController {
+public class StudentRelationController {
 
-        @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
-        private StudentService studentService;
+        @Autowired  //把StudentRelation的Service层接口所有的方法自动装配到该对象中
+        private StudentRelationService studentRelationService;
 
         @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
         private RedisCache cache;
@@ -43,43 +43,43 @@ public class StudentController {
 
         //内部类，专门用来管理每个get方法所对应缓存的名称。
         static class CacheNameHelper{
-            // ub1_s_student_{学生信息记录id}
-            public static final String Receive_CacheNamePrefix = "ub1_s_student_";
-            // ub1_s_student_listAll
-            public static final String ListAll_CacheName = "ub1_s_student_listAll";
+            // ub1_s_StudentRelation_{学生亲属信息记录id}
+            public static final String Receive_CacheNamePrefix = "ub1_s_StudentRelation_";
+            // ub1_s_StudentRelation_listAll
+            public static final String ListAll_CacheName = "ub1_s_StudentRelation_listAll";
         }
 
 
         /**
-         * Author: laizhouhao 10:27 2019/4/30
+         * Author: chenenru 10:27 2019/4/30
          * @param id
          * @return response
-         * @apiNote: 获取学生信息详情
+         * @apiNote: 获取学生亲属信息详情
          */
         //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
         //@ApiOperation：用于在swagger2页面显示方法的提示信息
         //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
         //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
         //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-        @ApiOperation( value = "以一个id获取一条学生信息记录详情",notes = "2019-5-5 15:53:53已通过测试" )
-        @GetMapping("student/{id}")
-        @ApiImplicitParam(name = "id", value = "Student表的一个id", required = false, dataType = "Long" , paramType = "path")
+        @ApiOperation( value = "以一个id获取一条学生亲属信息记录详情",notes = "2019-5-5 15:53:53已通过测试" )
+        @GetMapping("studentRelation/{id}")
+        @ApiImplicitParam(name = "id", value = "studentRelation表的一个id", required = false, dataType = "Long" , paramType = "path")
         @ResponseBody
         public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.Receive_CacheNamePrefix + id;
+            String cacheName = StudentRelationController.CacheNameHelper.Receive_CacheNamePrefix + id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);
             //如果在缓存中找不到，那就从数据库里找
             if(json == null){
-                Student student = studentService.selectById(id);
+                StudentRelation studentRelation = studentRelationService.selectById(id);
                 //把查询到的结果用Result工具类转换成json格式的字符串
-                json = Result.build(ResultType.Success).appendData("student",student).convertIntoJSON();
+                json = Result.build(ResultType.Success).appendData("studentRelation",studentRelation).convertIntoJSON();
                 //如果有查询到数据，就把在数据库查到的数据放到缓存中
-                if(student != null){
+                if(studentRelation != null){
                     cache.set(cacheName,json);
                 }
             }
@@ -89,47 +89,66 @@ public class StudentController {
         }
 
         /**
-         * Author: laizhouhao 10:29 2019/4/30
-         * @apiNote: 查询所有学生信息记录
+         * Author: chenenru 10:29 2019/4/30
+         * @apiNote: 查询所有学生亲属信息记录
          */
-        @ApiOperation( value = "获取所有学生信息记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
-        @GetMapping("students/listAll")
+        @ApiOperation( value = "获取所有学生亲属信息记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
+        @GetMapping("studentRelations/listAll")
         @ResponseBody
         public void selectAll(HttpServletResponse response) throws IOException {
             response.setContentType("application/json;charset=utf-8");
-            String cacheName = edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName;
+            String cacheName = StudentRelationController.CacheNameHelper.ListAll_CacheName;
             String json = cache.get(cacheName);
             if(json == null){
                 json = Result.build(ResultType.Success)
-                        .appendData("students",studentService.selectAll()).convertIntoJSON();
+                        .appendData("studentRelations",studentRelationService.selectAll()).convertIntoJSON();
                 cache.set(cacheName,json);
             }
             response.getWriter().write(json);
         }
 
 
+    /**
+     * Author: chenenru 0:49 2019/5/5
+     * @apiNote: 根据用户的id查询对应的学生亲属记录
+     */
+    @ApiOperation( value = "根据用户的id查询对应的学生亲属的内容",notes = "2019-5-5 15:53:53已通过测试" )
+    @GetMapping("addressByUId/{userId}")
+    @ResponseBody
+    public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = StudentRelationController.CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("studentRelations",studentRelationService.selectByUserId(userId)).convertIntoJSON();
+            cache.set(cacheName,json);
+        }
+        response.getWriter().write(json);
+    }
+
         /**
-         * 新增学生方式
-         * @param student
-         * @return  新增学生结果
+         * 新增电子学生亲属方式
+         * @param studentRelation
+         * @return  新增学生亲属结果
          */
         /**
-         * Author: laizhouhao 10:30 2019/4/30
-         * 新增学生信息
-         * @param student
-         * @return 新增学生信息结果
+         * Author: chenenru 10:30 2019/4/30
+         * 新增学生亲属信息
+         * @param studentRelation
+         * @return 新增学生亲属信息结果
          */
-        @ApiOperation(value="新增学生方式", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "student", value = "学生信息详情实体", required = true, dataType = "Student")
-        @PostMapping("/student")  //post请求方式
+        @ApiOperation(value="新增电子学生亲属方式", notes="2019-5-5 15:53:53已通过测试")
+        @ApiImplicitParam(name = "studentRelation", value = "学生亲属信息详情实体", required = true, dataType = "StudentRelation")
+        @PostMapping("/studentRelation")  //post请求方式
         @ResponseBody
-        public Result create(@RequestBody(required = false) Student student){
+        public Result create(@RequestBody(required = false) StudentRelation studentRelation){
             //检验页面传来的对象是否存在
-            if(student != null){
-                boolean success = studentService.insert(student);
+            if(studentRelation != null){
+                boolean success = studentRelationService.insert(studentRelation);
                 if(success){
                     // 清空相关缓存
-                    cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
+                    cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
                     return Result.build(ResultType.Success);
                 }else{
                     return Result.build(ResultType.Failed);
@@ -139,20 +158,20 @@ public class StudentController {
         }
 
         /**
-         * Author: laizhouhao 10:33 2019/4/30
-         * 删除学生信息
+         * Author: chenenru 10:33 2019/4/30
+         * 删除学生亲属信息
          * @param id
          * @return 删除操作结果
          */
-        @ApiOperation(value="删除学生", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "id", value = "学生id", required = true, dataType = "Long", paramType = "path")
-        @DeleteMapping("/student/{id}")   //delete请求
+        @ApiOperation(value="删除学生亲属", notes="2019-5-5 15:53:53已通过测试")
+        @ApiImplicitParam(name = "id", value = "学生亲属id", required = true, dataType = "Long", paramType = "path")
+        @DeleteMapping("/studentRelation/{id}")   //delete请求
         @ResponseBody
         public Result destroy(@PathVariable Long id){
-            boolean success = studentService.delete(id);
+            boolean success = studentRelationService.delete(id);
             if(success){
                 // 清空相关缓存
-                cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
+                cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
                 return Result.build(ResultType.Failed);
@@ -160,22 +179,22 @@ public class StudentController {
         }
 
         /**
-         * Author: laizhouhao 10:34 2019/4/30
-         * 更新学生信息
-         * @param student
+         * Author: chenenru 10:34 2019/4/30
+         * 更新学生亲属信息
+         * @param studentRelation
          * @return 更新操作结果
          */
-        @ApiOperation(value="更新学生信息详情", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "student", value = "学生信息详情实体", required = true, dataType = "Student")
-        @PutMapping("/student")   //Put请求
+        @ApiOperation(value="更新学生亲属信息详情", notes="2019-5-5 15:53:53已通过测试")
+        @ApiImplicitParam(name = "studentRelation", value = "学生亲属信息详情实体", required = true, dataType = "StudentRelation")
+        @PutMapping("/studentRelation")   //Put请求
         @ResponseBody
-        public Result update(@RequestBody(required = false) Student student){
-            if(student != null && student.getId() != null){
-                boolean success = studentService.update(student);
+        public Result update(@RequestBody(required = false) StudentRelation studentRelation){
+            if(studentRelation != null && studentRelation.getId() != null){
+                boolean success = studentRelationService.update(studentRelation);
                 if(success){
                     //清除相应的缓存
-                    cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.Receive_CacheNamePrefix + student.getId());
-                    cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
+                    cache.delete(StudentRelationController.CacheNameHelper.Receive_CacheNamePrefix + studentRelation.getId());
+                    cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
                     return Result.build(ResultType.Success);
                 }else{
                     return Result.build(ResultType.Failed);
