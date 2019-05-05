@@ -36,9 +36,7 @@ public class UserUploadFileController {
 
     //把UserUploadFile的Service层接口所有的方法自动装配到该对象中
     @Autowired
-    UserUploadFileService userUploadFileService
-            
-            ;
+    UserUploadFileService userUploadFileService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
