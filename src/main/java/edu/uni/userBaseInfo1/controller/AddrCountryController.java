@@ -42,14 +42,14 @@ public class AddrCountryController {
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
         // ub1_e_AddrCountry_{国家记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_AddrCountry_";
+        public static final String Receive_CacheNamePrefix = "ub1_a_addrCountry_";
         // ub1_e_AddrCountrys_listAll
-        public static final String ListAll_CacheName = "ub1_e_AddrCountrys_listAll";
+        public static final String ListAll_CacheName = "ub1_a_addrCountry_listAll";
     }
 
     /**
      * Author: chenenru 23:41 2019/4/29
-     * @param id response
+     * @param id
      * @return response
      * @apiNote: 获取国家详情
      */

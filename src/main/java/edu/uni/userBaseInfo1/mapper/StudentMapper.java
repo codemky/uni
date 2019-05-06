@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.mapper;
 
+import edu.uni.userBaseInfo1.bean.EmployeeHistory;
 import edu.uni.userBaseInfo1.bean.Student;
 import edu.uni.userBaseInfo1.bean.StudentExample;
 import org.apache.ibatis.annotations.Param;
@@ -27,6 +28,9 @@ public interface StudentMapper {
 
     //按主键查询
     Student selectByPrimaryKey(Long id);
+
+    //按用户id查询
+    List<Student>selectByUserId(Long user_id);
 
     //按条件更新值不为null的字段
     int updateByExampleSelective(@Param("record") Student record, @Param("example") StudentExample example);

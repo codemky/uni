@@ -174,6 +174,27 @@ public class EmployeeController {
     }
 
     /**
+     * Author: laizhouhao 18:52 2019/5/6
+     * @param user_id
+     * @return response
+     * @apiNote: 根据用户的id查询对应的职员主要信息
+     */
+    @ApiOperation( value = "根据用户的id查询对应的职员主要信息",notes = "2019年5月6日 18:53:21 已通过测试" )
+    @GetMapping("employeeByUserId/{user_id}")
+    @ResponseBody
+    public void selectByUserId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = EmployeeController.CacheNameHelper.ListAll_CacheName+user_id;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("employees",employeeService.selectByUserId(user_id)).convertIntoJSON();
+            cache.set(cacheName,json);
+        }
+        response.getWriter().write(json);
+    }
+
+    /**
      * <p>
      *     上传文件方法
      * </p>

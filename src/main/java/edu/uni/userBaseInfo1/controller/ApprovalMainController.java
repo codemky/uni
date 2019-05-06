@@ -58,7 +58,7 @@ public class ApprovalMainController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条每一种申请的审批步骤数记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条每一种申请的审批步骤数记录详情",notes = "2019年5月6日 14:46:30 已测试" )
     @GetMapping("approvalMain/{id}")
     @ApiImplicitParam(name = "id", value = "ApprovalMain表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -89,7 +89,7 @@ public class ApprovalMainController {
      * Author: laizhouhao 16:26 2019/4/29
      * @apiNote: 查询每一种申请的审批步骤数的所有记录
      */
-    @ApiOperation( value = "获取所有每一种申请的审批步骤数记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有每一种申请的审批步骤数记录的内容",notes = "2019年5月6日 18:03:28 已通过测试" )
     @GetMapping("approvalMains/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
@@ -108,7 +108,7 @@ public class ApprovalMainController {
      * @param approvalMain
      * @return 新增每一种申请的审批步骤数信息结果
      */
-    @ApiOperation(value="新增每一种申请的审批步骤数信息记录", notes="未测试")
+    @ApiOperation(value="新增每一种申请的审批步骤数信息记录", notes="2019年5月6日 18:03:46 已通过测试")
     @ApiImplicitParam(name = "approvalMain", value = "每一种申请的审批步骤数详情实体", required = true, dataType = "ApprovalMain")
     @PostMapping("/approvalMain")  //post请求方式
     @ResponseBody
@@ -130,7 +130,7 @@ public class ApprovalMainController {
      * @param id
      * @return 删除每一种申请的审批步骤数信息结果
      */
-    @ApiOperation(value="删除每一种申请的审批步骤数信息", notes="未测试")
+    @ApiOperation(value="删除每一种申请的审批步骤数信息", notes="2019年5月6日 18:05:43 已通过测试")
     @ApiImplicitParam(name = "id", value = "每一种申请的审批步骤数id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/approvalMain/{id}")   //delete请求
     @ResponseBody
@@ -150,7 +150,7 @@ public class ApprovalMainController {
      * @param approvalMain
      * @return 更新操作结果
      */
-    @ApiOperation(value="更新每一种申请的审批步骤数信息", notes="未测试")
+    @ApiOperation(value="更新每一种申请的审批步骤数信息", notes="2019年5月6日 18:06:29 已通过测试")
     @ApiImplicitParam(name = "approvalMain", value = "每一种申请的审批步骤数信息详情实体", required = true, dataType = "ApprovalMain")
     @PutMapping("/approvalMain")   //Put请求
     @ResponseBody

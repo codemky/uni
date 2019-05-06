@@ -20,6 +20,15 @@ public interface LearningDegreeSerevice {
      * @apiNote: 根据id查询学历
      */
     LearningDegree selectLearningDegreeById(long id);
+
+    /**
+     * Author: laizhouhao 8:29 2019/5/6
+     * @param user_id
+     * @return List<LearningDegree>
+     * @apiNote: 根据user_id查询学历
+     */
+    List<LearningDegree>selectByUserId(Long user_id);
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param pageNum

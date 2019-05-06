@@ -28,6 +28,9 @@ public interface EmployeeHistoryMapper {
     //按主键查询
     EmployeeHistory selectByPrimaryKey(Long id);
 
+    //按用户id查询
+    List<EmployeeHistory>selectByUserId(Long user_id);
+
     //按条件更新值不为null的字段
     int updateByExampleSelective(@Param("record") EmployeeHistory record, @Param("example") EmployeeHistoryExample example);
 

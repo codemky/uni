@@ -83,8 +83,29 @@ public class LearningDegreeController {
         }
         //到最后通过response对象返回json格式字符串的数据
         response.getWriter().write(json);
-
     }
+
+    /**
+     * Author: laizhouhao 8:34 2019/5/6
+     * @param user_id
+     * @return response
+     * @apiNote: 以user_id获取学历详情
+     */
+    @ApiOperation( value = "根据用户的id查询对应的学历信息",notes = "未测试" )
+    @GetMapping("selectLearningDegreeByUserId/{user_id}")
+    @ResponseBody
+    public void selectByUserId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = LearningDegreeController.CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("learningDegree",learningDegreeService.selectByUserId(user_id)).convertIntoJSON();
+            cache.set(cacheName,json);
+        }
+        response.getWriter().write(json);
+    }
+
     /**
      * Author: chenenru 23:44 2019/4/29
      * @param response
@@ -195,4 +216,5 @@ public class LearningDegreeController {
         file.transferTo(serverFile);
         return filename;
     }
+
 }

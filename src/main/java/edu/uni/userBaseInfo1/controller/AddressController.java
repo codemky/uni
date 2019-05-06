@@ -90,14 +90,14 @@ public class AddressController {
      * @apiNote: 查询地址的所有记录
      */
     @ApiOperation( value = "获取所有地址记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
-    @GetMapping("addresss/listAll")
+    @GetMapping("addresses/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
         response.setContentType("application/json;charset=utf-8");
         String cacheName = AddressController.CacheNameHelper.ListAll_CacheName;
         String json = cache.get(cacheName);
         if(json==null){
-            json = Result.build(ResultType.Success).appendData("addresss", addressService.selectAll()).convertIntoJSON();
+            json = Result.build(ResultType.Success).appendData("addresses", addressService.selectAll()).convertIntoJSON();
             cache.set(json, cacheName);
         }
         response.getWriter().write(json);
@@ -112,11 +112,11 @@ public class AddressController {
     @ResponseBody
     public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
         response.setContentType("application/json;charset=utf-8");
-        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName;
+        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName+userId;
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
-                    .appendData("addresss",addressService.selectByUserId(userId)).convertIntoJSON();
+                    .appendData("addresses",addressService.selectByUserId(userId)).convertIntoJSON();
             cache.set(cacheName,json);
         }
         response.getWriter().write(json);

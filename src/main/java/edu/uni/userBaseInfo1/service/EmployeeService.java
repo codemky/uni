@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Employee;
+import edu.uni.userBaseInfo1.bean.EmployeeHistory;
 
 import java.util.List;
 
@@ -20,6 +21,15 @@ public interface EmployeeService {
      * @apiNote: 根据id查询职员
      */
     Employee selectEmployeeById(long id);
+
+    /**
+     * Author: laizhouhao 18:47 2019/5/6
+     * @param user_id
+     * @return List<Employee>
+     * @apiNote: 根据用户id查询职工主要信息
+     */
+    List<Employee>selectByUserId(Long user_id);
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param pageNum

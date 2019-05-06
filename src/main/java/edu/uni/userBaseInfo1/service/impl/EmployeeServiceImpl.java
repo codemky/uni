@@ -48,6 +48,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee selectEmployeeById(long id) {
         return employeeMapper.selectByPrimaryKey(id);
     }
+
+    /**
+     * Author: laizhouhao 18:50 2019/5/6
+     * @param user_id
+     * @return List<Employee>
+     * @apiNote: 根据用户id查询职工主要信息
+     */
+    @Override
+    public List<Employee> selectByUserId(Long user_id) {
+        return employeeMapper.selectByUserId(user_id);
+    }
+
     /**
      * Author: chenenru 0:10 2019/4/30
      * @param pageNum

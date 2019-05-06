@@ -88,6 +88,27 @@ public class StudentController {
 
         }
 
+    /**
+     * Author: laizhouhao 18:36 2019/5/6
+     * @param user_id
+     * @return response
+     * @apiNote: 根据用户的id查询对应的学生信息
+     */
+    @ApiOperation( value = "根据用户的id查询对应的学生信息",notes = "2019年5月6日 18:37:01 已通过测试" )
+    @GetMapping("studentByUserId/{user_id}")
+    @ResponseBody
+    public void selectByUserId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = StudentController.CacheNameHelper.ListAll_CacheName+user_id;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("students",studentService.selectByUserId(user_id)).convertIntoJSON();
+            cache.set(cacheName,json);
+        }
+        response.getWriter().write(json);
+    }
+
         /**
          * Author: laizhouhao 10:29 2019/4/30
          * @apiNote: 查询所有学生信息记录
@@ -107,12 +128,6 @@ public class StudentController {
             response.getWriter().write(json);
         }
 
-
-        /**
-         * 新增学生方式
-         * @param student
-         * @return  新增学生结果
-         */
         /**
          * Author: laizhouhao 10:30 2019/4/30
          * 新增学生信息

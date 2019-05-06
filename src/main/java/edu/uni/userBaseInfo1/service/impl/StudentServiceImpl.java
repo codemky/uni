@@ -48,6 +48,17 @@ public class StudentServiceImpl implements StudentService {
     }
 
     /**
+     * Author: laizhouhao 18:34 2019/5/6
+     * @param user_id
+     * @return List<Student>
+     * @apiNote: 根据用户id查找学生信息
+     */
+    @Override
+    public List<Student> selectByUserId(Long user_id) {
+        return studentMapper.selectByUserId(user_id);
+    }
+
+    /**
      * Author: laizhouhao 10:16 2019/4/30
      * @param pageNum
      * @return pageInfo<Student>

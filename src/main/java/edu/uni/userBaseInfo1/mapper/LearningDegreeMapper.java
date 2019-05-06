@@ -28,6 +28,9 @@ public interface LearningDegreeMapper {
     //按主键查询
     LearningDegree selectByPrimaryKey(Long id);
 
+    //根据user_id查询学历
+    List<LearningDegree>selectByUserId(Long user_id);
+
     //按条件更新值不为null的字段
     int updateByExampleSelective(@Param("record") LearningDegree record, @Param("example") LearningDegreeExample example);
 

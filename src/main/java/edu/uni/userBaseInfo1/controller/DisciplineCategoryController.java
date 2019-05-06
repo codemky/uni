@@ -58,7 +58,7 @@ public class DisciplineCategoryController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条学科类别信息记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条学科类别信息记录详情",notes = "2019年5月6日 18:12:21 已通过测试" )
     @GetMapping("disciplineCategory/{id}")
     @ApiImplicitParam(name = "id", value = "DisciplineCategory表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -89,7 +89,7 @@ public class DisciplineCategoryController {
      * Author: laizhouhao 16:26 2019/4/29
      * @apiNote: 查询学科类别信息的所有记录
      */
-    @ApiOperation( value = "获取所有学科类别信息记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有学科类别信息记录的内容",notes = "2019年5月6日 18:12:35 已通过测试" )
     @GetMapping("disciplineCategorys/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
@@ -97,7 +97,7 @@ public class DisciplineCategoryController {
         String cacheName = CacheNameHelper.ListAll_CacheName;
         String json = cache.get(cacheName);
         if(json==null){
-            json = Result.build(ResultType.Success).appendData("disciplineCategory", disciplineCategoryService.selectAll()).convertIntoJSON();
+            json = Result.build(ResultType.Success).appendData("disciplineCategorys", disciplineCategoryService.selectAll()).convertIntoJSON();
             cache.set(json, cacheName);
         }
         response.getWriter().write(json);
@@ -108,7 +108,7 @@ public class DisciplineCategoryController {
      * @param disciplineCategory
      * @return 新增学科类别信息信息结果
      */
-    @ApiOperation(value="新增学科类别信息信息记录", notes="未测试")
+    @ApiOperation(value="新增学科类别信息信息记录", notes="2019年5月6日 18:13:07 已通过测试")
     @ApiImplicitParam(name = "disciplineCategory", value = "学科类别信息详情实体", required = true, dataType = "DisciplineCategory")
     @PostMapping("/disciplineCategory")  //post请求方式
     @ResponseBody
@@ -130,7 +130,7 @@ public class DisciplineCategoryController {
      * @param id
      * @return 删除学科类别信息信息结果
      */
-    @ApiOperation(value="删除学科类别信息信息", notes="未测试")
+    @ApiOperation(value="删除学科类别信息信息", notes="2019年5月6日 18:13:21 已通过测试")
     @ApiImplicitParam(name = "id", value = "学科类别信息id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/disciplineCategory/{id}")   //delete请求
     @ResponseBody
@@ -150,7 +150,7 @@ public class DisciplineCategoryController {
      * @param disciplineCategory
      * @return 更新操作结果
      */
-    @ApiOperation(value="更新学科类别信息信息", notes="未测试")
+    @ApiOperation(value="更新学科类别信息信息", notes="2019年5月6日 18:13:35 已通过测试")
     @ApiImplicitParam(name = "disciplineCategory", value = "学科类别信息信息详情实体", required = true, dataType = "DisciplineCategory")
     @PutMapping("/disciplineCategory")   //Put请求
     @ResponseBody

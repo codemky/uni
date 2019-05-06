@@ -61,7 +61,7 @@ public class AcademicDegreeController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条学位信息记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条学位信息记录详情",notes = "2019年5月6日 11:08:07 已通过测试" )
     @GetMapping("academicDegree/{id}")
     @ApiImplicitParam(name = "id", value = "AcademicDegree表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -92,7 +92,7 @@ public class AcademicDegreeController {
      * Author: laizhouhao 10:29 2019/4/30
      * @apiNote: 查询所有学位信息记录
      */
-    @ApiOperation( value = "获取所有学位信息记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有学位信息记录的内容",notes = "2019年5月6日 11:09:00 已通过测试" )
     @GetMapping("academicDegrees/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -113,7 +113,7 @@ public class AcademicDegreeController {
      * @param academicDegree
      * @return 新增学位信息结果
      */
-    @ApiOperation(value="新增学位信息", notes="未测试")
+    @ApiOperation(value="新增学位信息", notes="2019年5月6日 11:09:26 已通过测试")
     @ApiImplicitParam(name = "academicDegree", value = "学位信息详情实体", required = true, dataType = "AcademicDegree")
     @PostMapping("/academicDegree")  //post请求方式
     @ResponseBody
@@ -138,7 +138,7 @@ public class AcademicDegreeController {
      * @param id
      * @return 删除操作结果
      */
-    @ApiOperation(value="删除学位信息", notes="未测试")
+    @ApiOperation(value="删除学位信息", notes="2019年5月6日 11:10:00 已通过测试")
     @ApiImplicitParam(name = "id", value = "学位id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/academicDegree/{id}")   //delete请求
     @ResponseBody
@@ -159,7 +159,7 @@ public class AcademicDegreeController {
      * @param academicDegree
      * @return 更新操作结果
      */
-    @ApiOperation(value="更新学位信息详情", notes="未测试")
+    @ApiOperation(value="更新学位信息详情", notes="2019年5月6日 11:11:09 已通过测试")
     @ApiImplicitParam(name = "academicDegree", value = "学位信息详情实体", required = true, dataType = "AcademicDegree")
     @PutMapping("/academicDegree")   //Put请求
     @ResponseBody

@@ -43,9 +43,9 @@ public class AddrAreaController {
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
         // ub1_e_AddrArea_{城区记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_AddrArea_";
+        public static final String Receive_CacheNamePrefix = "ub1_a_addrArea_";
         // ub1_e_AddrAreas_listAll
-        public static final String ListAll_CacheName = "ub1_e_AddrAreas_listAll";
+        public static final String ListAll_CacheName = "ub1_a_addrArea_listAll";
     }
 
     /**
@@ -88,7 +88,6 @@ public class AddrAreaController {
     /**
      * Author: chenenru 23:44 2019/4/29
      * @param response
-     * @return
      * @apiNote: 获取所有城区记录的内容
      */
     @ApiOperation( value = "获取所有城区记录的内容",notes = "2019-5-2 11:01:22 已通过测试" )

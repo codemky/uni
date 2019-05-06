@@ -118,7 +118,7 @@ public class EcommController {
     @ResponseBody
     public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
         response.setContentType("application/json;charset=utf-8");
-        String cacheName = CacheNameHelper.ListAll_CacheName;
+        String cacheName = CacheNameHelper.ListAll_CacheName+userId;
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)

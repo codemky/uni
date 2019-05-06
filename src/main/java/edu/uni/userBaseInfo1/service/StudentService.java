@@ -28,6 +28,14 @@ public interface StudentService {
         Student selectById(long id);
 
         /**
+         * Author: laizhouhao 18:34 2019/5/6
+         * @param user_id
+         * @return List<Student>
+         * @apiNote: 根据用户id查找学生信息
+         */
+        List<Student>selectByUserId(Long user_id);
+
+        /**
          * Author: laizhouhao 10:06 2019/4/30
          * @param pageNum
          * @return List<Student>

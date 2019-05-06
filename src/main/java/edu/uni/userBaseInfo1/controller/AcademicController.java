@@ -60,7 +60,7 @@ public class AcademicController {
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条受教育信息记录详情",notes = "未测试" )
+    @ApiOperation( value = "以一个id获取一条受教育信息记录详情",notes = "2019年5月6日 10:57:28已通过测试" )
     @GetMapping("academic/{id}")
     @ApiImplicitParam(name = "id", value = "Academic表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -91,7 +91,7 @@ public class AcademicController {
      * Author: laizhouhao 15:19 2019/4/30
      * @apiNote: 查询所有受教育信息记录
      */
-    @ApiOperation( value = "获取所有受教育信息记录的内容",notes = "未测试" )
+    @ApiOperation( value = "获取所有受教育信息记录的内容",notes = "2019年5月6日 10:59:37 已通过测试" )
     @GetMapping("academic/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
@@ -100,7 +100,7 @@ public class AcademicController {
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
-                    .appendData("academic",academicService.selectAll()).convertIntoJSON();
+                    .appendData("academics",academicService.selectAll()).convertIntoJSON();
             cache.set(cacheName,json);
         }
         response.getWriter().write(json);
@@ -112,7 +112,7 @@ public class AcademicController {
      * @param academic
      * @return 新增受教育信息结果
      */
-    @ApiOperation(value="新增受教育信息结果", notes="未测试")
+    @ApiOperation(value="新增受教育信息结果", notes="2019年5月6日 11:00:30 已通过测试")
     @ApiImplicitParam(name = "academic", value = "受教育信息详情实体", required = true, dataType = "Academic")
     @PostMapping("/academic")  //post请求方式
     @ResponseBody
@@ -137,7 +137,7 @@ public class AcademicController {
      * @param id
      * @return 删除操作结果
      */
-    @ApiOperation(value="删除受教育程度信息", notes="未测试")
+    @ApiOperation(value="删除受教育程度信息", notes="2019年5月6日 11:04:16 已通过测试")
     @ApiImplicitParam(name = "id", value = "受教育程度id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/academic/{id}")   //delete请求
     @ResponseBody
@@ -158,7 +158,7 @@ public class AcademicController {
      * @param academic
      * @return 更新操作结果
      */
-    @ApiOperation(value="更新受教育程度信息详情", notes="未测试")
+    @ApiOperation(value="更新受教育程度信息详情", notes="2019年5月6日 11:06:04 已通过测试")
     @ApiImplicitParam(name = "academic", value = "受教育程度信息详情实体", required = true, dataType = "Academic")
     @PutMapping("/academic")   //Put请求
     @ResponseBody

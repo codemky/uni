@@ -68,6 +68,17 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
     }
 
     /**
+     * Author: laizhouhao 18:21 2019/5/6
+     * @param user_id
+     * @return List<EmployeeHistory>
+     * @apiNote: 根据用户id查询简历信息
+     */
+    @Override
+    public List<EmployeeHistory> selectByUserId(Long user_id) {
+        return employeeHistoryMapper.selectByUserId(user_id);
+    }
+
+    /**
      * Author: laizhouhao 15:44 2019/4/29
      * @param employeeHistory
      * @return boolean

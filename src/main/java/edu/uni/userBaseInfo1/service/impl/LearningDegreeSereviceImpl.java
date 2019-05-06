@@ -49,6 +49,18 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
     public LearningDegree selectLearningDegreeById(long id) {
         return learningDegreeMapper.selectByPrimaryKey(id);
     }
+
+    /**
+     * Author: laizhouhao 8:30 2019/5/6
+     * @param user_id
+     * @return List<LearningDegree>
+     * @apiNote:
+     */
+    @Override
+    public List<LearningDegree> selectByUserId(Long user_id) {
+        return learningDegreeMapper.selectByUserId(user_id);
+    }
+
     /**
      * Author: chenenru 0:10 2019/4/30
      * @param pageNum

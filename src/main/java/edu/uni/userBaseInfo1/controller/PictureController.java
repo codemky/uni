@@ -98,8 +98,10 @@ public class PictureController {
         String json = cache.get(cacheName);
         if(json==null){
             json = Result.build(ResultType.Success).appendData("pictures", pictureService.selectAll()).convertIntoJSON();
+            //System.out.println("pictures="+pictureService.selectAll());
             cache.set(json, cacheName);
         }
+        System.out.println("pictures="+json);
         response.getWriter().write(json);
     }
 
