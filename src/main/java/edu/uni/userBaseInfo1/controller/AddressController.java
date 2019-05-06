@@ -94,7 +94,7 @@ public class AddressController {
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
         response.setContentType("application/json;charset=utf-8");
-        String cacheName = CacheNameHelper.ListAll_CacheName;
+        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName;
         String json = cache.get(cacheName);
         if(json==null){
             json = Result.build(ResultType.Success).appendData("addresss", addressService.selectAll()).convertIntoJSON();

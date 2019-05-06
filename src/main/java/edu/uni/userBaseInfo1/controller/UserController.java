@@ -42,9 +42,9 @@ public class UserController {
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
         // ub1_e_User_{用户记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_User_";
+        public static final String Receive_CacheNamePrefix = "ub1_e_user_";
         // ub1_e_Users_listAll
-        public static final String ListAll_CacheName = "ub1_e_Users_listAll";
+        public static final String ListAll_CacheName = "ub1_e_user_listAll";
     }
 
     /**

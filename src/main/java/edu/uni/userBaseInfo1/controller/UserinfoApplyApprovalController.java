@@ -43,9 +43,9 @@ public class UserinfoApplyApprovalController {
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
         // ub1_e_UserinfoApplyApproval_{用户信息审批流程记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_UserinfoApplyApproval_";
+        public static final String Receive_CacheNamePrefix = "ub1_u_userinfoApplyApproval_";
         // ub1_e_UserinfoApplyApprovals_listAll
-        public static final String ListAll_CacheName = "ub1_e_UserinfoApplyApprovals_listAll";
+        public static final String ListAll_CacheName = "ub1_u_userinfoApplyApproval_listAll";
     }
 
     /**

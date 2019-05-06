@@ -43,9 +43,9 @@ public class SecondLevelDisciplineController {
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
         // ub1_e_SecondLevelDiscipline_{二级学科记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_SecondLevelDiscipline_";
+        public static final String Receive_CacheNamePrefix = "ub1_s_secondLevelDiscipline_";
         // ub1_e_SecondLevelDisciplines_listAll
-        public static final String ListAll_CacheName = "ub1_e_SecondLevelDisciplines_listAll";
+        public static final String ListAll_CacheName = "ub1_s_secondLevelDiscipline_listAll";
     }
 
     /**

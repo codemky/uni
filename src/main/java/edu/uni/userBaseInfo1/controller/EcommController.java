@@ -47,7 +47,7 @@ public class EcommController {
         // ub1_e_ecomm_{电子通信记录id}
         public static final String Receive_CacheNamePrefix = "ub1_e_ecomm_";
         // ub1_e_ecomms_listAll
-        public static final String ListAll_CacheName = "ub1_e_ecomms_listAll";
+        public static final String ListAll_CacheName = "ub1_e_ecomm_listAll";
     }
 
 

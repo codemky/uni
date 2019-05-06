@@ -42,9 +42,9 @@ public class EmployeeController {
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
         // ub1_e_Employee_{职员记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_Employee_";
+        public static final String Receive_CacheNamePrefix = "ub1_e_employee_";
         // ub1_e_Employees_listAll
-        public static final String ListAll_CacheName = "ub1_e_Employees_listAll";
+        public static final String ListAll_CacheName = "ub1_e_employee_listAll";
     }
 
     /**

@@ -43,9 +43,9 @@ public class UserUploadFileController {
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
         // ub1_e_UserUploadFile_{用户上传文件记录id}
-        public static final String Receive_CacheNamePrefix = "ub1_e_UserUploadFile_";
+        public static final String Receive_CacheNamePrefix = "ub1_u_userUploadFile_";
         // ub1_e_UserUploadFiles_listAll
-        public static final String ListAll_CacheName = "ub1_e_UserUploadFiles_listAll";
+        public static final String ListAll_CacheName = "ub1_u_userUploadFile_listAll";
     }
 
     /**

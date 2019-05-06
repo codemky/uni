@@ -44,9 +44,9 @@ public class StudentRelationController {
         //内部类，专门用来管理每个get方法所对应缓存的名称。
         static class CacheNameHelper{
             // ub1_s_StudentRelation_{学生亲属信息记录id}
-            public static final String Receive_CacheNamePrefix = "ub1_s_StudentRelation_";
+            public static final String Receive_CacheNamePrefix = "ub1_s_studentRelation_";
             // ub1_s_StudentRelation_listAll
-            public static final String ListAll_CacheName = "ub1_s_StudentRelation_listAll";
+            public static final String ListAll_CacheName = "ub1_s_studentRelation_listAll";
         }
 
 
@@ -117,7 +117,7 @@ public class StudentRelationController {
     @ResponseBody
     public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
         response.setContentType("application/json;charset=utf-8");
-        String cacheName = StudentRelationController.CacheNameHelper.ListAll_CacheName;
+        String cacheName = StudentRelationController.CacheNameHelper.ListAll_CacheName+userId;
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
