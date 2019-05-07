@@ -8,7 +8,7 @@ import java.util.List;
  * Author: mokuanyuan 15:53 2019/5/7
  * @apiNote: 用于把所有跟user_id有关的数据记录关联到一起
  */
-public class userInfo {
+public class UserInfo {
 
     List<User> users;
     List<Ecomm> ecomms;
@@ -102,7 +102,11 @@ public class userInfo {
     }
 
 
-    public userInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies) {
+    public UserInfo() {
+    }
+
+
+    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies) {
         this.users = users;
         this.ecomms = ecomms;
         this.addresses = addresses;
@@ -117,7 +121,7 @@ public class userInfo {
 
     @Override
     public String toString() {
-        return "userInfo{" +
+        return "UserInfo{" +
                 "users=" + users +
                 ", ecomms=" + ecomms +
                 ", addresses=" + addresses +
