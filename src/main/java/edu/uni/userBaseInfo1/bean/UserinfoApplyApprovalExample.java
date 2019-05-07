@@ -405,6 +405,76 @@ public class UserinfoApplyApprovalExample {
             return (Criteria) this;
         }
 
+        public Criteria andReasonIsNull() {
+            addCriterion("reason is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonIsNotNull() {
+            addCriterion("reason is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonEqualTo(String value) {
+            addCriterion("reason =", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotEqualTo(String value) {
+            addCriterion("reason <>", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonGreaterThan(String value) {
+            addCriterion("reason >", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonGreaterThanOrEqualTo(String value) {
+            addCriterion("reason >=", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonLessThan(String value) {
+            addCriterion("reason <", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonLessThanOrEqualTo(String value) {
+            addCriterion("reason <=", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonLike(String value) {
+            addCriterion("reason like", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotLike(String value) {
+            addCriterion("reason not like", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonIn(List<String> values) {
+            addCriterion("reason in", values, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotIn(List<String> values) {
+            addCriterion("reason not in", values, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonBetween(String value1, String value2) {
+            addCriterion("reason between", value1, value2, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotBetween(String value1, String value2) {
+            addCriterion("reason not between", value1, value2, "reason");
+            return (Criteria) this;
+        }
+
         public Criteria andCheckWhoIsNull() {
             addCriterion("check_who is null");
             return (Criteria) this;

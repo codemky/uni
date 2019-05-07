@@ -1,35 +1,28 @@
-/**
- * Author: mokuanyuan 16:28 2019/4/30
- * @apiNote: 用户信息申请审核流程表实体类
- */
 package edu.uni.userBaseInfo1.bean;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
 public class UserinfoApplyApproval {
-//    审批流程表id
     private Long id;
-//    学校ID
+
     private Long universityId;
-//    申请表id
+
     private Long userinfoApplyId;
-//    步骤编号：说明是第几次审批
+
     private Integer step;
-//    结果，0：不通过 1：通过
+
     private Boolean result;
-//    审批人
+
+    private String reason;
+
     private Long checkWho;
-//    审批时间
-@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     private Date checkTime;
-    //    本记录的创建时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     private Date datetime;
-//    本记录的写入者
+
     private Long byWho;
-//    本记录是否有效 0:有效 1:无效
+
     private Boolean deleted;
 
     public Long getId() {
@@ -70,6 +63,14 @@ public class UserinfoApplyApproval {
 
     public void setResult(Boolean result) {
         this.result = result;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason == null ? null : reason.trim();
     }
 
     public Long getCheckWho() {

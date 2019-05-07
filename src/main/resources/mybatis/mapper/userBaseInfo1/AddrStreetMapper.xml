@@ -3,12 +3,10 @@
 <mapper namespace="edu.uni.userBaseInfo1.mapper.AddrStreetMapper" >
   <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.AddrStreet" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="area_id" property="areaId" jdbcType="BIGINT" />
+    <result column="area_code" property="areaCode" jdbcType="BIGINT" />
     <result column="street_zh" property="streetZh" jdbcType="CHAR" />
     <result column="street_en" property="streetEn" jdbcType="CHAR" />
-    <result column="datetime" property="datetime" jdbcType="DATE" />
-    <result column="by_who" property="byWho" jdbcType="BIGINT" />
-    <result column="deleted" property="deleted" jdbcType="BIT" />
+    <result column="code" property="code" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -69,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, area_id, street_zh, street_en, datetime, by_who, deleted
+    id, area_code, street_zh, street_en, code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.AddrStreetExample" >
     select
@@ -105,10 +103,10 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into addr_street (area_id, street_zh, street_en, 
-      datetime, by_who, deleted)
-    values (#{areaId,jdbcType=BIGINT}, #{streetZh,jdbcType=CHAR}, #{streetEn,jdbcType=CHAR}, 
-      #{datetime,jdbcType=DATE}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
+    insert into addr_street (area_code, street_zh, street_en, 
+      code)
+    values (#{areaCode,jdbcType=BIGINT}, #{streetZh,jdbcType=CHAR}, #{streetEn,jdbcType=CHAR}, 
+      #{code,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.AddrStreet" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -116,8 +114,8 @@
     </selectKey>
     insert into addr_street
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="areaId != null" >
-        area_id,
+      <if test="areaCode != null" >
+        area_code,
       </if>
       <if test="streetZh != null" >
         street_zh,
@@ -125,19 +123,13 @@
       <if test="streetEn != null" >
         street_en,
       </if>
-      <if test="datetime != null" >
-        datetime,
-      </if>
-      <if test="byWho != null" >
-        by_who,
-      </if>
-      <if test="deleted != null" >
-        deleted,
+      <if test="code != null" >
+        code,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="areaId != null" >
-        #{areaId,jdbcType=BIGINT},
+      <if test="areaCode != null" >
+        #{areaCode,jdbcType=BIGINT},
       </if>
       <if test="streetZh != null" >
         #{streetZh,jdbcType=CHAR},
@@ -145,14 +137,8 @@
       <if test="streetEn != null" >
         #{streetEn,jdbcType=CHAR},
       </if>
-      <if test="datetime != null" >
-        #{datetime,jdbcType=DATE},
-      </if>
-      <if test="byWho != null" >
-        #{byWho,jdbcType=BIGINT},
-      </if>
-      <if test="deleted != null" >
-        #{deleted,jdbcType=BIT},
+      <if test="code != null" >
+        #{code,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -168,8 +154,8 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.areaId != null" >
-        area_id = #{record.areaId,jdbcType=BIGINT},
+      <if test="record.areaCode != null" >
+        area_code = #{record.areaCode,jdbcType=BIGINT},
       </if>
       <if test="record.streetZh != null" >
         street_zh = #{record.streetZh,jdbcType=CHAR},
@@ -177,14 +163,8 @@
       <if test="record.streetEn != null" >
         street_en = #{record.streetEn,jdbcType=CHAR},
       </if>
-      <if test="record.datetime != null" >
-        datetime = #{record.datetime,jdbcType=DATE},
-      </if>
-      <if test="record.byWho != null" >
-        by_who = #{record.byWho,jdbcType=BIGINT},
-      </if>
-      <if test="record.deleted != null" >
-        deleted = #{record.deleted,jdbcType=BIT},
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -194,12 +174,10 @@
   <update id="updateByExample" parameterType="map" >
     update addr_street
     set id = #{record.id,jdbcType=BIGINT},
-      area_id = #{record.areaId,jdbcType=BIGINT},
+      area_code = #{record.areaCode,jdbcType=BIGINT},
       street_zh = #{record.streetZh,jdbcType=CHAR},
       street_en = #{record.streetEn,jdbcType=CHAR},
-      datetime = #{record.datetime,jdbcType=DATE},
-      by_who = #{record.byWho,jdbcType=BIGINT},
-      deleted = #{record.deleted,jdbcType=BIT}
+      code = #{record.code,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -207,8 +185,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.AddrStreet" >
     update addr_street
     <set >
-      <if test="areaId != null" >
-        area_id = #{areaId,jdbcType=BIGINT},
+      <if test="areaCode != null" >
+        area_code = #{areaCode,jdbcType=BIGINT},
       </if>
       <if test="streetZh != null" >
         street_zh = #{streetZh,jdbcType=CHAR},
@@ -216,26 +194,18 @@
       <if test="streetEn != null" >
         street_en = #{streetEn,jdbcType=CHAR},
       </if>
-      <if test="datetime != null" >
-        datetime = #{datetime,jdbcType=DATE},
-      </if>
-      <if test="byWho != null" >
-        by_who = #{byWho,jdbcType=BIGINT},
-      </if>
-      <if test="deleted != null" >
-        deleted = #{deleted,jdbcType=BIT},
+      <if test="code != null" >
+        code = #{code,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.AddrStreet" >
     update addr_street
-    set area_id = #{areaId,jdbcType=BIGINT},
+    set area_code = #{areaCode,jdbcType=BIGINT},
       street_zh = #{streetZh,jdbcType=CHAR},
       street_en = #{streetEn,jdbcType=CHAR},
-      datetime = #{datetime,jdbcType=DATE},
-      by_who = #{byWho,jdbcType=BIGINT},
-      deleted = #{deleted,jdbcType=BIT}
+      code = #{code,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

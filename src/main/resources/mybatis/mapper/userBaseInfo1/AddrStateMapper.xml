@@ -3,12 +3,10 @@
 <mapper namespace="edu.uni.userBaseInfo1.mapper.AddrStateMapper" >
   <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.AddrState" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="country_id" property="countryId" jdbcType="BIGINT" />
+    <result column="country_code" property="countryCode" jdbcType="BIGINT" />
     <result column="state_zh" property="stateZh" jdbcType="CHAR" />
     <result column="state_en" property="stateEn" jdbcType="CHAR" />
-    <result column="date" property="date" jdbcType="DATE" />
-    <result column="by_who" property="byWho" jdbcType="BIGINT" />
-    <result column="deleted" property="deleted" jdbcType="BIT" />
+    <result column="code" property="code" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -69,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, country_id, state_zh, state_en, date, by_who, deleted
+    id, country_code, state_zh, state_en, code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.AddrStateExample" >
     select
@@ -105,10 +103,10 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into addr_state (country_id, state_zh, state_en, 
-      date, by_who, deleted)
-    values (#{countryId,jdbcType=BIGINT}, #{stateZh,jdbcType=CHAR}, #{stateEn,jdbcType=CHAR}, 
-      #{date,jdbcType=DATE}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
+    insert into addr_state (country_code, state_zh, state_en, 
+      code)
+    values (#{countryCode,jdbcType=BIGINT}, #{stateZh,jdbcType=CHAR}, #{stateEn,jdbcType=CHAR}, 
+      #{code,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.AddrState" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -116,8 +114,8 @@
     </selectKey>
     insert into addr_state
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="countryId != null" >
-        country_id,
+      <if test="countryCode != null" >
+        country_code,
       </if>
       <if test="stateZh != null" >
         state_zh,
@@ -125,19 +123,13 @@
       <if test="stateEn != null" >
         state_en,
       </if>
-      <if test="date != null" >
-        date,
-      </if>
-      <if test="byWho != null" >
-        by_who,
-      </if>
-      <if test="deleted != null" >
-        deleted,
+      <if test="code != null" >
+        code,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="countryId != null" >
-        #{countryId,jdbcType=BIGINT},
+      <if test="countryCode != null" >
+        #{countryCode,jdbcType=BIGINT},
       </if>
       <if test="stateZh != null" >
         #{stateZh,jdbcType=CHAR},
@@ -145,14 +137,8 @@
       <if test="stateEn != null" >
         #{stateEn,jdbcType=CHAR},
       </if>
-      <if test="date != null" >
-        #{date,jdbcType=DATE},
-      </if>
-      <if test="byWho != null" >
-        #{byWho,jdbcType=BIGINT},
-      </if>
-      <if test="deleted != null" >
-        #{deleted,jdbcType=BIT},
+      <if test="code != null" >
+        #{code,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -168,8 +154,8 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.countryId != null" >
-        country_id = #{record.countryId,jdbcType=BIGINT},
+      <if test="record.countryCode != null" >
+        country_code = #{record.countryCode,jdbcType=BIGINT},
       </if>
       <if test="record.stateZh != null" >
         state_zh = #{record.stateZh,jdbcType=CHAR},
@@ -177,14 +163,8 @@
       <if test="record.stateEn != null" >
         state_en = #{record.stateEn,jdbcType=CHAR},
       </if>
-      <if test="record.date != null" >
-        date = #{record.date,jdbcType=DATE},
-      </if>
-      <if test="record.byWho != null" >
-        by_who = #{record.byWho,jdbcType=BIGINT},
-      </if>
-      <if test="record.deleted != null" >
-        deleted = #{record.deleted,jdbcType=BIT},
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -194,12 +174,10 @@
   <update id="updateByExample" parameterType="map" >
     update addr_state
     set id = #{record.id,jdbcType=BIGINT},
-      country_id = #{record.countryId,jdbcType=BIGINT},
+      country_code = #{record.countryCode,jdbcType=BIGINT},
       state_zh = #{record.stateZh,jdbcType=CHAR},
       state_en = #{record.stateEn,jdbcType=CHAR},
-      date = #{record.date,jdbcType=DATE},
-      by_who = #{record.byWho,jdbcType=BIGINT},
-      deleted = #{record.deleted,jdbcType=BIT}
+      code = #{record.code,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -207,8 +185,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.AddrState" >
     update addr_state
     <set >
-      <if test="countryId != null" >
-        country_id = #{countryId,jdbcType=BIGINT},
+      <if test="countryCode != null" >
+        country_code = #{countryCode,jdbcType=BIGINT},
       </if>
       <if test="stateZh != null" >
         state_zh = #{stateZh,jdbcType=CHAR},
@@ -216,26 +194,18 @@
       <if test="stateEn != null" >
         state_en = #{stateEn,jdbcType=CHAR},
       </if>
-      <if test="date != null" >
-        date = #{date,jdbcType=DATE},
-      </if>
-      <if test="byWho != null" >
-        by_who = #{byWho,jdbcType=BIGINT},
-      </if>
-      <if test="deleted != null" >
-        deleted = #{deleted,jdbcType=BIT},
+      <if test="code != null" >
+        code = #{code,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.AddrState" >
     update addr_state
-    set country_id = #{countryId,jdbcType=BIGINT},
+    set country_code = #{countryCode,jdbcType=BIGINT},
       state_zh = #{stateZh,jdbcType=CHAR},
       state_en = #{stateEn,jdbcType=CHAR},
-      date = #{date,jdbcType=DATE},
-      by_who = #{byWho,jdbcType=BIGINT},
-      deleted = #{deleted,jdbcType=BIT}
+      code = #{code,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

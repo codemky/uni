@@ -7,6 +7,7 @@
     <result column="userinfo_apply_id" property="userinfoApplyId" jdbcType="BIGINT" />
     <result column="step" property="step" jdbcType="INTEGER" />
     <result column="result" property="result" jdbcType="BIT" />
+    <result column="reason" property="reason" jdbcType="CHAR" />
     <result column="check_who" property="checkWho" jdbcType="BIGINT" />
     <result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
     <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
@@ -72,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, university_id, userinfo_apply_id, step, result, check_who, check_time, datetime, 
-    by_who, deleted
+    id, university_id, userinfo_apply_id, step, result, reason, check_who, check_time, 
+    datetime, by_who, deleted
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.UserinfoApplyApprovalExample" >
     select
@@ -110,11 +111,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into userinfo_apply_approval (university_id, userinfo_apply_id, step, 
-      result, check_who, check_time, 
+      result, reason, check_who, check_time, 
       datetime, by_who, deleted
       )
     values (#{universityId,jdbcType=BIGINT}, #{userinfoApplyId,jdbcType=BIGINT}, #{step,jdbcType=INTEGER}, 
-      #{result,jdbcType=BIT}, #{checkWho,jdbcType=BIGINT}, #{checkTime,jdbcType=TIMESTAMP}, 
+      #{result,jdbcType=BIT}, #{reason,jdbcType=CHAR}, #{checkWho,jdbcType=BIGINT}, #{checkTime,jdbcType=TIMESTAMP}, 
       #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}
       )
   </insert>
@@ -135,6 +136,9 @@
       </if>
       <if test="result != null" >
         result,
+      </if>
+      <if test="reason != null" >
+        reason,
       </if>
       <if test="checkWho != null" >
         check_who,
@@ -164,6 +168,9 @@
       </if>
       <if test="result != null" >
         #{result,jdbcType=BIT},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=CHAR},
       </if>
       <if test="checkWho != null" >
         #{checkWho,jdbcType=BIGINT},
@@ -206,6 +213,9 @@
       <if test="record.result != null" >
         result = #{record.result,jdbcType=BIT},
       </if>
+      <if test="record.reason != null" >
+        reason = #{record.reason,jdbcType=CHAR},
+      </if>
       <if test="record.checkWho != null" >
         check_who = #{record.checkWho,jdbcType=BIGINT},
       </if>
@@ -233,6 +243,7 @@
       userinfo_apply_id = #{record.userinfoApplyId,jdbcType=BIGINT},
       step = #{record.step,jdbcType=INTEGER},
       result = #{record.result,jdbcType=BIT},
+      reason = #{record.reason,jdbcType=CHAR},
       check_who = #{record.checkWho,jdbcType=BIGINT},
       check_time = #{record.checkTime,jdbcType=TIMESTAMP},
       datetime = #{record.datetime,jdbcType=TIMESTAMP},
@@ -256,6 +267,9 @@
       </if>
       <if test="result != null" >
         result = #{result,jdbcType=BIT},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=CHAR},
       </if>
       <if test="checkWho != null" >
         check_who = #{checkWho,jdbcType=BIGINT},
@@ -281,6 +295,7 @@
       userinfo_apply_id = #{userinfoApplyId,jdbcType=BIGINT},
       step = #{step,jdbcType=INTEGER},
       result = #{result,jdbcType=BIT},
+      reason = #{reason,jdbcType=CHAR},
       check_who = #{checkWho,jdbcType=BIGINT},
       check_time = #{checkTime,jdbcType=TIMESTAMP},
       datetime = #{datetime,jdbcType=TIMESTAMP},
