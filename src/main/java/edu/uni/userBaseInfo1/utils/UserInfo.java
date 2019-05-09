@@ -26,6 +26,24 @@ public class UserInfo {
     List<AddrCity>addrCities;
     List<AddrArea>addrAreas;
     List<AddrStreet>addrStreets;
+    List<Academic> academics;
+    List<AcademicDegree> academicDegrees;
+
+    public List<Academic> getAcademics() {
+        return academics;
+    }
+
+    public void setAcademics(List<Academic> academics) {
+        this.academics = academics;
+    }
+
+    public List<AcademicDegree> getAcademicDegrees() {
+        return academicDegrees;
+    }
+
+    public void setAcademicDegrees(List<AcademicDegree> academicDegrees) {
+        this.academicDegrees = academicDegrees;
+    }
 
     public List<AddrCountry> getAddrCountries() {
         return addrCountries;
@@ -159,7 +177,7 @@ public class UserInfo {
     public UserInfo() {
     }
 
-    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies, List<PoliticalAffiliation> politicalAffiliations, List<AddrCountry> countries, List<AddrState> states, List<AddrCity> cities, List<AddrStreet> addrStreets) {
+    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies, List<PoliticalAffiliation> politicalAffiliations, List<AddrCountry> addrCountries, List<AddrState> addrStates, List<AddrCity> addrCities, List<AddrArea> addrAreas, List<AddrStreet> addrStreets, List<Academic> academics, List<AcademicDegree> academicDegrees) {
         this.users = users;
         this.ecomms = ecomms;
         this.addresses = addresses;
@@ -171,6 +189,13 @@ public class UserInfo {
         this.employees = employees;
         this.userinfoApplies = userinfoApplies;
         this.politicalAffiliations = politicalAffiliations;
+        this.addrCountries = addrCountries;
+        this.addrStates = addrStates;
+        this.addrCities = addrCities;
+        this.addrAreas = addrAreas;
+        this.addrStreets = addrStreets;
+        this.academics = academics;
+        this.academicDegrees = academicDegrees;
     }
 
     @Override
@@ -187,6 +212,13 @@ public class UserInfo {
                 ", employees=" + employees +
                 ", userinfoApplies=" + userinfoApplies +
                 ", politicalAffiliations=" + politicalAffiliations +
+                ", addrCountries=" + addrCountries +
+                ", addrStates=" + addrStates +
+                ", addrCities=" + addrCities +
+                ", addrAreas=" + addrAreas +
+                ", addrStreets=" + addrStreets +
+                ", academics=" + academics +
+                ", academicDegrees=" + academicDegrees +
                 '}';
     }
 }

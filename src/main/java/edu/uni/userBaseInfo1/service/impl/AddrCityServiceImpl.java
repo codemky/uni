@@ -98,4 +98,15 @@ public class AddrCityServiceImpl implements AddrCityService {
     public boolean deleteAddrCity(long id) {
         return addrCityMapper.deleteByPrimaryKey(id) > 0 ? true :false;
     }
+
+    /**
+     * Author: chenenru 19:30 2019/5/8
+     * @param stateCode
+     * @return List<AddrCity>
+     * @apiNote: 根据省份的编码查询所有的城市
+     */
+    @Override
+    public List<AddrCity> selectAllAddrCitysByStateCode(Long stateCode) {
+        return addrCityMapper.selectByStateCode(stateCode);
+    }
 }

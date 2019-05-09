@@ -47,4 +47,12 @@ public interface AddrCityService {
      * @apiNote : 用于删除AddrCity表的某个记录
      */
     boolean deleteAddrCity(long id);
+
+    /**
+     * Author: chenenru 19:29 2019/5/8
+     * @param stateCode
+     * @return List<AddrCity>
+     * @apiNote: 根据省份的编码查询对应的所有的城市
+     */
+    List<AddrCity> selectAllAddrCitysByStateCode(Long stateCode);
 }

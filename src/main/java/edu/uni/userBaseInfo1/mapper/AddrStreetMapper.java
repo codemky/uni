@@ -28,4 +28,6 @@ public interface AddrStreetMapper {
     int updateByPrimaryKeySelective(AddrStreet record);
 
     int updateByPrimaryKey(AddrStreet record);
+
+    List<AddrStreet> selectByAreaCode(Long AreaCode);
 }

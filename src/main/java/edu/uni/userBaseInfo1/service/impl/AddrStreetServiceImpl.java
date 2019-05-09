@@ -99,4 +99,9 @@ public class AddrStreetServiceImpl implements AddrStreetService {
     public boolean deleteAddrStreet(long id) {
         return addrStreetMapper.deleteByPrimaryKey(id) > 0 ? true :false;
     }
+
+    @Override
+    public List<AddrStreet> selectStreetsByAreaCode(Long areaCode) {
+        return addrStreetMapper.selectByAreaCode(areaCode);
+    }
 }

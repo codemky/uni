@@ -57,4 +57,11 @@ public interface LearningDegreeSerevice {
      * @apiNote:  用于删除LearningDegree表的某个记录
      */
     boolean deleteLearningDegree(long id);
+    /**
+     * Author: chenenru 21:48 2019/5/8
+     * @param userId
+     * @return LearningDegree
+     * @apiNote: 根据职员的id查询有效的学历记录
+     */
+   /* LearningDegree selectLearingDegreeByEmployeeId(long userId);*/
 }

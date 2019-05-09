@@ -47,4 +47,12 @@ public interface AddrStreetService {
      * @apiNote : 用于删除AddrStreet表的某个记录
      */
     boolean deleteAddrStreet(long id);
+
+    /**
+     * Author: chenenru 19:48 2019/5/8
+     * @param AreaCode
+     * @return List<AddrStreet>
+     * @apiNote: 根据县/区的编码查询所有的街道
+     */
+    List<AddrStreet> selectStreetsByAreaCode(Long AreaCode);
 }

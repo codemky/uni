@@ -89,6 +89,12 @@
     from addr_state
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByCountryCode" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from addr_state
+    where country_code = #{country_code,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from addr_state
     where id = #{id,jdbcType=BIGINT}

@@ -2,8 +2,9 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Address;
+import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.AddressService;
+import edu.uni.userBaseInfo1.utils.AddressUtil;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author laizhouhao
@@ -45,6 +47,126 @@ public class AddressController {
         public static final String Receive_CacheNamePrefix = "ub1_a_address_";
         // ub1_a_address_listAll
         public static final String ListAll_CacheName = "ub1_a_address_listAll";
+    }
+
+    @ApiOperation( value = "测试地址工具类",notes = "未测试" )
+    @GetMapping("/test")
+    @ResponseBody
+    //@ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
+    public void test(){
+        AddressUtil addressUtil = new AddressUtil();
+        System.out.println("所有国家："+addressUtil.SelectCountries().toString());
+        System.out.println("根据国家编码查询所有省份："+addressUtil.SelectStates(1).toString());
+        System.out.println("根据省份编码查询所有城市："+addressUtil.SelectCities(13).toString());
+        System.out.println("根据城市编码查询所有县/区："+addressUtil.SelectAreas(1101).toString());
+        System.out.println("根据县/区编码查询所有街道："+addressUtil.SelectStreets(110101).toString());
+
+    }
+
+    //根据国家编码查询所有省份
+    @ApiOperation( value = "根据国家编码查询所有省份",notes = "未测试" )
+    @GetMapping("address/addrState/{countryCode}")
+    @ApiImplicitParam(name = "countryCode", value = "国家的编码", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void selectByCountryCode(@PathVariable Long countryCode,HttpServletResponse response) throws IOException{
+        //设置返回的数据格式
+        response.setContentType("application/json;charset=utf-8");
+        //拼接缓存键名（字符串）
+        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + countryCode;
+        //尝试在缓存中通过键名获取相应的键值
+        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+        String json = cache.get(cacheName);
+        //如果在缓存中找不到，那就从数据库里找
+        AddressUtil addressUtil = new AddressUtil();
+        if(json ==null){
+            List<AddrState> addrStates = addressUtil.SelectStates(countryCode);
+            //把查询到的结果用Result工具类转换成json格式的字符串
+            json = Result.build(ResultType.Success).appendData("addrStates",addrStates).convertIntoJSON();
+            System.out.println("-----"+addrStates.toString());
+            if(addrStates!=null){
+                cache.set(json, cacheName);
+            }
+        }
+        //到最后通过response对象返回json格式字符串的数据
+        response.getWriter().write(json);
+    }
+    //根据省份编码查询所有城市
+    @ApiOperation( value = "根据省份编码查询所有城市",notes = "未测试" )
+    @GetMapping("address/addrCity/{stateCode}")
+    @ApiImplicitParam(name = "stateCode", value = "省份的编码", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void selectByStateCode(@PathVariable Long stateCode,HttpServletResponse response) throws IOException{
+        //设置返回的数据格式
+        response.setContentType("application/json;charset=utf-8");
+        //拼接缓存键名（字符串）
+        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + stateCode;
+        //尝试在缓存中通过键名获取相应的键值
+        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+        String json = cache.get(cacheName);
+        //如果在缓存中找不到，那就从数据库里找
+        AddressUtil addressUtil = new AddressUtil();
+        if(json ==null){
+            List<AddrCity> addrCities = addressUtil.SelectCities(stateCode);
+            //把查询到的结果用Result工具类转换成json格式的字符串
+            json = Result.build(ResultType.Success).appendData("addrCities",addrCities).convertIntoJSON();
+            if(addrCities!=null){
+                cache.set(json, cacheName);
+            }
+        }
+        //到最后通过response对象返回json格式字符串的数据
+        response.getWriter().write(json);
+    }
+    //根据城市编码查询所有县/区
+    @ApiOperation( value = "根据城市编码查询所有县/区",notes = "未测试" )
+    @GetMapping("address/addrArea/{cityCode}")
+    @ApiImplicitParam(name = "cityCode", value = "cityCode", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void selectByCityCode(@PathVariable Long cityCode,HttpServletResponse response) throws IOException{
+        //设置返回的数据格式
+        response.setContentType("application/json;charset=utf-8");
+        //拼接缓存键名（字符串）
+        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + cityCode;
+        //尝试在缓存中通过键名获取相应的键值
+        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+        String json = cache.get(cacheName);
+        //如果在缓存中找不到，那就从数据库里找
+        AddressUtil addressUtil = new AddressUtil();
+        if(json ==null){
+            List<AddrArea> addrAreas = addressUtil.SelectAreas(cityCode);
+            //把查询到的结果用Result工具类转换成json格式的字符串
+            json = Result.build(ResultType.Success).appendData("addrAreas",addrAreas).convertIntoJSON();
+            if(addrAreas!=null){
+                cache.set(json, cacheName);
+            }
+        }
+        //到最后通过response对象返回json格式字符串的数据
+        response.getWriter().write(json);
+    }
+    //根据县/区编码查询所有街道
+    @ApiOperation( value = "根据县/区编码查询所有街道",notes = "未测试" )
+    @GetMapping("address/addrStreet/{areaCode}")
+    @ApiImplicitParam(name = "areaCode", value = "县/区的编码", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void selectByAreaCode(@PathVariable Long areaCode,HttpServletResponse response) throws IOException{
+        //设置返回的数据格式
+        response.setContentType("application/json;charset=utf-8");
+        //拼接缓存键名（字符串）
+        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + areaCode;
+        //尝试在缓存中通过键名获取相应的键值
+        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+        String json = cache.get(cacheName);
+        //如果在缓存中找不到，那就从数据库里找
+        AddressUtil addressUtil = new AddressUtil();
+        if(json ==null){
+            List<AddrStreet> addrStreets = addressUtil.SelectStreets(areaCode);
+            //把查询到的结果用Result工具类转换成json格式的字符串
+            json = Result.build(ResultType.Success).appendData("addrStreets",addrStreets).convertIntoJSON();
+            if(addrStreets!=null){
+                cache.set(json, cacheName);
+            }
+        }
+        //到最后通过response对象返回json格式字符串的数据
+        response.getWriter().write(json);
     }
 
     /**

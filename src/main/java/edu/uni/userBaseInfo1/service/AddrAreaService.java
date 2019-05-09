@@ -47,4 +47,6 @@ public interface AddrAreaService {
      * @apiNote : 用于删除AddrArea表的某个记录
      */
     boolean deleteAddrArea(long id);
+
+    List<AddrArea> selectAllAddrAreasByCityCode(Long cityCode);
 }

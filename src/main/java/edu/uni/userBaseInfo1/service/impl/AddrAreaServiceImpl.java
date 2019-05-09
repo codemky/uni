@@ -99,4 +99,15 @@ public class AddrAreaServiceImpl implements AddrAreaService {
         return addrAreaMapper.deleteByPrimaryKey(id) > 0 ? true :false;
     }
 
+    /**
+     * Author: chenenru 19:39 2019/5/8
+     * @param cityCode
+     * @return  List<AddrArea>
+     * @apiNote: 根据城市的编码查询所有的县/区
+     */
+    @Override
+    public List<AddrArea> selectAllAddrAreasByCityCode(Long cityCode) {
+        return addrAreaMapper.selectByCityCode(cityCode);
+    }
+
 }

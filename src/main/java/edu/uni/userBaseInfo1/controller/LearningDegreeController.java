@@ -2,8 +2,13 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.userBaseInfo1.bean.Academic;
+import edu.uni.userBaseInfo1.bean.AcademicDegree;
 import edu.uni.userBaseInfo1.bean.LearningDegree;
+import edu.uni.userBaseInfo1.service.AcademicDegreeService;
+import edu.uni.userBaseInfo1.service.AcademicService;
 import edu.uni.userBaseInfo1.service.LearningDegreeSerevice;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author chenenru
@@ -37,6 +43,10 @@ public class LearningDegreeController {
     //把LearningDegree的Service层接口所有的方法自动装配到该对象中
     @Autowired
     LearningDegreeSerevice learningDegreeService;
+    @Autowired
+    AcademicDegreeService academicDegreeService;
+    @Autowired
+    AcademicService academicService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -105,6 +115,13 @@ public class LearningDegreeController {
         }
         response.getWriter().write(json);
     }
+
+    /**
+     * Author: chenenru 18:14 2019/5/8
+     * @param
+     * @return
+     * @apiNote: 为申请修改学历页面提供某职员的一条学历记录、和所有的受教育程度的List集合、和学位的
+     */
 
     /**
      * Author: chenenru 23:44 2019/4/29
@@ -193,6 +210,40 @@ public class LearningDegreeController {
             }
         }
         return Result.build(ResultType.ParamError);
+    }
+
+    @ApiOperation(value = "根据职员的id查询有效的学历记录",notes="")
+    @ApiImplicitParam(name = "learningDegree", value = "学历详情实体", required = true, dataType = "LearningDegree")
+    @PutMapping("//employee/learningDegree/{userId}")   //Put请求
+    @ResponseBody
+    private void AddToUserApplay(@PathVariable Long userId,HttpServletResponse response) throws IOException {
+        if(userId != null){
+            UserInfo userInfo = new UserInfo();
+
+            //获取职员的有效的学历
+            List<LearningDegree> learningDegrees = learningDegreeService.selectByUserId(userId);
+
+            //查询受教育表的所有记录
+            List<Academic> academics = academicService.selectAll();
+
+            //查询学位表
+            List<AcademicDegree> academicDegrees = academicDegreeService.selectAll();
+
+            //放入到工具类里面
+            userInfo.setLearningDegrees(learningDegrees);
+            userInfo.setAcademics(academics);
+            userInfo.setAcademicDegrees(academicDegrees);
+
+            response.setContentType("application/json;charset=utf-8");
+            String cacheName = LearningDegreeController.CacheNameHelper.ListAll_CacheName;
+            String json = cache.get(cacheName);
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("learningDegrees",learningDegreeService.selectByUserId(userId)).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            response.getWriter().write(json);
+        }
     }
 
     /**

@@ -99,4 +99,15 @@ public class AddrStateServiceImpl implements AddrStateService {
     public boolean deleteAddrState(long id) {
         return addrStateMapper.deleteByPrimaryKey(id) > 0 ? true :false;
     }
+
+    /**
+     * Author: chenenru 19:23 2019/5/8
+     * @param countryCode
+     * @return List<AddrState>
+     * @apiNote: 根据国家的编码查询对应的所有省份
+     */
+    @Override
+    public List<AddrState> selectAllAddrStatesByCountryCode(Long countryCode) {
+        return addrStateMapper.selectByCountryCode(countryCode);
+    }
 }

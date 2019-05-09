@@ -28,4 +28,6 @@ public interface AddrStateMapper {
     int updateByPrimaryKeySelective(AddrState record);
 
     int updateByPrimaryKey(AddrState record);
+
+    List<AddrState> selectByCountryCode(Long countryCode);
 }

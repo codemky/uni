@@ -89,6 +89,12 @@
     from addr_area
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByCityCode" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from addr_area
+    where city_code = #{city_code,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from addr_area
     where id = #{id,jdbcType=BIGINT}
