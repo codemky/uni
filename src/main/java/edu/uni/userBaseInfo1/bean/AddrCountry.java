@@ -40,4 +40,14 @@ public class AddrCountry {
     public void setCode(Long code) {
         this.code = code;
     }
+
+    @Override
+    public String toString() {
+        return "AddrCountry{" +
+                "id=" + id +
+                ", countryZh='" + countryZh + '\'' +
+                ", countryEn='" + countryEn + '\'' +
+                ", code=" + code +
+                '}';
+    }
 }

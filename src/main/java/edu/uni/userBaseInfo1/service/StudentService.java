@@ -1,7 +1,10 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
+import edu.uni.userBaseInfo1.bean.Picture;
+import edu.uni.userBaseInfo1.bean.PictureExample;
 import edu.uni.userBaseInfo1.bean.Student;
+import edu.uni.userBaseInfo1.bean.StudentExample;
 
 import java.util.List;
 
@@ -66,4 +69,20 @@ public interface StudentService {
          * @apiNote: 删除Student表的某个记录
          */
         boolean delete(long id);
+
+        /**
+         * Author: laizhouhao 18:21 2019/5/7
+         * @param studentExample
+         * @return List<Student>
+         * @apiNote: 根据自定义条件查询Student的一个记录
+         */
+        List<Student> selectByExample(StudentExample studentExample);
+
+        /**
+         * Author: laizhouhao 14:54 2019/5/8
+         * @param stu_no
+         * @return
+         * @apiNote: 根据学号查询学生的用户id
+         */
+        Long selectByStuNo(String stu_no);
 }

@@ -6,6 +6,7 @@
 package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Picture;
+import edu.uni.userBaseInfo1.bean.PictureExample;
 
 import java.util.List;
 
@@ -64,4 +65,20 @@ public interface PictureService {
      * @apiNote: 用于根据id删除Picture表的一个记录
      */
     boolean delete(Long id);
+
+    /**
+     * Author: laizhouhao 18:21 2019/5/7
+     * @param pictureExample
+     * @return List<Picture>
+     * @apiNote: 根据自定义条件查询Picture的一个记录
+     */
+    List<Picture> selectByExample(PictureExample pictureExample);
+
+    /**
+     * Author: laizhouhao 16:37 2019/5/8
+     * @param user_id
+     * @return Picture
+     * @apiNote: 根据用户id查询有效的照片信息
+     */
+    Picture selectPictureByUserId(Long user_id);
 }

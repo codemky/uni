@@ -50,4 +50,15 @@ public class AddrState {
     public void setCode(Long code) {
         this.code = code;
     }
+
+    @Override
+    public String toString() {
+        return "AddrState{" +
+                "id=" + id +
+                ", countryCode=" + countryCode +
+                ", stateZh='" + stateZh + '\'' +
+                ", stateEn='" + stateEn + '\'' +
+                ", code=" + code +
+                '}';
+    }
 }

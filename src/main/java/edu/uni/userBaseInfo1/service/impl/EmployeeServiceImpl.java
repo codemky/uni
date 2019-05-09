@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.Employee;
+import edu.uni.userBaseInfo1.bean.EmployeeExample;
 import edu.uni.userBaseInfo1.mapper.EmployeeMapper;
 import edu.uni.userBaseInfo1.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,5 +109,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public boolean deleteEmployee(long id) {
         return employeeMapper.deleteByPrimaryKey(id) > 0 ? true :false;
+    }
+
+    /**
+     * Author: laizhouhao 8:31 2019/5/9
+     * @param emp_no
+     * @return Employee
+     * @apiNote: 根据员工编号查询未离职员工的主要信息
+     */
+    @Override
+    public Employee selectEmployeeByEmpNo(String emp_no) {
+        EmployeeExample employeeExample = new EmployeeExample();
+        employeeExample.createCriteria().andEmpNoEqualTo(emp_no)
+                .andDeletedEqualTo(false);
+        Employee employee = new Employee();
+        employee = employeeMapper.selectByExample(employeeExample).get(0);
+        return employee;
     }
 }

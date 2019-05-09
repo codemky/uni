@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.Picture;
+import edu.uni.userBaseInfo1.bean.PictureExample;
 import edu.uni.userBaseInfo1.mapper.PictureMapper;
 import edu.uni.userBaseInfo1.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,5 +111,34 @@ public class PictureServiceImpl implements PictureService {
     @Override
     public boolean delete(Long id) {
         return pictureMapper.deleteByPrimaryKey(id) > 0 ? true : false;
+    }
+
+
+    /**
+     * Author: laizhouhao 19:00 2019/5/7
+     * @param pictureExample
+     * @return List<Picture>
+     * @apiNote: 根据自定义条件查询用户的照片信息
+     */
+    @Override
+    public List<Picture> selectByExample(PictureExample pictureExample) {
+        return pictureMapper.selectByExample(pictureExample);
+    }
+
+    /**
+     * Author: laizhouhao 16:37 2019/5/8
+     * @param user_id
+     * @return List<Picture>
+     * @apiNote: 根据用户id查询有效的照片信息
+     */
+    @Override
+    public Picture selectPictureByUserId(Long user_id) {
+        //构造查询照片的条件
+        PictureExample pictureExample = new PictureExample();
+        pictureExample.createCriteria().andUserIdEqualTo(user_id)
+                .andDeletedEqualTo(false);
+        //根据照片查询
+        List<Picture> pictures = pictureMapper.selectByExample(pictureExample);
+        return pictures.size()>=1?pictures.get(0):null;
     }
 }

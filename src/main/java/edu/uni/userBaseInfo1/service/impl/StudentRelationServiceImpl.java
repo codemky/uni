@@ -4,11 +4,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.StudentRelation;
+import edu.uni.userBaseInfo1.bean.StudentRelationExample;
 import edu.uni.userBaseInfo1.mapper.StudentRelationMapper;
 import edu.uni.userBaseInfo1.service.StudentRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -114,4 +116,33 @@ public class StudentRelationServiceImpl implements StudentRelationService {
     public boolean delete(long id) {
         return studentRelationMapper.deleteByPrimaryKey(id) > 0 ? true : false;
     }
+
+    /**
+     * Author: laizhouhao 19:29 2019/5/7
+     * @param studentRelationExample
+     * @return List<StudentRelation>
+     * @apiNote: 根据自定义条件查询学生亲属记录
+     */
+    @Override
+    public List<StudentRelation> selectByExample(StudentRelationExample studentRelationExample) {
+        return studentRelationMapper.selectByExample(studentRelationExample);
+    }
+
+    /**
+     * Author: laizhouhao 15:13 2019/5/8
+     * @param user_id
+     * @return List<Long>
+     * @apiNote: 根据用户id查询亲属在本系统的id
+     */
+    @Override
+    public List<StudentRelation> selectRelaByUserId(Long user_id) {
+        //构造查询条件
+        StudentRelationExample studentRelationExample = new StudentRelationExample();
+        studentRelationExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
+        //查找所有的亲属信息
+        List<StudentRelation> studentRelations
+                = studentRelationMapper.selectByExample(studentRelationExample);
+        return studentRelations;
+    }
+
 }

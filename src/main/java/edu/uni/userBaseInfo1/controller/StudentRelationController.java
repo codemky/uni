@@ -2,8 +2,10 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.StudentRelation;
-import edu.uni.userBaseInfo1.service.StudentRelationService;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.GetAddrDetail;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author chenenru
@@ -33,6 +37,10 @@ import java.time.LocalDateTime;
 @Controller
 public class StudentRelationController {
 
+        @Autowired
+        private UserService userService;
+        @Autowired
+        private StudentService studentService;
         @Autowired  //把StudentRelation的Service层接口所有的方法自动装配到该对象中
         private StudentRelationService studentRelationService;
 
@@ -128,11 +136,6 @@ public class StudentRelationController {
     }
 
         /**
-         * 新增电子学生亲属方式
-         * @param studentRelation
-         * @return  新增学生亲属结果
-         */
-        /**
          * Author: chenenru 10:30 2019/4/30
          * 新增学生亲属信息
          * @param studentRelation
@@ -203,7 +206,55 @@ public class StudentRelationController {
             return Result.build(ResultType.ParamError);
         }
 
+    /**
+     * Author: laizhouhao 21:40 2019/5/7
+     * @param stu_no
+     * @return response
+     * @apiNote: 根据学号查找该学生的亲属信息
+     */
+    @ApiOperation( value = "根据学号查找该学生的亲属信息",notes = "2019年5月8日 18:35:43 已通过测试" )
+    @GetMapping("info/studentRelationsInfo/All/{stu_no}")
+    @ApiImplicitParam(name = "stu_no", value = "学号stu_no", required = false, dataType = "String" , paramType = "path")
+    @ResponseBody
+    public void receiveRelations(@PathVariable String stu_no, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(stu_no != null){
+            UserInfo userInfo = new UserInfo();
 
+            //先根据学号查询用户id
+            Long user_id = studentService.selectByStuNo(stu_no);
+
+            //根据用户id查询出该用户所有的亲属在本系统的id,并将查询出来的放入工具类对象userInfo储存
+            List<StudentRelation> relations = studentRelationService.selectByUserId(user_id);
+            userInfo.setStudentRelations(relations);
+
+            //根据亲属的rela_id查询亲属咋本系统的信息，即在user表中的信息,从而获取亲属信息
+            List<User> relas = new ArrayList<>();
+            //查询亲属的用户信息
+            for(int i=0; i<relations.size(); i++){
+                relas.add(userService.selectUserById(relations.get(i).getRelaId()));
+            }
+            userInfo.setUsers(relas);
+
+            System.out.println(userInfo.getUsers());
+
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = StudentInfoController.CacheNameHelper.Receive_CacheNamePrefix +stu_no;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("userInfo",userInfo).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
+    }
 
         /**
          * <p>

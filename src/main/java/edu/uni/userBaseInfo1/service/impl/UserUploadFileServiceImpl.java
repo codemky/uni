@@ -19,6 +19,7 @@ import java.util.List;
  * @Version 1.0
  **/
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到=
+@SuppressWarnings("ALL")
 @Service
 public class UserUploadFileServiceImpl implements UserUploadFileService {
     //持久层接口的对象

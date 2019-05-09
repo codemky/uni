@@ -3,7 +3,11 @@ package edu.uni.userBaseInfo1.controller;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.Employee;
+import edu.uni.userBaseInfo1.bean.StudentRelation;
+import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.service.EmployeeService;
+import edu.uni.userBaseInfo1.service.UserService;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author chenenru
@@ -36,6 +42,8 @@ public class EmployeeController {
     //把employee的Service层接口所有的方法自动装配到该对象中
     @Autowired
     EmployeeService employeeService;
+    @Autowired
+    UserService userService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -188,10 +196,52 @@ public class EmployeeController {
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
-                    .appendData("employees",employeeService.selectByUserId(user_id)).convertIntoJSON();
+                    .appendData("employee",employeeService.selectByUserId(user_id)).convertIntoJSON();
             cache.set(cacheName,json);
         }
         response.getWriter().write(json);
+    }
+
+    /**
+     * Author: laizhouhao 8:21 2019/5/9
+     * @param emp_no
+     * @return response
+     * @apiNote: 根据员工编号查询未离职员工的主要信息
+     */
+    @ApiOperation( value = "根据员工编号查询未离职员工的主要信息",notes = "未测试" )
+    @GetMapping("info/employeeWorkedMainInfo/All/{emp_no}")
+    @ApiImplicitParam(name = "emp_no", value = "员工号emp_no", required = false, dataType = "String" , paramType = "path")
+    @ResponseBody
+    public void receiveRelations(@PathVariable String emp_no, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(emp_no != null){
+            UserInfo userInfo = new UserInfo();
+
+            //根据员工编号查询user_id
+            Long user_id = employeeService.selectEmployeeByEmpNo(emp_no).getUserId();
+            //根据user_id查询员工主要信息
+            List<User> us = new ArrayList<>();
+            us.add(userService.selectUserById(user_id));
+
+            //将查询出来的用户加入工具类对象储存
+            userInfo.setUsers(us);
+
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = StudentInfoController.CacheNameHelper.Receive_CacheNamePrefix + emp_no;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("userInfo",userInfo).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
     }
 
     /**

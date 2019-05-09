@@ -2,8 +2,13 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.userBaseInfo1.bean.Address;
 import edu.uni.userBaseInfo1.bean.User;
+import edu.uni.userBaseInfo1.service.AddressService;
+import edu.uni.userBaseInfo1.service.PictureService;
 import edu.uni.userBaseInfo1.service.UserService;
+import edu.uni.userBaseInfo1.utils.GetAddrDetail;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author chenenru
@@ -36,6 +42,10 @@ public class UserController {
     //把User的Service层接口所有的方法自动装配到该对象中
     @Autowired
     UserService userService;
+    @Autowired
+    private PictureService pictureService;
+    @Autowired
+    private AddressService addressService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -171,6 +181,45 @@ public class UserController {
             }
         }
         return Result.build(ResultType.ParamError);
+    }
+
+    /**
+     * Author: laizhouhao 21:40 2019/5/7
+     * @param user_id
+     * @return response
+     * @apiNote: 根据用户表的id查找该用户的照片、地址信息
+     */
+    @ApiOperation( value = "根据用户表的id查找该用户的照片、地址信息",notes = "2019年5月8日 20:40:35 已测试通过" )
+    @GetMapping("info/userInfo/All/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void receiveRelaInfo(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(user_id != null){
+            UserInfo userInfo = new UserInfo();
+            //获取亲属的地址信息
+            List<Address> addresses = addressService.selectByUserId(user_id);
+
+            userInfo = new GetAddrDetail().reviceAddrDetail(addresses);
+            //获取亲属的照片
+            userInfo.setPictures(pictureService.selectByUserId(user_id));
+            System.out.println(userInfo);
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = StudentInfoController.CacheNameHelper.Receive_CacheNamePrefix + addresses + user_id;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("userInfo",userInfo).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
     }
 
     /**

@@ -50,4 +50,15 @@ public class AddrArea {
     public void setCode(Long code) {
         this.code = code;
     }
+
+    @Override
+    public String toString() {
+        return "AddrArea{" +
+                "id=" + id +
+                ", cityCode=" + cityCode +
+                ", areaZh='" + areaZh + '\'' +
+                ", areaEn='" + areaEn + '\'' +
+                ", code=" + code +
+                '}';
+    }
 }

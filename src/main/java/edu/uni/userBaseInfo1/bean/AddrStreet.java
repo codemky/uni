@@ -50,4 +50,15 @@ public class AddrStreet {
     public void setCode(Long code) {
         this.code = code;
     }
+
+    @Override
+    public String toString() {
+        return "AddrStreet{" +
+                "id=" + id +
+                ", areaCode=" + areaCode +
+                ", streetZh='" + streetZh + '\'' +
+                ", streetEn='" + streetEn + '\'' +
+                ", code=" + code +
+                '}';
+    }
 }

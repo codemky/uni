@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.Student;
+import edu.uni.userBaseInfo1.bean.StudentExample;
 import edu.uni.userBaseInfo1.mapper.StudentMapper;
 import edu.uni.userBaseInfo1.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,5 +108,32 @@ public class StudentServiceImpl implements StudentService {
      */
     public boolean delete(long id) {
         return studentMapper.deleteByPrimaryKey(id) > 0 ? true : false;
+    }
+
+    /**
+     * Author: laizhouhao 19:29 2019/5/7
+     * @param studentExample
+     * @return List<Student>
+     * @apiNote: 根据自定义条件查询学生记录
+     */
+    @Override
+    public List<Student> selectByExample(StudentExample studentExample) {
+        return studentMapper.selectByExample(studentExample);
+    }
+
+    /**
+     * Author: laizhouhao 14:59 2019/5/8
+     * @param stu_no
+     * @return Long
+     * @apiNote: 根据学号查询用户id
+     */
+    @Override
+    public Long selectByStuNo(String stu_no) {
+        //根据学号查询学生
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria().andStuNoEqualTo(stu_no).andDeletedEqualTo(false);
+        List<Student> students = studentMapper.selectByExample(studentExample);
+        Long user_id = students.get(0).getUserId();
+        return user_id;
     }
 }

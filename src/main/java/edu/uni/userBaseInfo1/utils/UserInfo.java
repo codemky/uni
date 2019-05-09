@@ -20,6 +20,60 @@ public class UserInfo {
     List<Student> students;
     List<Employee> employees;
     List<UserinfoApply> userinfoApplies;
+    List<PoliticalAffiliation> politicalAffiliations;
+    List<AddrCountry>addrCountries;
+    List<AddrState> addrStates;
+    List<AddrCity>addrCities;
+    List<AddrArea>addrAreas;
+    List<AddrStreet>addrStreets;
+
+    public List<AddrCountry> getAddrCountries() {
+        return addrCountries;
+    }
+
+    public void setAddrCountries(List<AddrCountry> addrCountries) {
+        this.addrCountries = addrCountries;
+    }
+
+    public List<AddrState> getAddrStates() {
+        return addrStates;
+    }
+
+    public void setAddrStates(List<AddrState> addrStates) {
+        this.addrStates = addrStates;
+    }
+
+    public List<AddrCity> getAddrCities() {
+        return addrCities;
+    }
+
+    public void setAddrCities(List<AddrCity> addrCities) {
+        this.addrCities = addrCities;
+    }
+
+    public List<AddrArea> getAddrAreas() {
+        return addrAreas;
+    }
+
+    public void setAddrAreas(List<AddrArea> addrAreas) {
+        this.addrAreas = addrAreas;
+    }
+
+    public List<AddrStreet> getAddrStreets() {
+        return addrStreets;
+    }
+
+    public void setAddrStreets(List<AddrStreet> addrStreets) {
+        this.addrStreets = addrStreets;
+    }
+
+    public List<PoliticalAffiliation> getPoliticalAffiliations() {
+        return politicalAffiliations;
+    }
+
+    public void setPoliticalAffiliations(List<PoliticalAffiliation> politicalAffiliations) {
+        this.politicalAffiliations = politicalAffiliations;
+    }
 
     public List<User> getUsers() {
         return users;
@@ -105,8 +159,7 @@ public class UserInfo {
     public UserInfo() {
     }
 
-
-    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies) {
+    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies, List<PoliticalAffiliation> politicalAffiliations, List<AddrCountry> countries, List<AddrState> states, List<AddrCity> cities, List<AddrStreet> addrStreets) {
         this.users = users;
         this.ecomms = ecomms;
         this.addresses = addresses;
@@ -117,6 +170,7 @@ public class UserInfo {
         this.students = students;
         this.employees = employees;
         this.userinfoApplies = userinfoApplies;
+        this.politicalAffiliations = politicalAffiliations;
     }
 
     @Override
@@ -132,6 +186,7 @@ public class UserInfo {
                 ", students=" + students +
                 ", employees=" + employees +
                 ", userinfoApplies=" + userinfoApplies +
+                ", politicalAffiliations=" + politicalAffiliations +
                 '}';
     }
 }

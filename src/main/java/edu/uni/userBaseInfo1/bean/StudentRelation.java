@@ -90,4 +90,18 @@ public class StudentRelation {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public String toString() {
+        return "StudentRelation{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", relaName='" + relaName + '\'' +
+                ", relaId=" + relaId +
+                ", relationship=" + relationship +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

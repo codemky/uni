@@ -1,7 +1,10 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
+import edu.uni.userBaseInfo1.bean.Student;
+import edu.uni.userBaseInfo1.bean.StudentExample;
 import edu.uni.userBaseInfo1.bean.StudentRelation;
+import edu.uni.userBaseInfo1.bean.StudentRelationExample;
 
 import java.util.List;
 
@@ -66,4 +69,21 @@ public interface StudentRelationService {
          * @apiNote: 删除StudentRelation表的某个记录
          */
         boolean delete(long id);
+
+        /**
+         * Author: laizhouhao 18:21 2019/5/7
+         * @param studentRelationExample
+         * @return List<StudentRelation>
+         * @apiNote: 根据自定义条件查询StudentRelation表的一个记录
+         */
+        List<StudentRelation> selectByExample(StudentRelationExample studentRelationExample);
+        
+        /**
+         * Author: laizhouhao 15:07 2019/5/8
+         * @param user_id
+         * @return List<StudentRelation>
+         * @apiNote: 根据用户id查询所有的亲属信息
+         */
+        List<StudentRelation> selectRelaByUserId(Long user_id);
+
 }

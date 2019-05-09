@@ -6,6 +6,9 @@
 package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Address;
+import edu.uni.userBaseInfo1.bean.AddressExample;
+import edu.uni.userBaseInfo1.bean.Picture;
+import edu.uni.userBaseInfo1.bean.PictureExample;
 
 import java.util.List;
 
@@ -64,4 +67,12 @@ public interface AddressService {
      * @apiNote: 用于根据id删除Address表的一个记录
      */
     boolean delete(Long id);
+
+    /**
+     * Author: laizhouhao 18:21 2019/5/7
+     * @param addressExample
+     * @return List<Address>
+     * @apiNote: 根据自定义条件查询Address的一个记录
+     */
+    List<Address> selectByExample(AddressExample addressExample);
 }

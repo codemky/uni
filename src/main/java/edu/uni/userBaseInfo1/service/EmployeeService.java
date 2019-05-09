@@ -58,4 +58,12 @@ public interface EmployeeService {
      * @apiNote:  用于删除Employee表的某个记录
      */
     boolean deleteEmployee(long id);
+
+    /**
+     * Author: laizhouhao 8:31 2019/5/9
+     * @param emp_no
+     * @return Employee
+     * @apiNote: 根据员工编号查询未离职员工的主要信息
+     */
+    Employee selectEmployeeByEmpNo(String emp_no);
 }

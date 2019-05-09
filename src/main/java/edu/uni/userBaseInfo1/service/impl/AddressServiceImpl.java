@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.Address;
+import edu.uni.userBaseInfo1.bean.AddressExample;
 import edu.uni.userBaseInfo1.mapper.AddressMapper;
 import edu.uni.userBaseInfo1.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,5 +111,16 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public boolean delete(Long id) {
         return addressMapper.deleteByPrimaryKey(id) > 0 ? true : false;
+    }
+
+    /**
+     * Author: laizhouhao 19:00 2019/5/7
+     * @param addressExample
+     * @return List<Address>
+     * @apiNote: 根据自定义条件查询用户的地址信息
+     */
+    @Override
+    public List<Address> selectByExample(AddressExample addressExample) {
+        return addressMapper.selectByExample(addressExample);
     }
 }
