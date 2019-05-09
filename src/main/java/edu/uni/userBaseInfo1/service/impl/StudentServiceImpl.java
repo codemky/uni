@@ -136,4 +136,19 @@ public class StudentServiceImpl implements StudentService {
         Long user_id = students.get(0).getUserId();
         return user_id;
     }
+
+    /**
+     * Author: laizhouhao 15:22 2019/5/9
+     * @param user_id
+     * @return List<Student>
+     * @apiNote: 根据用户id查找有效的学生信息
+     */
+    @Override
+    public List<Student> selectValidStudentByUserId(Long user_id) {
+        //构造查询条件
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria().andUserIdEqualTo(user_id)
+                .andDeletedEqualTo(false);
+        return studentMapper.selectByExample(studentExample);
+    }
 }

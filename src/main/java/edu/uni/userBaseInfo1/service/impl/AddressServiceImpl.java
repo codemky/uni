@@ -52,7 +52,7 @@ public class AddressServiceImpl implements AddressService {
      * Author: chenenru 1:24 2019/5/5
      * @param userId
      * @return Address
-     * @apiNote: 根据用户的id查询出一条地址信息
+     * @apiNote: 根据用户的id查询出地址信息
      */
     @Override
     public List<Address> selectByUserId(Long userId) {

@@ -10,6 +10,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.Ecomm;
+import edu.uni.userBaseInfo1.bean.EcommExample;
 import edu.uni.userBaseInfo1.mapper.EcommMapper;
 import edu.uni.userBaseInfo1.service.EcommService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,5 +111,20 @@ public class EcommServiceImpl implements EcommService {
      */
     public boolean delete(long id) {
         return ecommMapper.deleteByPrimaryKey(id) > 0 ? true : false;
+    }
+
+    /**
+     * Author: laizhouhao 15:41 2019/5/9
+     * @param user_id
+     * @return List<Ecomm>
+     * @apiNote: 根据用户id返回用户的有效的通信信息
+     */
+    @Override
+    public List<Ecomm> selectValidEcomByUserId(Long user_id) {
+        EcommExample ecommExample = new EcommExample();
+        ecommExample.createCriteria().andUserIdEqualTo(user_id)
+                .andDeletedEqualTo(false);
+        List<Ecomm> ecommList = ecommMapper.selectByExample(ecommExample);
+        return ecommList;
     }
 }

@@ -2,8 +2,14 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.userBaseInfo1.bean.PoliticalAffiliation;
 import edu.uni.userBaseInfo1.bean.Student;
+import edu.uni.userBaseInfo1.bean.User;
+import edu.uni.userBaseInfo1.service.EcommService;
+import edu.uni.userBaseInfo1.service.PoliticalAffiliationService;
 import edu.uni.userBaseInfo1.service.StudentService;
+import edu.uni.userBaseInfo1.service.UserService;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author laizhouhao
@@ -35,6 +43,12 @@ public class StudentController {
 
         @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
         private StudentService studentService;
+        @Autowired
+        private UserService userService;
+        @Autowired
+        private EcommService ecommService;
+        @Autowired
+        private PoliticalAffiliationService politicalAffiliationService;
 
         @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
         private RedisCache cache;
@@ -47,45 +61,6 @@ public class StudentController {
             public static final String Receive_CacheNamePrefix = "ub1_s_student_";
             // ub1_s_student_listAll
             public static final String ListAll_CacheName = "ub1_s_student_listAll";
-        }
-
-
-        /**
-         * Author: laizhouhao 10:27 2019/4/30
-         * @param id
-         * @return response
-         * @apiNote: 获取学生信息详情
-         */
-        //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
-        //@ApiOperation：用于在swagger2页面显示方法的提示信息
-        //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
-        //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
-        //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-        @ApiOperation( value = "以一个id获取一条学生信息记录详情",notes = "2019-5-5 15:53:53已通过测试" )
-        @GetMapping("student/{id}")
-        @ApiImplicitParam(name = "id", value = "Student表的一个id", required = false, dataType = "Long" , paramType = "path")
-        @ResponseBody
-        public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
-            //设置返回的数据格式
-            response.setContentType("application/json;charset=utf-8");
-            //拼接缓存键名（字符串）
-            String cacheName = edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.Receive_CacheNamePrefix + id;
-            //尝试在缓存中通过键名获取相应的键值
-            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-            String json = cache.get(cacheName);
-            //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
-                Student student = studentService.selectById(id);
-                //把查询到的结果用Result工具类转换成json格式的字符串
-                json = Result.build(ResultType.Success).appendData("student",student).convertIntoJSON();
-                //如果有查询到数据，就把在数据库查到的数据放到缓存中
-                if(student != null){
-                    cache.set(cacheName,json);
-                }
-            }
-            //到最后通过response对象返回json格式字符串的数据
-            response.getWriter().write(json);
-
         }
 
     /**
@@ -199,7 +174,60 @@ public class StudentController {
             return Result.build(ResultType.ParamError);
         }
 
+    /**
+     * Author: laizhouhao 16:08 2019/5/7
+     * @param user_id
+     * @return response
+     * @apiNote: 根据学生的用户id查找学生个人详细信息
+     */
+    @ApiOperation( value = "根据学生的用户id查找学生个人详细信息",notes = "未测试" )
+    @GetMapping("info/studentDetailInfo/All/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void receiveStudentDetailInfo(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(user_id != null){
+            UserInfo userInfo = new UserInfo();
+            //获取学生在用户表的主要信息
+            List<User> userList = new ArrayList<>();
+            userList.add(userService.selectUserById(user_id));
 
+            //获取学生的照片、地址信息
+            userInfo = userService.selectPictureAddrByUserId(user_id);
+            userInfo.setUsers(userList);
+
+            //获取学生的通信方式
+            userInfo.setEcomms(ecommService.selectValidEcomByUserId(user_id));
+
+            //获取学生在学生表的主要信息
+            List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
+            userInfo.setStudents(studentList);
+
+            //获取政治面貌
+            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
+            if(studentList.size()>=1) {
+                politicalAffiliationList.add(politicalAffiliationService
+                        .selectPoliticalAffiliationById(studentList.get(0).getPoliticalId()));
+            }
+            userInfo.setPoliticalAffiliations(politicalAffiliationList);
+            System.out.println(userInfo);
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix +"yyy"+ user_id;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("userInfo",userInfo).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
+    }
 
         /**
          * <p>

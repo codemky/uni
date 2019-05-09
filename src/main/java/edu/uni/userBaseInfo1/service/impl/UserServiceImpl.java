@@ -3,9 +3,16 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.userBaseInfo1.bean.Address;
+import edu.uni.userBaseInfo1.bean.AddressExample;
+import edu.uni.userBaseInfo1.bean.PictureExample;
 import edu.uni.userBaseInfo1.bean.User;
+import edu.uni.userBaseInfo1.mapper.AddressMapper;
+import edu.uni.userBaseInfo1.mapper.PictureMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.UserService;
+import edu.uni.userBaseInfo1.utils.GetAddrDetail;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +31,10 @@ public class UserServiceImpl implements UserService {
     //持久层接口的对象
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PictureMapper pictureMapper;
+    @Autowired
+    private AddressMapper addressMapper;
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -95,5 +106,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(long id) {
         return userMapper.deleteByPrimaryKey(id) > 0 ? true :false;
+    }
+
+    /**
+     * Author: laizhouhao 14:47 2019/5/9
+     * @param user_id
+     * @return UserInfo
+     * @apiNote: 根据用户id查找用户的照片、详细地址
+     */
+    @Override
+    public UserInfo selectPictureAddrByUserId(Long user_id) {
+        UserInfo userInfo = new UserInfo();
+        //获取亲属的有效地址信息
+        AddressExample addressExample = new AddressExample();
+        addressExample.createCriteria().andDeletedEqualTo(false)
+                .andUserIdEqualTo(user_id);
+        List<Address> addresses = addressMapper.selectByExample(addressExample);
+        //获取地址详细信息
+        userInfo = new GetAddrDetail().reviceAddrDetail(addresses);
+        userInfo.setAddresses(addresses);
+        //获取亲属的有效照片
+        PictureExample pictureExample = new PictureExample();
+        pictureExample.createCriteria().andUserIdEqualTo(user_id)
+                .andDeletedEqualTo(false);
+        userInfo.setPictures(pictureMapper.selectByExample(pictureExample));
+        return userInfo;
     }
 }

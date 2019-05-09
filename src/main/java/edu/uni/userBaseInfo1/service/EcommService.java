@@ -68,8 +68,13 @@ public interface EcommService {
      */
     boolean delete(long id);
 
-
-
+    /**
+     * Author: laizhouhao 15:41 2019/5/9
+     * @param user_id
+     * @return List<Ecomm>
+     * @apiNote: 根据用户id返回用户的有效的通信信息
+     */
+    List<Ecomm> selectValidEcomByUserId(Long user_id);
 
 
 }

@@ -197,17 +197,13 @@ public class UserController {
         //检验页面传来的id是否存在
         if(user_id != null){
             UserInfo userInfo = new UserInfo();
-            //获取亲属的地址信息
-            List<Address> addresses = addressService.selectByUserId(user_id);
-
-            userInfo = new GetAddrDetail().reviceAddrDetail(addresses);
-            //获取亲属的照片
-            userInfo.setPictures(pictureService.selectByUserId(user_id));
+            //获取用户照片、地址信息
+            userInfo = userService.selectPictureAddrByUserId(user_id);
             System.out.println(userInfo);
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = StudentInfoController.CacheNameHelper.Receive_CacheNamePrefix + addresses + user_id;
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix + user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);
@@ -221,6 +217,7 @@ public class UserController {
             response.getWriter().write(json);
         }
     }
+
 
     /**
      * <p>

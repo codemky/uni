@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.User;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 
 import java.util.List;
 
@@ -48,4 +49,12 @@ public interface UserService {
      * @apiNote: 用于删除User表的某个记录
      */
     boolean deleteUser(long id);
+
+    /**
+     * Author: laizhouhao 14:47 2019/5/9
+     * @param user_id
+     * @return UserInfo
+     * @apiNote: 根据用户id查找用户的照片、详细地址
+     */
+    UserInfo selectPictureAddrByUserId(Long user_id);
 }

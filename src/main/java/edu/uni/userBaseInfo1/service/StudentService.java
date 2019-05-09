@@ -85,4 +85,13 @@ public interface StudentService {
          * @apiNote: 根据学号查询学生的用户id
          */
         Long selectByStuNo(String stu_no);
+
+        /**
+         * Author: laizhouhao 15:22 2019/5/9
+         * @param user_id
+         * @return List<Student>
+         * @apiNote: 根据用户id查找有效的学生信息
+         */
+        List<Student> selectValidStudentByUserId(Long user_id);
+
 }
