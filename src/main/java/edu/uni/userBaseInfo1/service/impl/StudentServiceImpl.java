@@ -56,11 +56,7 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public List<Student> selectByUserId(Long user_id) {
-        StudentExample studentExample = new StudentExample();
-        studentExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
-
-        return studentMapper.selectByExample(studentExample);
-
+        return studentMapper.selectByPrimaryKey(user_id);
     }
 
     /**
