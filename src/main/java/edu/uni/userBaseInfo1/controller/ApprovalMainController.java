@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.ApprovalMain;
@@ -7,7 +8,9 @@ import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author laizhouhao
@@ -45,6 +49,28 @@ public class ApprovalMainController {
         public static final String Receive_CacheNamePrefix = "ub1_a_approvalMain_";
         // ub1_a_approvalMain_listAll
         public static final String ListAll_CacheName = "ub1_a_approvalMain_listAll";
+    }
+
+    @ApiOperation(value = "根据审批业务名称和类型查询所有的审批规定",notes = "未测试")
+    @GetMapping("approvalMain/{name}/{type}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "审批业务名称", required = false, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "type", value = "审批业务类型", required = false, dataType = "String", paramType = "path" )
+    })
+    @ResponseBody
+    public void selectBySchoolIdAndNameAndType(@PathVariable String name,
+             @PathVariable String type,HttpServletResponse response) throws IOException {
+        if(name.equals("{name}"))
+            name = null;
+        if(type.equals("{type}"))
+            type = null;
+
+        response.setContentType("application/json;charset=utf-8");
+        List<ApprovalMain> approvalMains = approvalMainService.selectBySchoolIdAndNameAndType((long) 1, name, type);
+        String json = Result.build(ResultType.Success).appendData("approvalMains",approvalMains).convertIntoJSON();
+
+        response.getWriter().write(json);
+
     }
 
     /**
@@ -84,6 +110,7 @@ public class ApprovalMainController {
         response.getWriter().write(json);
 
     }
+
 
     /**
      * Author: laizhouhao 16:26 2019/4/29

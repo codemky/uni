@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.ApprovalStepIncharge;
+import edu.uni.userBaseInfo1.bean.ApprovalStepInchargeExample;
 import edu.uni.userBaseInfo1.mapper.ApprovalStepInchargeMapper;
 import edu.uni.userBaseInfo1.service.ApprovalStepInchargeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,65 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
+
+    /**
+     * Author: mokuanyuan 21:28 2019/5/7
+     * @param id
+     * @return List
+     * @apiNote: 根据审批规定表id查询该规定的每一步审批的具体情况
+     */
+    @Override
+    public List<ApprovalStepIncharge> selectByMainId(Long id) {
+        ApprovalStepInchargeExample example = new ApprovalStepInchargeExample();
+        ApprovalStepInchargeExample.Criteria criteria = example.createCriteria();
+        criteria.andApprovalMainIdEqualTo(id);
+        criteria.andDeletedEqualTo(false);
+
+        List<ApprovalStepIncharge> approvalStepIncharges =
+                approvalStepInchargeMapper.selectByExample(example);
+
+        return approvalStepIncharges;
+    }
+
+    /**
+     * Author: mokuanyuan 15:40 2019/5/8
+     * @param mainId
+     * @param step
+     * @return role_id
+     * @apiNote: 根据审批规定表approval_main_id和具体部署编号查询具体某一步的角色id
+     */
+    @Override
+    public Long selectRoleIdByMainIdAndStep(Long mainId, Integer step) {
+        ApprovalStepInchargeExample example = new ApprovalStepInchargeExample();
+        ApprovalStepInchargeExample.Criteria criteria = example.createCriteria();
+        criteria.andApprovalMainIdEqualTo(mainId);
+        criteria.andStepEqualTo(step);
+        criteria.andDeletedEqualTo(false);
+
+        List<ApprovalStepIncharge> approvalStepIncharges =
+                approvalStepInchargeMapper.selectByExample(example);
+        if(approvalStepIncharges.size() == 1) {
+            return approvalStepIncharges.get(0).getRoleId();
+        }
+        else{
+            return (long)-1;
+        }
+
+    }
+
+    /**
+     * Author: mokuanyuan 16:01 2019/5/8
+     * @param id
+     * @return boolean
+     * @apiNote: 把某个步骤记录逻辑删除（Deleted字段置为true）
+     */
+    @Override
+    public boolean updateToInvalidById(Long id) {
+        ApprovalStepIncharge approvalStepIncharge = approvalStepInchargeMapper.selectByPrimaryKey(id);
+        approvalStepIncharge.setDeleted(true);
+        return approvalStepInchargeMapper.updateByPrimaryKey(approvalStepIncharge) > 0 ? true : false;
+
+    }
 
     /**
      * Author: laizhouhao 15:17 2019/4/29

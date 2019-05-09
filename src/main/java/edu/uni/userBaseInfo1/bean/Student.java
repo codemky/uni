@@ -18,6 +18,8 @@ public class Student {
     private Long id;
     //用户表id
     private Long userId;
+    //学校id
+    private Long universityId;
     // 学号
     private String stuNo;
     // 入学日期
@@ -158,11 +160,20 @@ public class Student {
         this.userId = userId;
     }
 
+    public Long getUniversityId() {
+        return universityId;
+    }
+
+    public void setUniversityId(Long universityId) {
+        this.universityId = universityId;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
                 "id=" + id +
                 ", userId=" + userId +
+                ", universityId=" + universityId +
                 ", stuNo='" + stuNo + '\'' +
                 ", beginLearnDate=" + beginLearnDate +
                 ", grade='" + grade + '\'' +

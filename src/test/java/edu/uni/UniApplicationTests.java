@@ -1,8 +1,11 @@
 package edu.uni;
 
+import edu.uni.userBaseInfo1.bean.ApprovalStepIncharge;
 import edu.uni.userBaseInfo1.bean.Ecomm;
 import edu.uni.userBaseInfo1.mapper.EcommMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
+import edu.uni.userBaseInfo1.service.ApprovalMainService;
+import edu.uni.userBaseInfo1.service.ApprovalStepInchargeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +21,29 @@ import java.util.Date;
 public class UniApplicationTests {
 
     @Autowired
-    EcommMapper ecommMapper;
+    ApprovalStepInchargeService approvalStepInchargeService;
+
+    @Autowired
+    ApprovalMainService approvalMainService;
 
 
     @Test
-    public void testEcomm(){
+    public void testImpl(){
 
-        for(long i = 0 ; i < 10;i++){
-            Ecomm ecomm = new Ecomm(null, i, "第" + i + "条数据“”“", 1, new Date(), i, false);
-//            ecommMapper.insertSelective(ecomm);
+        long main_id = 1;
+        long step_id = 1;
 
-        }
+//        approvalMainService.updateToInvalidById((long)5);
 
+        System.out.println(approvalMainService.selectBySchoolId((long) 1));
+        System.out.println(approvalMainService.selectBySchoolIdAndNameAndType((long) 1, "生" ,null));
 
-        ecommMapper.selectByExample(null).stream().forEach(item -> {
-            System.out.println(item.toString());
-        });
-
+//        System.out.println(approvalMainService.selectIdByName((long)2, "审批学生申请修改照片"));
+//        long id = approvalMainService.selectIdByName((long)2,"审批学生申请修改照片");
+//        System.out.println(approvalMainService.selectStepCntById(id));
+//        System.out.println(approvalMainService.isAlreadyExist(id , "审批学生申请修改照片"));
+//        System.out.println(approvalStepInchargeService.selectRoleIdByMainIdAndStep(id,2));
+//        System.out.println(approvalStepInchargeService.selectByMainId(id).toString());
 
 
     }

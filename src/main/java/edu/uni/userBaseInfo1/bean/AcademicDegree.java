@@ -1,49 +1,67 @@
 package edu.uni.userBaseInfo1.bean;
 
-/**
- * 学位表
- */
-public class AcademicDegree {
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-    //学位表id
+import java.util.Date;
+
+public class AcademicDegree {
     private Long id;
 
-    //具体内容
-    private String degreeInfo;
+    private String name;
 
-    //学位表id的get方法
+    private String ename;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date datetime;
+
+    private Long byWho;
+
+    private Boolean deleted;
+
     public Long getId() {
         return id;
     }
 
-    //学位表id的set方法
     public void setId(Long id) {
         this.id = id;
     }
 
-    //具体内容的get方法
-    public String getDegreeInfo() {
-        return degreeInfo;
+    public String getName() {
+        return name;
     }
 
-    //具体内容的set方法
-    public void setDegreeInfo(String degreeInfo) {
-        this.degreeInfo = degreeInfo == null ? null : degreeInfo.trim();
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    @Override
-    public String toString() {
-        return "AcademicDegree{" +
-                "id=" + id +
-                ", degreeInfo='" + degreeInfo + '\'' +
-                '}';
+    public String getEname() {
+        return ename;
     }
 
-    public AcademicDegree(Long id, String degreeInfo) {
-        this.id = id;
-        this.degreeInfo = degreeInfo;
+    public void setEname(String ename) {
+        this.ename = ename == null ? null : ename.trim();
     }
 
-    public AcademicDegree() {
+    public Date getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
+    }
+
+    public Long getByWho() {
+        return byWho;
+    }
+
+    public void setByWho(Long byWho) {
+        this.byWho = byWho;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

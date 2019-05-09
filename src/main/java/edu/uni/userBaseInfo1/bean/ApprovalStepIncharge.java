@@ -100,4 +100,19 @@ public class ApprovalStepIncharge {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public String toString() {
+        return "ApprovalStepIncharge{" +
+                "id=" + id +
+                ", universityId=" + universityId +
+                ", approvalMainId=" + approvalMainId +
+                ", name='" + name + '\'' +
+                ", step=" + step +
+                ", roleId=" + roleId +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

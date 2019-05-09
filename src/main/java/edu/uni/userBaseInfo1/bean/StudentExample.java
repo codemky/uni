@@ -225,6 +225,66 @@ public class StudentExample {
             return (Criteria) this;
         }
 
+        public Criteria andUniversityIdIsNull() {
+            addCriterion("university_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdIsNotNull() {
+            addCriterion("university_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdEqualTo(Long value) {
+            addCriterion("university_id =", value, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdNotEqualTo(Long value) {
+            addCriterion("university_id <>", value, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdGreaterThan(Long value) {
+            addCriterion("university_id >", value, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("university_id >=", value, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdLessThan(Long value) {
+            addCriterion("university_id <", value, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdLessThanOrEqualTo(Long value) {
+            addCriterion("university_id <=", value, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdIn(List<Long> values) {
+            addCriterion("university_id in", values, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdNotIn(List<Long> values) {
+            addCriterion("university_id not in", values, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdBetween(Long value1, Long value2) {
+            addCriterion("university_id between", value1, value2, "universityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUniversityIdNotBetween(Long value1, Long value2) {
+            addCriterion("university_id not between", value1, value2, "universityId");
+            return (Criteria) this;
+        }
+
         public Criteria andStuNoIsNull() {
             addCriterion("stu_no is null");
             return (Criteria) this;

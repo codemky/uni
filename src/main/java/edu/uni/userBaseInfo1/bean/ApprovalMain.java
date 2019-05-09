@@ -91,4 +91,18 @@ public class ApprovalMain {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public String toString() {
+        return "ApprovalMain{" +
+                "id=" + id +
+                ", universityId=" + universityId +
+                ", name='" + name + '\'' +
+                ", stepCnt=" + stepCnt +
+                ", type='" + type + '\'' +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

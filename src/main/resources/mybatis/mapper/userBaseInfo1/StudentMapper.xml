@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.Student" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="university_id" property="universityId" jdbcType="BIGINT" />
     <result column="stu_no" property="stuNo" jdbcType="VARCHAR" />
     <result column="begin_learn_date" property="beginLearnDate" jdbcType="TIMESTAMP" />
     <result column="grade" property="grade" jdbcType="CHAR" />
@@ -76,8 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_id, stu_no, begin_learn_date, grade, major_id, class_id, political_id, live_room, 
-    home_address, mail_address, datetime, by_who, deleted
+    id, user_id, university_id, stu_no, begin_learn_date, grade, major_id, class_id, 
+    political_id, live_room, home_address, mail_address, datetime, by_who, deleted
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.StudentExample" >
     select
@@ -99,12 +100,6 @@
     from student
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select
-    <include refid="Base_Column_List" />
-    from student
-    where user_id = #{user_id,jdbcType=BIGINT}
-  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from student
     where id = #{id,jdbcType=BIGINT}
@@ -119,16 +114,16 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into student (user_id, stu_no, begin_learn_date, 
-      grade, major_id, class_id, 
-      political_id, live_room, home_address, 
-      mail_address, datetime, by_who, 
-      deleted)
-    values (#{userId,jdbcType=BIGINT}, #{stuNo,jdbcType=VARCHAR}, #{beginLearnDate,jdbcType=TIMESTAMP}, 
-      #{grade,jdbcType=CHAR}, #{majorId,jdbcType=BIGINT}, #{classId,jdbcType=BIGINT}, 
-      #{politicalId,jdbcType=BIGINT}, #{liveRoom,jdbcType=BIGINT}, #{homeAddress,jdbcType=BIGINT}, 
-      #{mailAddress,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, 
-      #{deleted,jdbcType=BIT})
+    insert into student (user_id, university_id, stu_no, 
+      begin_learn_date, grade, major_id, 
+      class_id, political_id, live_room, 
+      home_address, mail_address, datetime, 
+      by_who, deleted)
+    values (#{userId,jdbcType=BIGINT}, #{universityId,jdbcType=BIGINT}, #{stuNo,jdbcType=VARCHAR}, 
+      #{beginLearnDate,jdbcType=TIMESTAMP}, #{grade,jdbcType=CHAR}, #{majorId,jdbcType=BIGINT}, 
+      #{classId,jdbcType=BIGINT}, #{politicalId,jdbcType=BIGINT}, #{liveRoom,jdbcType=BIGINT}, 
+      #{homeAddress,jdbcType=BIGINT}, #{mailAddress,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, 
+      #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Student" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -138,6 +133,9 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
         user_id,
+      </if>
+      <if test="universityId != null" >
+        university_id,
       </if>
       <if test="stuNo != null" >
         stu_no,
@@ -179,6 +177,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
         #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="universityId != null" >
+        #{universityId,jdbcType=BIGINT},
       </if>
       <if test="stuNo != null" >
         #{stuNo,jdbcType=VARCHAR},
@@ -233,6 +234,9 @@
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=BIGINT},
       </if>
+      <if test="record.universityId != null" >
+        university_id = #{record.universityId,jdbcType=BIGINT},
+      </if>
       <if test="record.stuNo != null" >
         stu_no = #{record.stuNo,jdbcType=VARCHAR},
       </if>
@@ -278,6 +282,7 @@
     update student
     set id = #{record.id,jdbcType=BIGINT},
       user_id = #{record.userId,jdbcType=BIGINT},
+      university_id = #{record.universityId,jdbcType=BIGINT},
       stu_no = #{record.stuNo,jdbcType=VARCHAR},
       begin_learn_date = #{record.beginLearnDate,jdbcType=TIMESTAMP},
       grade = #{record.grade,jdbcType=CHAR},
@@ -299,6 +304,9 @@
     <set >
       <if test="userId != null" >
         user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=BIGINT},
       </if>
       <if test="stuNo != null" >
         stu_no = #{stuNo,jdbcType=VARCHAR},
@@ -342,6 +350,7 @@
   <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.Student" >
     update student
     set user_id = #{userId,jdbcType=BIGINT},
+      university_id = #{universityId,jdbcType=BIGINT},
       stu_no = #{stuNo,jdbcType=VARCHAR},
       begin_learn_date = #{beginLearnDate,jdbcType=TIMESTAMP},
       grade = #{grade,jdbcType=CHAR},

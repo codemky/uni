@@ -14,6 +14,9 @@ public class Employee {
     //用户表id
     private Long userId;
 
+    //学校id
+    private Long universityId;
+
     //员工编号
     private String empNo;
 
@@ -189,6 +192,35 @@ public class Employee {
         this.userId = userId;
     }
 
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", universityId=" + universityId +
+                ", empNo='" + empNo + '\'' +
+                ", departmentId=" + departmentId +
+                ", subdepartmentId=" + subdepartmentId +
+                ", employHistoryId=" + employHistoryId +
+                ", disciplineId=" + disciplineId +
+                ", politicalId=" + politicalId +
+                ", positionId=" + positionId +
+                ", homeAddressId=" + homeAddressId +
+                ", mailAddressId=" + mailAddressId +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
+
+    public Long getUniversityId() {
+        return universityId;
+    }
+
+    public void setUniversityId(Long universityId) {
+        this.universityId = universityId;
+    }
+
     public Employee(Long id, Long userId, String empNo, Long departmentId, Long subdepartmentId, Long employHistoryId, Long disciplineId, Long politicalId, Long positionId, Long homeAddressId, Long mailAddressId, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
         this.userId = userId;
@@ -209,23 +241,4 @@ public class Employee {
     public Employee() {
     }
 
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", empNo='" + empNo + '\'' +
-                ", departmentId=" + departmentId +
-                ", subdepartmentId=" + subdepartmentId +
-                ", employHistoryId=" + employHistoryId +
-                ", disciplineId=" + disciplineId +
-                ", politicalId=" + politicalId +
-                ", positionId=" + positionId +
-                ", homeAddressId=" + homeAddressId +
-                ", mailAddressId=" + mailAddressId +
-                ", datetime=" + datetime +
-                ", byWho=" + byWho +
-                ", deleted=" + deleted +
-                '}';
-    }
 }
