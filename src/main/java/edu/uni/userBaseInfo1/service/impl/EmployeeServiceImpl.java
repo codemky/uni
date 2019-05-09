@@ -58,7 +58,11 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public List<Employee> selectByUserId(Long user_id) {
-        return employeeMapper.selectByUserId(user_id);
+        EmployeeExample employeeExample = new EmployeeExample();
+        employeeExample.createCriteria().andUserIdEqualTo(user_id)
+                .andDeletedEqualTo(false);
+
+        return employeeMapper.selectByExample(employeeExample);
     }
 
     /**
