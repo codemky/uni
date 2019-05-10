@@ -49,22 +49,28 @@ public class AddressController {
         public static final String ListAll_CacheName = "ub1_a_address_listAll";
     }
 
-    @ApiOperation( value = "测试地址工具类",notes = "未测试" )
-    @GetMapping("/test")
-    @ResponseBody
-    //@ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
-    public void test(){
-        AddressUtil addressUtil = new AddressUtil();
-        System.out.println("所有国家："+addressUtil.SelectCountries().toString());
-        System.out.println("根据国家编码查询所有省份："+addressUtil.SelectStates(1).toString());
-        System.out.println("根据省份编码查询所有城市："+addressUtil.SelectCities(13).toString());
-        System.out.println("根据城市编码查询所有县/区："+addressUtil.SelectAreas(1101).toString());
-        System.out.println("根据县/区编码查询所有街道："+addressUtil.SelectStreets(110101).toString());
+//    @ApiOperation( value = "测试地址工具类",notes = "未测试" )
+//    @GetMapping("/test")
+//    @ResponseBody
+//    //@ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
+//    public void test(){
+//        AddressUtil addressUtil = new AddressUtil();
+//        System.out.println("所有国家："+addressUtil.SelectCountries().toString());
+//        System.out.println("根据国家编码查询所有省份："+addressUtil.SelectStates(1).toString());
+//        System.out.println("根据省份编码查询所有城市："+addressUtil.SelectCities(13).toString());
+//        System.out.println("根据城市编码查询所有县/区："+addressUtil.SelectAreas(1101).toString());
+//        System.out.println("根据县/区编码查询所有街道："+addressUtil.SelectStreets(110101).toString());
+//
+//    }
 
-    }
-
+    /**
+     * Author: chenenru 18:50 2019/5/10
+     * @param countryCode
+     * @return Response
+     * @apiNote: 根据国家编码查询所有省份
+     */
     //根据国家编码查询所有省份
-    @ApiOperation( value = "根据国家编码查询所有省份",notes = "未测试" )
+    @ApiOperation( value = "根据国家编码查询所有省份",notes = "2019年5月10日 18:50:00 已通过测试" )
     @GetMapping("address/addrState/{countryCode}")
     @ApiImplicitParam(name = "countryCode", value = "国家的编码", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -90,8 +96,15 @@ public class AddressController {
         //到最后通过response对象返回json格式字符串的数据
         response.getWriter().write(json);
     }
+
+    /**
+     * Author: chenenru 18:50 2019/5/10
+     * @param stateCode
+     * @return Response
+     * @apiNote: 根据省份编码查询所有城市
+     */
     //根据省份编码查询所有城市
-    @ApiOperation( value = "根据省份编码查询所有城市",notes = "未测试" )
+    @ApiOperation( value = "根据省份编码查询所有城市",notes = "2019年5月10日 18:51:43 已通过测试" )
     @GetMapping("address/addrCity/{stateCode}")
     @ApiImplicitParam(name = "stateCode", value = "省份的编码", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -116,8 +129,15 @@ public class AddressController {
         //到最后通过response对象返回json格式字符串的数据
         response.getWriter().write(json);
     }
+
+    /**
+     * Author: chenenru 18:50 2019/5/10
+     * @param cityCode
+     * @return Response
+     * @apiNote: 根据城市编码查询所有县
+     */
     //根据城市编码查询所有县/区
-    @ApiOperation( value = "根据城市编码查询所有县/区",notes = "未测试" )
+    @ApiOperation( value = "根据城市编码查询所有县/区",notes = "2019年5月10日 18:51:51 已通过测试" )
     @GetMapping("address/addrArea/{cityCode}")
     @ApiImplicitParam(name = "cityCode", value = "cityCode", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -142,8 +162,15 @@ public class AddressController {
         //到最后通过response对象返回json格式字符串的数据
         response.getWriter().write(json);
     }
+
+    /**
+     * Author: chenenru 18:50 2019/5/10
+     * @param areaCode
+     * @return Response
+     * @apiNote: 根据县/区编码查询所有街道
+     */
     //根据县/区编码查询所有街道
-    @ApiOperation( value = "根据县/区编码查询所有街道",notes = "未测试" )
+    @ApiOperation( value = "根据县/区编码查询所有街道",notes = "2019年5月10日 18:52:28 已通过测试" )
     @GetMapping("address/addrStreet/{areaCode}")
     @ApiImplicitParam(name = "areaCode", value = "县/区的编码", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -175,11 +202,6 @@ public class AddressController {
      * @return response
      * @apiNote: 获取地址信息详细
      */
-    //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
-    //@ApiOperation：用于在swagger2页面显示方法的提示信息
-    //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
-    //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
-    //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
     @ApiOperation( value = "以一个id获取一条地址记录详情",notes = "2019-5-5 15:53:53已通过测试" )
     @GetMapping("address/{id}")
     @ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
@@ -209,6 +231,7 @@ public class AddressController {
 
     /**
      * Author: laizhouhao 16:26 2019/4/29
+     * @return response
      * @apiNote: 查询地址的所有记录
      */
     @ApiOperation( value = "获取所有地址记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
@@ -270,8 +293,9 @@ public class AddressController {
      * Author: laizhouhao 16:47 2019/4/29
      * @param id
      * @return 删除地址信息结果
+     * @apiNote 根据id删除地址信息
      */
-    @ApiOperation(value="删除地址信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiOperation(value="根据id删除地址信息", notes="2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "id", value = "地址id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/address/{id}")   //delete请求
     @ResponseBody
@@ -290,6 +314,7 @@ public class AddressController {
      * Author: laizhouhao 11:01 2019/4/30
      * @param address
      * @return 更新操作结果
+     * @apiNote 更新地址信息
      */
     @ApiOperation(value="更新地址信息", notes="2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "address", value = "地址信息详情实体", required = true, dataType = "Address")

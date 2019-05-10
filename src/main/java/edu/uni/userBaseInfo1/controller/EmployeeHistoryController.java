@@ -21,11 +21,11 @@ import java.time.LocalDateTime;
 
 /**
  * @Author laizhouhao
- * @Description 关于简历信息模块的Controller层（Http URL请求）的具体实现方法
+ * @Description 关于雇员简历信息模块的Controller层（Http URL请求）的具体实现方法
  * @Date 16:15 2019/4/29
  **/
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "简历信息模块")
+@Api(description = "雇员简历信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/employeeHistory")
@@ -42,7 +42,7 @@ public class EmployeeHistoryController {
 
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
-        // ub1_e_employeeHistory_{简历信息记录id}
+        // ub1_e_employeeHistory_{雇员简历信息记录id}
         public static final String Receive_CacheNamePrefix = "ub1_e_employeeHistory_";
         // ub1_e_employeeHistory_listAll
         public static final String ListAll_CacheName = "ub1_e_employeeHistory_listAll";
@@ -52,14 +52,14 @@ public class EmployeeHistoryController {
      * Author: laizhouhao 9:55 2019/4/30
      * @param id
      * @return response
-     * @apiNote: 获取简历信息详情
+     * @apiNote: 获取雇员简历信息
      */
     //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
     //@ApiOperation：用于在swagger2页面显示方法的提示信息
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条简历信息记录详情",notes = "2019-5-2 11:06:25已通过测试" )
+    @ApiOperation( value = "以一个id获取一条雇员简历信息",notes = "2019-5-2 11:06:25已通过测试" )
     @GetMapping("employeeHistory/{id}")
     @ApiImplicitParam(name = "id", value = "EmployeeHistory表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -90,9 +90,9 @@ public class EmployeeHistoryController {
      * Author: laizhouhao 18:23 2019/5/6
      * @param user_id
      * @return response
-     * @apiNote: 根据用户的id查询对应的简历信息
+     * @apiNote: 根据用户的id查询对应的雇员简历信息
      */
-    @ApiOperation( value = "根据用户的id查询对应的简历信息",notes = "2019年5月6日 18:25:13 已通过测试" )
+    @ApiOperation( value = "根据用户的id查询对应的雇员简历信息",notes = "2019年5月6日 18:25:13 已通过测试" )
     @GetMapping("employeeHistoryByUserId/{user_id}")
     @ResponseBody
     public void selectByUserId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
@@ -109,9 +109,10 @@ public class EmployeeHistoryController {
 
     /**
      * Author: laizhouhao 16:26 2019/4/29
-     * @apiNote: 查询简历信息的所有记录
+     * @return response
+     * @apiNote: 查询雇员简历信息表的所有记录
      */
-    @ApiOperation( value = "获取所有简历信息记录的内容",notes = "2019-5-2 11:06:16已通过测试" )
+    @ApiOperation( value = "查询雇员简历信息表的所有记录",notes = "2019-5-2 11:06:16已通过测试" )
     @GetMapping("employeeHistorys/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
@@ -119,7 +120,7 @@ public class EmployeeHistoryController {
         String cacheName = CacheNameHelper.ListAll_CacheName;
         String json = cache.get(cacheName);
         if(json==null){
-            json = Result.build(ResultType.Success).appendData("employeeHistory", employeeHistoryService.selectAll()).convertIntoJSON();
+            json = Result.build(ResultType.Success).appendData("employeeHistorys", employeeHistoryService.selectAll()).convertIntoJSON();
             cache.set(json, cacheName);
         }
         response.getWriter().write(json);
@@ -128,16 +129,18 @@ public class EmployeeHistoryController {
     /**
      * Author: laizhouhao 16:40 2019/4/29
      * @param employeeHistory
-     * @return 新增简历信息信息结果
+     * @return 新增雇员简历信息结果
+     * @apiNote 新增雇员简历信息
      */
-    @ApiOperation(value="新增简历信息记录", notes="2019-5-2 11:06:11已通过测试")
-    @ApiImplicitParam(name = "employeeHistory", value = "简历信息详情实体", required = true, dataType = "EmployeeHistory")
+    @ApiOperation(value="新增雇员简历信息", notes="2019-5-2 11:06:11已通过测试")
+    @ApiImplicitParam(name = "employeeHistory", value = "雇员简历信息实体", required = true, dataType = "EmployeeHistory")
     @PostMapping("/employeeHistory")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false)EmployeeHistory employeeHistory){
         if(employeeHistory!=null){
             boolean success = employeeHistoryService.insert(employeeHistory);
             if(success){
+                //清除对应的缓存
                 cache.delete(EmployeeHistoryController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
@@ -150,10 +153,11 @@ public class EmployeeHistoryController {
     /**
      * Author: laizhouhao 16:47 2019/4/29
      * @param id
-     * @return 删除简历信息结果
+     * @return 删除雇员简历信息结果
+     * @apiNote 根据id删除雇员简历信息
      */
-    @ApiOperation(value="删除简历信息", notes="2019-5-2 11:06:07已通过测试")
-    @ApiImplicitParam(name = "id", value = "简历信息id", required = true, dataType = "Long", paramType = "path")
+    @ApiOperation(value="根据id删除雇员简历信息", notes="2019-5-2 11:06:07已通过测试")
+    @ApiImplicitParam(name = "id", value = "雇员简历信息id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/employeeHistory/{id}")   //delete请求
     @ResponseBody
     public Result destroy(@PathVariable long id){
@@ -171,9 +175,10 @@ public class EmployeeHistoryController {
      * Author: laizhouhao 11:01 2019/4/30
      * @param employeeHistory
      * @return 更新操作结果
+     * @apiNote 更新雇员简历信息
      */
-    @ApiOperation(value="更新简历信息", notes="2019-5-2 11:06:03已通过测试")
-    @ApiImplicitParam(name = "employeeHistory", value = "简历信息详情实体", required = true, dataType = "EmployeeHistory")
+    @ApiOperation(value="更新雇员简历信息", notes="2019-5-2 11:06:03已通过测试")
+    @ApiImplicitParam(name = "employeeHistory", value = "雇员简历信息详情实体", required = true, dataType = "EmployeeHistory")
     @PutMapping("/employeeHistory")   //Put请求
     @ResponseBody
     public Result update(@RequestBody(required = false) EmployeeHistory employeeHistory){

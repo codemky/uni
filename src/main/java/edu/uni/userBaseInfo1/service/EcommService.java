@@ -50,7 +50,7 @@ public interface EcommService {
      * @return boolean
      * @apiNote : 用于增加Ecomm表的一个记录
      */
-    boolean insert(Ecomm ecomm);
+    int insert(Ecomm ecomm);
 
     /**
      * Author: mokuanyuan 21:08 2019/4/24

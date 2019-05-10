@@ -24,12 +24,12 @@ import java.util.List;
 
 /**
  * @Author chenenru
- * @Description 关于学生亲属信息模块的Controller层（Http URL请求）的具体实现方法
+ * @Description 关于学生亲属表信息模块的Controller层（Http URL请求）的具体实现方法
  * @Date 10:21 2019/4/30
  **/
 
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "学生亲属信息模块")
+@Api(description = "学生亲属表信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/studentRelation")
@@ -51,7 +51,7 @@ public class StudentRelationController {
 
         //内部类，专门用来管理每个get方法所对应缓存的名称。
         static class CacheNameHelper{
-            // ub1_s_StudentRelation_{学生亲属信息记录id}
+            // ub1_s_StudentRelation_{学生亲属表信息记录id}
             public static final String Receive_CacheNamePrefix = "ub1_s_studentRelation_";
             // ub1_s_StudentRelation_listAll
             public static final String ListAll_CacheName = "ub1_s_studentRelation_listAll";
@@ -62,14 +62,14 @@ public class StudentRelationController {
          * Author: chenenru 10:27 2019/4/30
          * @param id
          * @return response
-         * @apiNote: 获取学生亲属信息详情
+         * @apiNote: 根据id获取学生亲属表信息
          */
         //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
         //@ApiOperation：用于在swagger2页面显示方法的提示信息
         //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
         //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
         //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-        @ApiOperation( value = "以一个id获取一条学生亲属信息记录详情",notes = "2019-5-5 15:53:53已通过测试" )
+        @ApiOperation( value = "根据id获取学生亲属表信息",notes = "2019-5-5 15:53:53已通过测试" )
         @GetMapping("studentRelation/{id}")
         @ApiImplicitParam(name = "id", value = "studentRelation表的一个id", required = false, dataType = "Long" , paramType = "path")
         @ResponseBody
@@ -98,9 +98,9 @@ public class StudentRelationController {
 
         /**
          * Author: chenenru 10:29 2019/4/30
-         * @apiNote: 查询所有学生亲属信息记录
+         * @apiNote: 查询所有学生亲属表信息记录
          */
-        @ApiOperation( value = "获取所有学生亲属信息记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
+        @ApiOperation( value = "获取所有学生亲属表信息记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
         @GetMapping("studentRelations/listAll")
         @ResponseBody
         public void selectAll(HttpServletResponse response) throws IOException {
@@ -137,12 +137,12 @@ public class StudentRelationController {
 
         /**
          * Author: chenenru 10:30 2019/4/30
-         * 新增学生亲属信息
+         * 新增学生亲属表信息
          * @param studentRelation
-         * @return 新增学生亲属信息结果
+         * @return 新增学生亲属表信息结果
          */
         @ApiOperation(value="新增电子学生亲属方式", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "studentRelation", value = "学生亲属信息详情实体", required = true, dataType = "StudentRelation")
+        @ApiImplicitParam(name = "studentRelation", value = "学生亲属表信息详情实体", required = true, dataType = "StudentRelation")
         @PostMapping("/studentRelation")  //post请求方式
         @ResponseBody
         public Result create(@RequestBody(required = false) StudentRelation studentRelation){
@@ -162,7 +162,7 @@ public class StudentRelationController {
 
         /**
          * Author: chenenru 10:33 2019/4/30
-         * 删除学生亲属信息
+         * 删除学生亲属表信息
          * @param id
          * @return 删除操作结果
          */
@@ -183,12 +183,12 @@ public class StudentRelationController {
 
         /**
          * Author: chenenru 10:34 2019/4/30
-         * 更新学生亲属信息
+         * 更新学生亲属表信息
          * @param studentRelation
          * @return 更新操作结果
          */
-        @ApiOperation(value="更新学生亲属信息详情", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "studentRelation", value = "学生亲属信息详情实体", required = true, dataType = "StudentRelation")
+        @ApiOperation(value="更新学生亲属表信息详情", notes="2019-5-5 15:53:53已通过测试")
+        @ApiImplicitParam(name = "studentRelation", value = "学生亲属表信息详情实体", required = true, dataType = "StudentRelation")
         @PutMapping("/studentRelation")   //Put请求
         @ResponseBody
         public Result update(@RequestBody(required = false) StudentRelation studentRelation){

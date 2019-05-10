@@ -25,11 +25,11 @@ import java.util.List;
 
 /**
  * @Author laizhouhao
- * @Description 关于审批规定信息模块的Controller层（Http URL请求）的具体实现方法
+ * @Description 关于审批步数规定信息模块的Controller层（Http URL请求）的具体实现方法
  * @Date 16:15 2019/4/29
  **/
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "审批规定信息模块")
+@Api(description = "审批步数规定信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/approvalMain")
@@ -115,14 +115,14 @@ public class ApprovalMainController {
      * Author: laizhouhao 9:55 2019/4/30
      * @param id
      * @return response
-     * @apiNote: 获取审批规定信息详细
+     * @apiNote: 以一个id获取一条审批步数规定记录详情
      */
     //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
     //@ApiOperation：用于在swagger2页面显示方法的提示信息
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条审批规定记录详情",notes = "2019年5月6日 14:46:30 已测试" )
+    @ApiOperation( value = "以一个id获取一条审批步数规定记录详情",notes = "2019年5月6日 14:46:30 已测试" )
     @GetMapping("approvalMain/{id}")
     @ApiImplicitParam(name = "id", value = "ApprovalMain表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -152,9 +152,10 @@ public class ApprovalMainController {
 
     /**
      * Author: laizhouhao 16:26 2019/4/29
-     * @apiNote: 查询审批规定的所有记录
+     * @return response
+     * @apiNote: 获取所有审批步骤规定信息
      */
-    @ApiOperation( value = "获取所有审批规定记录的内容",notes = "2019年5月6日 18:03:28 已通过测试" )
+    @ApiOperation( value = "获取所有审批步骤规定信息",notes = "2019年5月6日 18:03:28 已通过测试" )
     @GetMapping("approvalMains/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
@@ -171,9 +172,10 @@ public class ApprovalMainController {
     /**
      * Author: laizhouhao 16:40 2019/4/29
      * @param approvalMain
-     * @return 新增审批规定信息结果
+     * @return 新增审批步骤规定信息结果
+     * @apiNote 新增审批步骤规定信息
      */
-    @ApiOperation(value="新增审批规定信息记录", notes="2019年5月6日 18:03:46 已通过测试")
+    @ApiOperation(value="新增审批步骤规定信息", notes="2019年5月6日 18:03:46 已通过测试")
     @ApiImplicitParam(name = "approvalMain", value = "审批规定详情实体", required = true, dataType = "ApprovalMain")
     @PostMapping("/approvalMain")  //post请求方式
     @ResponseBody
@@ -216,9 +218,10 @@ public class ApprovalMainController {
      * Author: laizhouhao 11:01 2019/4/30
      * @param approvalMain
      * @return 更新操作结果
+     * @apiNote 更新审批步骤规定信息
      */
-    @ApiOperation(value="更新审批规定信息", notes="2019年5月6日 18:06:29 已通过测试")
-    @ApiImplicitParam(name = "approvalMain", value = "审批规定信息详情实体", required = true, dataType = "ApprovalMain")
+    @ApiOperation(value="更新审批步骤规定信息", notes="2019年5月6日 18:06:29 已通过测试")
+    @ApiImplicitParam(name = "approvalMain", value = "审批步骤规定信息详情实体", required = true, dataType = "ApprovalMain")
     @PutMapping("/approvalMain")   //Put请求
     @ResponseBody
     public Result update(@RequestBody(required = false)ApprovalMain approvalMain){

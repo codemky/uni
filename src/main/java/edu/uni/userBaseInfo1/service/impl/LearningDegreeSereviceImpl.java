@@ -13,6 +13,7 @@ import edu.uni.userBaseInfo1.service.LearningDegreeSerevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -126,6 +127,21 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
     @Override
     public boolean deleteLearningDegree(long id) {
         return learningDegreeMapper.deleteByPrimaryKey(id) > 0 ? true :false;
+    }
+
+    /**
+     * Author: laizhouhao 18:13 2019/5/10
+     * @param user_id
+     * @return List<LearningDegree>
+     * @apiNote: 根据用户id获取有效的学历信息
+     */
+    @Override
+    public List<LearningDegree> selectValidLeaDeByUserId(Long user_id) {
+        LearningDegreeExample learningDegreeExample = new LearningDegreeExample();
+        learningDegreeExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
+        List<LearningDegree> learningDegreeList = new ArrayList<>();
+        learningDegreeList = learningDegreeMapper.selectByExample(learningDegreeExample);
+        return learningDegreeList;
     }
 
 }

@@ -90,6 +90,7 @@ public class AcademicDegreeController {
 
     /**
      * Author: laizhouhao 10:29 2019/4/30
+     * @return response
      * @apiNote: 查询所有学位信息记录
      */
     @ApiOperation( value = "获取所有学位信息记录的内容",notes = "2019年5月6日 11:09:00 已通过测试" )
@@ -97,7 +98,7 @@ public class AcademicDegreeController {
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
-        String cacheName = edu.uni.userBaseInfo1.controller.AcademicController.CacheNameHelper.ListAll_CacheName;
+        String cacheName = AcademicController.CacheNameHelper.ListAll_CacheName;
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
@@ -109,9 +110,9 @@ public class AcademicDegreeController {
 
     /**
      * Author: laizhouhao 10:30 2019/4/30
-     * 新增学位信息
      * @param academicDegree
      * @return 新增学位信息结果
+     * @apiNote: 新增学位信息
      */
     @ApiOperation(value="新增学位信息", notes="2019年5月6日 11:09:26 已通过测试")
     @ApiImplicitParam(name = "academicDegree", value = "学位信息详情实体", required = true, dataType = "AcademicDegree")
@@ -134,9 +135,9 @@ public class AcademicDegreeController {
 
     /**
      * Author: laizhouhao 10:33 2019/4/30
-     * 删除学位信息
      * @param id
      * @return 删除操作结果
+     * @apiNote: 删除学位信息
      */
     @ApiOperation(value="删除学位信息", notes="2019年5月6日 11:10:00 已通过测试")
     @ApiImplicitParam(name = "id", value = "学位id", required = true, dataType = "Long", paramType = "path")
@@ -155,9 +156,9 @@ public class AcademicDegreeController {
 
     /**
      * Author: laizhouhao 10:34 2019/4/30
-     * 更新学位信息
      * @param academicDegree
      * @return 更新操作结果
+     * @apiNote 更新学位信息
      */
     @ApiOperation(value="更新学位信息详情", notes="2019年5月6日 11:11:09 已通过测试")
     @ApiImplicitParam(name = "academicDegree", value = "学位信息详情实体", required = true, dataType = "AcademicDegree")
@@ -177,8 +178,6 @@ public class AcademicDegreeController {
         }
         return Result.build(ResultType.ParamError);
     }
-
-
 
     /**
      * <p>

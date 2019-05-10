@@ -70,7 +70,10 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public List<Student> selectByUserId(Long user_id) {
-        return studentMapper.selectByPrimaryKey(user_id);
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria().andUserIdEqualTo(user_id)
+                .andDeletedEqualTo(false);
+        return studentMapper.selectByExample(studentExample);
     }
 
     /**
@@ -163,6 +166,7 @@ public class StudentServiceImpl implements StudentService {
         StudentExample studentExample = new StudentExample();
         studentExample.createCriteria().andUserIdEqualTo(user_id)
                 .andDeletedEqualTo(false);
+        System.out.println("55555");
         return studentMapper.selectByExample(studentExample);
     }
 }

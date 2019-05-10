@@ -88,8 +88,8 @@ public class EcommServiceImpl implements EcommService {
      * @return boolean
      * @apiNote: 插入一条电子通信记录
      */
-    public boolean insert(Ecomm ecomm) {
-        return ecommMapper.insertSelective(ecomm) > 0 ? true : false;
+    public int insert(Ecomm ecomm) {
+        return ecommMapper.insertSelective(ecomm);
 
     }
 

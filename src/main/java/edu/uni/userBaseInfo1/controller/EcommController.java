@@ -8,10 +8,15 @@ package edu.uni.userBaseInfo1.controller;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.Ecomm;
+import edu.uni.userBaseInfo1.bean.RequestMessage;
+import edu.uni.userBaseInfo1.bean.UserinfoApply;
+import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.userBaseInfo1.service.EcommService;
+import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,9 +24,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 //填写description内容可以在测试模块显示相应的文字和模块
 @Api(description = "电子通信模块")
@@ -36,6 +45,10 @@ public class EcommController {
 
     @Autowired  //把Ecomm的Service层接口所有的方法自动装配到该对象中
     EcommService ecommService;
+    @Autowired
+    ApprovalMainService approvalMainService;
+    @Autowired
+    UserinfoApplyService userinfoApplyService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -111,9 +124,9 @@ public class EcommController {
 
     /**
      * Author: chenenru 0:49 2019/5/5
-     * @apiNote: 根据用户的id查询对应的电子通信记录
+     * @apiNote: 根据用户id获取用户的通信方式
      */
-    @ApiOperation( value = "根据用户的id查询对应的电子通信记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
+    @ApiOperation( value = "根据用户id获取用户的通信方式",notes = "2019-5-5 15:53:53已通过测试" )
     @GetMapping("ecommByUId/{userId}")
     @ResponseBody
     public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
@@ -128,7 +141,6 @@ public class EcommController {
         response.getWriter().write(json);
     }
 
-
     /**
      * 新增电子通信方式
      * @param ecomm
@@ -142,8 +154,9 @@ public class EcommController {
         //检验页面传来的对象是否存在
 
         if(ecomm != null){
-            boolean success = ecommService.insert(ecomm);
-            if(success){
+            int success = ecommService.insert(ecomm);
+//            System.out.println("succ=="+ecomm.getId());
+            if(success==1){
                 // 清空相关缓存
                 cache.delete(CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
@@ -203,7 +216,65 @@ public class EcommController {
         return Result.build(ResultType.ParamError);
     }
 
+    /**
+     * Author: laizhouhao 20:50 2019/5/9
+     * @param requestMessage
+     * @return Result
+     * @apiNote: 申请修改通信方式
+     */
+    @ApiOperation(value="申请修改通信方式", notes="未测试")
+    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
+    @PostMapping("applyModifydEcomm/")
+    @ResponseBody
+    public Result ApplyModifyEcomm(@RequestBody RequestMessage requestMessage){
+//        System.out.println("o = "+ requestMessage.getEcomm());
+        Ecomm ecomm = requestMessage.getEcomm();
+        Long byWho = requestMessage.getByWho();
+        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
+        //判断前端传过来的值是否为空
+        if(requestMessage.getEcomm()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
+            //获取被修改的用户id
+            Long user_id = ecomm.getUserId();
+            //旧记录id
+            Long oldId = ecomm.getId();
+//            System.out.println("oldId = "+oldId);
+            //将要插入的记录设置为无效
+            ecomm.setDeleted(true);
+            //将新纪录插入Ecomm表
+            ecommService.insert(ecomm);
+            //新纪录的id
+            Long newId = ecomm.getId();
 
+            //向userinfoApply增加审批业务id
+            userInfo_apply.setApprovalMainId(approvalMainService.
+                    selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改照片"));
+            //设置用户信息申请种类
+            userInfo_apply.setInfoType(0);
+            //设置用户信息申请旧信息记录id
+            userInfo_apply.setOldInfoId(oldId);
+            //设置用户信息申请新信息记录id
+            userInfo_apply.setNewInfoId(newId);
+            //设置用户信息申请开始时间
+            userInfo_apply.setStartTime(ecomm.getDatetime());
+            //设置用户信息创建时间
+            userInfo_apply.setDatetime(ecomm.getDatetime());
+            //设置用户信息申请写入者
+            userInfo_apply.setByWho(byWho);
+            //设置用户信息申请为有效
+            userInfo_apply.setDeleted(false);
+            //插入新的userinfoApply记录
+            boolean success = userinfoApplyService.insertUserinfoApply(userInfo_apply);
+            if(success){
+                //清除相应的缓存
+                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
+                cache.delete(CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
 
     /**
      * <p>

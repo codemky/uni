@@ -28,6 +28,15 @@ public class UserInfo {
     List<AddrStreet>addrStreets;
     List<Academic> academics;
     List<AcademicDegree> academicDegrees;
+    List<GetAddrDetail>getAddrDetails;
+
+    public List<GetAddrDetail> getGetAddrDetails() {
+        return getAddrDetails;
+    }
+
+    public void setGetAddrDetails(List<GetAddrDetail> getAddrDetails) {
+        this.getAddrDetails = getAddrDetails;
+    }
 
     public List<Academic> getAcademics() {
         return academics;

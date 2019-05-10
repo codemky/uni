@@ -64,4 +64,12 @@ public interface LearningDegreeSerevice {
      * @apiNote: 根据职员的id查询有效的学历记录
      */
    /* LearningDegree selectLearingDegreeByEmployeeId(long userId);*/
+
+    /**
+     * Author: laizhouhao 18:13 2019/5/10
+     * @param user_id
+     * @return List<LearningDegree>
+     * @apiNote: 根据用户id获取有效的学历信息
+     */
+    List<LearningDegree> selectValidLeaDeByUserId(Long user_id);
 }

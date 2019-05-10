@@ -82,8 +82,8 @@ public interface StudentRelationService {
          * Author: laizhouhao 15:07 2019/5/8
          * @param user_id
          * @return List<StudentRelation>
-         * @apiNote: 根据用户id查询所有的亲属信息
+         * @apiNote: 根据用户id查询所有有效的亲属信息
          */
-        List<StudentRelation> selectRelaByUserId(Long user_id);
+        List<StudentRelation> selectValidRelaByUserId(Long user_id);
 
 }

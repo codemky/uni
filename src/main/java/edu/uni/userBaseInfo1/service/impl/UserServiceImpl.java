@@ -3,10 +3,7 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
-import edu.uni.userBaseInfo1.bean.Address;
-import edu.uni.userBaseInfo1.bean.AddressExample;
-import edu.uni.userBaseInfo1.bean.PictureExample;
-import edu.uni.userBaseInfo1.bean.User;
+import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.AddressMapper;
 import edu.uni.userBaseInfo1.mapper.PictureMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
@@ -131,5 +128,16 @@ public class UserServiceImpl implements UserService {
                 .andDeletedEqualTo(false);
         userInfo.setPictures(pictureMapper.selectByExample(pictureExample));
         return userInfo;
+    }
+
+    /**
+     * Author: laizhouhao 19:15 2019/5/9
+     * @param record,example
+     * @return int
+     * @apiNote: 根据条件修改
+     */
+    @Override
+    public int updateByExample(User record, UserExample example) {
+        return userMapper.updateByExampleSelective(record, example);
     }
 }

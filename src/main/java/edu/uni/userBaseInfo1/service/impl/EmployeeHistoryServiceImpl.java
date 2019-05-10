@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.EmployeeHistory;
+import edu.uni.userBaseInfo1.bean.EmployeeHistoryExample;
 import edu.uni.userBaseInfo1.mapper.EmployeeHistoryMapper;
 import edu.uni.userBaseInfo1.service.EmployeeHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  * @Description employeeHistory实体类的service层接口的实现类
  * @Date 15:49 2019/4/29
  **/
+import java.util.ArrayList;
 import java.util.List;
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -110,5 +112,20 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
     @Override
     public boolean delete(Long id) {
         return employeeHistoryMapper.deleteByPrimaryKey(id) > 0 ? true : false;
+    }
+
+    /**
+     * Author: laizhouhao 18:26 2019/5/10
+     * @param user_id
+     * @return List<EmployeeHistory>
+     * @apiNote: 根据用户id查询有效的雇佣历史信息
+     */
+    @Override
+    public List<EmployeeHistory> seleValidEmpHisByUserId(Long user_id) {
+        EmployeeHistoryExample employeeHistoryExample = new EmployeeHistoryExample();
+        employeeHistoryExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
+        List<EmployeeHistory> employeeHistoryList = new ArrayList<>();
+        employeeHistoryList = employeeHistoryMapper.selectByExample(employeeHistoryExample);
+        return employeeHistoryList;
     }
 }

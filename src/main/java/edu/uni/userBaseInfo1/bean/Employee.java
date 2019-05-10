@@ -75,6 +75,9 @@ public class Employee {
                 '}';
     }
 
+    public Employee() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -211,8 +214,5 @@ public class Employee {
         this.datetime = datetime;
         this.byWho = byWho;
         this.deleted = deleted;
-    }
-
-    public Employee() {
     }
 }

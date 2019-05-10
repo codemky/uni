@@ -64,4 +64,12 @@ public interface EmployeeHistoryService {
      * @apiNote: 用于根据id删除EmployeeHistory表的一个记录
      */
     boolean delete(Long id);
+
+    /**
+     * Author: laizhouhao 18:26 2019/5/10
+     * @param user_id
+     * @return List<EmployeeHistory>
+     * @apiNote: 根据用户id查询有效的雇佣历史信息
+     */
+    List<EmployeeHistory> seleValidEmpHisByUserId(Long user_id);
 }

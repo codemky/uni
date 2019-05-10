@@ -2,16 +2,14 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Address;
-import edu.uni.userBaseInfo1.bean.User;
-import edu.uni.userBaseInfo1.service.AddressService;
-import edu.uni.userBaseInfo1.service.PictureService;
-import edu.uni.userBaseInfo1.service.UserService;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.GetAddrDetail;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,11 +40,26 @@ import java.util.List;
 public class UserController {
     //把User的Service层接口所有的方法自动装配到该对象中
     @Autowired
-    UserService userService;
+    private UserService userService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private StudentRelationService studentRelationService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
     @Autowired
     private PictureService pictureService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private AcademicService academicService;
+    @Autowired
+    private AcademicDegreeService academicDegreeService;
+    @Autowired
+    private EmployeeHistoryService employeeHistoryService;
+
+    @Autowired
+    private LearningDegreeSerevice learningDegreeSerevice;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -76,7 +90,7 @@ public class UserController {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
-        String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix + id;
+        String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"id"+id;
         //尝试在缓存中通过键名获取相应的键值
         //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
         String json = cache.get(cacheName);
@@ -190,20 +204,19 @@ public class UserController {
      * @apiNote: 根据用户表的id查找该用户的照片、地址信息
      */
     @ApiOperation( value = "根据用户表的id查找该用户的照片、地址信息",notes = "2019年5月8日 20:40:35 已测试通过" )
-    @GetMapping("info/userInfo/All/{user_id}")
+    @GetMapping("info/userPictureAddr/{user_id}")
     @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void receiveRelaInfo(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
         //检验页面传来的id是否存在
         if(user_id != null){
             UserInfo userInfo = new UserInfo();
             //获取用户照片、地址信息
             userInfo = userService.selectPictureAddrByUserId(user_id);
-            System.out.println(userInfo);
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix + user_id;
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"pictureUserId"+ user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);
@@ -218,6 +231,128 @@ public class UserController {
         }
     }
 
+    /**
+     * Author: laizhouhao 18:31 2019/5/9
+     * @param user_id,oldPwd,newPwd
+     * @return Result
+     * @apiNote: 验证旧密码后修改密码
+     */
+    @ApiOperation( value = "验证旧密码后修改密码",notes = "2019-5-9 19:32:36 已通过测试" )
+    @GetMapping("modifyPassword/{user_id}/{oldPwd}/{newPwd}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "user_id", value = "用户id", required = false, dataType = "Long", paramType = "path"),
+            @ApiImplicitParam(name = "oldPwd", value = "旧密码", required = false, dataType = "String", paramType = "path" ),
+            @ApiImplicitParam(name = "newPwd", value = "新密码", required = false, dataType = "String", paramType = "path" )
+    })
+    @ResponseBody
+    public Result updatePassword(@PathVariable Long user_id,@PathVariable String oldPwd,@PathVariable String newPwd, HttpServletResponse response) throws IOException {
+        //检验页面传来的id、旧密码、新密码是否存在
+        if(user_id!=null && oldPwd != null && newPwd!=null){
+            User user = new User();
+            user.setPwd(newPwd);
+            //构造修改条件，即当用户名和旧密码都正确时
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andIdEqualTo(user_id).andPwdEqualTo(oldPwd);
+            int success = userService.updateByExample(user,userExample);
+            if(success==1){
+                //清除相应的缓存
+                cache.delete(UserController.CacheNameHelper.Receive_CacheNamePrefix +"midifyPwd"+ user_id);
+                cache.delete(UserController.CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
+
+    /**
+     * Author: laizhouhao 16:26 2019/5/10
+     * @param user_id
+     * @return userInfo
+     * @apiNote: 根据用户id获取用户所有信息
+     */
+    @ApiOperation( value = "根据用户id获取用户所有信息",notes = "已测试" )
+    @GetMapping("userInfoListAll/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void receiveUserInfoListAll(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(user_id != null){
+            UserInfo userInfo = new UserInfo();
+            //获取用户在user表的信息
+            List<User> userList = new ArrayList<>();
+            userList.add(userService.selectUserById(user_id));
+            //获取用户在student的有效的学生信息，如果没有则为空
+            List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
+            //获取主修专业
+
+            //获取班级
+
+            //获取政治面貌
+            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
+            politicalAffiliationList.add(politicalAffiliationService
+                    .selectPoliticalAffiliationById(studentList.get(0).getPoliticalId()));
+            //获取宿舍
+
+            //获取当前地址
+            List<Address> addressList = new ArrayList<>();
+            List<GetAddrDetail> getAddrDetailList = new ArrayList<>();
+            GetAddrDetail getAddrDetail = new GetAddrDetail();
+            if(studentList.size()>=1) {
+                //当前地址主要信息
+                addressList.add(addressService.selectById(studentList.get(0).getHomeAddress()));
+                if(studentList.size()>=2) {
+                    //获取当前通信地址主要信息
+                    addressList.add(addressService.selectById(studentList.get(0).getHomeAddress()));
+                }
+            }
+            //详细地址
+            userInfo = getAddrDetail.reviceAddrDetail(addressList);
+            //获取该用户在student_ralation的有效的亲属信息，如果没有则为空
+            userInfo.setStudentRelations(studentRelationService.selectValidRelaByUserId(user_id));
+            //获取用户照片，如果没有则为空
+            List<Picture> pictureList = new ArrayList<>();
+            pictureList.add(pictureService.selectPictureByUserId(user_id));
+            userInfo.setPictures(pictureList);
+            //获取用户学历，如果没有则为空
+            List<LearningDegree> learningDegreeList = new ArrayList<>();
+            learningDegreeList = learningDegreeSerevice.selectValidLeaDeByUserId(user_id);
+            if(learningDegreeList.size()>=1) {
+                //获取受教育程度，如果没有则为空
+                List<Academic> academicList = new ArrayList<>();
+                academicList.add(academicService.selectById(learningDegreeList.get(0).getAcademicId()));
+                //获取学位表，如果没有则为空
+                List<AcademicDegree> academicDegreeList = new ArrayList<>();
+                academicDegreeList.add(academicDegreeService.selectById(learningDegreeList.get(0).getDegreeId()));
+                userInfo.setAcademicDegrees(academicDegreeList);
+                userInfo.setAcademics(academicList);
+            }
+            //获取雇佣历史，如果没有则为空
+            userInfo.setEmployeeHistories(employeeHistoryService.seleValidEmpHisByUserId(user_id));
+            userInfo.setLearningDegrees(learningDegreeList);
+            userInfo.setAddresses(addressList);
+            userInfo.setUsers(userList);
+            userInfo.setStudents(studentList);
+            userInfo.setPoliticalAffiliations(politicalAffiliationList);
+            System.out.println(userInfo);
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"userInfoAll"+ userInfo;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("userInfo",userInfo).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
+    }
 
     /**
      * <p>

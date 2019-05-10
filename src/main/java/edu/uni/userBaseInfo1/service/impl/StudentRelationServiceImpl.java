@@ -135,11 +135,11 @@ public class StudentRelationServiceImpl implements StudentRelationService {
      * @apiNote: 根据用户id查询亲属在本系统的id
      */
     @Override
-    public List<StudentRelation> selectRelaByUserId(Long user_id) {
-        //构造查询条件
+    public List<StudentRelation> selectValidRelaByUserId(Long user_id) {
+        //构造查询条件,根据user_id的有效的信息记录
         StudentRelationExample studentRelationExample = new StudentRelationExample();
         studentRelationExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
-        //查找所有的亲属信息
+        //查找所有的符合条件的亲属信息
         List<StudentRelation> studentRelations
                 = studentRelationMapper.selectByExample(studentRelationExample);
         return studentRelations;

@@ -28,12 +28,12 @@ import java.util.List;
 
 /**
  * @Author laizhouhao
- * @Description 关于学生信息模块的Controller层（Http URL请求）的具体实现方法
+ * @Description 关于学生主要信息模块的Controller层（Http URL请求）的具体实现方法
  * @Date 10:21 2019/4/30
  **/
 
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "学生信息模块")
+@Api(description = "学生主要信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/student")
@@ -57,7 +57,7 @@ public class StudentController {
 
         //内部类，专门用来管理每个get方法所对应缓存的名称。
         static class CacheNameHelper{
-            // ub1_s_student_{学生信息记录id}
+            // ub1_s_student_{学生主要信息记录id}
             public static final String Receive_CacheNamePrefix = "ub1_s_student_";
             // ub1_s_student_listAll
             public static final String ListAll_CacheName = "ub1_s_student_listAll";
@@ -67,9 +67,9 @@ public class StudentController {
      * Author: laizhouhao 18:36 2019/5/6
      * @param user_id
      * @return response
-     * @apiNote: 根据用户的id查询对应的学生信息
+     * @apiNote: 根据用户的id查询对应的学生主要信息
      */
-    @ApiOperation( value = "根据用户的id查询对应的学生信息",notes = "2019年5月6日 18:37:01 已通过测试" )
+    @ApiOperation( value = "根据用户的id查询对应的学生主要信息",notes = "2019年5月6日 18:37:01 已通过测试" )
     @GetMapping("studentByUserId/{user_id}")
     @ResponseBody
     public void selectByUserId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
@@ -86,9 +86,10 @@ public class StudentController {
 
         /**
          * Author: laizhouhao 10:29 2019/4/30
-         * @apiNote: 查询所有学生信息记录
+         * return response
+         * @apiNote: 查询所有学生主要信息记录
          */
-        @ApiOperation( value = "获取所有学生信息记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
+        @ApiOperation( value = "查询所有学生主要信息记录",notes = "2019-5-5 15:53:53已通过测试" )
         @GetMapping("students/listAll")
         @ResponseBody
         public void selectAll(HttpServletResponse response) throws IOException {
@@ -105,12 +106,12 @@ public class StudentController {
 
         /**
          * Author: laizhouhao 10:30 2019/4/30
-         * 新增学生信息
          * @param student
-         * @return 新增学生信息结果
+         * @return 新增学生主要信息结果
+         * @apiNote 新增学生主要信息
          */
-        @ApiOperation(value="新增学生方式", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "student", value = "学生信息详情实体", required = true, dataType = "Student")
+        @ApiOperation(value="新增学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+        @ApiImplicitParam(name = "student", value = "学生主要信息详情实体", required = true, dataType = "Student")
         @PostMapping("/student")  //post请求方式
         @ResponseBody
         public Result create(@RequestBody(required = false) Student student){
@@ -130,11 +131,11 @@ public class StudentController {
 
         /**
          * Author: laizhouhao 10:33 2019/4/30
-         * 删除学生信息
          * @param id
          * @return 删除操作结果
+         * @apiNote 根据id删除学生主要信息
          */
-        @ApiOperation(value="删除学生", notes="2019-5-5 15:53:53已通过测试")
+        @ApiOperation(value="根据id删除学生主要信息", notes="2019-5-5 15:53:53已通过测试")
         @ApiImplicitParam(name = "id", value = "学生id", required = true, dataType = "Long", paramType = "path")
         @DeleteMapping("/student/{id}")   //delete请求
         @ResponseBody
@@ -151,12 +152,12 @@ public class StudentController {
 
         /**
          * Author: laizhouhao 10:34 2019/4/30
-         * 更新学生信息
          * @param student
          * @return 更新操作结果
+         * @apiNote 更新学生主要信息
          */
-        @ApiOperation(value="更新学生信息详情", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "student", value = "学生信息详情实体", required = true, dataType = "Student")
+        @ApiOperation(value="更新学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+        @ApiImplicitParam(name = "student", value = "学生主要信息实体", required = true, dataType = "Student")
         @PutMapping("/student")   //Put请求
         @ResponseBody
         public Result update(@RequestBody(required = false) Student student){
@@ -191,18 +192,14 @@ public class StudentController {
             //获取学生在用户表的主要信息
             List<User> userList = new ArrayList<>();
             userList.add(userService.selectUserById(user_id));
-
             //获取学生的照片、地址信息
             userInfo = userService.selectPictureAddrByUserId(user_id);
             userInfo.setUsers(userList);
-
             //获取学生的通信方式
             userInfo.setEcomms(ecommService.selectValidEcomByUserId(user_id));
-
             //获取学生在学生表的主要信息
             List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
             userInfo.setStudents(studentList);
-
             //获取政治面貌
             List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
             if(studentList.size()>=1) {
@@ -214,7 +211,7 @@ public class StudentController {
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix +"yyy"+ user_id;
+            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix +"studentDetailInfo"+ user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);

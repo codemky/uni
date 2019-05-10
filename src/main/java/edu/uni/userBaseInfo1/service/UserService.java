@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.User;
+import edu.uni.userBaseInfo1.bean.UserExample;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 
 import java.util.List;
@@ -57,4 +58,12 @@ public interface UserService {
      * @apiNote: 根据用户id查找用户的照片、详细地址
      */
     UserInfo selectPictureAddrByUserId(Long user_id);
+
+    /**
+     * Author: laizhouhao 19:15 2019/5/9
+     * @param record,example
+     * @return int
+     * @apiNote: 根据条件修改
+     */
+    int updateByExample(User record, UserExample example);
 }

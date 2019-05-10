@@ -113,4 +113,6 @@ public class Ecomm {
         this.deleted = deleted;
     }
 
+    public Ecomm() {
+    }
 }

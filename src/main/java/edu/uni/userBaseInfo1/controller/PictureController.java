@@ -20,11 +20,11 @@ import java.time.LocalDateTime;
 
 /**
  * @Author laizhouhao
- * @Description 关于照片信息模块的Controller层（Http URL请求）的具体实现方法
+ * @Description 关于照片表信息模块的Controller层（Http URL请求）的具体实现方法
  * @Date 16:15 2019/4/29
  **/
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "照片信息模块")
+@Api(description = "照片表信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/picture")
@@ -51,14 +51,14 @@ public class PictureController {
      * Author: laizhouhao 9:55 2019/4/30
      * @param id
      * @return response
-     * @apiNote: 获取照片信息详细
+     * @apiNote: 根据id获取照片表信息
      */
     //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
     //@ApiOperation：用于在swagger2页面显示方法的提示信息
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条照片记录详情",notes = "2019-5-5 15:53:53已通过测试" )
+    @ApiOperation( value = "根据id获取照片表信息",notes = "2019-5-5 15:53:53已通过测试" )
     @GetMapping("picture/{id}")
     @ApiImplicitParam(name = "id", value = "Picture表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -87,9 +87,10 @@ public class PictureController {
 
     /**
      * Author: laizhouhao 16:26 2019/4/29
-     * @apiNote: 查询照片的所有记录
+     * @return response
+     * @apiNote: 查询照片表的所有记录
      */
-    @ApiOperation( value = "获取所有照片记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
+    @ApiOperation( value = "查询照片表的所有记录",notes = "2019-5-5 15:53:53已通过测试" )
     @GetMapping("pictures/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
@@ -127,9 +128,10 @@ public class PictureController {
     /**
      * Author: laizhouhao 16:40 2019/4/29
      * @param picture
-     * @return 新增照片信息结果
+     * @return 新增照片表信息结果
+     * @apiNote 新增照片信息
      */
-    @ApiOperation(value="新增照片信息记录", notes="2019-5-5 15:53:53已通过测试")
+    @ApiOperation(value="新增照片信息", notes="2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "picture", value = "照片详情实体", required = true, dataType = "Picture")
     @PostMapping("/picture")  //post请求方式
     @ResponseBody
@@ -149,9 +151,10 @@ public class PictureController {
     /**
      * Author: laizhouhao 16:47 2019/4/29
      * @param id
-     * @return 删除照片信息结果
+     * @return 删除照片表信息结果
+     * @apiNote 根据id删除照片表信息
      */
-    @ApiOperation(value="删除照片信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiOperation(value="根据id删除照片表信息", notes="2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "id", value = "照片id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/picture/{id}")   //delete请求
     @ResponseBody
@@ -170,9 +173,10 @@ public class PictureController {
      * Author: laizhouhao 11:01 2019/4/30
      * @param picture
      * @return 更新操作结果
+     * @apiNote 更新照片表信息
      */
-    @ApiOperation(value="更新照片信息", notes="2019-5-5 15:53:53已通过测试")
-    @ApiImplicitParam(name = "picture", value = "照片信息详情实体", required = true, dataType = "Picture")
+    @ApiOperation(value="更新照片表信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiImplicitParam(name = "picture", value = "照片表信息实体", required = true, dataType = "Picture")
     @PutMapping("/picture")   //Put请求
     @ResponseBody
     public Result update(@RequestBody(required = false) Picture picture){
