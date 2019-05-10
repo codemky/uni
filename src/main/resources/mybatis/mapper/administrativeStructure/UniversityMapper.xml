@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.uni.administrativestructure.mapper.UniversityMapper" >
+  <resultMap id="BaseResultMap" type="edu.uni.administrativestructure.bean.University" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="unit_number" property="unitNumber" jdbcType="VARCHAR" />
+    <result column="social_trust_code" property="socialTrustCode" jdbcType="VARCHAR" />
+    <result column="certification_code" property="certificationCode" jdbcType="VARCHAR" />
+    <result column="enterprise_code" property="enterpriseCode" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="ename" property="ename" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="funding_sources" property="fundingSources" jdbcType="INTEGER" />
+    <result column="establish_date" property="establishDate" jdbcType="TIMESTAMP" />
+    <result column="hosted_by" property="hostedBy" jdbcType="INTEGER" />
+    <result column="admini_by" property="adminiBy" jdbcType="INTEGER" />
+    <result column="initial_funding" property="initialFunding" jdbcType="INTEGER" />
+    <result column="certification_begin_date" property="certificationBeginDate" jdbcType="TIMESTAMP" />
+    <result column="certification_end_date" property="certificationEndDate" jdbcType="TIMESTAMP" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
+    <result column="by_who" property="byWho" jdbcType="BIGINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, unit_number, social_trust_code, certification_code, enterprise_code, name, ename, 
+    status, funding_sources, establish_date, hosted_by, admini_by, initial_funding, certification_begin_date, 
+    certification_end_date, telephone, address, datetime, by_who, deleted
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.administrativestructure.bean.UniversityExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from university
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from university
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from university
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.administrativestructure.bean.UniversityExample" >
+    delete from university
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.administrativestructure.bean.University" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into university (unit_number, social_trust_code, certification_code, 
+      enterprise_code, name, ename, 
+      status, funding_sources, establish_date, 
+      hosted_by, admini_by, initial_funding, 
+      certification_begin_date, certification_end_date, 
+      telephone, address, datetime, 
+      by_who, deleted)
+    values (#{unitNumber,jdbcType=VARCHAR}, #{socialTrustCode,jdbcType=VARCHAR}, #{certificationCode,jdbcType=VARCHAR}, 
+      #{enterpriseCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{ename,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{fundingSources,jdbcType=INTEGER}, #{establishDate,jdbcType=TIMESTAMP}, 
+      #{hostedBy,jdbcType=INTEGER}, #{adminiBy,jdbcType=INTEGER}, #{initialFunding,jdbcType=INTEGER}, 
+      #{certificationBeginDate,jdbcType=TIMESTAMP}, #{certificationEndDate,jdbcType=TIMESTAMP}, 
+      #{telephone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{datetime,jdbcType=TIMESTAMP}, 
+      #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.administrativestructure.bean.University" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into university
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="unitNumber != null" >
+        unit_number,
+      </if>
+      <if test="socialTrustCode != null" >
+        social_trust_code,
+      </if>
+      <if test="certificationCode != null" >
+        certification_code,
+      </if>
+      <if test="enterpriseCode != null" >
+        enterprise_code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="ename != null" >
+        ename,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="fundingSources != null" >
+        funding_sources,
+      </if>
+      <if test="establishDate != null" >
+        establish_date,
+      </if>
+      <if test="hostedBy != null" >
+        hosted_by,
+      </if>
+      <if test="adminiBy != null" >
+        admini_by,
+      </if>
+      <if test="initialFunding != null" >
+        initial_funding,
+      </if>
+      <if test="certificationBeginDate != null" >
+        certification_begin_date,
+      </if>
+      <if test="certificationEndDate != null" >
+        certification_end_date,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="byWho != null" >
+        by_who,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="unitNumber != null" >
+        #{unitNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="socialTrustCode != null" >
+        #{socialTrustCode,jdbcType=VARCHAR},
+      </if>
+      <if test="certificationCode != null" >
+        #{certificationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseCode != null" >
+        #{enterpriseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null" >
+        #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="fundingSources != null" >
+        #{fundingSources,jdbcType=INTEGER},
+      </if>
+      <if test="establishDate != null" >
+        #{establishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hostedBy != null" >
+        #{hostedBy,jdbcType=INTEGER},
+      </if>
+      <if test="adminiBy != null" >
+        #{adminiBy,jdbcType=INTEGER},
+      </if>
+      <if test="initialFunding != null" >
+        #{initialFunding,jdbcType=INTEGER},
+      </if>
+      <if test="certificationBeginDate != null" >
+        #{certificationBeginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="certificationEndDate != null" >
+        #{certificationEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.administrativestructure.bean.UniversityExample" resultType="java.lang.Integer" >
+    select count(*) from university
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update university
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.unitNumber != null" >
+        unit_number = #{record.unitNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.socialTrustCode != null" >
+        social_trust_code = #{record.socialTrustCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.certificationCode != null" >
+        certification_code = #{record.certificationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.enterpriseCode != null" >
+        enterprise_code = #{record.enterpriseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ename != null" >
+        ename = #{record.ename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.fundingSources != null" >
+        funding_sources = #{record.fundingSources,jdbcType=INTEGER},
+      </if>
+      <if test="record.establishDate != null" >
+        establish_date = #{record.establishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.hostedBy != null" >
+        hosted_by = #{record.hostedBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.adminiBy != null" >
+        admini_by = #{record.adminiBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.initialFunding != null" >
+        initial_funding = #{record.initialFunding,jdbcType=INTEGER},
+      </if>
+      <if test="record.certificationBeginDate != null" >
+        certification_begin_date = #{record.certificationBeginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.certificationEndDate != null" >
+        certification_end_date = #{record.certificationEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.telephone != null" >
+        telephone = #{record.telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datetime != null" >
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null" >
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null" >
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update university
+    set id = #{record.id,jdbcType=BIGINT},
+      unit_number = #{record.unitNumber,jdbcType=VARCHAR},
+      social_trust_code = #{record.socialTrustCode,jdbcType=VARCHAR},
+      certification_code = #{record.certificationCode,jdbcType=VARCHAR},
+      enterprise_code = #{record.enterpriseCode,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      ename = #{record.ename,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      funding_sources = #{record.fundingSources,jdbcType=INTEGER},
+      establish_date = #{record.establishDate,jdbcType=TIMESTAMP},
+      hosted_by = #{record.hostedBy,jdbcType=INTEGER},
+      admini_by = #{record.adminiBy,jdbcType=INTEGER},
+      initial_funding = #{record.initialFunding,jdbcType=INTEGER},
+      certification_begin_date = #{record.certificationBeginDate,jdbcType=TIMESTAMP},
+      certification_end_date = #{record.certificationEndDate,jdbcType=TIMESTAMP},
+      telephone = #{record.telephone,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.administrativestructure.bean.University" >
+    update university
+    <set >
+      <if test="unitNumber != null" >
+        unit_number = #{unitNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="socialTrustCode != null" >
+        social_trust_code = #{socialTrustCode,jdbcType=VARCHAR},
+      </if>
+      <if test="certificationCode != null" >
+        certification_code = #{certificationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseCode != null" >
+        enterprise_code = #{enterpriseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null" >
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="fundingSources != null" >
+        funding_sources = #{fundingSources,jdbcType=INTEGER},
+      </if>
+      <if test="establishDate != null" >
+        establish_date = #{establishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hostedBy != null" >
+        hosted_by = #{hostedBy,jdbcType=INTEGER},
+      </if>
+      <if test="adminiBy != null" >
+        admini_by = #{adminiBy,jdbcType=INTEGER},
+      </if>
+      <if test="initialFunding != null" >
+        initial_funding = #{initialFunding,jdbcType=INTEGER},
+      </if>
+      <if test="certificationBeginDate != null" >
+        certification_begin_date = #{certificationBeginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="certificationEndDate != null" >
+        certification_end_date = #{certificationEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.administrativestructure.bean.University" >
+    update university
+    set unit_number = #{unitNumber,jdbcType=VARCHAR},
+      social_trust_code = #{socialTrustCode,jdbcType=VARCHAR},
+      certification_code = #{certificationCode,jdbcType=VARCHAR},
+      enterprise_code = #{enterpriseCode,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ename = #{ename,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      funding_sources = #{fundingSources,jdbcType=INTEGER},
+      establish_date = #{establishDate,jdbcType=TIMESTAMP},
+      hosted_by = #{hostedBy,jdbcType=INTEGER},
+      admini_by = #{adminiBy,jdbcType=INTEGER},
+      initial_funding = #{initialFunding,jdbcType=INTEGER},
+      certification_begin_date = #{certificationBeginDate,jdbcType=TIMESTAMP},
+      certification_end_date = #{certificationEndDate,jdbcType=TIMESTAMP},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
