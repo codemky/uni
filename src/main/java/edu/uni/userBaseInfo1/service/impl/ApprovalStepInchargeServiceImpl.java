@@ -37,6 +37,7 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
     public List<ApprovalStepIncharge> selectByMainId(Long id) {
         ApprovalStepInchargeExample example = new ApprovalStepInchargeExample();
         ApprovalStepInchargeExample.Criteria criteria = example.createCriteria();
+        example.setOrderByClause("step ASC");
         criteria.andApprovalMainIdEqualTo(id);
         criteria.andDeletedEqualTo(false);
 

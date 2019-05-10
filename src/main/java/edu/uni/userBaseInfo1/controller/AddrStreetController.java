@@ -100,7 +100,7 @@ public class AddrStreetController {
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
-                    .appendData("addrStreets",addrStreetService.selectAllAddrStreets()).convertIntoJSON();
+                    .appendData("datas",addrStreetService.selectAllAddrStreets()).convertIntoJSON();
             cache.set(cacheName,json);
         }
         response.getWriter().write(json);

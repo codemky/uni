@@ -14,7 +14,7 @@ public interface ApprovalMainService {
     /**
      * Author: laizhouhao 15:17 2019/4/29
      * @return List<ApprovalMain>
-     * @apiNote: 查询所有的每一种申请的审批步骤数
+     * @apiNote: 查询所有的审批规定
      */
     List<ApprovalMain> selectAll();
 
@@ -22,7 +22,7 @@ public interface ApprovalMainService {
      * Author: laizhouhao 15:39 2019/4/29
      * @param id
      * @return ApprovalMain
-     * @apiNote: 根据id查询每一种申请的审批步骤数
+     * @apiNote: 根据id查询审批规定
      */
     ApprovalMain selectById(Long id);
 
@@ -30,7 +30,7 @@ public interface ApprovalMainService {
      * Author: laizhouhao 15:41 2019/4/29
      * @param pageNum
      * @return List<ApprovalMain>
-     * @apiNote: 分页查询每一种申请的审批步骤数信息
+     * @apiNote: 分页查询审批规定信息
      */
     PageInfo<ApprovalMain> selectPage(Integer pageNum);
 

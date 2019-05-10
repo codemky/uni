@@ -72,7 +72,7 @@ public class AddressController {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
         //拼接缓存键名（字符串）
-        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + countryCode;
+        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix +  "countryCode" ;
         //尝试在缓存中通过键名获取相应的键值
         //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
         String json = cache.get(cacheName);
