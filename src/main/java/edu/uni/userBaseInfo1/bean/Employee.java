@@ -212,4 +212,7 @@ public class Employee {
         this.byWho = byWho;
         this.deleted = deleted;
     }
+
+    public Employee() {
+    }
 }

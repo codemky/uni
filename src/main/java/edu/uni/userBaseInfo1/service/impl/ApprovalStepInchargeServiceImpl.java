@@ -3,9 +3,12 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.userBaseInfo1.bean.ApprovalMain;
 import edu.uni.userBaseInfo1.bean.ApprovalStepIncharge;
 import edu.uni.userBaseInfo1.bean.ApprovalStepInchargeExample;
+import edu.uni.userBaseInfo1.mapper.ApprovalMainMapper;
 import edu.uni.userBaseInfo1.mapper.ApprovalStepInchargeMapper;
+import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.userBaseInfo1.service.ApprovalStepInchargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,8 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
     //持久层接口的对象
     @Autowired
     private ApprovalStepInchargeMapper approvalStepInchargeMapper;//爆红的话编译器的原因，不影响运行
+    @Autowired
+    private ApprovalMainService approvalMainService;
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
@@ -37,6 +42,7 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
     public List<ApprovalStepIncharge> selectByMainId(Long id) {
         ApprovalStepInchargeExample example = new ApprovalStepInchargeExample();
         ApprovalStepInchargeExample.Criteria criteria = example.createCriteria();
+        example.setOrderByClause("step ASC");
         criteria.andApprovalMainIdEqualTo(id);
         criteria.andDeletedEqualTo(false);
 
@@ -82,6 +88,11 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
     public boolean updateToInvalidById(Long id) {
         ApprovalStepIncharge approvalStepIncharge = approvalStepInchargeMapper.selectByPrimaryKey(id);
         approvalStepIncharge.setDeleted(true);
+        ApprovalMain approvalMain = approvalMainService.
+                selectById(approvalStepIncharge.getApprovalMainId());
+        approvalMain.setStepCnt(approvalMain.getStepCnt()-1);
+        approvalMainService.update(approvalMain);
+
         return approvalStepInchargeMapper.updateByPrimaryKey(approvalStepIncharge) > 0 ? true : false;
 
     }
@@ -135,6 +146,12 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
      */
     @Override
     public boolean insert(ApprovalStepIncharge approvalStepIncharge) {
+        ApprovalMain approvalMain = approvalMainService.
+                selectById(approvalStepIncharge.getApprovalMainId());
+        approvalMain.setStepCnt(approvalMain.getStepCnt()+1);
+        approvalMainService.update(approvalMain);
+
+
         return approvalStepInchargeMapper.insert(approvalStepIncharge)>0 ? true : false;
     }
 

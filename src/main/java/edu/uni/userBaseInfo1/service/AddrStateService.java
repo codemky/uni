@@ -47,4 +47,11 @@ public interface AddrStateService {
      * @apiNote : 用于删除AddrState表的某个记录
      */
     boolean deleteAddrState(long id);
+    /**
+     * Author: chenenru 19:19 2019/5/8
+     * @param countryCode
+     * @return List<AddrState>
+     * @apiNote: 根据国家的编码查询该国家的所有省份
+     */
+    List<AddrState> selectAllAddrStatesByCountryCode(Long countryCode);
 }

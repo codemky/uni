@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.ApprovalMain;
+import edu.uni.userBaseInfo1.bean.ApprovalStepIncharge;
 import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
@@ -24,11 +25,11 @@ import java.util.List;
 
 /**
  * @Author laizhouhao
- * @Description 关于每一种申请的审批步骤数信息模块的Controller层（Http URL请求）的具体实现方法
+ * @Description 关于审批规定信息模块的Controller层（Http URL请求）的具体实现方法
  * @Date 16:15 2019/4/29
  **/
 //填写description内容可以在测试模块显示相应的文字和模块
-@Api(description = "每一种申请的审批步骤数信息模块")
+@Api(description = "审批规定信息模块")
 //Controller类（或者说Http）的请求路径
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/approvalMain")
@@ -45,46 +46,83 @@ public class ApprovalMainController {
 
     //内部类，专门用来管理每个get方法所对应缓存的名称。
     static class CacheNameHelper{
-        // ub1_a_approvalMain_{每一种申请的审批步骤数记录id}
+        // ub1_a_approvalMain_{审批规定记录id}
         public static final String Receive_CacheNamePrefix = "ub1_a_approvalMain_";
         // ub1_a_approvalMain_listAll
         public static final String ListAll_CacheName = "ub1_a_approvalMain_listAll";
     }
 
-    @ApiOperation(value = "根据审批业务名称和类型查询所有的审批规定",notes = "未测试")
-    @GetMapping("approvalMain/{name}/{type}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "审批业务名称", required = false, dataType = "String", paramType = "path"),
-            @ApiImplicitParam(name = "type", value = "审批业务类型", required = false, dataType = "String", paramType = "path" )
-    })
+    @ApiOperation(value = "根据学校id和审批业务名称和类型查询所有的审批规定",notes = "未测试")
+    @PostMapping("/getApprovalMains")
+    @ApiImplicitParam(name = "approvalMain", value = "审批规定详情实体", required = true, dataType = "ApprovalMain")
     @ResponseBody
-    public void selectBySchoolIdAndNameAndType(@PathVariable String name,
-             @PathVariable String type,HttpServletResponse response) throws IOException {
-        if(name.equals("{name}"))
-            name = null;
-        if(type.equals("{type}"))
-            type = null;
+    public void selectBySchoolIdAndNameAndType(
+            @RequestBody(required = false)ApprovalMain approvalMain , HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/json;charset=utf-8");
-        List<ApprovalMain> approvalMains = approvalMainService.selectBySchoolIdAndNameAndType((long) 1, name, type);
-        String json = Result.build(ResultType.Success).appendData("approvalMains",approvalMains).convertIntoJSON();
+        String json;
+        if(approvalMain == null){
+            json = Result.build(ResultType.ParamError).convertIntoJSON();
+        }
+        else
+        {
+            Long schoolId = null;
+            String name = null;
+            String type = null;
+
+            if( approvalMain.getUniversityId()!= -1 )
+                schoolId = approvalMain.getUniversityId();
+            if(approvalMain.getName() != "null" )
+                name = approvalMain.getName();
+            if(approvalMain.getType() != "null" )
+                type = approvalMain.getType();
+
+            response.setContentType("application/json;charset=utf-8");
+            List<ApprovalMain> approvalMains = approvalMainService.
+                    selectBySchoolIdAndNameAndType(
+                            schoolId,approvalMain.getName(), approvalMain.getType());
+            json = Result.build(ResultType.Success).appendData("approvalMains",approvalMains).convertIntoJSON();
+        }
+
+
 
         response.getWriter().write(json);
 
+    }
+
+
+    /**
+     * Author: mokuanyuan 18:58 2019/5/9
+     * @param id
+     * @return boolean
+     * @apiNote: 把某个审批业务规定逻辑删除，并且把与之相关的每一步规定的记录（approval_step_incharge表）也逻辑删除
+     */
+    @ApiOperation(value="逻辑删除某个审批规定记录", notes="未测试")
+    @ApiImplicitParam(name = "id", value = "审批步骤规定表记录id", required = true, dataType = "Long", paramType = "path")
+        @DeleteMapping("/approvalMain/{id}")   //delete请求
+    @ResponseBody
+    public Result updateToInvalid(@PathVariable long id){
+        boolean success = approvalMainService.updateToInvalidById(id);
+        if(success) {
+            // 清空相关缓存
+            cache.delete(ApprovalMainController.CacheNameHelper.ListAll_CacheName);
+            return Result.build(ResultType.Success);
+        }else{
+            return Result.build(ResultType.Failed);
+        }
     }
 
     /**
      * Author: laizhouhao 9:55 2019/4/30
      * @param id
      * @return response
-     * @apiNote: 获取每一种申请的审批步骤数信息详细
+     * @apiNote: 获取审批规定信息详细
      */
     //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
     //@ApiOperation：用于在swagger2页面显示方法的提示信息
     //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
     //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
     //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条每一种申请的审批步骤数记录详情",notes = "2019年5月6日 14:46:30 已测试" )
+    @ApiOperation( value = "以一个id获取一条审批规定记录详情",notes = "2019年5月6日 14:46:30 已测试" )
     @GetMapping("approvalMain/{id}")
     @ApiImplicitParam(name = "id", value = "ApprovalMain表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -114,9 +152,9 @@ public class ApprovalMainController {
 
     /**
      * Author: laizhouhao 16:26 2019/4/29
-     * @apiNote: 查询每一种申请的审批步骤数的所有记录
+     * @apiNote: 查询审批规定的所有记录
      */
-    @ApiOperation( value = "获取所有每一种申请的审批步骤数记录的内容",notes = "2019年5月6日 18:03:28 已通过测试" )
+    @ApiOperation( value = "获取所有审批规定记录的内容",notes = "2019年5月6日 18:03:28 已通过测试" )
     @GetMapping("approvalMains/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response)throws Exception{
@@ -133,10 +171,10 @@ public class ApprovalMainController {
     /**
      * Author: laizhouhao 16:40 2019/4/29
      * @param approvalMain
-     * @return 新增每一种申请的审批步骤数信息结果
+     * @return 新增审批规定信息结果
      */
-    @ApiOperation(value="新增每一种申请的审批步骤数信息记录", notes="2019年5月6日 18:03:46 已通过测试")
-    @ApiImplicitParam(name = "approvalMain", value = "每一种申请的审批步骤数详情实体", required = true, dataType = "ApprovalMain")
+    @ApiOperation(value="新增审批规定信息记录", notes="2019年5月6日 18:03:46 已通过测试")
+    @ApiImplicitParam(name = "approvalMain", value = "审批规定详情实体", required = true, dataType = "ApprovalMain")
     @PostMapping("/approvalMain")  //post请求方式
     @ResponseBody
     public Result create(@RequestBody(required = false)ApprovalMain approvalMain){
@@ -152,33 +190,35 @@ public class ApprovalMainController {
         return Result.build(ResultType.ParamError);
     }
 
-    /**
-     * Author: laizhouhao 16:47 2019/4/29
-     * @param id
-     * @return 删除每一种申请的审批步骤数信息结果
-     */
-    @ApiOperation(value="删除每一种申请的审批步骤数信息", notes="2019年5月6日 18:05:43 已通过测试")
-    @ApiImplicitParam(name = "id", value = "每一种申请的审批步骤数id", required = true, dataType = "Long", paramType = "path")
-    @DeleteMapping("/approvalMain/{id}")   //delete请求
-    @ResponseBody
-    public Result destroy(@PathVariable long id){
-        boolean success = approvalMainService.delete(id);
-        if(success){
-            // 清空相关缓存
-            cache.delete(ApprovalMainController.CacheNameHelper.ListAll_CacheName);
-            return Result.build(ResultType.Success);
-        }else{
-            return Result.build(ResultType.Failed);
-        }
-    }
+//    /**
+//     * Author: laizhouhao 16:47 2019/4/29
+//     * @param id
+//     * @return 删除审批规定信息结果
+//     */
+//    @ApiOperation(value="删除审批规定信息", notes="2019年5月6日 18:05:43 已通过测试")
+//    @ApiImplicitParam(name = "id", value = "审批规定id", required = true, dataType = "Long", paramType = "path")
+//    @DeleteMapping("/approvalMain/{id}")   //delete请求
+//    @ResponseBody
+//    public Result destroy(@PathVariable long id){
+//        boolean success = approvalMainService.delete(id);
+//        if(success){
+//            // 清空相关缓存
+//            cache.delete(ApprovalMainController.CacheNameHelper.ListAll_CacheName);
+//            return Result.build(ResultType.Success);
+//        }else{
+//            return Result.build(ResultType.Failed);
+//        }
+//    }
+
+
 
     /**
      * Author: laizhouhao 11:01 2019/4/30
      * @param approvalMain
      * @return 更新操作结果
      */
-    @ApiOperation(value="更新每一种申请的审批步骤数信息", notes="2019年5月6日 18:06:29 已通过测试")
-    @ApiImplicitParam(name = "approvalMain", value = "每一种申请的审批步骤数信息详情实体", required = true, dataType = "ApprovalMain")
+    @ApiOperation(value="更新审批规定信息", notes="2019年5月6日 18:06:29 已通过测试")
+    @ApiImplicitParam(name = "approvalMain", value = "审批规定信息详情实体", required = true, dataType = "ApprovalMain")
     @PutMapping("/approvalMain")   //Put请求
     @ResponseBody
     public Result update(@RequestBody(required = false)ApprovalMain approvalMain){

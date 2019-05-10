@@ -99,7 +99,7 @@ public class AddrCityController {
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
-                    .appendData("addrCitys",addrCityService.selectAllAddrCitys()).convertIntoJSON();
+                    .appendData("datas",addrCityService.selectAllAddrCitys()).convertIntoJSON();
             cache.set(cacheName,json);
         }
         response.getWriter().write(json);

@@ -5,6 +5,7 @@ import edu.uni.userBaseInfo1.bean.Picture;
 import edu.uni.userBaseInfo1.bean.PictureExample;
 import edu.uni.userBaseInfo1.bean.Student;
 import edu.uni.userBaseInfo1.bean.StudentExample;
+import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.List;
 
@@ -21,6 +22,14 @@ public interface StudentService {
          * @apiNote: 获取所有学生的学生信息
          */
         List<Student> selectAll();
+
+        /**
+         * Author: mokuanyuan 12:55 2019/5/10
+         * @param classId
+         * @return List<Student>
+         * @apiNote: 根据班级id查询所有学生信息
+         */
+        List<Student> selectByClassId(Long classId);
 
         /**
          * Author: laizhouhao 10:05 2019/4/30

@@ -63,7 +63,8 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
         ApprovalMainExample example = new ApprovalMainExample();
         ApprovalMainExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
-        criteria.andUniversityIdEqualTo(schoolId);
+        if(schoolId != null)
+            criteria.andUniversityIdEqualTo(schoolId);
         if(type != null)
             criteria.andTypeEqualTo(type);
         if(name != null)
@@ -164,7 +165,7 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
             approvalStepInchargeService.updateToInvalidById(item.getId()); } );
         ApprovalMain approvalMain = approvalMainMapper.selectByPrimaryKey(id);
         approvalMain.setDeleted(true);
-        return approvalMainMapper.updateByPrimaryKeySelective(approvalMain) > 1 ? true : false;
+        return approvalMainMapper.updateByPrimaryKeySelective(approvalMain) > 0 ? true : false;
 
     }
 
@@ -217,7 +218,13 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
      */
     @Override
     public boolean insert(ApprovalMain approvalMain) {
-        return approvalMainMapper.insert(approvalMain)>0 ? true : false;
+
+        if ( !isAlreadyExist(approvalMain.getUniversityId(),approvalMain.getName()) ){
+            approvalMain.setStepCnt(0);
+            return approvalMainMapper.insert(approvalMain)>0 ? true : false;
+        }
+        else
+            return false;
     }
 
     /**
@@ -228,6 +235,22 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
      */
     @Override
     public boolean update(ApprovalMain approvalMain) {
+        //计算更新的步骤数和原本的步骤数差
+        int diff_step = selectStepCntById(approvalMain.getId()) - approvalMain.getStepCnt();
+        //如果更新的步骤数比原本的步骤数少，则把多余的步骤详情记录置为无效记录
+        if( diff_step > 1 ){
+            List<ApprovalStepIncharge> approvalStepIncharges =
+                    approvalStepInchargeService.selectByMainId(approvalMain.getId());
+            for(long index=approvalStepIncharges.size(); diff_step > 0 ; index-- ){
+                approvalStepInchargeService.updateToInvalidById(index);
+            }
+            return approvalMainMapper.updateByPrimaryKey(approvalMain) > 0 ? true : false;
+        }
+        //如果更新的步骤数比原本的步骤数多，则拒绝修改
+        if(diff_step < 0)
+            return false;
+
+        //如果更新的步骤数比原本的步骤数一样，则照常操作
         return approvalMainMapper.updateByPrimaryKey(approvalMain) > 0 ? true : false;
     }
 

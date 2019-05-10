@@ -100,7 +100,7 @@ public class AddrStateController {
         String json = cache.get(cacheName);
         if(json == null){
             json = Result.build(ResultType.Success)
-                    .appendData("addrStates",addrStateService.selectAllAddrStates()).convertIntoJSON();
+                    .appendData("datas",addrStateService.selectAllAddrStates()).convertIntoJSON();
             cache.set(cacheName,json);
         }
         response.getWriter().write(json);

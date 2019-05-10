@@ -5,6 +5,9 @@ import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.LearningDegree;
 import edu.uni.userBaseInfo1.bean.LearningDegree;
+import edu.uni.userBaseInfo1.bean.LearningDegreeExample;
+import edu.uni.userBaseInfo1.mapper.AcademicDegreeMapper;
+import edu.uni.userBaseInfo1.mapper.AcademicMapper;
 import edu.uni.userBaseInfo1.mapper.LearningDegreeMapper;
 import edu.uni.userBaseInfo1.service.LearningDegreeSerevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,10 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
     //持久层接口的对象
     @Autowired
     private LearningDegreeMapper learningDegreeMapper;
+    /*@Autowired
+    private AcademicMapper academicMapper;
+    @Autowired
+    private AcademicDegreeMapper academicDegreeMapper;*/
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -48,7 +55,11 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
      */
     @Override
     public LearningDegree selectLearningDegreeById(long id) {
-        return learningDegreeMapper.selectByPrimaryKey(id);
+        LearningDegreeExample example = new LearningDegreeExample();
+        LearningDegreeExample.Criteria criteria = example.createCriteria();
+        criteria.andDegreeIdEqualTo(id);
+        //return learningDegreeMapper.selectByPrimaryKey(id);
+        return  learningDegreeMapper.selectByExample(example).get(0);
     }
 
     /**
@@ -59,7 +70,12 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
      */
     @Override
     public List<LearningDegree> selectByUserId(Long user_id) {
-        return learningDegreeMapper.selectByUserId(user_id);
+        LearningDegreeExample example = new LearningDegreeExample();
+        LearningDegreeExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(user_id);
+        criteria.andDeletedEqualTo(false);
+        //return learningDegreeMapper.selectByUserId(user_id);
+        return  learningDegreeMapper.selectByExample(example);
     }
 
     /**
@@ -111,4 +127,5 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
     public boolean deleteLearningDegree(long id) {
         return learningDegreeMapper.deleteByPrimaryKey(id) > 0 ? true :false;
     }
+
 }

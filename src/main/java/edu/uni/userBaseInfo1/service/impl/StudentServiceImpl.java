@@ -39,6 +39,20 @@ public class StudentServiceImpl implements StudentService {
     }
 
     /**
+     * Author: mokuanyuan 12:55 2019/5/10
+     * @param classId
+     * @return List<Student>
+     * @apiNote: 根据班级id查询所有学生信息
+     */
+    @Override
+    public List<Student> selectByClassId(Long classId) {
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria().andUserIdEqualTo(classId).andDeletedEqualTo(false);
+
+        return studentMapper.selectByExample(studentExample);
+    }
+
+    /**
      * Author: laizhouhao 10:15 2019/4/30
      * @param id
      * @return Student
