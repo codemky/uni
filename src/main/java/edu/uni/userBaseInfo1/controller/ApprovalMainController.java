@@ -53,27 +53,37 @@ public class ApprovalMainController {
     }
 
     @ApiOperation(value = "根据学校id和审批业务名称和类型查询所有的审批规定",notes = "未测试")
-    @GetMapping("/approvalMain")
+    @PostMapping("/getApprovalMains")
     @ApiImplicitParam(name = "approvalMain", value = "审批规定详情实体", required = true, dataType = "ApprovalMain")
     @ResponseBody
     public void selectBySchoolIdAndNameAndType(
             @RequestBody(required = false)ApprovalMain approvalMain , HttpServletResponse response) throws IOException {
 
-        Long schoolId = null;
-        String name = null;
-        String type = null;
+        String json;
+        if(approvalMain == null){
+            json = Result.build(ResultType.ParamError).convertIntoJSON();
+        }
+        else
+        {
+            Long schoolId = null;
+            String name = null;
+            String type = null;
 
-        if( approvalMain.getUniversityId()!= -1 )
-            schoolId = approvalMain.getUniversityId();
-        if(approvalMain.getName() != "null" )
-            name = approvalMain.getName();
-        if(approvalMain.getType() != "null" )
-            type = approvalMain.getType();
+            if( approvalMain.getUniversityId()!= -1 )
+                schoolId = approvalMain.getUniversityId();
+            if(approvalMain.getName() != "null" )
+                name = approvalMain.getName();
+            if(approvalMain.getType() != "null" )
+                type = approvalMain.getType();
 
-        response.setContentType("application/json;charset=utf-8");
-        List<ApprovalMain> approvalMains = approvalMainService.
-                selectBySchoolIdAndNameAndType( schoolId,name, type);
-        String json = Result.build(ResultType.Success).appendData("approvalMains",approvalMains).convertIntoJSON();
+            response.setContentType("application/json;charset=utf-8");
+            List<ApprovalMain> approvalMains = approvalMainService.
+                    selectBySchoolIdAndNameAndType(
+                            schoolId,approvalMain.getName(), approvalMain.getType());
+            json = Result.build(ResultType.Success).appendData("approvalMains",approvalMains).convertIntoJSON();
+        }
+
+
 
         response.getWriter().write(json);
 
@@ -88,7 +98,7 @@ public class ApprovalMainController {
      */
     @ApiOperation(value="逻辑删除某个审批规定记录", notes="未测试")
     @ApiImplicitParam(name = "id", value = "审批步骤规定表记录id", required = true, dataType = "Long", paramType = "path")
-    @DeleteMapping("/approvalMain/{id}")   //delete请求
+        @DeleteMapping("/approvalMain/{id}")   //delete请求
     @ResponseBody
     public Result updateToInvalid(@PathVariable long id){
         boolean success = approvalMainService.updateToInvalidById(id);

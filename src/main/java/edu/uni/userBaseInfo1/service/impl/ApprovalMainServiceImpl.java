@@ -63,7 +63,8 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
         ApprovalMainExample example = new ApprovalMainExample();
         ApprovalMainExample.Criteria criteria = example.createCriteria();
         criteria.andDeletedEqualTo(false);
-        criteria.andUniversityIdEqualTo(schoolId);
+        if(schoolId != null)
+            criteria.andUniversityIdEqualTo(schoolId);
         if(type != null)
             criteria.andTypeEqualTo(type);
         if(name != null)
@@ -218,8 +219,10 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
     @Override
     public boolean insert(ApprovalMain approvalMain) {
 
-        if ( !isAlreadyExist(approvalMain.getUniversityId(),approvalMain.getName()) )
+        if ( !isAlreadyExist(approvalMain.getUniversityId(),approvalMain.getName()) ){
+            approvalMain.setStepCnt(0);
             return approvalMainMapper.insert(approvalMain)>0 ? true : false;
+        }
         else
             return false;
     }
