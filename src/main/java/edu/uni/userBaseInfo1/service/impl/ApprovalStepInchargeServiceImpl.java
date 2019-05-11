@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
  * @Description ApprovalStepIncharge实体类的service层接口的实现类
  * @Date 15:49 2019/4/29
  **/
+import java.util.ArrayList;
 import java.util.List;
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -172,5 +173,22 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
     @Override
     public boolean delete(Long id) {
         return approvalStepInchargeMapper.deleteByPrimaryKey(id) > 0 ? true : false;
+    }
+
+    /**
+     * Author: laizhouhao 12:54 2019/5/11
+     * @param step, appoval_main_id
+     * @return 审批该步骤的角色的id
+     * @apiNote: 根据步骤数和申请步数规定表id查询审批角色id
+     */
+    @Override
+    public Long selectRoleIdByStepAppovalId(Integer step, Long appoval_main_id) {
+        //构造查询条件为步骤数相同、申请步数规定表id相同
+        ApprovalStepInchargeExample approvalStepInchargeExample = new ApprovalStepInchargeExample();
+        approvalStepInchargeExample.createCriteria().andStepEqualTo(step)
+                .andApprovalMainIdEqualTo(appoval_main_id);
+        List<ApprovalStepIncharge> approvalStepInchargeList = new ArrayList<>();
+                approvalStepInchargeList = approvalStepInchargeMapper.selectByExample(approvalStepInchargeExample);
+        return approvalStepInchargeList.get(0).getRoleId();
     }
 }

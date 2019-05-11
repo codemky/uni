@@ -7,14 +7,8 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Ecomm;
-import edu.uni.userBaseInfo1.bean.RequestMessage;
-import edu.uni.userBaseInfo1.bean.UserinfoApply;
-import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
-import edu.uni.userBaseInfo1.service.ApprovalMainService;
-import edu.uni.userBaseInfo1.service.EcommService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyApprovalService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyService;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -53,6 +47,10 @@ public class EcommController {
     UserinfoApplyService userinfoApplyService;
     @Autowired
     UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    ApprovalStepInchargeService approvalStepInchargeService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -224,9 +222,9 @@ public class EcommController {
      * Author: laizhouhao 20:50 2019/5/9
      * @param requestMessage
      * @return Result
-     * @apiNote: 申请修改通信方式
+     * @apiNote: 申请修改通信方式, 点击申请时
      */
-    @ApiOperation(value="申请修改通信方式", notes="已测试")
+    @ApiOperation(value="申请修改通信方式", notes="2019年5月11日 14:33:14 已通过测试")
     @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
     @PostMapping("applyModifyEcomm/")
     @ResponseBody
@@ -248,7 +246,6 @@ public class EcommController {
             ecommService.insert(ecomm);
             //新纪录的id
             Long newId = ecomm.getId();
-
             //向userinfoApply增加审批业务id
             userInfo_apply.setApprovalMainId(approvalMainService.
                     selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改照片"));
@@ -270,14 +267,58 @@ public class EcommController {
             boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
             //向审批流程表插入一条数据
             UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+            //设置学校id
             applyApproval.setUniversityId(userInfo_apply.getUniversityId());
+            //设置申请表id
             applyApproval.setUserinfoApplyId(userInfo_apply.getId());
+            //设置步骤，初始化为1
             applyApproval.setStep(1);
+            //设置时间
             applyApproval.setDatetime(userInfo_apply.getStartTime());
+            //设置写入者
             applyApproval.setByWho(byWho);
+            //设置为有效
             applyApproval.setDeleted(false);
+            //设置申请信息的种类
+            applyApproval.setInfoType(userInfo_apply.getInfoType());
+            //设置审批的角色名
+            int st = applyApproval.getStep();
+            Long mainId = userInfo_apply.getApprovalMainId();
+            Long roleId = approvalStepInchargeService
+                    .selectRoleIdByStepAppovalId(st,mainId);
+            Role role = roleService.selectById(roleId);
+            //设置申请人的用户id
+            applyApproval.setApplyUserId(byWho);
             boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
+            System.out.println("aaa="+applyApproval);
             if(successInfoApply && successApplyApproval){
+                //清除相应的缓存
+                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
+                cache.delete(CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
+
+    /**
+     * Author: laizhouhao 20:50 2019/5/9
+     * @param userinfoApplyApproval
+     * @return Result
+     * @apiNote: 审批修改通信方式的申请, 点击通过时
+     */
+    @ApiOperation(value="申请修改通信方式", notes="未测试")
+    @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "RequestMessage")
+    @PostMapping("commituserinfoApply/")
+    @ResponseBody
+    public Result ApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval){
+        //根据用户申请表id获取用户信息申请信息
+        UserinfoApply userinfoApply = userinfoApplyService.selectUserinfoApplyById(userinfoApplyApproval.getUserinfoApplyId());
+        //获取用户申请表中的
+        if(userinfoApplyApproval != null){
+            if(true){
                 //清除相应的缓存
                 cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
                 cache.delete(CacheNameHelper.ListAll_CacheName);
