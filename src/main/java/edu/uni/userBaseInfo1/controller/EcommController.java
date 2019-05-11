@@ -50,6 +50,8 @@ public class EcommController {
     @Autowired
     private RoleService roleService;
     @Autowired
+    private UserService userService;
+    @Autowired
     ApprovalStepInchargeService approvalStepInchargeService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -305,26 +307,45 @@ public class EcommController {
 
     /**
      * Author: laizhouhao 20:50 2019/5/9
-     * @param userinfoApplyApproval
+     * @param userinfoApplyApproval, user_id
      * @return Result
      * @apiNote: 审批修改通信方式的申请, 点击通过时
      */
-    @ApiOperation(value="申请修改通信方式", notes="未测试")
-    @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "RequestMessage")
-    @PostMapping("commituserinfoApply/")
+    @ApiOperation(value="审批修改通信方式的申请, 点击通过时", notes="未测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+    })
+    @PostMapping("commituserinfoApply/{user_id}")
     @ResponseBody
-    public Result ApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval){
-        //根据用户申请表id获取用户信息申请信息
-        UserinfoApply userinfoApply = userinfoApplyService.selectUserinfoApplyById(userinfoApplyApproval.getUserinfoApplyId());
-        //获取用户申请表中的
+    public Result ApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id){
         if(userinfoApplyApproval != null){
-            if(true){
-                //清除相应的缓存
-                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
-                cache.delete(CacheNameHelper.ListAll_CacheName);
-                return Result.build(ResultType.Success);
-            }else{
-                return Result.build(ResultType.Failed);
+            //比较当前步骤是否是最后一步
+            boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
+            //该步骤是最后一步
+            if(isLast){
+                //更新
+                boolean firstSuccess = userService.endForPass(userinfoApplyApproval, user_id);
+                //判断两个更新是否都成功
+                if(firstSuccess) {
+                    //清除相应的缓存
+                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
+                    cache.delete(CacheNameHelper.ListAll_CacheName);
+                    return Result.build(ResultType.Success);
+                }else{
+                    return Result.build(ResultType.Failed);
+                }
+            }else{ //该审批不是最后一步
+                boolean secondSuccess = userService.createForPass(userinfoApplyApproval, user_id);
+                //操作成功
+                if(secondSuccess){
+                    //清除相应的缓存
+                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
+                    cache.delete(CacheNameHelper.ListAll_CacheName);
+                    return Result.build(ResultType.Success);
+                }else{
+                    return Result.build(ResultType.Failed);
+                }
             }
         }
         return Result.build(ResultType.ParamError);

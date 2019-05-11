@@ -1,5 +1,7 @@
 package edu.uni.userBaseInfo1.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class UserinfoApplyApproval {
@@ -16,9 +18,9 @@ public class UserinfoApplyApproval {
     private String reason;
 
     private Long checkWho;
-
+    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     private Date checkTime;
-
+    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     private Date datetime;
 
     private Long byWho;
@@ -32,6 +34,23 @@ public class UserinfoApplyApproval {
     private Long applyUserId;
 
     public UserinfoApplyApproval() {
+    }
+
+    public UserinfoApplyApproval(Long id, Long universityId, Long userinfoApplyId, Integer step, Boolean result, String reason, Long checkWho, Date checkTime, Date datetime, Long byWho, Boolean deleted, String roleName, Integer infoType, Long applyUserId) {
+        this.id = id;
+        this.universityId = universityId;
+        this.userinfoApplyId = userinfoApplyId;
+        this.step = step;
+        this.result = result;
+        this.reason = reason;
+        this.checkWho = checkWho;
+        this.checkTime = checkTime;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+        this.roleName = roleName;
+        this.infoType = infoType;
+        this.applyUserId = applyUserId;
     }
 
     public Long getId() {

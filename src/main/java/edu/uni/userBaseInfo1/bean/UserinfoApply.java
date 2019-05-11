@@ -22,17 +22,17 @@ public class UserinfoApply {
 //    新信息记录的id
     private Long newInfoId;
 //    开始时间
-@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+@JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     private Date startTime;
 //    结束时间
-@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+@JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     private Date endTime;
 //    说明提出更新用户信息的原因
     private String applyReason;
 //    申请结果：0：不通过 1：通过
     private Boolean applyResult;
 //    本记录的创建时间
-@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+@JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     private Date datetime;
 //    本记录的写入者
     private Long byWho;

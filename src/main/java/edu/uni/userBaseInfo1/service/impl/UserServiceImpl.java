@@ -4,15 +4,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.mapper.AddressMapper;
-import edu.uni.userBaseInfo1.mapper.PictureMapper;
-import edu.uni.userBaseInfo1.mapper.UserMapper;
+import edu.uni.userBaseInfo1.mapper.*;
+import edu.uni.userBaseInfo1.service.ApprovalStepInchargeService;
 import edu.uni.userBaseInfo1.service.UserService;
 import edu.uni.userBaseInfo1.utils.GetAddrDetail;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,9 +29,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
+    private RoleMapper roleMapper;
+    @Autowired
     private PictureMapper pictureMapper;
     @Autowired
     private AddressMapper addressMapper;
+    @Autowired
+    private UserinfoApplyMapper userinfoApplyMapper;
+    @Autowired
+    private ApprovalMainMapper approvalMainMapper;
+    @Autowired
+    private ApprovalStepInchargeMapper approvalStepInchargeMapper;
+    @Autowired
+    private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -139,5 +149,95 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updateByExample(User record, UserExample example) {
         return userMapper.updateByExampleSelective(record, example);
+    }
+
+    /**
+     * Author: laizhouhao 16:14 2019/5/11
+     * @param now_step, userinfo_apply_id
+     * @return boolean
+     * @apiNote: 判断该步骤是否是最后一步
+     */
+    @Override
+    public boolean isLastStep(int now_step, Long userinfo_apply_id) {
+        UserinfoApply userinfoApply = userinfoApplyMapper.selectByPrimaryKey(userinfo_apply_id);
+        ApprovalMain approvalMain = approvalMainMapper.selectByPrimaryKey(userinfoApply.getApprovalMainId());
+        return approvalMain.getStepCnt() == now_step;
+    }
+
+    /**
+     * Author: laizhouhao 16:29 2019/5/11
+     * @param userinfoApplyApproval, user_id
+     * @return boolean
+     * @apiNote: 通过申请并且该步骤是最后一步
+     */
+    @Override
+    public boolean endForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id) {
+        //更新用户信息审批流程表
+        userinfoApplyApproval.setResult(true);
+        userinfoApplyApproval.setCheckWho(user_id);
+        Date checkTime = new Date();
+        userinfoApplyApproval.setCheckTime(checkTime);
+        int firstSuccess = userinfoApplyApprovalMapper.updateByPrimaryKeySelective(userinfoApplyApproval);
+        //更新用户申请表
+        UserinfoApply userinfoApply = userinfoApplyMapper.selectByPrimaryKey(userinfoApplyApproval.getUserinfoApplyId());
+        userinfoApply.setEndTime(checkTime);
+        userinfoApply.setApplyResult(true);
+        int secondSuccess = userinfoApplyMapper.updateByPrimaryKeySelective(userinfoApply);
+        if(firstSuccess == 1 && secondSuccess == 1){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Author: laizhouhao 16:50 2019/5/11
+     * @param userinfoApplyApproval, user_id
+     * @return boolean
+     * @apiNote: 通过申请并且该步骤不是最后一步
+     */
+    @Override
+    public boolean createForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id) {
+        //审批结果为通过
+        userinfoApplyApproval.setResult(true);
+        //审批人为该用户
+        userinfoApplyApproval.setCheckWho(user_id);
+        //审批时间
+        userinfoApplyApproval.setCheckTime(new Date());
+        //更新审批流程表中该条信息
+        int firstSuccess = userinfoApplyApprovalMapper.updateByPrimaryKeySelective(userinfoApplyApproval);
+        //在UserinfoApplyApproval表新增一条记录，用来记录下一步的审批信息
+        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+        //设置学校id
+        applyApproval.setUniversityId(userinfoApplyApproval.getUniversityId());
+        //设置审批表id
+        applyApproval.setUserinfoApplyId(userinfoApplyApproval.getUserinfoApplyId());
+        //设置该审批记录的创建时间
+        applyApproval.setDatetime(new Date());
+        //设置审批记录的写入者
+        applyApproval.setByWho(user_id);
+        //设置该记录为有效
+        applyApproval.setDeleted(false);
+        //设置步骤编号
+        applyApproval.setStep(userinfoApplyApproval.getStep()+1);
+        System.out.println("creat5");
+        //设置下一步审核的角色名
+        UserinfoApply userinfoApply = new UserinfoApply();
+        //根据id查找出UserinfoApply的一条记录
+        userinfoApply = userinfoApplyMapper.selectByPrimaryKey(userinfoApplyApproval.getUserinfoApplyId());
+        //设置查找审批人id的条件
+        ApprovalStepInchargeExample approvalStepInchargeExample = new ApprovalStepInchargeExample();
+        approvalStepInchargeExample.createCriteria().andApprovalMainIdEqualTo(userinfoApply.getApprovalMainId())
+                .andStepEqualTo(applyApproval.getStep()).andDeletedEqualTo(false);
+        //审批人条件
+        Long roleId = approvalStepInchargeMapper.selectByExample(approvalStepInchargeExample).get(0).getRoleId();
+        //审批人姓名
+        String roleName = roleMapper.selectByPrimaryKey(roleId).getName();
+        applyApproval.setRoleName(roleName);
+        //设置申请信息类型
+        applyApproval.setInfoType(userinfoApplyApproval.getInfoType());
+        //设置申请人用户id
+        applyApproval.setApplyUserId(userinfoApplyApproval.getApplyUserId());
+        int secondSuccess = userinfoApplyApprovalMapper.insertSelective(applyApproval);
+        return firstSuccess == 1 && secondSuccess == 1;
     }
 }

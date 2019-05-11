@@ -3,6 +3,7 @@ package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.bean.UserExample;
+import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 
 import java.util.List;
@@ -66,4 +67,28 @@ public interface UserService {
      * @apiNote: 根据条件修改
      */
     int updateByExample(User record, UserExample example);
+
+    /**
+     * Author: laizhouhao 16:14 2019/5/11
+     * @param now_step, userinfo_apply_id
+     * @return boolean
+     * @apiNote: 判断该步骤是否是最后一步
+     */
+    boolean isLastStep(int now_step,Long userinfo_apply_id );
+
+    /**
+     * Author: laizhouhao 16:29 2019/5/11
+     * @param userinfoApplyApproval, user_id
+     * @return boolean
+     * @apiNote: 通过申请并且该步骤是最后一步
+     */
+    boolean endForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id);
+
+    /**
+     * Author: laizhouhao 16:50 2019/5/11
+     * @param userinfoApplyApproval, user_id
+     * @return boolean
+     * @apiNote: 通过申请并且该步骤不是最后一步
+     */
+    boolean createForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id);
 }
