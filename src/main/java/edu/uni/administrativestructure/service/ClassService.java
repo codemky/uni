@@ -71,5 +71,13 @@ public interface ClassService {
      */
     PageInfo<Class> selectPageBySpecialty(int pageNum, long specialtyId);
 
+    /**
+     * Author: chenenru 13:14 2019/5/11
+     * @param classId
+     * @return Class
+     * @apiNote: 根据用户class_id查询对应的班级
+     */
+    Class selectClassByClassId(Long classId);
+
 
 }

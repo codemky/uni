@@ -1,5 +1,7 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.bean.Class;
+import edu.uni.administrativestructure.service.ClassService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.PoliticalAffiliation;
@@ -47,6 +49,8 @@ public class StudentController {
         private UserService userService;
         @Autowired
         private EcommService ecommService;
+        @Autowired
+        private ClassService classService;
         @Autowired
         private PoliticalAffiliationService politicalAffiliationService;
 
@@ -224,6 +228,33 @@ public class StudentController {
             //到最后通过response对象返回json格式字符串的数据
             response.getWriter().write(json);
         }
+    }
+    @ApiOperation( value = "根据学生的用户id查找学生对应的学院",notes = "未测试" )
+    @GetMapping("info/studentDetailInfo/department/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void selectDepartmentIdByStudentId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
+        if(user_id != null){
+            Student student = studentService.selectByUserId(user_id).get(0);
+            Class aClass = classService.selectClassByClassId(student.getClassId());
+            System.out.println(aClass.getDepartmentId()+"--->");
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix +"department"+ user_id;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("class",aClass).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
+
     }
 
         /**

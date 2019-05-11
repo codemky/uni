@@ -2,11 +2,13 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.userBaseInfo1.bean.LearningDegree;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
 import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -172,6 +174,21 @@ public class UserinfoApplyController {
             }
         }
         return Result.build(ResultType.ParamError);
+    }
+    /**
+     * Author: chenenru 21:11 2019/5/9
+     * @param
+     * @return
+     * @apiNote: 此方法处理提交申请后保存申请记录，保存前先生成修改的对象的新纪录，再保存申请表的记录
+     *
+     */
+    @ApiOperation(value = "处理申请修改学历的方法",notes = "未测试")
+    @ApiImplicitParams(
+            {@ApiImplicitParam(name = "userinfoApply", value = "用户信息申请详情实体", required = true, dataType = "UserinfoApply"),@ApiImplicitParam(name = "learningDegree", value = "职员的学历详情实体", required = true, dataType = "LearningDegree")}
+    )
+    @PostMapping("info/employee/userInfoApply")
+    @ResponseBody
+    public void createUserApplayAndLearningDegree(UserinfoApply userinfoApply, LearningDegree learningDegree,Long byWho){
     }
 
     /**

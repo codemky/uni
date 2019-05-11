@@ -98,6 +98,12 @@
     from student_relation
     where user_id = #{user_id,jdbcType=BIGINT}
   </select>
+  <select id="selectByRelaId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from student_relation
+    where rela_id = #{rela_id,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from student_relation
     where id = #{id,jdbcType=BIGINT}

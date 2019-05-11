@@ -2,12 +2,8 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Academic;
-import edu.uni.userBaseInfo1.bean.AcademicDegree;
-import edu.uni.userBaseInfo1.bean.LearningDegree;
-import edu.uni.userBaseInfo1.service.AcademicDegreeService;
-import edu.uni.userBaseInfo1.service.AcademicService;
-import edu.uni.userBaseInfo1.service.LearningDegreeSerevice;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
@@ -47,6 +43,10 @@ public class LearningDegreeController {
     AcademicDegreeService academicDegreeService;
     @Autowired
     AcademicService academicService;
+    @Autowired
+    private ApprovalMainService approvalMainService;
+    @Autowired
+    UserinfoApplyService userinfoApplyService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -115,13 +115,6 @@ public class LearningDegreeController {
         }
         response.getWriter().write(json);
     }
-
-    /**
-     * Author: chenenru 18:14 2019/5/8
-     * @param
-     * @return
-     * @apiNote: 为申请修改学历页面提供某职员的一条学历记录、和所有的受教育程度的List集合、和学位的
-     */
 
     /**
      * Author: chenenru 23:44 2019/4/29
@@ -212,11 +205,17 @@ public class LearningDegreeController {
         return Result.build(ResultType.ParamError);
     }
 
-    @ApiOperation(value = "根据职员的id查询有效的学历记录",notes="")
-    @ApiImplicitParam(name = "learningDegree", value = "学历详情实体", required = true, dataType = "LearningDegree")
-    @PutMapping("//employee/learningDegree/{userId}")   //Put请求
+    /**
+     * Author: chenenru 2019-5-11 08:48:28
+     * @param userId
+     * @param response
+     * @throws IOException
+     */
+    @ApiOperation(value = "根据职员的id查询有效的学历记录，同时查询所有的受教育程度和学位表",notes="正在测试")
+    @GetMapping("info/learningDegree/employee/{userId}")   //GET请求
     @ResponseBody
     private void AddToUserApplay(@PathVariable Long userId,HttpServletResponse response) throws IOException {
+        System.out.println("-----"+userId);
         if(userId != null){
             UserInfo userInfo = new UserInfo();
 
@@ -234,16 +233,78 @@ public class LearningDegreeController {
             userInfo.setAcademics(academics);
             userInfo.setAcademicDegrees(academicDegrees);
 
+            System.out.println("^-^ --->:"+userInfo.toString());
+
             response.setContentType("application/json;charset=utf-8");
-            String cacheName = LearningDegreeController.CacheNameHelper.ListAll_CacheName;
+            String cacheName = LearningDegreeController.CacheNameHelper.ListAll_CacheName+"learningDegree"+userId;
             String json = cache.get(cacheName);
             if(json == null){
                 json = Result.build(ResultType.Success)
-                        .appendData("learningDegrees",learningDegreeService.selectByUserId(userId)).convertIntoJSON();
+                        .appendData("userInfo",userInfo).convertIntoJSON();
                 cache.set(cacheName,json);
             }
             response.getWriter().write(json);
         }
+    }
+
+    /**
+     * Author: chenenru 2019-5-11 08:48:28
+     * @param requestMessage
+     * @return
+     */
+
+    @ApiOperation(value="保存申请修改学历的操作", notes="未测试")
+    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
+    @PostMapping("applyModifydLearningDegree/")
+    @ResponseBody
+    public Result ApplyModifyLearningDegree(@RequestBody RequestMessage requestMessage){
+//        System.out.println("o = "+ requestMessage.getLearningDegree());
+        LearningDegree learningDegree = requestMessage.getLearningDegree();
+        Long byWho = requestMessage.getByWho();
+        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
+        //判断前端传过来的值是否为空
+        if(requestMessage.getLearningDegree()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
+            //获取被修改的用户id
+            Long user_id = learningDegree.getUserId();
+            //旧记录id
+            Long oldId = learningDegree.getId();
+//            System.out.println("oldId = "+oldId);
+            //将要插入的记录设置为无效
+            learningDegree.setDeleted(true);
+            //将新纪录插入LearningDegree表
+            learningDegreeService.insertLearningDegree(learningDegree);
+            //新纪录的id
+            Long newId = learningDegree.getId();
+
+            //向userinfoApply增加审批业务id
+            userInfo_apply.setApprovalMainId(approvalMainService.
+                    selectIdByName(userInfo_apply.getUniversityId(), "审批职员申请修改学历"));
+            //设置用户信息申请种类
+            userInfo_apply.setInfoType(0);
+            //设置用户信息申请旧信息记录id
+            userInfo_apply.setOldInfoId(oldId);
+            //设置用户信息申请新信息记录id
+            userInfo_apply.setNewInfoId(newId);
+            //设置用户信息申请开始时间
+            userInfo_apply.setStartTime(learningDegree.getDatetime());
+            //设置用户信息创建时间
+            userInfo_apply.setDatetime(learningDegree.getDatetime());
+            //设置用户信息申请写入者
+            userInfo_apply.setByWho(byWho);
+            //设置用户信息申请为有效
+            userInfo_apply.setDeleted(false);
+            //插入新的userinfoApply记录
+            boolean success = userinfoApplyService.insertUserinfoApply(userInfo_apply);
+            if(success){
+                //清除相应的缓存
+                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydLearningDegree");
+                cache.delete(CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
     }
 
     /**

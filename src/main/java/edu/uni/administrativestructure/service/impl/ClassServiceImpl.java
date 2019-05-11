@@ -171,4 +171,12 @@ public class ClassServiceImpl implements ClassService {
         else
             return null;
     }
+
+    @Override
+    public Class selectClassByClassId(Long classId) {
+        ClassExample classExample = new ClassExample();
+        ClassExample.Criteria criteria = classExample.createCriteria();
+        criteria.andIdEqualTo(classId);
+        return classMapper.selectByExample(classExample).get(0);
+    }
 }

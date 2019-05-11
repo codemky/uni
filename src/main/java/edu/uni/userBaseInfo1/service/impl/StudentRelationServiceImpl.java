@@ -145,4 +145,15 @@ public class StudentRelationServiceImpl implements StudentRelationService {
         return studentRelations;
     }
 
+    /**
+     *
+     * @param relaId
+     * @return StudentRelation
+     * @apiNote: 根据亲属在用户表的id查亲属的信息
+     */
+    @Override
+    public StudentRelation selectRelaByRelaId(Long relaId) {
+        return studentRelationMapper.selectByRelaId(relaId);
+    }
+
 }

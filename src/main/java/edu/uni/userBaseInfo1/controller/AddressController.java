@@ -58,19 +58,19 @@ public class AddressController {
         public static final String ListAll_CacheName = "ub1_a_address_listAll";
     }
 
-//    @ApiOperation( value = "测试地址工具类",notes = "未测试" )
-//    @GetMapping("/test")
-//    @ResponseBody
-//    //@ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
-//    public void test(){
-//        AddressUtil addressUtil = new AddressUtil();
-//        System.out.println("所有国家："+addressUtil.SelectCountries().toString());
-//        System.out.println("根据国家编码查询所有省份："+addressUtil.SelectStates(1).toString());
-//        System.out.println("根据省份编码查询所有城市："+addressUtil.SelectCities(13).toString());
-//        System.out.println("根据城市编码查询所有县/区："+addressUtil.SelectAreas(1101).toString());
-//        System.out.println("根据县/区编码查询所有街道："+addressUtil.SelectStreets(110101).toString());
-//
-//    }
+    @ApiOperation( value = "测试地址工具类",notes = "未测试" )
+    @GetMapping("/test")
+    @ResponseBody
+    //@ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
+    public void test(){
+        AddressUtil addressUtil = new AddressUtil();
+        System.out.println("所有国家："+addressUtil.SelectCountries().toString());
+        System.out.println("根据国家编码查询所有省份："+addressUtil.SelectStates(1).toString());
+        System.out.println("根据省份编码查询所有城市："+addressUtil.SelectCities(13).toString());
+        System.out.println("根据城市编码查询所有县/区："+addressUtil.SelectAreas(1101).toString());
+        System.out.println("根据县/区编码查询所有街道："+addressUtil.SelectStreets(110101).toString());
+
+    }
 
     /**
      * Author: chenenru 18:50 2019/5/10

@@ -107,6 +107,14 @@ public class EmployServiceImpl implements EmployService {
     }
 
     @Override
+    public Employ selectEmployByEmployeeId(Long employeeId) {
+        EmployExample employExample = new EmployExample();
+        EmployExample.Criteria criteria = employExample.createCriteria();
+        criteria.andDepartmentIdEqualTo(employeeId);
+        return employMapper.selectByExample(employExample).get(0);
+    }
+
+    @Override
     public List<Employ> selectAll() {
         // 创建查询条件
         EmployExample example = new EmployExample();

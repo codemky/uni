@@ -77,7 +77,7 @@ public interface StudentRelationService {
          * @apiNote: 根据自定义条件查询StudentRelation表的一个记录
          */
         List<StudentRelation> selectByExample(StudentRelationExample studentRelationExample);
-        
+
         /**
          * Author: laizhouhao 15:07 2019/5/8
          * @param user_id
@@ -85,5 +85,13 @@ public interface StudentRelationService {
          * @apiNote: 根据用户id查询所有有效的亲属信息
          */
         List<StudentRelation> selectValidRelaByUserId(Long user_id);
+
+        /**
+         * Author: chenenru 16:21 2019/5/10
+         * @param relaId
+         * @return StudentRelation
+         * @apiNote: 根据亲属在用户表的id查亲属的信息
+         */
+        StudentRelation selectRelaByRelaId(Long relaId);
 
 }

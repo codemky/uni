@@ -12,6 +12,24 @@ public class RequestMessage {
     private StudentRelation studentRelation;
     private Long byWho;
     private UserinfoApply userinfoApply;
+    private LearningDegree learningDegree;
+    private EmployeeHistory employeeHistory;
+
+    public EmployeeHistory getEmployeeHistory() {
+        return employeeHistory;
+    }
+
+    public void setEmployeeHistory(EmployeeHistory employeeHistory) {
+        this.employeeHistory = employeeHistory;
+    }
+
+    public LearningDegree getLearningDegree() {
+        return learningDegree;
+    }
+
+    public void setLearningDegree(LearningDegree learningDegree) {
+        this.learningDegree = learningDegree;
+    }
 
     public StudentRelation getStudentRelation() {
         return studentRelation;
@@ -64,10 +82,12 @@ public class RequestMessage {
     public RequestMessage() {
     }
 
-    public RequestMessage(Ecomm ecomm, Long byWho, UserinfoApply userinfoApply) {
+    public RequestMessage(Ecomm ecomm, Long byWho, UserinfoApply userinfoApply, LearningDegree learningDegree, EmployeeHistory employeeHistory) {
         this.ecomm = ecomm;
         this.byWho = byWho;
         this.userinfoApply = userinfoApply;
+        this.learningDegree = learningDegree;
+        this.employeeHistory = employeeHistory;
     }
 
     @Override
@@ -76,6 +96,8 @@ public class RequestMessage {
                 "ecomm=" + ecomm +
                 ", byWho=" + byWho +
                 ", userinfoApply=" + userinfoApply +
+                ", learningDegree=" + learningDegree +
+                ", employeeHistory=" + employeeHistory +
                 '}';
     }
 }

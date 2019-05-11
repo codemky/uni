@@ -1,8 +1,16 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.bean.Class;
+import edu.uni.administrativestructure.bean.Employ;
+import edu.uni.administrativestructure.service.ClassService;
+import edu.uni.administrativestructure.service.EmployService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.userBaseInfo1.bean.Employee;
+import edu.uni.userBaseInfo1.bean.Student;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
+import edu.uni.userBaseInfo1.service.EmployeeService;
+import edu.uni.userBaseInfo1.service.StudentService;
 import edu.uni.userBaseInfo1.service.UserinfoApplyApprovalService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
@@ -37,6 +45,14 @@ public class UserinfoApplyApprovalController {
     //把UserinfoApplyApproval的Service层接口所有的方法自动装配到该对象中
     @Autowired
     UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private ClassService classService;
+    @Autowired
+    EmployeeService employeeService;
+    @Autowired
+    EmployService employService;
+    @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
+    private StudentService studentService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -172,6 +188,22 @@ public class UserinfoApplyApprovalController {
             }
         }
         return Result.build(ResultType.ParamError);
+    }
+    //根据申请人的用户id(第一个参数)和登录到审批中心人的用户id(第二个参数)判断是否处于同一个学院
+    public boolean isDepartmentSame(Long studentId,Long userId){
+        //审批人
+        Employee employee = employeeService.selectByUserId(userId).get(0);
+        Employ employ = employService.selectEmployByEmployeeId(employee.getUserId());
+        System.out.println(employ.getDepartmentId());
+        //申请人为小学生才行
+        Student student = studentService.selectByUserId(studentId).get(0);
+        Class aClass = classService.selectClassByClassId(student.getClassId());
+        System.out.println(aClass.getDepartmentId()+"--->");
+        if(employ.getDepartmentId()==aClass.getDepartmentId()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**

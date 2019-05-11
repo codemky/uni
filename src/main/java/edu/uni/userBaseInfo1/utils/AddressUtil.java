@@ -1,6 +1,7 @@
 package edu.uni.userBaseInfo1.utils;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,8 @@ import java.util.List;
  * @Author chenenru
  * @ClassName AddressUtil
  * @Description 地址的操作工具类
- *  这是关于地址的工具类，前端传回国家id，后台根据国家id返回此国家的所有省份，
- *  前端选中某一个省份的id并传回该省份的id,后台根据该省份的id查询并返回该城市下的所有城市，以此类推...
+ *  这是关于地址的工具类，前端传回国家code，后台根据国家code返回此国家的所有省份，
+ *  前端选中某一个省份的code并传回该省份的code,后台根据该省份的code查询并返回该城市下的所有城市，以此类推...
  * @Date 2019/5/8 18:24
  * @Version 1.0
  **/
@@ -57,7 +58,7 @@ public class AddressUtil {
      * Author: chenenru 18:51 2019/5/8
      * @param countryCode
      * @return 某国家的所有省份
-     * @apiNote: 根据国家的id查询某国家的所有省份
+     * @apiNote: 根据国家的code查询某国家的所有省份
      */
     public List<AddrState> SelectStates(long countryCode){
         return  addrStateService.selectAllAddrStatesByCountryCode(countryCode);
