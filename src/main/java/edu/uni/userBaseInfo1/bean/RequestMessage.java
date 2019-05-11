@@ -7,8 +7,35 @@ package edu.uni.userBaseInfo1.bean;
  **/
 public class RequestMessage {
     private Ecomm ecomm;
+    private Address address;
+    private Picture picture;
+    private StudentRelation studentRelation;
     private Long byWho;
     private UserinfoApply userinfoApply;
+
+    public StudentRelation getStudentRelation() {
+        return studentRelation;
+    }
+
+    public void setStudentRelation(StudentRelation studentRelation) {
+        this.studentRelation = studentRelation;
+    }
+
+    public Picture getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Picture picture) {
+        this.picture = picture;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
     public Ecomm getEcomm() {
         return ecomm;

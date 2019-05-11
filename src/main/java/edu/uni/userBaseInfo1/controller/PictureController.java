@@ -2,8 +2,9 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Picture;
+import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.PictureService;
+import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -34,6 +35,8 @@ public class PictureController {
     //把Picture的Service接口层的所有方法自动装配到该对象中
     @Autowired
     private PictureService pictureService;
+    @Autowired
+    private UserinfoApplyService userinfoApplyService;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired

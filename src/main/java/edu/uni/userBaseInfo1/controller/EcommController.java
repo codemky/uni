@@ -10,8 +10,10 @@ import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.Ecomm;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
+import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
 import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.userBaseInfo1.service.EcommService;
+import edu.uni.userBaseInfo1.service.UserinfoApplyApprovalService;
 import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
@@ -49,6 +51,8 @@ public class EcommController {
     ApprovalMainService approvalMainService;
     @Autowired
     UserinfoApplyService userinfoApplyService;
+    @Autowired
+    UserinfoApplyApprovalService userinfoApplyApprovalService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -222,9 +226,9 @@ public class EcommController {
      * @return Result
      * @apiNote: 申请修改通信方式
      */
-    @ApiOperation(value="申请修改通信方式", notes="未测试")
+    @ApiOperation(value="申请修改通信方式", notes="已测试")
     @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
-    @PostMapping("applyModifydEcomm/")
+    @PostMapping("applyModifyEcomm/")
     @ResponseBody
     public Result ApplyModifyEcomm(@RequestBody RequestMessage requestMessage){
 //        System.out.println("o = "+ requestMessage.getEcomm());
@@ -263,8 +267,17 @@ public class EcommController {
             //设置用户信息申请为有效
             userInfo_apply.setDeleted(false);
             //插入新的userinfoApply记录
-            boolean success = userinfoApplyService.insertUserinfoApply(userInfo_apply);
-            if(success){
+            boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
+            //向审批流程表插入一条数据
+            UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+            applyApproval.setUniversityId(userInfo_apply.getUniversityId());
+            applyApproval.setUserinfoApplyId(userInfo_apply.getId());
+            applyApproval.setStep(1);
+            applyApproval.setDatetime(userInfo_apply.getStartTime());
+            applyApproval.setByWho(byWho);
+            applyApproval.setDeleted(false);
+            boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
+            if(successInfoApply && successApplyApproval){
                 //清除相应的缓存
                 cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
                 cache.delete(CacheNameHelper.ListAll_CacheName);

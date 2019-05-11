@@ -4,6 +4,9 @@ import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.AddressService;
+import edu.uni.userBaseInfo1.service.ApprovalMainService;
+import edu.uni.userBaseInfo1.service.UserinfoApplyApprovalService;
+import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import edu.uni.userBaseInfo1.utils.AddressUtil;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
@@ -36,6 +39,12 @@ public class AddressController {
     //把Address的Service接口层的所有方法自动装配到该对象中
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private ApprovalMainService approvalMainService;
+    @Autowired
+    private UserinfoApplyService userinfoApplyService;
+    @Autowired
+    private UserinfoApplyApprovalService userinfoApplyApprovalService;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired
@@ -326,6 +335,75 @@ public class AddressController {
             if(success){
                 //清除相应的缓存
                 cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + address.getId());
+                cache.delete(AddressController.CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
+
+    /**
+     * Author: laizhouhao 9:56 2019/5/11
+     * @param requestMessage
+     * @return Result
+     * @apiNote: 申请修改地址
+     */
+    @ApiOperation(value="申请修改地址", notes="2019年5月11日 10:25:26 已通过测试")
+    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
+    @PostMapping("applyModifyAddress/")
+    @ResponseBody
+    public Result applyModifyAddress(@RequestBody RequestMessage requestMessage){
+//        System.out.println("o = "+ requestMessage.getAddress());
+        Address address = requestMessage.getAddress();
+        Long byWho = requestMessage.getByWho();
+        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
+        //判断前端传过来的值是否为空
+        if(requestMessage.getAddress()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
+            //获取被修改的用户id
+            Long user_id = address.getUserId();
+            //旧记录id
+            Long oldId = address.getId();
+            System.out.println("oldId = "+oldId);
+            //将要插入的记录设置为无效
+            address.setDeleted(true);
+            //将新纪录插入Address表
+            addressService.insert(address);
+            //新纪录的id
+            Long newId = address.getId();
+
+            //向userinfoApply增加审批业务id
+            userInfo_apply.setApprovalMainId(approvalMainService.
+                    selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改地址"));
+            //设置用户信息申请种类
+            userInfo_apply.setInfoType(0);
+            //设置用户信息申请旧信息记录id
+            userInfo_apply.setOldInfoId(oldId);
+            //设置用户信息申请新信息记录id
+            userInfo_apply.setNewInfoId(newId);
+            //设置用户信息申请开始时间
+            userInfo_apply.setStartTime(address.getDatetime());
+            //设置用户信息创建时间
+            userInfo_apply.setDatetime(address.getDatetime());
+            //设置用户信息申请写入者
+            userInfo_apply.setByWho(byWho);
+            //设置用户信息申请为有效
+            userInfo_apply.setDeleted(false);
+            //插入新的userinfoApply记录
+            boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
+            //向审批流程表插入一条数据
+            UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+            applyApproval.setUniversityId(userInfo_apply.getUniversityId());
+            applyApproval.setUserinfoApplyId(userInfo_apply.getId());
+            applyApproval.setStep(1);
+            applyApproval.setDatetime(userInfo_apply.getStartTime());
+            applyApproval.setByWho(byWho);
+            applyApproval.setDeleted(false);
+            boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
+            if(successInfoApply && successApplyApproval){
+                //清除相应的缓存
+                cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifydAddress");
                 cache.delete(AddressController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
