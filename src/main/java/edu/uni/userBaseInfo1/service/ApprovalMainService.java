@@ -51,6 +51,14 @@ public interface ApprovalMainService {
     boolean update(ApprovalMain approvalMain);
 
     /**
+     * Author: mokuanyuan 20:12 2019/5/10
+     * @param approvalMain
+     * @return boolean
+     * @apiNote: 更新审批规定记录（因为对审批步骤详情表进行了某些操作而导致的更新）
+     */
+    boolean updateForStepIncharge(ApprovalMain approvalMain);
+
+    /**
      * Author: laizhouhao 15:47 2019/4/29
      * @param id
      * @return boolean

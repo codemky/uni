@@ -29,8 +29,51 @@ public class ApprovalStepIncharge {
 //    本记录是否有效 0：有效  1：无效
     private Boolean deleted;
 
+    //说明是那个角色才能审批
+    private String roleName;
+//    信息类型
+    private Integer infoType;
+//    申请用户id
+    private Long applyUserId;
+
     public Long getId() {
         return id;
+    }
+
+    public ApprovalStepIncharge() {
+    }
+
+    public ApprovalStepIncharge(Long id, Long universityId, Long approvalMainId, String name, Integer step, Long roleId, Date datetime, Long byWho, Boolean deleted, String roleName, Integer infoType, Long applyUserId) {
+        this.id = id;
+        this.universityId = universityId;
+        this.approvalMainId = approvalMainId;
+        this.name = name;
+        this.step = step;
+        this.roleId = roleId;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+        this.roleName = roleName;
+        this.infoType = infoType;
+        this.applyUserId = applyUserId;
+    }
+
+    @Override
+    public String toString() {
+        return "ApprovalStepIncharge{" +
+                "id=" + id +
+                ", universityId=" + universityId +
+                ", approvalMainId=" + approvalMainId +
+                ", name='" + name + '\'' +
+                ", step=" + step +
+                ", roleId=" + roleId +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                ", roleName='" + roleName + '\'' +
+                ", infoType=" + infoType +
+                ", applyUserId=" + applyUserId +
+                '}';
     }
 
     public void setId(Long id) {
@@ -58,7 +101,7 @@ public class ApprovalStepIncharge {
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public Integer getStep() {
@@ -101,18 +144,27 @@ public class ApprovalStepIncharge {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "ApprovalStepIncharge{" +
-                "id=" + id +
-                ", universityId=" + universityId +
-                ", approvalMainId=" + approvalMainId +
-                ", name='" + name + '\'' +
-                ", step=" + step +
-                ", roleId=" + roleId +
-                ", datetime=" + datetime +
-                ", byWho=" + byWho +
-                ", deleted=" + deleted +
-                '}';
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Integer getInfoType() {
+        return infoType;
+    }
+
+    public void setInfoType(Integer infoType) {
+        this.infoType = infoType;
+    }
+
+    public Long getApplyUserId() {
+        return applyUserId;
+    }
+
+    public void setApplyUserId(Long applyUserId) {
+        this.applyUserId = applyUserId;
     }
 }

@@ -774,6 +774,196 @@ public class UserinfoApplyApprovalExample {
             addCriterion("deleted not between", value1, value2, "deleted");
             return (Criteria) this;
         }
+
+        public Criteria andRoleNameIsNull() {
+            addCriterion("role_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameIsNotNull() {
+            addCriterion("role_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameEqualTo(String value) {
+            addCriterion("role_name =", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameNotEqualTo(String value) {
+            addCriterion("role_name <>", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameGreaterThan(String value) {
+            addCriterion("role_name >", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameGreaterThanOrEqualTo(String value) {
+            addCriterion("role_name >=", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameLessThan(String value) {
+            addCriterion("role_name <", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameLessThanOrEqualTo(String value) {
+            addCriterion("role_name <=", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameLike(String value) {
+            addCriterion("role_name like", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameNotLike(String value) {
+            addCriterion("role_name not like", value, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameIn(List<String> values) {
+            addCriterion("role_name in", values, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameNotIn(List<String> values) {
+            addCriterion("role_name not in", values, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameBetween(String value1, String value2) {
+            addCriterion("role_name between", value1, value2, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andRoleNameNotBetween(String value1, String value2) {
+            addCriterion("role_name not between", value1, value2, "roleName");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeIsNull() {
+            addCriterion("info_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeIsNotNull() {
+            addCriterion("info_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeEqualTo(Integer value) {
+            addCriterion("info_type =", value, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeNotEqualTo(Integer value) {
+            addCriterion("info_type <>", value, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeGreaterThan(Integer value) {
+            addCriterion("info_type >", value, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("info_type >=", value, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeLessThan(Integer value) {
+            addCriterion("info_type <", value, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("info_type <=", value, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeIn(List<Integer> values) {
+            addCriterion("info_type in", values, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeNotIn(List<Integer> values) {
+            addCriterion("info_type not in", values, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeBetween(Integer value1, Integer value2) {
+            addCriterion("info_type between", value1, value2, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("info_type not between", value1, value2, "infoType");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdIsNull() {
+            addCriterion("apply_user_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdIsNotNull() {
+            addCriterion("apply_user_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdEqualTo(Long value) {
+            addCriterion("apply_user_id =", value, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdNotEqualTo(Long value) {
+            addCriterion("apply_user_id <>", value, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdGreaterThan(Long value) {
+            addCriterion("apply_user_id >", value, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("apply_user_id >=", value, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdLessThan(Long value) {
+            addCriterion("apply_user_id <", value, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdLessThanOrEqualTo(Long value) {
+            addCriterion("apply_user_id <=", value, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdIn(List<Long> values) {
+            addCriterion("apply_user_id in", values, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdNotIn(List<Long> values) {
+            addCriterion("apply_user_id not in", values, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdBetween(Long value1, Long value2) {
+            addCriterion("apply_user_id between", value1, value2, "applyUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyUserIdNotBetween(Long value1, Long value2) {
+            addCriterion("apply_user_id not between", value1, value2, "applyUserId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

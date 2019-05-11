@@ -97,18 +97,21 @@ public class ApprovalStepInchargeController {
     public void selectByMainId(@PathVariable Long mainId, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
 
-        String cacheName = ApprovalStepInchargeController.CacheNameHelper.Receive_CacheNamePrefix + "mainId_" + mainId;
-        String json = cache.get(cacheName);
-
-        if(json == null){
-            List<ApprovalStepIncharge> approvalStepIncharges = approvalStepInchargeService.selectByMainId(mainId);
-            //把查询到的结果用Result工具类转换成json格式的字符串
-            json = Result.build(ResultType.Success).appendData("approvalStepIncharges",approvalStepIncharges).convertIntoJSON();
-            //如果有查询到数据，就把在数据库查到的数据放到缓存中
-            if(approvalStepIncharges != null){
-                cache.set(cacheName,json);
-            }
-        }
+//        String cacheName = ApprovalStepInchargeController.CacheNameHelper.Receive_CacheNamePrefix + "mainId_" + mainId;
+//        String json = cache.get(cacheName);
+        List<ApprovalStepIncharge> approvalStepIncharges = approvalStepInchargeService.selectByMainId(mainId);
+        String json = Result.build(ResultType.Success).appendData("approvalStepIncharges",approvalStepIncharges).convertIntoJSON();
+//        if(json == null){
+//            approvalStepIncharges = approvalStepInchargeService.selectByMainId(mainId);
+//            //把查询到的结果用Result工具类转换成json格式的字符串
+//            json = Result.build(ResultType.Success).appendData("approvalStepIncharges",approvalStepIncharges).convertIntoJSON();
+//            //如果有查询到数据，就把在数据库查到的数据放到缓存中
+//            if(approvalStepIncharges != null){
+//                cache.set(cacheName,json);
+//            }
+//            cache.delete(cacheName);cache.
+//        }
+//        cache.delete(cacheName);
         //到最后通过response对象返回json格式字符串的数据
         response.getWriter().write(json);
 
@@ -149,7 +152,7 @@ public class ApprovalStepInchargeController {
             int step = approvalMain.getStepCnt();
             approvalStepIncharge.setStep(step+1);
             approvalMain.setStepCnt(step+1);
-            boolean main_success = approvalMainService.update(approvalMain);
+            boolean main_success = approvalMainService.updateForStepIncharge(approvalMain);
 
             boolean success = approvalStepInchargeService.insert(approvalStepIncharge);
             if(success || main_success){

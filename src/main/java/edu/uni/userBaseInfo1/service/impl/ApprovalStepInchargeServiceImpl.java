@@ -46,10 +46,7 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
         criteria.andApprovalMainIdEqualTo(id);
         criteria.andDeletedEqualTo(false);
 
-        List<ApprovalStepIncharge> approvalStepIncharges =
-                approvalStepInchargeMapper.selectByExample(example);
-
-        return approvalStepIncharges;
+        return approvalStepInchargeMapper.selectByExample(example);
     }
 
     /**
@@ -91,7 +88,7 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
         ApprovalMain approvalMain = approvalMainService.
                 selectById(approvalStepIncharge.getApprovalMainId());
         approvalMain.setStepCnt(approvalMain.getStepCnt()-1);
-        approvalMainService.update(approvalMain);
+        approvalMainService.updateForStepIncharge(approvalMain);
 
         return approvalStepInchargeMapper.updateByPrimaryKey(approvalStepIncharge) > 0 ? true : false;
 
@@ -146,11 +143,10 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
      */
     @Override
     public boolean insert(ApprovalStepIncharge approvalStepIncharge) {
-        ApprovalMain approvalMain = approvalMainService.
-                selectById(approvalStepIncharge.getApprovalMainId());
-        approvalMain.setStepCnt(approvalMain.getStepCnt()+1);
-        approvalMainService.update(approvalMain);
-
+//        ApprovalMain approvalMain = approvalMainService.
+//                selectById(approvalStepIncharge.getApprovalMainId());
+//        approvalMain.setStepCnt(approvalMain.getStepCnt()+1);
+//        approvalMainService.updateForStepIncharge(approvalMain);
 
         return approvalStepInchargeMapper.insert(approvalStepIncharge)>0 ? true : false;
     }

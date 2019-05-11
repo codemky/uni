@@ -146,9 +146,9 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
         criteria.andDeletedEqualTo(false);
         Integer count = approvalMainMapper.countByExample(example);
         if( count > 1 )
-            return false;
-        else
             return true;
+        else
+            return false;
     }
 
     /**
@@ -221,7 +221,7 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
 
         if ( !isAlreadyExist(approvalMain.getUniversityId(),approvalMain.getName()) ){
             approvalMain.setStepCnt(0);
-            return approvalMainMapper.insert(approvalMain)>0 ? true : false;
+            return approvalMainMapper.insert(approvalMain) > 0 ? true : false;
         }
         else
             return false;
@@ -241,8 +241,9 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
         if( diff_step > 1 ){
             List<ApprovalStepIncharge> approvalStepIncharges =
                     approvalStepInchargeService.selectByMainId(approvalMain.getId());
-            for(long index=approvalStepIncharges.size(); diff_step > 0 ; index-- ){
-                approvalStepInchargeService.updateToInvalidById(index);
+            for( int i = approvalStepIncharges.size() ; diff_step > 0 ; i-- ){
+                diff_step-- ;
+                approvalStepInchargeService.updateToInvalidById( approvalStepIncharges.get(i-1).getId() );
             }
             return approvalMainMapper.updateByPrimaryKey(approvalMain) > 0 ? true : false;
         }
@@ -254,6 +255,11 @@ public class ApprovalMainServiceImpl implements ApprovalMainService {
         return approvalMainMapper.updateByPrimaryKey(approvalMain) > 0 ? true : false;
     }
 
+    @Override
+    public boolean updateForStepIncharge(ApprovalMain approvalMain) {
+
+        return approvalMainMapper.updateByPrimaryKey(approvalMain) > 0 ? true : false ;
+    }
 
     /**
      * Author: laizhouhao 15:47 2019/4/29
