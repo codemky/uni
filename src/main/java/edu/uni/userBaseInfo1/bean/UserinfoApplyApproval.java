@@ -25,6 +25,15 @@ public class UserinfoApplyApproval {
 
     private Boolean deleted;
 
+    private  String roleName;
+
+    private Integer infoType;
+
+    private Long applyUserId;
+
+    public UserinfoApplyApproval() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -70,7 +79,7 @@ public class UserinfoApplyApproval {
     }
 
     public void setReason(String reason) {
-        this.reason = reason == null ? null : reason.trim();
+        this.reason = reason;
     }
 
     public Long getCheckWho() {
@@ -111,5 +120,49 @@ public class UserinfoApplyApproval {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Integer getInfoType() {
+        return infoType;
+    }
+
+    public void setInfoType(Integer infoType) {
+        this.infoType = infoType;
+    }
+
+    public Long getApplyUserId() {
+        return applyUserId;
+    }
+
+    public void setApplyUserId(Long applyUserId) {
+        this.applyUserId = applyUserId;
+    }
+
+    @Override
+    public String toString() {
+        return "UserinfoApplyApproval{" +
+                "id=" + id +
+                ", universityId=" + universityId +
+                ", userinfoApplyId=" + userinfoApplyId +
+                ", step=" + step +
+                ", result=" + result +
+                ", reason='" + reason + '\'' +
+                ", checkWho=" + checkWho +
+                ", checkTime=" + checkTime +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                ", roleName='" + roleName + '\'' +
+                ", infoType=" + infoType +
+                ", applyUserId=" + applyUserId +
+                '}';
     }
 }

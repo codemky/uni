@@ -82,4 +82,12 @@ public interface ApprovalStepInchargeService {
      * @apiNote: 用于根据id删除ApprovalStepIncharge表的一个记录
      */
     boolean delete(Long id);
+
+    /**
+     * Author: laizhouhao 12:54 2019/5/11
+     * @param step, appoval_main_id
+     * @return 审批该步骤的角色的id
+     * @apiNote: 根据步骤数和申请步数规定表id查询审批角色id
+     */
+    Long selectRoleIdByStepAppovalId(Integer step, Long appoval_main_id);
 }
