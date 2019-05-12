@@ -34,7 +34,7 @@ import java.util.List;
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/address")
 //标志这个类是一个controller类，用于被Spring扫描然后配置添加和配置相应的bean
-@Controller
+@RestController
 public class AddressController {
     //把Address的Service接口层的所有方法自动装配到该对象中
     @Autowired
@@ -64,6 +64,7 @@ public class AddressController {
     //@ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
     public void test(){
         AddressUtil addressUtil = new AddressUtil();
+        //System.out.println(new UserinfoApplyApprovalController().isDepartmentSame(727,0));
         System.out.println("所有国家："+addressUtil.SelectCountries().toString());
         System.out.println("根据国家编码查询所有省份："+addressUtil.SelectStates(1).toString());
         System.out.println("根据省份编码查询所有城市："+addressUtil.SelectCities(13).toString());

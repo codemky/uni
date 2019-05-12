@@ -190,8 +190,9 @@ public class UserinfoApplyApprovalController {
         return Result.build(ResultType.ParamError);
     }
     //根据申请人的用户id(第一个参数)和登录到审批中心人的用户id(第二个参数)判断是否处于同一个学院
-    public boolean isDepartmentSame(Long studentId,Long userId){
+    public boolean isDepartmentSame(long studentId,long userId){
         //审批人
+        System.out.println("-->"+employeeService.selectByUserId(userId));
         Employee employee = employeeService.selectByUserId(userId).get(0);
         Employ employ = employService.selectEmployByEmployeeId(employee.getUserId());
         System.out.println(employ.getDepartmentId());
@@ -199,9 +200,11 @@ public class UserinfoApplyApprovalController {
         Student student = studentService.selectByUserId(studentId).get(0);
         Class aClass = classService.selectClassByClassId(student.getClassId());
         System.out.println(aClass.getDepartmentId()+"--->");
-        if(employ.getDepartmentId()==aClass.getDepartmentId()){
+        if(employ.getDepartmentId().equals(aClass.getDepartmentId())){
+            System.out.println("是同一个学院");
             return true;
         }else{
+            System.out.println("不是同一个学院");
             return false;
         }
     }

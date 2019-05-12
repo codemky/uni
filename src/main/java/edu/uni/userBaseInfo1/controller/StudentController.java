@@ -40,7 +40,7 @@ import java.util.List;
 //如果添加了路径，则在需要调用该类的方法时需要在方法请求mapping路径前加上类的mapping路径
 @RequestMapping("json/student")
 //标志这个类是一个controller类，用于被Spring扫描然后配置添加和配置相应的bean
-@Controller
+@RestController
 public class StudentController {
 
         @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中

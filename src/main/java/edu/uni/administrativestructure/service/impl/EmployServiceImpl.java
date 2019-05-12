@@ -110,7 +110,7 @@ public class EmployServiceImpl implements EmployService {
     public Employ selectEmployByEmployeeId(Long employeeId) {
         EmployExample employExample = new EmployExample();
         EmployExample.Criteria criteria = employExample.createCriteria();
-        criteria.andDepartmentIdEqualTo(employeeId);
+        criteria.andWorkerIdEqualTo(employeeId);
         return employMapper.selectByExample(employExample).get(0);
     }
 

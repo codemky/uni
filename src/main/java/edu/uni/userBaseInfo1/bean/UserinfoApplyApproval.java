@@ -18,9 +18,9 @@ public class UserinfoApplyApproval {
     private String reason;
 
     private Long checkWho;
-    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkTime;
-    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
 
     private Long byWho;
