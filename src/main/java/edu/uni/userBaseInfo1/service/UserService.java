@@ -91,4 +91,12 @@ public interface UserService {
      * @apiNote: 通过申请并且该步骤不是最后一步
      */
     boolean createForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id);
+
+    /**
+     * Author: laizhouhao 20:57 2019/5/11
+     * @param userinfoApplyApproval, user_id
+     * @return boolean
+     * @apiNote: 不通过申请
+     */
+    boolean endForRefuse(UserinfoApplyApproval userinfoApplyApproval, Long user_id);
 }

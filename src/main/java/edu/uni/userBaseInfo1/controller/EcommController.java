@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -318,7 +319,7 @@ public class EcommController {
     })
     @PostMapping("commituserinfoApply/{user_id}")
     @ResponseBody
-    public Result ApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id){
+    public Result commitApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id){
         if(userinfoApplyApproval != null){
             //比较当前步骤是否是最后一步
             boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
@@ -346,6 +347,37 @@ public class EcommController {
                 }else{
                     return Result.build(ResultType.Failed);
                 }
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
+
+    /**
+     * Author: laizhouhao 20:50 2019/5/9
+     * @param user,user_id
+     * @return Result
+     * @apiNote: 审批修改通信方式的申请, 点击不通过时
+     */
+    @ApiOperation(value="审批修改通信方式的申请, 点击不通过时", notes="未测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "user", value = "用户申请审批流程表实体", required = true, dataType = "User"),
+            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+    })
+    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Result refuseApplyModifyEcomm(@RequestBody User user,@PathVariable Long user_id) throws IOException {
+        UserinfoApplyApproval userinfoApplyApproval = new UserinfoApplyApproval();
+        System.out.println("---");
+        if(userinfoApplyApproval != null && user_id != null){
+            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
+            System.out.println("---"+userinfoApplyApproval);
+            if(success) {
+                //清除相应的缓存
+                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
+                cache.delete(CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
             }
         }
         return Result.build(ResultType.ParamError);

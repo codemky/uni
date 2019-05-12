@@ -33,26 +33,6 @@ public class UserinfoApplyApproval {
 
     private Long applyUserId;
 
-    public UserinfoApplyApproval() {
-    }
-
-    public UserinfoApplyApproval(Long id, Long universityId, Long userinfoApplyId, Integer step, Boolean result, String reason, Long checkWho, Date checkTime, Date datetime, Long byWho, Boolean deleted, String roleName, Integer infoType, Long applyUserId) {
-        this.id = id;
-        this.universityId = universityId;
-        this.userinfoApplyId = userinfoApplyId;
-        this.step = step;
-        this.result = result;
-        this.reason = reason;
-        this.checkWho = checkWho;
-        this.checkTime = checkTime;
-        this.datetime = datetime;
-        this.byWho = byWho;
-        this.deleted = deleted;
-        this.roleName = roleName;
-        this.infoType = infoType;
-        this.applyUserId = applyUserId;
-    }
-
     public Long getId() {
         return id;
     }
@@ -162,6 +142,26 @@ public class UserinfoApplyApproval {
     }
 
     public void setApplyUserId(Long applyUserId) {
+        this.applyUserId = applyUserId;
+    }
+
+    public UserinfoApplyApproval() {
+    }
+
+    public UserinfoApplyApproval(Long id, Long universityId, Long userinfoApplyId, Integer step, Boolean result, String reason, Long checkWho, Date checkTime, Date datetime, Long byWho, Boolean deleted, String roleName, Integer infoType, Long applyUserId) {
+        this.id = id;
+        this.universityId = universityId;
+        this.userinfoApplyId = userinfoApplyId;
+        this.step = step;
+        this.result = result;
+        this.reason = reason;
+        this.checkWho = checkWho;
+        this.checkTime = checkTime;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+        this.roleName = roleName;
+        this.infoType = infoType;
         this.applyUserId = applyUserId;
     }
 

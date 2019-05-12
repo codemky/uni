@@ -240,4 +240,33 @@ public class UserServiceImpl implements UserService {
         int secondSuccess = userinfoApplyApprovalMapper.insertSelective(applyApproval);
         return firstSuccess == 1 && secondSuccess == 1;
     }
+
+    /**
+     * Author: laizhouhao 20:57 2019/5/11
+     * @param userinfoApplyApproval, user_id
+     * @return boolean
+     * @apiNote: 不通过申请
+     */
+    @Override
+    public boolean endForRefuse(UserinfoApplyApproval userinfoApplyApproval, Long user_id) {
+        //修改用户流程审批表的审批结果
+        userinfoApplyApproval.setResult(false);
+        //设置审批人
+        userinfoApplyApproval.setCheckWho(user_id);
+        //设置审批时间
+        userinfoApplyApproval.setCheckTime(new Date());
+        //更新用户流程审批表的该条信息
+        int firstSuccess = userinfoApplyApprovalMapper.updateByPrimaryKeySelective(userinfoApplyApproval);
+
+        //查找申请表
+        UserinfoApply userinfoApply = userinfoApplyMapper.selectByPrimaryKey(userinfoApplyApproval.getUserinfoApplyId());
+        //将申请表结果改为不通过
+        userinfoApply.setApplyResult(false);
+        //填写申请表的结束时间
+        userinfoApply.setEndTime(new Date());
+        //更新申请表该条信息
+        int secondSuccess = userinfoApplyMapper.updateByPrimaryKeySelective(userinfoApply);
+        //如果两个都更新成功则返回操作成功true
+        return firstSuccess==1 && secondSuccess==1;
+    }
 }
