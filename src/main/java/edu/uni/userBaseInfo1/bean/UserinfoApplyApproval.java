@@ -6,31 +6,20 @@ import java.util.Date;
 
 public class UserinfoApplyApproval {
     private Long id;
-
     private Long universityId;
-
     private Long userinfoApplyId;
-
-    private Integer step;
-
-    private Boolean result;
-
+    private int step;
+    private boolean result;
     private String reason;
-
     private Long checkWho;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
-
     private Long byWho;
-
-    private Boolean deleted;
-
-    private  String roleName;
-
-    private Integer infoType;
-
+    private boolean deleted;
+    private String roleName;
+    private int infoType;
     private Long applyUserId;
 
     public Long getId() {
@@ -57,19 +46,19 @@ public class UserinfoApplyApproval {
         this.userinfoApplyId = userinfoApplyId;
     }
 
-    public Integer getStep() {
+    public int getStep() {
         return step;
     }
 
-    public void setStep(Integer step) {
+    public void setStep(int step) {
         this.step = step;
     }
 
-    public Boolean getResult() {
+    public boolean isResult() {
         return result;
     }
 
-    public void setResult(Boolean result) {
+    public void setResult(boolean result) {
         this.result = result;
     }
 
@@ -113,11 +102,11 @@ public class UserinfoApplyApproval {
         this.byWho = byWho;
     }
 
-    public Boolean getDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -129,11 +118,11 @@ public class UserinfoApplyApproval {
         this.roleName = roleName;
     }
 
-    public Integer getInfoType() {
+    public int getInfoType() {
         return infoType;
     }
 
-    public void setInfoType(Integer infoType) {
+    public void setInfoType(int infoType) {
         this.infoType = infoType;
     }
 
@@ -148,7 +137,7 @@ public class UserinfoApplyApproval {
     public UserinfoApplyApproval() {
     }
 
-    public UserinfoApplyApproval(Long id, Long universityId, Long userinfoApplyId, Integer step, Boolean result, String reason, Long checkWho, Date checkTime, Date datetime, Long byWho, Boolean deleted, String roleName, Integer infoType, Long applyUserId) {
+    public UserinfoApplyApproval(Long id, Long universityId, Long userinfoApplyId, int step, boolean result, String reason, Long checkWho, Date checkTime, Date datetime, Long byWho, boolean deleted, String roleName, int infoType, Long applyUserId) {
         this.id = id;
         this.universityId = universityId;
         this.userinfoApplyId = userinfoApplyId;

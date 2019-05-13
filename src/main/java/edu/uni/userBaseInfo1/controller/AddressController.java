@@ -3,16 +3,15 @@ package edu.uni.userBaseInfo1.controller;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.service.AddressService;
-import edu.uni.userBaseInfo1.service.ApprovalMainService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyApprovalService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyService;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.AddressUtil;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +44,8 @@ public class AddressController {
     private UserinfoApplyService userinfoApplyService;
     @Autowired
     private UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private UserService userService;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired
@@ -413,6 +414,36 @@ public class AddressController {
         }
         return Result.build(ResultType.ParamError);
     }
+
+    /**
+     * Author: laizhouhao 20:50 2019/5/9
+     * @param userinfoApplyApproval,user_id
+     * @return Result
+     * @apiNote: 审批修改通信方式的申请, 点击不通过时
+     */
+    @ApiOperation(value="审批修改通信方式的申请, 点击不通过时", notes="未测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+    })
+    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Result refuseApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id) throws IOException {
+        System.out.println("小莫是头猪！！！---");
+        if(userinfoApplyApproval != null && user_id != null){
+            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
+            if(success) {
+                //清除相应的缓存
+                cache.delete(EcommController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
+                cache.delete(EcommController.CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
+
 
     /**
      * <p>

@@ -9,10 +9,9 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
-import edu.uni.userBaseInfo1.bean.Ecomm;
-import edu.uni.userBaseInfo1.bean.EcommExample;
-import edu.uni.userBaseInfo1.mapper.EcommMapper;
-import edu.uni.userBaseInfo1.service.EcommService;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.mapper.*;
+import edu.uni.userBaseInfo1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +25,16 @@ public class EcommServiceImpl implements EcommService {
     //持久层接口的对象
     @Autowired
     private EcommMapper ecommMapper;  //爆红不用管
+    @Autowired
+    private RoleMapper roleMapper;
+    @Autowired
+    private ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private ApprovalMainService approvalMainService;
+    @Autowired
+    private UserinfoApplyService userinfoApplyService;
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
@@ -126,5 +135,75 @@ public class EcommServiceImpl implements EcommService {
                 .andDeletedEqualTo(false);
         List<Ecomm> ecommList = ecommMapper.selectByExample(ecommExample);
         return ecommList;
+    }
+
+    /**
+     * Author: laizhouhao 18:35 2019/5/13
+     * @param requestMessage
+     * @return boolean
+     * @apiNote: 用户点击申请修改通信方式
+     */
+    @Override
+    public boolean clickApplyEcomm(RequestMessage requestMessage) {
+        Ecomm ecomm = requestMessage.getEcomm();
+        Long byWho = requestMessage.getByWho();
+        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
+        //获取被修改的用户id
+        Long user_id = ecomm.getUserId();
+        //旧记录id
+        Long oldId = ecomm.getId();
+//            System.out.println("oldId = "+oldId);
+        //将要插入的记录设置为无效
+        ecomm.setDeleted(true);
+        //将新纪录插入Ecomm表
+        ecommMapper.insert(ecomm);
+        //新纪录的id
+        Long newId = ecomm.getId();
+        //向userinfoApply增加审批业务id
+        userInfo_apply.setApprovalMainId(approvalMainService.
+                selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改通信方式"));
+        //设置用户信息申请种类
+        userInfo_apply.setInfoType(0);
+        //设置用户信息申请旧信息记录id
+        userInfo_apply.setOldInfoId(oldId);
+        //设置用户信息申请新信息记录id
+        userInfo_apply.setNewInfoId(newId);
+        //设置用户信息申请开始时间
+        userInfo_apply.setStartTime(ecomm.getDatetime());
+        //设置用户信息创建时间
+        userInfo_apply.setDatetime(ecomm.getDatetime());
+        //设置用户信息申请写入者
+        userInfo_apply.setByWho(byWho);
+        //设置用户信息申请为有效
+        userInfo_apply.setDeleted(false);
+        //插入新的userinfoApply记录
+        boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
+        //向审批流程表插入一条数据
+        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+        //设置学校id
+        applyApproval.setUniversityId(userInfo_apply.getUniversityId());
+        //设置申请表id
+        applyApproval.setUserinfoApplyId(userInfo_apply.getId());
+        //设置步骤，初始化为1
+        applyApproval.setStep(1);
+        //设置时间
+        applyApproval.setDatetime(userInfo_apply.getStartTime());
+        //设置写入者
+        applyApproval.setByWho(byWho);
+        //设置为有效
+        applyApproval.setDeleted(false);
+        //设置申请信息的种类
+        applyApproval.setInfoType(userInfo_apply.getInfoType());
+        //设置审批的角色名
+        int st = applyApproval.getStep();
+        Long mainId = userInfo_apply.getApprovalMainId();
+        Long roleId = approvalStepInchargeService
+                .selectRoleIdByStepAppovalId(st,mainId);
+        Role role = roleMapper.selectByPrimaryKey(roleId);
+        //设置申请人的用户id
+        applyApproval.setApplyUserId(byWho);
+        boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
+        System.out.println("aaa="+applyApproval);
+        return successInfoApply && successApplyApproval;
     }
 }

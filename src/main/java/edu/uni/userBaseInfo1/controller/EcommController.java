@@ -1,5 +1,5 @@
 /**
- * Author: mokuanyuan 10:06 2019/4/25
+ * Author: laizhouhao 10:06 2019/4/25
  * @apiNote: 关于电子通信信息模块的Controller层（Http URL请求）的具体实现方法
  */
 
@@ -70,7 +70,7 @@ public class EcommController {
 
 
     /**
-     * Author: mokuanyuan 10:58 2019/4/26
+     * Author: laizhouhao 10:58 2019/4/26
      * @param id
      * @return response
      * @apiNote: 获取电子通信记录详情
@@ -109,7 +109,7 @@ public class EcommController {
 
 
     /**
-     * Author: mokuanyuan 11:02 2019/4/26
+     * Author: laizhouhao 11:02 2019/4/26
      * @apiNote: 查询所有电子通信记录
      */
     @ApiOperation( value = "获取所有通信记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
@@ -232,69 +232,10 @@ public class EcommController {
     @PostMapping("applyModifyEcomm/")
     @ResponseBody
     public Result ApplyModifyEcomm(@RequestBody RequestMessage requestMessage){
-//        System.out.println("o = "+ requestMessage.getEcomm());
-        Ecomm ecomm = requestMessage.getEcomm();
-        Long byWho = requestMessage.getByWho();
-        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
         //判断前端传过来的值是否为空
         if(requestMessage.getEcomm()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
-            //获取被修改的用户id
-            Long user_id = ecomm.getUserId();
-            //旧记录id
-            Long oldId = ecomm.getId();
-//            System.out.println("oldId = "+oldId);
-            //将要插入的记录设置为无效
-            ecomm.setDeleted(true);
-            //将新纪录插入Ecomm表
-            ecommService.insert(ecomm);
-            //新纪录的id
-            Long newId = ecomm.getId();
-            //向userinfoApply增加审批业务id
-            userInfo_apply.setApprovalMainId(approvalMainService.
-                    selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改照片"));
-            //设置用户信息申请种类
-            userInfo_apply.setInfoType(0);
-            //设置用户信息申请旧信息记录id
-            userInfo_apply.setOldInfoId(oldId);
-            //设置用户信息申请新信息记录id
-            userInfo_apply.setNewInfoId(newId);
-            //设置用户信息申请开始时间
-            userInfo_apply.setStartTime(ecomm.getDatetime());
-            //设置用户信息创建时间
-            userInfo_apply.setDatetime(ecomm.getDatetime());
-            //设置用户信息申请写入者
-            userInfo_apply.setByWho(byWho);
-            //设置用户信息申请为有效
-            userInfo_apply.setDeleted(false);
-            //插入新的userinfoApply记录
-            boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
-            //向审批流程表插入一条数据
-            UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
-            //设置学校id
-            applyApproval.setUniversityId(userInfo_apply.getUniversityId());
-            //设置申请表id
-            applyApproval.setUserinfoApplyId(userInfo_apply.getId());
-            //设置步骤，初始化为1
-            applyApproval.setStep(1);
-            //设置时间
-            applyApproval.setDatetime(userInfo_apply.getStartTime());
-            //设置写入者
-            applyApproval.setByWho(byWho);
-            //设置为有效
-            applyApproval.setDeleted(false);
-            //设置申请信息的种类
-            applyApproval.setInfoType(userInfo_apply.getInfoType());
-            //设置审批的角色名
-            int st = applyApproval.getStep();
-            Long mainId = userInfo_apply.getApprovalMainId();
-            Long roleId = approvalStepInchargeService
-                    .selectRoleIdByStepAppovalId(st,mainId);
-            Role role = roleService.selectById(roleId);
-            //设置申请人的用户id
-            applyApproval.setApplyUserId(byWho);
-            boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
-            System.out.println("aaa="+applyApproval);
-            if(successInfoApply && successApplyApproval){
+            boolean success = ecommService.clickApplyEcomm(requestMessage);
+            if(success){
                 //清除相应的缓存
                 cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
                 cache.delete(CacheNameHelper.ListAll_CacheName);
@@ -354,23 +295,21 @@ public class EcommController {
 
     /**
      * Author: laizhouhao 20:50 2019/5/9
-     * @param user,user_id
+     * @param userinfoApplyApproval,user_id
      * @return Result
      * @apiNote: 审批修改通信方式的申请, 点击不通过时
      */
     @ApiOperation(value="审批修改通信方式的申请, 点击不通过时", notes="未测试")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "user", value = "用户申请审批流程表实体", required = true, dataType = "User"),
+            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
             @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
     })
     @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Result refuseApplyModifyEcomm(@RequestBody User user,@PathVariable Long user_id) throws IOException {
-        UserinfoApplyApproval userinfoApplyApproval = new UserinfoApplyApproval();
-        System.out.println("---");
+    public Result refuseApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id) throws IOException {
+        System.out.println("小莫是头猪！！！---");
         if(userinfoApplyApproval != null && user_id != null){
             boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
-            System.out.println("---"+userinfoApplyApproval);
             if(success) {
                 //清除相应的缓存
                 cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");

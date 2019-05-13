@@ -8,6 +8,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Ecomm;
+import edu.uni.userBaseInfo1.bean.RequestMessage;
 
 import java.util.List;
 
@@ -76,5 +77,11 @@ public interface EcommService {
      */
     List<Ecomm> selectValidEcomByUserId(Long user_id);
 
-
+    /**
+     * Author: laizhouhao 18:35 2019/5/13
+     * @param requestMessage
+     * @return boolean
+     * @apiNote: 用户点击申请修改通信方式
+     */
+    boolean clickApplyEcomm(RequestMessage requestMessage);
 }
