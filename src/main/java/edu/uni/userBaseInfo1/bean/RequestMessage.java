@@ -15,36 +15,26 @@ public class RequestMessage {
     private LearningDegree learningDegree;
     private EmployeeHistory employeeHistory;
 
-    public EmployeeHistory getEmployeeHistory() {
-        return employeeHistory;
+    public RequestMessage() {
     }
 
-    public void setEmployeeHistory(EmployeeHistory employeeHistory) {
+    public RequestMessage(Ecomm ecomm, Address address, Picture picture, StudentRelation studentRelation, Long byWho, UserinfoApply userinfoApply, LearningDegree learningDegree, EmployeeHistory employeeHistory) {
+        this.ecomm = ecomm;
+        this.address = address;
+        this.picture = picture;
+        this.studentRelation = studentRelation;
+        this.byWho = byWho;
+        this.userinfoApply = userinfoApply;
+        this.learningDegree = learningDegree;
         this.employeeHistory = employeeHistory;
     }
 
-    public LearningDegree getLearningDegree() {
-        return learningDegree;
+    public Ecomm getEcomm() {
+        return ecomm;
     }
 
-    public void setLearningDegree(LearningDegree learningDegree) {
-        this.learningDegree = learningDegree;
-    }
-
-    public StudentRelation getStudentRelation() {
-        return studentRelation;
-    }
-
-    public void setStudentRelation(StudentRelation studentRelation) {
-        this.studentRelation = studentRelation;
-    }
-
-    public Picture getPicture() {
-        return picture;
-    }
-
-    public void setPicture(Picture picture) {
-        this.picture = picture;
+    public void setEcomm(Ecomm ecomm) {
+        this.ecomm = ecomm;
     }
 
     public Address getAddress() {
@@ -55,12 +45,20 @@ public class RequestMessage {
         this.address = address;
     }
 
-    public Ecomm getEcomm() {
-        return ecomm;
+    public Picture getPicture() {
+        return picture;
     }
 
-    public void setEcomm(Ecomm ecomm) {
-        this.ecomm = ecomm;
+    public void setPicture(Picture picture) {
+        this.picture = picture;
+    }
+
+    public StudentRelation getStudentRelation() {
+        return studentRelation;
+    }
+
+    public void setStudentRelation(StudentRelation studentRelation) {
+        this.studentRelation = studentRelation;
     }
 
     public Long getByWho() {
@@ -79,14 +77,19 @@ public class RequestMessage {
         this.userinfoApply = userinfoApply;
     }
 
-    public RequestMessage() {
+    public LearningDegree getLearningDegree() {
+        return learningDegree;
     }
 
-    public RequestMessage(Ecomm ecomm, Long byWho, UserinfoApply userinfoApply, LearningDegree learningDegree, EmployeeHistory employeeHistory) {
-        this.ecomm = ecomm;
-        this.byWho = byWho;
-        this.userinfoApply = userinfoApply;
+    public void setLearningDegree(LearningDegree learningDegree) {
         this.learningDegree = learningDegree;
+    }
+
+    public EmployeeHistory getEmployeeHistory() {
+        return employeeHistory;
+    }
+
+    public void setEmployeeHistory(EmployeeHistory employeeHistory) {
         this.employeeHistory = employeeHistory;
     }
 
@@ -94,6 +97,9 @@ public class RequestMessage {
     public String toString() {
         return "RequestMessage{" +
                 "ecomm=" + ecomm +
+                ", address=" + address +
+                ", picture=" + picture +
+                ", studentRelation=" + studentRelation +
                 ", byWho=" + byWho +
                 ", userinfoApply=" + userinfoApply +
                 ", learningDegree=" + learningDegree +

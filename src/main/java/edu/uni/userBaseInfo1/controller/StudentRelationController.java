@@ -284,73 +284,31 @@ public class StudentRelationController {
     }
 
     /**
-     * Author: laizhouhao 9:56 2019/5/11
+     * Author: laizhouhao 20:11 2019/5/13
      * @param requestMessage
      * @return Result
-     * @apiNote: 申请修改学生亲属
+     * @apiNote: 申请学生亲属信息, 点击申请时
      */
-    @ApiOperation(value="申请修改学生亲属", notes="2019年5月11日 10:40:54 已通过测试")
+    @ApiOperation(value="申请学生亲属信息, 点击申请时", notes="2019年5月14日 19:08:05 已通过测试")
     @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
     @PostMapping("applyModifyStudentRelation/")
     @ResponseBody
     public Result applyModifyStudentRelation(@RequestBody RequestMessage requestMessage){
-//        System.out.println("o = "+ requestMessage.getStudentRelation());
-        StudentRelation studentRelation = requestMessage.getStudentRelation();
-        Long byWho = requestMessage.getByWho();
-        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
-        //判断前端传过来的值是否为空
-        if(requestMessage.getStudentRelation()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
-            //获取被修改的用户id
-            Long user_id = studentRelation.getUserId();
-            //旧记录id
-            Long oldId = studentRelation.getId();
-            System.out.println("oldId = "+oldId);
-            //将要插入的记录设置为无效
-            studentRelation.setDeleted(true);
-            //将新纪录插入StudentRelation表
-            studentRelationService.insert(studentRelation);
-            //新纪录的id
-            Long newId = studentRelation.getId();
-
-            //向userinfoApply增加审批业务id
-            userInfo_apply.setApprovalMainId(approvalMainService.
-                    selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改地址"));
-            //设置用户信息申请种类
-            userInfo_apply.setInfoType(0);
-            //设置用户信息申请旧信息记录id
-            userInfo_apply.setOldInfoId(oldId);
-            //设置用户信息申请新信息记录id
-            userInfo_apply.setNewInfoId(newId);
-            //设置用户信息申请开始时间
-            userInfo_apply.setStartTime(studentRelation.getDatetime());
-            //设置用户信息创建时间
-            userInfo_apply.setDatetime(studentRelation.getDatetime());
-            //设置用户信息申请写入者
-            userInfo_apply.setByWho(byWho);
-            //设置用户信息申请为有效
-            userInfo_apply.setDeleted(false);
-            //插入新的userinfoApply记录
-            boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
-            //向审批流程表插入一条数据
-            UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
-            applyApproval.setUniversityId(userInfo_apply.getUniversityId());
-            applyApproval.setUserinfoApplyId(userInfo_apply.getId());
-            applyApproval.setStep(1);
-            applyApproval.setDatetime(userInfo_apply.getStartTime());
-            applyApproval.setByWho(byWho);
-            applyApproval.setDeleted(false);
-            boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
-            if(successInfoApply && successApplyApproval){
+        if(requestMessage.getByWho()!=null && requestMessage.getStudentRelation()!=null && requestMessage.getUserinfoApply()!=null) {
+            boolean success = studentRelationService.clickApplyStudentRelation(requestMessage);
+            if (success) {
                 //清除相应的缓存
                 cache.delete(StudentRelationController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifydStudentRelation");
                 cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
-            }else{
+            } else {
                 return Result.build(ResultType.Failed);
             }
+        }else{
+            return Result.build(ResultType.ParamError);
         }
-        return Result.build(ResultType.ParamError);
     }
+
 
     /**
          * <p>

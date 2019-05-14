@@ -347,65 +347,22 @@ public class AddressController {
     }
 
     /**
-     * Author: laizhouhao 9:56 2019/5/11
+     * Author: laizhouhao 20:11 2019/5/13
      * @param requestMessage
      * @return Result
-     * @apiNote: 申请修改地址
+     * @apiNote: 申请修改地址信息, 点击申请时
      */
-    @ApiOperation(value="申请修改地址", notes="2019年5月11日 10:25:26 已通过测试")
+    @ApiOperation(value="申请修改地址信息, 点击申请时", notes="未测试")
     @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
     @PostMapping("applyModifyAddress/")
     @ResponseBody
-    public Result applyModifyAddress(@RequestBody RequestMessage requestMessage){
-//        System.out.println("o = "+ requestMessage.getAddress());
-        Address address = requestMessage.getAddress();
-        Long byWho = requestMessage.getByWho();
-        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
+    public Result ApplyModifyAddress(@RequestBody RequestMessage requestMessage){
         //判断前端传过来的值是否为空
         if(requestMessage.getAddress()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
-            //获取被修改的用户id
-            Long user_id = address.getUserId();
-            //旧记录id
-            Long oldId = address.getId();
-            System.out.println("oldId = "+oldId);
-            //将要插入的记录设置为无效
-            address.setDeleted(true);
-            //将新纪录插入Address表
-            addressService.insert(address);
-            //新纪录的id
-            Long newId = address.getId();
-
-            //向userinfoApply增加审批业务id
-            userInfo_apply.setApprovalMainId(approvalMainService.
-                    selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改地址"));
-            //设置用户信息申请种类
-            userInfo_apply.setInfoType(0);
-            //设置用户信息申请旧信息记录id
-            userInfo_apply.setOldInfoId(oldId);
-            //设置用户信息申请新信息记录id
-            userInfo_apply.setNewInfoId(newId);
-            //设置用户信息申请开始时间
-            userInfo_apply.setStartTime(address.getDatetime());
-            //设置用户信息创建时间
-            userInfo_apply.setDatetime(address.getDatetime());
-            //设置用户信息申请写入者
-            userInfo_apply.setByWho(byWho);
-            //设置用户信息申请为有效
-            userInfo_apply.setDeleted(false);
-            //插入新的userinfoApply记录
-            boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
-            //向审批流程表插入一条数据
-            UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
-            applyApproval.setUniversityId(userInfo_apply.getUniversityId());
-            applyApproval.setUserinfoApplyId(userInfo_apply.getId());
-            applyApproval.setStep(1);
-            applyApproval.setDatetime(userInfo_apply.getStartTime());
-            applyApproval.setByWho(byWho);
-            applyApproval.setDeleted(false);
-            boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
-            if(successInfoApply && successApplyApproval){
+            boolean success = addressService.clickApplyAddress(requestMessage);
+            if(success){
                 //清除相应的缓存
-                cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifydAddress");
+                cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifyAddress");
                 cache.delete(AddressController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
@@ -414,36 +371,6 @@ public class AddressController {
         }
         return Result.build(ResultType.ParamError);
     }
-
-    /**
-     * Author: laizhouhao 20:50 2019/5/9
-     * @param userinfoApplyApproval,user_id
-     * @return Result
-     * @apiNote: 审批修改通信方式的申请, 点击不通过时
-     */
-    @ApiOperation(value="审批修改通信方式的申请, 点击不通过时", notes="未测试")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
-            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
-    })
-    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Result refuseApplyModifyEcomm(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id) throws IOException {
-        System.out.println("小莫是头猪！！！---");
-        if(userinfoApplyApproval != null && user_id != null){
-            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
-            if(success) {
-                //清除相应的缓存
-                cache.delete(EcommController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEcomm");
-                cache.delete(EcommController.CacheNameHelper.ListAll_CacheName);
-                return Result.build(ResultType.Success);
-            }else{
-                return Result.build(ResultType.Failed);
-            }
-        }
-        return Result.build(ResultType.ParamError);
-    }
-
 
     /**
      * <p>

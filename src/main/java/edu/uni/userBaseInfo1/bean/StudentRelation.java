@@ -20,12 +20,26 @@ public class StudentRelation {
 //    关系0：母  1：父 2：兄  3：弟 4：姐  5：妹6: 其他
     private Integer relationship;
 //    本记录的创建时间
-@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
 //    本记录的写入者
     private Long byWho;
 //    记录是否有效  0：有效  1：无效
     private Boolean deleted;
+
+    public StudentRelation() {
+    }
+
+    public StudentRelation(Long id, Long userId, String relaName, Long relaId, Integer relationship, Date datetime, Long byWho, Boolean deleted) {
+        this.id = id;
+        this.userId = userId;
+        this.relaName = relaName;
+        this.relaId = relaId;
+        this.relationship = relationship;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+    }
 
     public Long getId() {
         return id;
@@ -48,7 +62,7 @@ public class StudentRelation {
     }
 
     public void setRelaName(String relaName) {
-        this.relaName = relaName == null ? null : relaName.trim();
+        this.relaName = relaName;
     }
 
     public Long getRelaId() {

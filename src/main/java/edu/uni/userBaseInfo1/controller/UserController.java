@@ -279,78 +279,7 @@ public class UserController {
     public void receiveUserInfoListAll(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
         //检验页面传来的id是否存在
         if(user_id != null){
-            UserInfo userInfo = new UserInfo();
-            //获取用户在user表的信息
-            List<User> userList = new ArrayList<>();
-            userList.add(userService.selectUserById(user_id));
-            //获取用户在student的有效的学生信息，如果没有则为空
-            List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
-            //获取主修专业
 
-            //获取班级
-
-            //获取政治面貌
-            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
-            politicalAffiliationList.add(politicalAffiliationService
-                    .selectPoliticalAffiliationById(studentList.get(0).getPoliticalId()));
-            //获取宿舍
-
-            //获取当前地址
-            List<Address> addressList = new ArrayList<>();
-            List<GetAddrDetail> getAddrDetailList = new ArrayList<>();
-            GetAddrDetail getAddrDetail = new GetAddrDetail();
-            if(studentList.size()>=1) {
-                //当前地址主要信息
-                addressList.add(addressService.selectById(studentList.get(0).getHomeAddress()));
-                if(studentList.size()>=2) {
-                    //获取当前通信地址主要信息
-                    addressList.add(addressService.selectById(studentList.get(0).getHomeAddress()));
-                }
-            }
-            //详细地址
-            userInfo = getAddrDetail.reviceAddrDetail(addressList);
-            //获取该用户在student_ralation的有效的亲属信息，如果没有则为空
-            userInfo.setStudentRelations(studentRelationService.selectValidRelaByUserId(user_id));
-            //获取用户照片，如果没有则为空
-            List<Picture> pictureList = new ArrayList<>();
-            pictureList.add(pictureService.selectPictureByUserId(user_id));
-            userInfo.setPictures(pictureList);
-            //获取用户学历，如果没有则为空
-            List<LearningDegree> learningDegreeList = new ArrayList<>();
-            learningDegreeList = learningDegreeSerevice.selectValidLeaDeByUserId(user_id);
-            if(learningDegreeList.size()>=1) {
-                //获取受教育程度，如果没有则为空
-                List<Academic> academicList = new ArrayList<>();
-                academicList.add(academicService.selectById(learningDegreeList.get(0).getAcademicId()));
-                //获取学位表，如果没有则为空
-                List<AcademicDegree> academicDegreeList = new ArrayList<>();
-                academicDegreeList.add(academicDegreeService.selectById(learningDegreeList.get(0).getDegreeId()));
-                userInfo.setAcademicDegrees(academicDegreeList);
-                userInfo.setAcademics(academicList);
-            }
-            //获取雇佣历史，如果没有则为空
-            userInfo.setEmployeeHistories(employeeHistoryService.seleValidEmpHisByUserId(user_id));
-            userInfo.setLearningDegrees(learningDegreeList);
-            userInfo.setAddresses(addressList);
-            userInfo.setUsers(userList);
-            userInfo.setStudents(studentList);
-            userInfo.setPoliticalAffiliations(politicalAffiliationList);
-            System.out.println(userInfo);
-            //设置返回的数据格式
-            response.setContentType("application/json;charset=utf-8");
-            //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"userInfoAll"+ userInfo;
-            //尝试在缓存中通过键名获取相应的键值
-            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-            String json = cache.get(cacheName);
-            //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
-                json = Result.build(ResultType.Success)
-                        .appendData("userInfo",userInfo).convertIntoJSON();
-                cache.set(cacheName,json);
-            }
-            //到最后通过response对象返回json格式字符串的数据
-            response.getWriter().write(json);
         }
     }
 

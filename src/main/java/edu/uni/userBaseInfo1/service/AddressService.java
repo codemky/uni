@@ -5,10 +5,7 @@
  **/
 package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
-import edu.uni.userBaseInfo1.bean.Address;
-import edu.uni.userBaseInfo1.bean.AddressExample;
-import edu.uni.userBaseInfo1.bean.Picture;
-import edu.uni.userBaseInfo1.bean.PictureExample;
+import edu.uni.userBaseInfo1.bean.*;
 
 import java.util.List;
 
@@ -75,4 +72,12 @@ public interface AddressService {
      * @apiNote: 根据自定义条件查询Address的一个记录
      */
     List<Address> selectByExample(AddressExample addressExample);
+
+    /**
+     * Author: laizhouhao 15:18 2019/5/14
+     * @param requestMessage
+     * @return boolean
+     * @apiNote: 用户点击申请修改地址信息
+     */
+    boolean clickApplyAddress(RequestMessage requestMessage);
 }

@@ -81,4 +81,12 @@ public interface PictureService {
      * @apiNote: 根据用户id查询有效的照片信息
      */
     Picture selectPictureByUserId(Long user_id);
+
+    /**
+     * Author: laizhouhao 15:39 2019/5/14
+     * @param requestMessage
+     * @return boolean
+     * @apiNote: 用户点击申请修改照片信息
+     */
+
 }

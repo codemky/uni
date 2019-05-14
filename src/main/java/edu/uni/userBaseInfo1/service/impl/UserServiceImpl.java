@@ -12,6 +12,7 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,18 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private RoleMapper roleMapper;
+    @Autowired
+    private EcommMapper ecommMapper;
+    @Autowired
+    private StudentRelationMapper studentRelationMapper;
+    @Autowired
+    private LearningDegreeMapper learningDegreeMapper;
+    @Autowired
+    private EmployeeHistoryMapper employeeHistoryMapper;
+    @Autowired
+    private StudentMapper studentMapper;
+    @Autowired
+    private EmployeeMapper employeeMapper;
     @Autowired
     private PictureMapper pictureMapper;
     @Autowired
@@ -275,5 +288,124 @@ public class UserServiceImpl implements UserService {
         int secondSuccess = userinfoApplyMapper.updateByPrimaryKeySelective(userinfoApply);
         //如果两个都更新成功则返回操作成功true
         return firstSuccess==1 && secondSuccess==1;
+    }
+
+    /**
+     * Author: laizhouhao 16:03 2019/5/14
+     * @param userinfoApplyApproval
+     * @return boolean
+     * @apiNote: 申请修改的信息通过后将新信息置为有效，旧信息置为无效
+     */
+    @Override
+    public boolean updateNewAndOldMessage(UserinfoApplyApproval userinfoApplyApproval) {
+        UserinfoApply userinfoApply = userinfoApplyMapper
+                .selectByPrimaryKey(userinfoApplyApproval.getUserinfoApplyId());
+        //旧信息id
+        Long oldId = userinfoApply.getOldInfoId();
+        //新信息id
+        Long newId = userinfoApply.getNewInfoId();
+        //判断申请的信息的类型，从而更新不同的表的信息
+        int infoType = userinfoApply.getInfoType();
+        //判断是否修改成功,默认为0
+        int oldScuuess = 0;
+        int newSuccess = 0;
+        //修改的是联系方式
+        if(infoType == 0){
+            //获取新旧记录
+            Ecomm oldEcomm = ecommMapper.selectByPrimaryKey(oldId);
+            Ecomm newEcomm = ecommMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldEcomm.setDeleted(true);
+            newEcomm.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = ecommMapper.updateByPrimaryKeySelective(oldEcomm);
+            newSuccess = ecommMapper.updateByPrimaryKeySelective(newEcomm);
+        }else if(infoType == 1){ //修改的是地址信息
+            //获取新旧记录
+            Address oldAddress = addressMapper.selectByPrimaryKey(oldId);
+            Address newAddress = addressMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldAddress.setDeleted(true);
+            newAddress.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = addressMapper.updateByPrimaryKeySelective(oldAddress);
+            newSuccess = addressMapper.updateByPrimaryKeySelective(newAddress);
+        }else if(infoType == 2){ //修改的是照片
+            //获取新旧记录
+            Picture oldPicture = pictureMapper.selectByPrimaryKey(oldId);
+            Picture newPicture = pictureMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldPicture.setDeleted(true);
+            newPicture.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = pictureMapper.updateByPrimaryKeySelective(oldPicture);
+            newSuccess = pictureMapper.updateByPrimaryKeySelective(newPicture);
+        }else if(infoType == 3){ //修改的是亲属信息
+            //获取新旧记录
+            StudentRelation oldStudentRelation = studentRelationMapper.selectByPrimaryKey(oldId);
+            StudentRelation newStudentRelation = studentRelationMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldStudentRelation.setDeleted(true);
+            newStudentRelation.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = studentRelationMapper.updateByPrimaryKeySelective(oldStudentRelation);
+            newSuccess = studentRelationMapper.updateByPrimaryKeySelective(newStudentRelation);
+        }else if(infoType == 4){ //修改的是学历信息
+            //获取新旧记录
+            LearningDegree oldLearningDegree =learningDegreeMapper.selectByPrimaryKey(oldId);
+            LearningDegree newLearningDegree = learningDegreeMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldLearningDegree.setDeleted(true);
+            newLearningDegree.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = learningDegreeMapper.updateByPrimaryKeySelective(oldLearningDegree);
+            newSuccess = learningDegreeMapper.updateByPrimaryKeySelective(newLearningDegree);
+        }else if(infoType == 5){ //修改的是简历信息
+            //获取新旧记录
+            EmployeeHistory oldEmployeeHistory =employeeHistoryMapper.selectByPrimaryKey(oldId);
+            EmployeeHistory newEmployeeHistory = employeeHistoryMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldEmployeeHistory.setDeleted(true);
+            newEmployeeHistory.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = employeeHistoryMapper.updateByPrimaryKeySelective(oldEmployeeHistory);
+            newSuccess = employeeHistoryMapper.updateByPrimaryKeySelective(newEmployeeHistory);
+        }else if(infoType == 6){ //修改的是学生信息
+            //获取新旧记录
+            Student oldStudent =studentMapper.selectByPrimaryKey(oldId);
+            Student newStudent = studentMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldStudent.setDeleted(true);
+            newStudent.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = studentMapper.updateByPrimaryKeySelective(oldStudent);
+            newSuccess = studentMapper.updateByPrimaryKeySelective(newStudent);
+        }else if(infoType == 7){ //修改的是教职工信息
+            //获取新旧记录
+            Employee oldEmployee = employeeMapper.selectByPrimaryKey(oldId);
+            Employee newEmployee = employeeMapper.selectByPrimaryKey(newId);
+            //旧记录置为无效，新纪录置为有效
+            oldEmployee.setDeleted(true);
+            newEmployee.setDeleted(false);
+            //更新新旧记录
+            oldScuuess = employeeMapper.updateByPrimaryKeySelective(oldEmployee);
+            newSuccess = employeeMapper.updateByPrimaryKeySelective(newEmployee);
+        }
+        return oldScuuess==1 && newSuccess==1;
+    }
+
+    /**
+     * Author: laizhouhao 18:06 2019/5/14
+     * @param identification
+     * @return  所搜索的游客信息
+     * @apiNote: 根据用户身份证查询游客信息，身份证为空时默认查询所有游客信息
+     */
+    @Override
+    public List<User> selectTouristByIdentification(String identification) {
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andIdentificationEqualTo(identification).andUserTypeEqualTo(0);
+        List<User> userList = new ArrayList<>();
+        userList = userMapper.selectByExample(userExample);
+        return userList;
     }
 }

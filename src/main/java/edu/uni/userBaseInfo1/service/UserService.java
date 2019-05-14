@@ -99,4 +99,20 @@ public interface UserService {
      * @apiNote: 不通过申请
      */
     boolean endForRefuse(UserinfoApplyApproval userinfoApplyApproval, Long user_id);
+
+    /**
+     * Author: laizhouhao 16:03 2019/5/14
+     * @param userinfoApplyApproval
+     * @return boolean
+     * @apiNote: 申请修改的信息通过后将新信息置为有效，旧信息置为无效
+     */
+    boolean updateNewAndOldMessage(UserinfoApplyApproval userinfoApplyApproval);
+
+    /**
+     * Author: laizhouhao 18:06 2019/5/14
+     * @param identification
+     * @return  所搜索的游客信息
+     * @apiNote: 根据用户身份证查询游客信息，身份证为空时默认查询所有游客信息
+     */
+    List<User> selectTouristByIdentification(String identification);
 }

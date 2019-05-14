@@ -1,10 +1,7 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
-import edu.uni.userBaseInfo1.bean.Student;
-import edu.uni.userBaseInfo1.bean.StudentExample;
-import edu.uni.userBaseInfo1.bean.StudentRelation;
-import edu.uni.userBaseInfo1.bean.StudentRelationExample;
+import edu.uni.userBaseInfo1.bean.*;
 
 import java.util.List;
 
@@ -93,5 +90,13 @@ public interface StudentRelationService {
          * @apiNote: 根据亲属在用户表的id查亲属的信息
          */
         StudentRelation selectRelaByRelaId(Long relaId);
+
+        /**
+         * Author: laizhouhao 15:18 2019/5/14
+         * @param requestMessage
+         * @return boolean
+         * @apiNote: 用户点击申请修改亲属信息
+         */
+        boolean clickApplyStudentRelation(RequestMessage requestMessage);
 
 }
