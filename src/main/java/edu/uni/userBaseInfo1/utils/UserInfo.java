@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.utils;
 
+import edu.uni.administrativestructure.bean.University;
 import edu.uni.userBaseInfo1.bean.*;
 
 import java.util.List;
@@ -10,6 +11,52 @@ import java.util.List;
  */
 public class UserInfo {
 
+    List<User> users;
+    List<Ecomm> ecomms;
+    List<Address> addresses;
+    List<Picture> pictures;
+    List<StudentRelation> studentRelations;
+    List<LearningDegree> learningDegrees;
+    List<EmployeeHistory> employeeHistories;
+    List<Student> students;
+    List<Employee> employees;
+    List<UserinfoApply> userinfoApplies;
+    List<AddrCountry>addrCountries;
+    List<AddrState> addrStates;
+    List<AddrCity>addrCities;
+    List<AddrArea>addrAreas;
+    List<AddrStreet>addrStreets;
+    List<Academic> academics;
+    List<AcademicDegree> academicDegrees;
+    List<GetAddrDetail>getAddrDetails;
+    University university;
+    SecondLevelDiscipline secondLevelDiscipline;
+    PoliticalAffiliation politicalAffiliation;
+
+
+    public PoliticalAffiliation getPoliticalAffiliation() {
+        return politicalAffiliation;
+    }
+
+    public void setPoliticalAffiliation(PoliticalAffiliation politicalAffiliation) {
+        this.politicalAffiliation = politicalAffiliation;
+    }
+
+    public SecondLevelDiscipline getSecondLevelDiscipline() {
+        return secondLevelDiscipline;
+    }
+
+    public void setSecondLevelDiscipline(SecondLevelDiscipline secondLevelDiscipline) {
+        this.secondLevelDiscipline = secondLevelDiscipline;
+    }
+
+    public University getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(University university) {
+        this.university = university;
+    }
     private List<User> users;
     private List<Ecomm> ecomms;
     private List<Address> addresses;
@@ -92,14 +139,6 @@ public class UserInfo {
 
     public void setAddrStreets(List<AddrStreet> addrStreets) {
         this.addrStreets = addrStreets;
-    }
-
-    public List<PoliticalAffiliation> getPoliticalAffiliations() {
-        return politicalAffiliations;
-    }
-
-    public void setPoliticalAffiliations(List<PoliticalAffiliation> politicalAffiliations) {
-        this.politicalAffiliations = politicalAffiliations;
     }
 
     public List<User> getUsers() {
@@ -197,7 +236,6 @@ public class UserInfo {
         this.students = students;
         this.employees = employees;
         this.userinfoApplies = userinfoApplies;
-        this.politicalAffiliations = politicalAffiliations;
         this.addrCountries = addrCountries;
         this.addrStates = addrStates;
         this.addrCities = addrCities;
@@ -220,7 +258,6 @@ public class UserInfo {
                 ", students=" + students +
                 ", employees=" + employees +
                 ", userinfoApplies=" + userinfoApplies +
-                ", politicalAffiliations=" + politicalAffiliations +
                 ", addrCountries=" + addrCountries +
                 ", addrStates=" + addrStates +
                 ", addrCities=" + addrCities +

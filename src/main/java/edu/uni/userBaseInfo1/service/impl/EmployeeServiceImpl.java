@@ -10,6 +10,7 @@ import edu.uni.userBaseInfo1.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -129,5 +130,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = new Employee();
         employee = employeeMapper.selectByExample(employeeExample).get(0);
         return employee;
+    }
+
+    /**
+     * Author: laizhouhao 20:43 2019/5/15
+     * @param user_id
+     * @return Employee
+     * @apiNote: 根据用户id获取有效的职员信息
+     */
+    @Override
+    public List<Employee> selectValidByUserId(Long user_id) {
+        EmployeeExample employeeExample = new EmployeeExample();
+        employeeExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
+        return employeeMapper.selectByExample(employeeExample);
     }
 }

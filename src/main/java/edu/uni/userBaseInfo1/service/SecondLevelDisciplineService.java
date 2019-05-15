@@ -48,4 +48,11 @@ public interface SecondLevelDisciplineService {
      * @apiNote:  用于删除SecondLevelDiscipline表的某个记录
      */
     boolean deleteSecondLevelDiscipline(long id);
+    /**
+     * Author: laizhouhao 20:56 2019/5/15
+     * @param id
+     * @return SecondLevelDiscipline
+     * @apiNote: 根据id获取有效的二级学科信息
+     */
+    SecondLevelDiscipline selectValidSecondLevelDisciplineById(Long id);
 }

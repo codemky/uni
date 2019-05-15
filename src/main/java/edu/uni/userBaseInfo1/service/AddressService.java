@@ -80,4 +80,20 @@ public interface AddressService {
      * @apiNote: 用户点击申请修改地址信息
      */
     boolean clickApplyAddress(RequestMessage requestMessage);
+
+    /**
+     * Author: laizhouhao 20:06 2019/5/15
+     * @param user_id
+     * @return Address
+     * @apiNote: 根据用户id获取有效的用户地址信息
+     */
+    List<Address> selectValidAddressByUserId(Long user_id);
+
+    /**
+     * Author: laizhouhao 20:22 2019/5/15
+     * @param id
+     * @return Address
+     * @apiNote: 根据用户id获取有效的地址信息
+     */
+    Address selectValidAddressById(Long id);
 }

@@ -115,4 +115,12 @@ public interface UserService {
      * @apiNote: 根据用户身份证查询游客信息，身份证为空时默认查询所有游客信息
      */
     List<User> selectTouristByIdentification(String identification);
+
+    /**
+     * Author: laizhouhao 19:24 2019/5/15
+     * @param user_id
+     * @return UserInfo
+     * @apiNote: 根据用户id获取该用户的所有信息
+     */
+    UserInfo selectUserInfoAllByUserId(Long user_id);
 }

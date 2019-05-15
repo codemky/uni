@@ -66,4 +66,12 @@ public interface EmployeeService {
      * @apiNote: 根据员工编号查询未离职员工的主要信息
      */
     Employee selectEmployeeByEmpNo(String emp_no);
+
+    /**
+     * Author: laizhouhao 20:43 2019/5/15
+     * @param user_id
+     * @return Employee
+     * @apiNote: 根据用户id获取有效的职员信息
+     */
+    List<Employee> selectValidByUserId(Long user_id);
 }

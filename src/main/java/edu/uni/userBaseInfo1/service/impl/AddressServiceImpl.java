@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
  * @Description Address实体类的service层接口的实现类
  * @Date 15:49 2019/4/29
  **/
+import java.util.ArrayList;
 import java.util.List;
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -203,5 +204,34 @@ public class AddressServiceImpl implements AddressService {
         System.out.println("aaa="+applyApproval);
         return successInfoApply && successApplyApproval;
     }
+
+    /**
+     * Author: laizhouhao 20:06 2019/5/15
+     * @param user_id
+     * @return Address
+     * @apiNote: 根据用户id获取有效的用户地址信息
+     */
+    @Override
+    public List<Address> selectValidAddressByUserId(Long user_id) {
+        AddressExample addressExample = new AddressExample();
+        addressExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
+        return addressMapper.selectByExample(addressExample);
+    }
+
+    /**
+     * Author: laizhouhao 20:22 2019/5/15
+     * @param id
+     * @return Address
+     * @apiNote: 根据用户id获取有效的地址信息
+     */
+    @Override
+    public Address selectValidAddressById(Long id) {
+        AddressExample addressExample = new AddressExample();
+        addressExample.createCriteria().andIdEqualTo(id).andDeletedEqualTo(false);
+        List<Address> addressList = new ArrayList<>();
+        addressList = addressMapper.selectByExample(addressExample);
+        return addressList==null?null:addressList.get(0);
+    }
+
 
 }

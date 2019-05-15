@@ -5,8 +5,7 @@ import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.*;
-import edu.uni.userBaseInfo1.service.ApprovalStepInchargeService;
-import edu.uni.userBaseInfo1.service.UserService;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.GetAddrDetail;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +54,20 @@ public class UserServiceImpl implements UserService {
     private ApprovalStepInchargeMapper approvalStepInchargeMapper;
     @Autowired
     private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
+    @Autowired
+    private SecondLevelDisciplineService secondLevelDisciplineService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private PoliticalAffiliationMapper politicalAffiliationMapper;
+    @Autowired
+    private AddressService addressService;
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private StudentRelationService studentRelationService;
+    @Autowired
+    private EmployeeHistoryService employeeHistoryService;
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -407,5 +420,90 @@ public class UserServiceImpl implements UserService {
         List<User> userList = new ArrayList<>();
         userList = userMapper.selectByExample(userExample);
         return userList;
+    }
+
+
+    /**
+     * Author: laizhouhao 19:24 2019/5/15
+     * @param user_id
+     * @return UserInfo
+     * @apiNote: 根据用户id获取该用户的所有信息
+     */
+    @Override
+    public UserInfo selectUserInfoAllByUserId(Long user_id) {
+        UserInfo userInfo = new UserInfo();
+        UserInfo info = new UserInfo();
+        //根据id获取用户在user表的主要信息
+        User user = userMapper.selectByPrimaryKey(user_id);
+        //将用户主要信息加入UserInfo这个信息集合里面
+        List<User> userList = new ArrayList<>();
+        userList.add(user);
+        userInfo.setUsers(userList);
+        //将该用户的学校信息加入UserInfo这个信息集合里面,
+//        userInfo.setUniversity(universityMapper.selectUniversityByid(user.getUniversityId()));
+        //判断用户的类型
+        int type = user.getUserType();
+        if(type == 0){
+            return userInfo;
+        }else if(type == 1 || type == 3 || type == 4 || type == 5 || type == 6){
+            //将该用户的学生主要信息加入UserInfo这个信息集合里面
+            List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
+            userInfo.setStudents(studentList);
+            //将该学生的主修专业加入集合
+            SecondLevelDiscipline secondLevelDiscipline = secondLevelDisciplineService
+                    .selectValidSecondLevelDisciplineById(userInfo.getStudents().get(0).getMajorId());
+            userInfo.setSecondLevelDiscipline(secondLevelDiscipline);
+            //将该学生的政治面貌加入集合
+            userInfo.setPoliticalAffiliation(politicalAffiliationMapper
+                    .selectByPrimaryKey(userInfo.getStudents().get(0).getPoliticalId()));
+            //将该学生的宿舍加入集合
+
+            //将该学生的当前住址、通信地址地址加入集合
+            List<Address> addresses = new ArrayList<>();
+            addresses.add(addressService.selectValidAddressById(studentList.get(0).getHomeAddress()));
+            addresses.add(addressService.selectValidAddressById(studentList.get(0).getMailAddress()));
+            userInfo.setAddresses(addresses);
+            //将该学生的地址的国家、省份、市、区、街道加入集合
+            info = new GetAddrDetail().reviceAddrDetail(addresses);
+            userInfo.setAddrCountries(info.getAddrCountries());
+            userInfo.setAddrStates(info.getAddrStates());
+            userInfo.setAddrCities(info.getAddrCities());
+            userInfo.setAddrAreas(info.getAddrAreas());
+            userInfo.setAddrStreets(info.getAddrStreets());
+            //将该学生的亲属信息加入集合
+            userInfo.setStudentRelations(studentRelationService.selectValidRelaByUserId(user_id));
+            //将学生的班级信息加入集合
+        }else if(type == 2){
+            //根据用户id查找有效的职员信息，加入信息集合中
+            List<Employee> employees = employeeService.selectValidByUserId(user_id);
+            userInfo.setEmployees(employees);
+            //将所属学院信息加入信息集合
+
+            //将当前所在科室加入信息集合
+
+            //将雇员简历加入信息集合
+            userInfo.setEmployeeHistories(employeeHistoryService.seleValidEmpHisByUserId(user_id));
+            //将主修专业加入信息集合
+            userInfo.setSecondLevelDiscipline(secondLevelDisciplineService
+                    .selectValidSecondLevelDisciplineById(employees.get(0).getDisciplineId()));
+            //将政治面貌加入信息集合
+            userInfo.setPoliticalAffiliation(politicalAffiliationMapper
+                    .selectByPrimaryKey(userInfo.getStudents().get(0).getPoliticalId()));
+            //将当前岗位加入信息集合
+
+            //将教职工的地址加入信息集合
+            List<Address> addresses = new ArrayList<>();
+            addresses.add(addressService.selectValidAddressById(employees.get(0).getHomeAddressId()));
+            addresses.add(addressService.selectValidAddressById(employees.get(0).getMailAddressId()));
+            userInfo.setAddresses(addresses);
+            //将该教职工的地址的国家、省份、市、区、街道加入集合
+            info = new GetAddrDetail().reviceAddrDetail(addresses);
+            userInfo.setAddrCountries(info.getAddrCountries());
+            userInfo.setAddrStates(info.getAddrStates());
+            userInfo.setAddrCities(info.getAddrCities());
+            userInfo.setAddrAreas(info.getAddrAreas());
+            userInfo.setAddrStreets(info.getAddrStreets());
+        }
+        return userInfo;
     }
 }

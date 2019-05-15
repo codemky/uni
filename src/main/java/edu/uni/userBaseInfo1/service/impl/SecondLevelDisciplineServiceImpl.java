@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.SecondLevelDiscipline;
+import edu.uni.userBaseInfo1.bean.SecondLevelDisciplineExample;
 import edu.uni.userBaseInfo1.mapper.SecondLevelDisciplineMapper;
 import edu.uni.userBaseInfo1.service.SecondLevelDisciplineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,5 +97,20 @@ public class SecondLevelDisciplineServiceImpl implements SecondLevelDisciplineSe
     @Override
     public boolean deleteSecondLevelDiscipline(long id) {
         return secondLevelDisciplineMapper.deleteByPrimaryKey(id) > 0 ? true :false;
+    }
+
+    /**
+     * Author: laizhouhao 20:56 2019/5/15
+     * @param id
+     * @return SecondLevelDiscipline
+     * @apiNote: 根据id获取有效的二级学科信息
+     */
+    @Override
+    public SecondLevelDiscipline selectValidSecondLevelDisciplineById(Long id) {
+        SecondLevelDisciplineExample secondLevelDisciplineExample = new SecondLevelDisciplineExample();
+        secondLevelDisciplineExample.createCriteria().andIdEqualTo(id);
+        List<SecondLevelDiscipline> secondLevelDisciplineList = secondLevelDisciplineMapper
+                .selectByExample(secondLevelDisciplineExample);
+        return secondLevelDisciplineList==null?null:secondLevelDisciplineList.get(0);
     }
 }

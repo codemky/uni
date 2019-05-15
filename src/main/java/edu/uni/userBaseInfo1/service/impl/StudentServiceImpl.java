@@ -166,7 +166,6 @@ public class StudentServiceImpl implements StudentService {
         StudentExample studentExample = new StudentExample();
         studentExample.createCriteria().andUserIdEqualTo(user_id)
                 .andDeletedEqualTo(false);
-        System.out.println("55555");
         return studentMapper.selectByExample(studentExample);
     }
 }
