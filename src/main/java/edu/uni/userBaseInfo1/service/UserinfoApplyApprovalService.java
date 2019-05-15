@@ -6,6 +6,17 @@ import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
 import java.util.List;
 
 public interface UserinfoApplyApprovalService {
+
+    /**
+     * Author: mokuanyuan 16:54 2019/5/11
+     * @param userinfoApplyApproval 申请审批的实体类
+     * @param roles 该用户所有扮演的角色
+     * @return List<UserinfoApplyApproval>
+     * @apiNote: 根据审批结果、审批类型、角色名搜素审批表
+     */
+    List<UserinfoApplyApproval> selectAllByApprovalAndRole(
+            UserinfoApplyApproval userinfoApplyApproval , List<String> roles);
+
     /**
      * Author: chenenru 23:59 2019/4/29
      * @param

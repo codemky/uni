@@ -12,6 +12,11 @@ import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.*;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.bean.Ecomm;
+import edu.uni.userBaseInfo1.bean.EcommExample;
+import edu.uni.userBaseInfo1.mapper.EcommMapper;
+import edu.uni.userBaseInfo1.service.EcommService;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -205,5 +210,24 @@ public class EcommServiceImpl implements EcommService {
         boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
         System.out.println("aaa="+applyApproval);
         return successInfoApply && successApplyApproval;
+    }
+
+    /**
+     * Author: mokuanyuan 20:03 2019/5/13
+     * @param userInfo
+     * @param user_id
+     * @apiNote: 根据用户id查询电子通信方式，并把结果赋值到工具类UserInfo的相应属性中
+     */
+    public void getEcommByUserIdToUserInfo(UserInfo userInfo , Long user_id){
+
+        EcommExample ecommExample = new EcommExample();
+        ecommExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
+
+        List<Ecomm> ecomms = ecommMapper.selectByExample(ecommExample);
+
+        userInfo.setEcomms(ecomms);
+
+
+
     }
 }

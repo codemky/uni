@@ -1,6 +1,7 @@
 package edu.uni.userBaseInfo1.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.models.auth.In;
 
 import java.util.Date;
 
@@ -8,8 +9,8 @@ public class UserinfoApplyApproval {
     private Long id;
     private Long universityId;
     private Long userinfoApplyId;
-    private int step;
-    private boolean result;
+    private Integer step;
+    private Boolean result;
     private String reason;
     private Long checkWho;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -17,9 +18,9 @@ public class UserinfoApplyApproval {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
     private Long byWho;
-    private boolean deleted;
+    private Boolean deleted;
     private String roleName;
-    private int infoType;
+    private Integer infoType;
     private Long applyUserId;
 
     public Long getId() {
@@ -46,19 +47,19 @@ public class UserinfoApplyApproval {
         this.userinfoApplyId = userinfoApplyId;
     }
 
-    public int getStep() {
+    public Integer getStep() {
         return step;
     }
 
-    public void setStep(int step) {
+    public void setStep(Integer step) {
         this.step = step;
     }
 
-    public boolean isResult() {
+    public Boolean getResult() {
         return result;
     }
 
-    public void setResult(boolean result) {
+    public void setResult(Boolean result) {
         this.result = result;
     }
 
@@ -102,11 +103,11 @@ public class UserinfoApplyApproval {
         this.byWho = byWho;
     }
 
-    public boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -118,11 +119,11 @@ public class UserinfoApplyApproval {
         this.roleName = roleName;
     }
 
-    public int getInfoType() {
+    public Integer getInfoType() {
         return infoType;
     }
 
-    public void setInfoType(int infoType) {
+    public void setInfoType(Integer infoType) {
         this.infoType = infoType;
     }
 
@@ -137,7 +138,7 @@ public class UserinfoApplyApproval {
     public UserinfoApplyApproval() {
     }
 
-    public UserinfoApplyApproval(Long id, Long universityId, Long userinfoApplyId, int step, boolean result, String reason, Long checkWho, Date checkTime, Date datetime, Long byWho, boolean deleted, String roleName, int infoType, Long applyUserId) {
+    public UserinfoApplyApproval(Long id, Long universityId, Long userinfoApplyId, Integer step, Boolean result, String reason, Long checkWho, Date checkTime, Date datetime, Long byWho, Boolean deleted, String roleName, Integer infoType, Long applyUserId) {
         this.id = id;
         this.universityId = universityId;
         this.userinfoApplyId = userinfoApplyId;

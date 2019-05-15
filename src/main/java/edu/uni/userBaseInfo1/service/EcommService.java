@@ -8,6 +8,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Ecomm;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
 
 import java.util.List;
@@ -84,4 +85,13 @@ public interface EcommService {
      * @apiNote: 用户点击申请修改通信方式
      */
     boolean clickApplyEcomm(RequestMessage requestMessage);
+
+    /**
+     * Author: mokuanyuan 20:03 2019/5/13
+     * @param userInfo
+     * @param user_id
+     * @apiNote: 根据用户id查询电子通信方式，并把结果赋值到工具类UserInfo的相应属性中
+     */
+    public void getEcommByUserIdToUserInfo(UserInfo userInfo , Long user_id);
+
 }

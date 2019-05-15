@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 //该注解用于被Springboot自动配置类扫描到，并在项目中添加相应的组件
 @Component
 //该注解用于指明配置文件的路径
-@PropertySource("classpath:config/example.properties")
+@PropertySource("classpath:config/userinfo1.properties")
 //该注解用于说明在配置文件中有哪些变量名是用到的
 @ConfigurationProperties(prefix="nui.userbaseinfo1")
 public class userBaseInfo1Config {

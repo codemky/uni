@@ -10,25 +10,25 @@ import java.util.List;
  */
 public class UserInfo {
 
-    List<User> users;
-    List<Ecomm> ecomms;
-    List<Address> addresses;
-    List<Picture> pictures;
-    List<StudentRelation> studentRelations;
-    List<LearningDegree> learningDegrees;
-    List<EmployeeHistory> employeeHistories;
-    List<Student> students;
-    List<Employee> employees;
-    List<UserinfoApply> userinfoApplies;
-    List<PoliticalAffiliation> politicalAffiliations;
-    List<AddrCountry>addrCountries;
-    List<AddrState> addrStates;
-    List<AddrCity>addrCities;
-    List<AddrArea>addrAreas;
-    List<AddrStreet>addrStreets;
-    List<Academic> academics;
-    List<AcademicDegree> academicDegrees;
-    List<GetAddrDetail>getAddrDetails;
+    private List<User> users;
+    private List<Ecomm> ecomms;
+    private List<Address> addresses;
+    private List<Picture> pictures;
+    private List<StudentRelation> studentRelations;
+    private List<LearningDegree> learningDegrees;
+    private List<EmployeeHistory> employeeHistories;
+    private List<Student> students;
+    private List<Employee> employees;
+    private List<UserinfoApply> userinfoApplies;
+    private List<PoliticalAffiliation> politicalAffiliations;
+    private List<AddrCountry>addrCountries;
+    private List<AddrState> addrStates;
+    private List<AddrCity>addrCities;
+    private List<AddrArea>addrAreas;
+    private List<AddrStreet>addrStreets;
+    private List<Academic> academics;
+    private List<AcademicDegree> academicDegrees;
+    private List<GetAddrDetail>getAddrDetails;
 
     public List<GetAddrDetail> getGetAddrDetails() {
         return getAddrDetails;

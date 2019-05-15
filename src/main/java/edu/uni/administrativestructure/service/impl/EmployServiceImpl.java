@@ -107,10 +107,11 @@ public class EmployServiceImpl implements EmployService {
     }
 
     @Override
-    public Employ selectEmployByEmployeeId(Long employeeId) {
+    public Employ selectEmployByEmployeeId(Long employeeId,Long schoolId) {
         EmployExample employExample = new EmployExample();
         EmployExample.Criteria criteria = employExample.createCriteria();
         criteria.andWorkerIdEqualTo(employeeId);
+        criteria.andDeletedEqualTo(false);
         return employMapper.selectByExample(employExample).get(0);
     }
 

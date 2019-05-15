@@ -6,6 +6,7 @@ import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.GetAddrDetail;
 import edu.uni.userBaseInfo1.utils.UserInfo;
+import edu.uni.utils.CommonUtils;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +43,8 @@ public class UserController {
     //把User的Service层接口所有的方法自动装配到该对象中
     @Autowired
     private UserService userService;
+    @Autowired
+    private EcommService ecommService;
     @Autowired
     private StudentService studentService;
     @Autowired

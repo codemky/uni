@@ -76,11 +76,13 @@ public interface EmployService {
      * @return
      */
     PageInfo<Employ> selectPageByEmployee(int pageNum, long workerId);
+
     /**
      * Author: chenenru 14:00 2019/5/11
+     * @param schoolId
      * @param employeeId
      * @return Employ
-     * @apiNote: 根据employeeId查询部门人员
+     * @apiNote: 根据employeeId和学校id查询部门人员
      */
-    Employ selectEmployByEmployeeId(Long employeeId);
+    Employ selectEmployByEmployeeId(Long employeeId , Long schoolId);
 }
