@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.LearningDegree;
+import edu.uni.userBaseInfo1.bean.RequestMessage;
 
 import java.util.List;
 
@@ -72,4 +73,11 @@ public interface LearningDegreeSerevice {
      * @apiNote: 根据用户id获取有效的学历信息
      */
     List<LearningDegree> selectValidLeaDeByUserId(Long user_id);
+    /**
+     * Author: chenenru 20:05 2019/5/13
+     * @param 
+     * @return 
+     * @apiNote: 用户点击申请修改学历
+     */
+    boolean clickApplyLearningDegree(RequestMessage requestMessage);
 }

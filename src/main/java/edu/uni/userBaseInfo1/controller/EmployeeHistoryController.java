@@ -3,14 +3,14 @@ package edu.uni.userBaseInfo1.controller;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.service.ApprovalMainService;
-import edu.uni.userBaseInfo1.service.EmployeeHistoryService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyService;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +41,14 @@ public class EmployeeHistoryController {
     @Autowired
     UserinfoApplyService userinfoApplyService;
     //把缓存工具类RedisCache相应的方法自动装配到该对象
+    @Autowired
+    UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired
     private RedisCache cache;
 
@@ -206,7 +214,7 @@ public class EmployeeHistoryController {
      * @return Result
      * @apiNote: 申请修改雇员的简历方式
      */
-    @ApiOperation(value="申请修改雇员的简历方式", notes="未测试")
+    /*@ApiOperation(value="申请修改雇员的简历方式", notes="未测试")
     @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
     @PostMapping("applyModifydEmployeeHistory/")
     @ResponseBody
@@ -258,7 +266,107 @@ public class EmployeeHistoryController {
             }
         }
         return Result.build(ResultType.ParamError);
+    }*/
+    /**
+     * Author: chenenru 20:50 2019/5/9
+     * @param requestMessage
+     * @return Result
+     * @apiNote: 申请修改简历, 点击申请时
+     */
+    @ApiOperation(value="申请修改简历", notes="2019年5月11日 14:33:14 已通过测试")
+    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
+    @PostMapping("applyModifyEmployeeHistory/")
+    @ResponseBody
+    public Result ApplyModifyEmployeeHistory(@RequestBody RequestMessage requestMessage){
+        //判断前端传过来的值是否为空
+        if(requestMessage.getEmployeeHistory()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
+            boolean success = employeeHistoryService.clickApplyEmployeeHistory(requestMessage);
+            if(success){
+                //清除相应的缓存
+                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployeeHistory");
+                cache.delete(CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
     }
+
+    /**
+     * Author: chenenru 20:50 2019/5/9
+     * @param userinfoApplyApproval, user_id
+     * @return Result
+     * @apiNote: 审批修改简历的申请, 点击通过时
+     *//*
+    @ApiOperation(value="审批修改简历的申请, 点击通过时", notes="未测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+    })
+    @PostMapping("commituserinfoApply/{user_id}")
+    @ResponseBody
+    public Result commitApplyModifyEmployeeHistory(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id){
+        if(userinfoApplyApproval != null){
+            //比较当前步骤是否是最后一步
+            boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
+            //该步骤是最后一步
+            if(isLast){
+                //更新
+                boolean firstSuccess = userService.endForPass(userinfoApplyApproval, user_id);
+                //判断两个更新是否都成功
+                if(firstSuccess) {
+                    //清除相应的缓存
+                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployeeHistory");
+                    cache.delete(CacheNameHelper.ListAll_CacheName);
+                    return Result.build(ResultType.Success);
+                }else{
+                    return Result.build(ResultType.Failed);
+                }
+            }else{ //该审批不是最后一步
+                boolean secondSuccess = userService.createForPass(userinfoApplyApproval, user_id);
+                //操作成功
+                if(secondSuccess){
+                    //清除相应的缓存
+                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployeeHistory");
+                    cache.delete(CacheNameHelper.ListAll_CacheName);
+                    return Result.build(ResultType.Success);
+                }else{
+                    return Result.build(ResultType.Failed);
+                }
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
+
+    *//**
+     * Author: chenenru 20:50 2019/5/9
+     * @param userinfoApplyApproval,user_id
+     * @return Result
+     * @apiNote: 审批修改简历的申请, 点击不通过时
+     *//*
+    @ApiOperation(value="审批修改简历的申请, 点击不通过时", notes="未测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+    })
+    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Result refuseApplyModifyEmployeeHistory(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id) throws IOException {
+        System.out.println("小莫是头猪！周浩也是！！---");
+        if(userinfoApplyApproval != null && user_id != null){
+            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
+            if(success) {
+                //清除相应的缓存
+                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployeeHistory");
+                cache.delete(CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }*/
 
     /**
      * <p>

@@ -1,10 +1,7 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
-import edu.uni.userBaseInfo1.bean.Picture;
-import edu.uni.userBaseInfo1.bean.PictureExample;
-import edu.uni.userBaseInfo1.bean.Student;
-import edu.uni.userBaseInfo1.bean.StudentExample;
+import edu.uni.userBaseInfo1.bean.*;
 import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.List;
@@ -102,5 +99,19 @@ public interface StudentService {
          * @apiNote: 根据用户id查找有效的学生信息
          */
         List<Student> selectValidStudentByUserId(Long user_id);
+        /**
+         * Author: chenenru 18:35 2019/5/13
+         * @param requestMessage
+         * @return boolean
+         * @apiNote: 用户点击申请修改学生主要信息
+         */
+        boolean clickApplyStudent(RequestMessage requestMessage);
 
+        /**
+         * Author: chenenru 15:44 2019/5/16
+         * @param  student_id
+         * @return Student
+         * @apiNote: 根据学生id获取学生实体信息
+         */
+        Student selectValidStudentByStuId(Long student_id);
 }

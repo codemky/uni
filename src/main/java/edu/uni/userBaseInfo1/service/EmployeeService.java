@@ -2,7 +2,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Employee;
-import edu.uni.userBaseInfo1.bean.EmployeeHistory;
+import edu.uni.userBaseInfo1.bean.RequestMessage;
 
 import java.util.List;
 
@@ -66,6 +66,22 @@ public interface EmployeeService {
      * @apiNote: 根据员工编号查询未离职员工的主要信息
      */
     Employee selectEmployeeByEmpNo(String emp_no);
+
+    /**
+     * Author: chenenru 15:41 2019/5/9
+     * @param user_id
+     * @return List<Employee>
+     * @apiNote: 根据用户id返回用户的有效的职员信息
+     */
+    List<Employee> selectValidEmployeeByUserId(Long user_id);
+
+    /**
+     * Author: chenenru 18:35 2019/5/13
+     * @param requestMessage
+     * @return boolean
+     * @apiNote: 用户点击申请修改职员
+     */
+    boolean clickApplyEmployee(RequestMessage requestMessage);
 
     /**
      * Author: laizhouhao 20:43 2019/5/15

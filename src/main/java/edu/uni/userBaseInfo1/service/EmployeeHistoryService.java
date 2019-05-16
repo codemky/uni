@@ -6,6 +6,7 @@
 package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.EmployeeHistory;
+import edu.uni.userBaseInfo1.bean.RequestMessage;
 
 import java.util.List;
 
@@ -72,4 +73,11 @@ public interface EmployeeHistoryService {
      * @apiNote: 根据用户id查询有效的雇佣历史信息
      */
     List<EmployeeHistory> seleValidEmpHisByUserId(Long user_id);
+    /**
+     * Author: chenenru 20:05 2019/5/13
+     * @param
+     * @return
+     * @apiNote: 用户点击申请修改简历
+     */
+    boolean clickApplyEmployeeHistory(RequestMessage requestMessage);
 }

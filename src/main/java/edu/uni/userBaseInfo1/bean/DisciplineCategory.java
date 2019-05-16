@@ -82,4 +82,18 @@ public class DisciplineCategory {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public String toString() {
+        return "DisciplineCategory{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", ename='" + ename + '\'' +
+                ", description='" + description + '\'' +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

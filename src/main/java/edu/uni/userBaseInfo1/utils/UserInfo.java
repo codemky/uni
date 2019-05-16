@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.utils;
 
 import edu.uni.administrativestructure.bean.University;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.bean.Class;
 
 import java.util.List;
 
@@ -76,6 +77,24 @@ public class UserInfo {
     private List<Academic> academics;
     private List<AcademicDegree> academicDegrees;
     private List<GetAddrDetail>getAddrDetails;
+    private List<Class> classes;
+    private List<Classmate> classmates;
+
+    public List<Class> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<Class> classes) {
+        this.classes = classes;
+    }
+
+    public List<Classmate> getClassmates() {
+        return classmates;
+    }
+
+    public void setClassmates(List<Classmate> classmates) {
+        this.classmates = classmates;
+    }
 
     public List<GetAddrDetail> getGetAddrDetails() {
         return getAddrDetails;
@@ -225,7 +244,7 @@ public class UserInfo {
     public UserInfo() {
     }
 
-    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies, List<PoliticalAffiliation> politicalAffiliations, List<AddrCountry> addrCountries, List<AddrState> addrStates, List<AddrCity> addrCities, List<AddrArea> addrAreas, List<AddrStreet> addrStreets, List<Academic> academics, List<AcademicDegree> academicDegrees) {
+    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies, List<PoliticalAffiliation> politicalAffiliations, List<AddrCountry> addrCountries, List<AddrState> addrStates, List<AddrCity> addrCities, List<AddrArea> addrAreas, List<AddrStreet> addrStreets, List<Academic> academics, List<AcademicDegree> academicDegrees, List<GetAddrDetail> getAddrDetails, List<Class> classes, List<Classmate> classmates) {
         this.users = users;
         this.ecomms = ecomms;
         this.addresses = addresses;
@@ -243,6 +262,9 @@ public class UserInfo {
         this.addrStreets = addrStreets;
         this.academics = academics;
         this.academicDegrees = academicDegrees;
+        this.getAddrDetails = getAddrDetails;
+        this.classes = classes;
+        this.classmates = classmates;
     }
 
     @Override
@@ -265,6 +287,9 @@ public class UserInfo {
                 ", addrStreets=" + addrStreets +
                 ", academics=" + academics +
                 ", academicDegrees=" + academicDegrees +
+                ", getAddrDetails=" + getAddrDetails +
+                ", classes=" + classes +
+                ", classmates=" + classmates +
                 '}';
     }
 }
