@@ -1,5 +1,5 @@
 /**
- * Author: laizhouhao 10:06 2019/4/25
+ * Author: mokuanyuan 10:06 2019/4/25
  * @apiNote: 关于电子通信信息模块的Controller层（Http URL请求）的具体实现方法
  */
 
@@ -7,16 +7,15 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.config.GlobalConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 //填写description内容可以在测试模块显示相应的文字和模块
 @Api(description = "电子通信模块")
@@ -58,6 +58,9 @@ public class EcommController {
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
+    @Autowired
+    private GlobalConfig config;
+
 
 
     //内部类，专门用来管理每个get方法所对应缓存的名称。
@@ -70,7 +73,7 @@ public class EcommController {
 
 
     /**
-     * Author: laizhouhao 10:58 2019/4/26
+     * Author: mokuanyuan 10:58 2019/4/26
      * @param id
      * @return response
      * @apiNote: 获取电子通信记录详情
@@ -109,7 +112,7 @@ public class EcommController {
 
 
     /**
-     * Author: laizhouhao 11:02 2019/4/26
+     * Author: mokuanyuan 11:02 2019/4/26
      * @apiNote: 查询所有电子通信记录
      */
     @ApiOperation( value = "获取所有通信记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
@@ -245,6 +248,39 @@ public class EcommController {
             }
         }
         return Result.build(ResultType.ParamError);
+    }
+
+
+    /**
+     * Author: mokuanyuan 20:18 2019/5/14
+     * @param file
+     * @param response
+     * @return 文件上传后的路径和文件名
+     * @apiNote: 实现上传文件功能
+     */
+    @ApiOperation(value = "上传文件")
+    @PostMapping("/uploadPicture")
+    @ResponseBody
+    public void upLoadFile(
+            @ApiParam(value = "上传的文件", required = true)MultipartFile file,
+            HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+        if (file != null ){
+            //文件后缀名带上"."的  比如 ".txt" ".sql"
+            String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+//              String path = ResourceUtils.getURL("classpath:").getPath() ;
+            //文件上传路径
+            String path = "/E:/" ;
+            //文件名（都用UUID命名吧）
+            String fileName = UUID.randomUUID() + suffix;
+            //传入路径和文件名这两个参数
+            file.transferTo(new File(path, fileName));
+            response.getWriter().write(Result.build(ResultType.Success).
+                    appendData("path", "/E:/" + fileName).
+                    appendData("fileName", fileName).
+                    convertIntoJSON());
+            }
+
     }
 
     /**

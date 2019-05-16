@@ -50,4 +50,15 @@ public class Role {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    public Role(Long id, String name, String description, Long universityId, Integer status) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.universityId = universityId;
+        this.status = status;
+    }
+
+    public Role() {
+    }
 }

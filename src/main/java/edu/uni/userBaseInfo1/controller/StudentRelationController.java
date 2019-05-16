@@ -148,13 +148,14 @@ public class StudentRelationController {
     @ApiOperation(value = "根据亲属的用户id查询相关的所有学生",notes = "未测试")
     @GetMapping("/studentRelation/students/{studentRelationId}")
     @ResponseBody
-    public void selectStudentByStudentRelationId(@PathVariable Long studentRelationId,HttpServletResponse response) throws  IOException{
+    public void selectStudentByStudentRelationId(@PathVariable Long studentRelationId,
+                                                 HttpServletResponse response) throws  IOException{
         response.setContentType("application/json;charset=utf-8");
         String cacheName = StudentRelationController.CacheNameHelper.ListAll_CacheName+"studentRelationId"+studentRelationId;
         String json = cache.get(cacheName);
         if(json == null){
             //根据亲属的用户id查询出亲属的实体
-            StudentRelation studentRelation = studentRelationService.selectRelaByRelaId(studentRelationId);
+            StudentRelation studentRelation = studentRelationService.selectUserIdByRelaId(studentRelationId);
             json = Result.build(ResultType.Success)
                     .appendData("students",studentService.selectByUserId(studentRelation.getUserId())).convertIntoJSON();
             cache.set(cacheName,json);

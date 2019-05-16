@@ -86,10 +86,10 @@ public interface StudentRelationService {
         /**
          * Author: chenenru 16:21 2019/5/10
          * @param relaId
-         * @return StudentRelation
-         * @apiNote: 根据亲属在用户表的id查亲属的信息
+         * @return user_id
+         * @apiNote: 根据亲属用户id查询孩子用户id
          */
-        StudentRelation selectRelaByRelaId(Long relaId);
+        StudentRelation selectUserIdByRelaId(Long relaId);
 
         /**
          * Author: laizhouhao 15:18 2019/5/14

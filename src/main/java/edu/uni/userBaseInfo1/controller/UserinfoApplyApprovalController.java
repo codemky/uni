@@ -6,12 +6,8 @@ import edu.uni.administrativestructure.service.ClassService;
 import edu.uni.administrativestructure.service.EmployService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.Employee;
-import edu.uni.userBaseInfo1.bean.Student;
-import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
-import edu.uni.userBaseInfo1.service.EmployeeService;
-import edu.uni.userBaseInfo1.service.StudentService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyApprovalService;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -25,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author chenenru
@@ -44,7 +42,9 @@ public class UserinfoApplyApprovalController {
 
     //把UserinfoApplyApproval的Service层接口所有的方法自动装配到该对象中
     @Autowired
-    UserinfoApplyApprovalService userinfoApplyApprovalService;
+    private UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private UserinfoApplyService userinfoApplyService;
     @Autowired
     private ClassService classService;
     @Autowired
@@ -53,6 +53,23 @@ public class UserinfoApplyApprovalController {
     EmployService employService;
     @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
     private StudentService studentService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private StudentRelationService studentRelationService;
+    @Autowired
+    private EcommService ecommService;
+    @Autowired
+    private AddressService addressService;
+    @Autowired
+    private PictureService pictureService;
+    @Autowired
+    private LearningDegreeSerevice learningDegreeSerevice;
+    @Autowired
+    private EmployeeHistoryService employeeHistoryService;
+    @Autowired
+    private UserUploadFileService userUploadFileService;
+
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -63,6 +80,134 @@ public class UserinfoApplyApprovalController {
         // ub1_e_UserinfoApplyApprovals_listAll
         public static final String ListAll_CacheName = "ub1_u_userinfoApplyApproval_listAll";
     }
+
+
+    @ApiOperation( value = "根据审核结果和信息类型和用户角色查询所有的审批记录",notes = "未测试" )
+    @PostMapping("/getByRoleName")
+    @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户信息审批流程详情实体", required = true, dataType = "UserinfoApplyApproval")
+    @ResponseBody
+    public void selectByRoleName(@RequestBody UserinfoApplyApproval userinfoApplyApproval,
+                                 HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json;charset=utf-8");
+
+        Long schoolId = (long) 1 ;
+        Long user_id = (long) 1720 ;
+
+        List<String > roles = new ArrayList<>();
+        roles.add("辅导员");
+        roles.add("院长");
+
+        List<UserinfoApplyApproval> userinfoApplyApprovalList =
+                userinfoApplyApprovalService.selectAllByApprovalAndRole(userinfoApplyApproval,roles);
+
+        List<UserinfoApplyApproval> show_apply = new ArrayList<>();
+
+        userinfoApplyApprovalList.forEach( item -> {
+            //先检验是否是同一个学校
+            if( item.getUniversityId().equals(schoolId) ) {
+                User user = userService.selectUserById(item.getApplyUserId());
+                //当申请人用户类型是学生时
+                if( user.getUserType() == 1 ){
+                    //当职员的学院和申请人学生的学院一致时才显示
+                    if( isDepartmentSame(user.getId(),user_id) )
+                        show_apply.add(item);
+                }else{
+                    //如果是学生的亲属，则需要找到该亲属的孩子的同一个学院职员才能审批
+                    if( user.getUserType() == 4 ){
+                        StudentRelation studentRelation = studentRelationService.selectUserIdByRelaId(user.getId());
+                        if( isDepartmentSame(studentRelation.getUserId(),user_id)  )
+                            show_apply.add(item);
+                    }
+                    else
+                        show_apply.add(item);
+                }
+            }
+        } ) ;
+
+        String json = Result.build(ResultType.Success).appendData("apply_list",show_apply).convertIntoJSON();
+
+        response.getWriter().write(json);
+
+    }
+
+
+    /**
+     * Author: mokuanyuan 18:33 2019/5/14
+     * @param userinfoApplyApproval
+     * @param response
+     * @return 旧纪录（如果有的话） 和 新纪录
+     * @apiNote: 根据信息类型和新旧记录的id查询出 旧纪录（如果有的话） 和 新纪录
+     */
+    @ApiOperation( value = "据信息类型和新旧记录的id查询出 旧纪录（如果有的话） 和 新纪录",notes = "未测试" )
+    @PostMapping("/getOldInfoAndNewInfoByApply")
+    @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户信息审批流程详情实体", required = true, dataType = "UserinfoApplyApproval")
+    @ResponseBody
+    public void getOldInfoAndNewInfoByApply(@RequestBody UserinfoApplyApproval userinfoApplyApproval ,
+                                            HttpServletResponse response ) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
+        UserinfoApply userinfoApply = userinfoApplyService.selectUserinfoApplyById(userinfoApplyApproval.getUserinfoApplyId());
+        Long old_id = userinfoApply.getOldInfoId();
+        Long new_id = userinfoApply.getNewInfoId();
+
+        Result result = Result.build(ResultType.Success);
+
+        //根据信息类型调用相应的service层的查询方法
+        switch ( userinfoApply.getInfoType() ) {
+            case 0: //0为联系方式
+                if( old_id != null)
+                    result.appendData("old_info",ecommService.selectById(old_id));
+                result.appendData("new_info",ecommService.selectById(new_id));
+            case 1: //1为地址
+                if( old_id != null)
+                    result.appendData("old_info",addressService.selectById(old_id));
+                result.appendData("new_info",addressService.selectById(new_id));
+            case 2: //2为照片
+                if( old_id != null)
+                    result.appendData("old_info",pictureService.selectById(old_id));
+                result.appendData("new_info",pictureService.selectById(new_id));
+            case 3: //3为学生亲属
+                if( old_id != null)
+                    result.appendData("old_info",studentRelationService.selectById(old_id));
+                result.appendData("new_info",studentRelationService.selectById(new_id));
+            case 4: //4为学历
+                if( old_id != null)
+                    result.appendData("old_info",learningDegreeSerevice.selectLearningDegreeById(old_id));
+                result.appendData("new_info",learningDegreeSerevice.selectLearningDegreeById(new_id));
+            case 5: //5为简历
+                if( old_id != null)
+                    result.appendData("old_info",learningDegreeSerevice.selectLearningDegreeById(old_id));
+                result.appendData("new_info",learningDegreeSerevice.selectLearningDegreeById(new_id));
+            case 6: //6为学生信息
+                if( old_id != null)
+                    result.appendData("old_info",studentService.selectById(old_id));
+                result.appendData("new_info",studentService.selectById(new_id));
+            case 7: //7为教职工信息
+                if( old_id != null)
+                    result.appendData("old_info",employeeService.selectEmployeeById(old_id));
+                result.appendData("new_info",employeeService.selectEmployeeById(new_id));
+            case 8: //8为用户个人信息
+                if( old_id != null)
+                    result.appendData("old_info",userService.selectUserById(old_id));
+                result.appendData("new_info",userService.selectUserById(new_id));
+            case 9: //9为学生excel表
+                if( old_id != null)
+                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
+                result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
+            case 10:  //10为教职工信息
+                if( old_id != null)
+                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
+                result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
+
+        }
+
+        String json = result.convertIntoJSON();
+
+        response.getWriter().write(json);
+
+
+    }
+
 
     /**
      * Author: chenenru 23:41 2019/4/29
@@ -189,18 +334,25 @@ public class UserinfoApplyApprovalController {
         }
         return Result.build(ResultType.ParamError);
     }
-    //根据申请人的用户id(第一个参数)和登录到审批中心人的用户id(第二个参数)判断是否处于同一个学院
+
+    /**
+     * Author: mokuanyuan 19:08 2019/5/13
+     * @param studentId
+     * @param userId
+     * @return boolean
+     * @apiNote: 根据申请人的用户id(第一个参数)和登录到审批中心人的用户id(第二个参数)判断是否处于同一个学院
+     */
     public boolean isDepartmentSame(long studentId,long userId){
         //审批人
         System.out.println("-->"+employeeService.selectByUserId(userId));
         Employee employee = employeeService.selectByUserId(userId).get(0);
-        Employ employ = employService.selectEmployByEmployeeId(employee.getUserId());
+        Employ employ = employService.selectEmployByEmployeeId(employee.getId(),employee.getUniversityId());
         System.out.println(employ.getDepartmentId());
         //申请人为小学生才行
         Student student = studentService.selectByUserId(studentId).get(0);
-        Class aClass = classService.selectClassByClassId(student.getClassId());
+        Class aClass = classService.selectClassByClassId( student.getClassId() );
         System.out.println(aClass.getDepartmentId()+"--->");
-        if(employ.getDepartmentId().equals(aClass.getDepartmentId())){
+        if( employ.getDepartmentId().equals(aClass.getDepartmentId()) ) {
             System.out.println("是同一个学院");
             return true;
         }else{

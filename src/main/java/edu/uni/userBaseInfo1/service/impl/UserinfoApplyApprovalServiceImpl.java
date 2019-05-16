@@ -3,9 +3,11 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
+import edu.uni.userBaseInfo1.bean.UserinfoApplyApprovalExample;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
-import edu.uni.userBaseInfo1.service.UserinfoApplyApprovalService;
+import edu.uni.userBaseInfo1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,41 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
+
+
+    /**
+     * Author: mokuanyuan 16:54 2019/5/11
+     * @param userinfoApplyApproval 申请审批的实体类
+     * @param roles 该用户所有扮演的角色
+     * @return List<UserinfoApplyApproval>
+     * @apiNote: 根据审批结果、审批类型、角色名搜素审批表
+     */
+    @Override
+    public List<UserinfoApplyApproval> selectAllByApprovalAndRole(
+            UserinfoApplyApproval userinfoApplyApproval, List<String> roles) {
+
+        UserinfoApplyApprovalExample example = new UserinfoApplyApprovalExample();
+        UserinfoApplyApprovalExample.Criteria criteria = example.createCriteria();
+
+        //判断审批结果
+        if(userinfoApplyApproval.getResult() != null)
+            criteria.andResultEqualTo(userinfoApplyApproval.getResult());
+        else
+            criteria.andResultIsNull();
+        //获取类型
+        if(userinfoApplyApproval.getInfoType() != null)
+            criteria.andInfoTypeEqualTo(userinfoApplyApproval.getInfoType());
+
+        if(roles != null)
+            criteria.andRoleNameIn(roles);
+
+        List<UserinfoApplyApproval> userinfoApplyApprovals =
+                userinfoApplyApprovalMapper.selectByExample(example);
+
+        return userinfoApplyApprovals;
+
+    }
+
 
     /**
      * Author: chenenru 0:10 2019/4/30

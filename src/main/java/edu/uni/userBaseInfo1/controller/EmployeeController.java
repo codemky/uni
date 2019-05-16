@@ -254,7 +254,7 @@ public class EmployeeController {
     @ResponseBody
     public void selectDepartmentIdByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
         Employee employee = employeeService.selectByUserId(userId).get(0);
-        Employ employ = employService.selectEmployByEmployeeId(employee.getUserId());
+        Employ employ = employService.selectEmployByEmployeeId(employee.getUserId() , employee.getUniversityId());
         System.out.println(employ.getDepartmentId());
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");

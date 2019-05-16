@@ -58,28 +58,17 @@ public class ApprovalMainController {
     @ResponseBody
     public void selectBySchoolIdAndNameAndType(
             @RequestBody(required = false)ApprovalMain approvalMain , HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+        System.out.println(approvalMain.toString());
 
         String json;
         if(approvalMain == null){
             json = Result.build(ResultType.ParamError).convertIntoJSON();
         }
-        else
-        {
-            Long schoolId = null;
-            String name = null;
-            String type = null;
-
-            if( approvalMain.getUniversityId()!= -1 )
-                schoolId = approvalMain.getUniversityId();
-            if(approvalMain.getName() != "null" )
-                name = approvalMain.getName();
-            if(approvalMain.getType() != "null" )
-                type = approvalMain.getType();
-
-            response.setContentType("application/json;charset=utf-8");
+        else {
             List<ApprovalMain> approvalMains = approvalMainService.
                     selectBySchoolIdAndNameAndType(
-                            schoolId,approvalMain.getName(), approvalMain.getType());
+                            approvalMain.getUniversityId(),approvalMain.getName(), approvalMain.getType());
             json = Result.build(ResultType.Success).appendData("approvalMains",approvalMains).convertIntoJSON();
         }
 

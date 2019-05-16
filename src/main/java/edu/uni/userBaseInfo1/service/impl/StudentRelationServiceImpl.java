@@ -163,8 +163,13 @@ public class StudentRelationServiceImpl implements StudentRelationService {
      * @apiNote: 根据亲属在用户表的id查亲属的信息
      */
     @Override
-    public StudentRelation selectRelaByRelaId(Long relaId) {
-        return studentRelationMapper.selectByRelaId(relaId);
+    public StudentRelation selectUserIdByRelaId(Long relaId) {
+        StudentRelationExample studentRelationExample = new StudentRelationExample();
+        studentRelationExample.createCriteria().andUserIdEqualTo(relaId).andDeletedEqualTo(false);
+
+        List<StudentRelation> studentRelations = studentRelationMapper.selectByExample(studentRelationExample);
+
+        return studentRelations.size() > 0 ? studentRelations.get(0) : null;
     }
 
     /**
