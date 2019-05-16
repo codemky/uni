@@ -41,8 +41,8 @@ public class Employee {
     //当前住址
     private Long homeAddressId;
 
-    ////当前通信地址
-    private Long mailAddressId;
+    //联系方式
+    private Long phoneEcommId;;
 
     //本记录的创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -53,30 +53,6 @@ public class Employee {
 
     //本记录是否有效 0:有效 1:无效
     private Boolean deleted;
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", universityId=" + universityId +
-                ", empNo='" + empNo + '\'' +
-                ", departmentId=" + departmentId +
-                ", subdepartmentId=" + subdepartmentId +
-                ", employHistoryId=" + employHistoryId +
-                ", disciplineId=" + disciplineId +
-                ", politicalId=" + politicalId +
-                ", positionId=" + positionId +
-                ", homeAddressId=" + homeAddressId +
-                ", mailAddressId=" + mailAddressId +
-                ", datetime=" + datetime +
-                ", byWho=" + byWho +
-                ", deleted=" + deleted +
-                '}';
-    }
-
-    public Employee() {
-    }
 
     public Long getId() {
         return id;
@@ -166,12 +142,12 @@ public class Employee {
         this.homeAddressId = homeAddressId;
     }
 
-    public Long getMailAddressId() {
-        return mailAddressId;
+    public Long getPhoneEcommId() {
+        return phoneEcommId;
     }
 
-    public void setMailAddressId(Long mailAddressId) {
-        this.mailAddressId = mailAddressId;
+    public void setPhoneEcommId(Long phoneEcommId) {
+        this.phoneEcommId = phoneEcommId;
     }
 
     public Date getDatetime() {
@@ -198,7 +174,31 @@ public class Employee {
         this.deleted = deleted;
     }
 
-    public Employee(Long id, Long userId, Long universityId, String empNo, Long departmentId, Long subdepartmentId, Long employHistoryId, Long disciplineId, Long politicalId, Long positionId, Long homeAddressId, Long mailAddressId, Date datetime, Long byWho, Boolean deleted) {
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", universityId=" + universityId +
+                ", empNo='" + empNo + '\'' +
+                ", departmentId=" + departmentId +
+                ", subdepartmentId=" + subdepartmentId +
+                ", employHistoryId=" + employHistoryId +
+                ", disciplineId=" + disciplineId +
+                ", politicalId=" + politicalId +
+                ", positionId=" + positionId +
+                ", homeAddressId=" + homeAddressId +
+                ", phoneEcommId=" + phoneEcommId +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
+
+    public Employee() {
+    }
+
+    public Employee(Long id, Long userId, Long universityId, String empNo, Long departmentId, Long subdepartmentId, Long employHistoryId, Long disciplineId, Long politicalId, Long positionId, Long homeAddressId, Long phoneEcommId, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
         this.userId = userId;
         this.universityId = universityId;
@@ -210,7 +210,7 @@ public class Employee {
         this.politicalId = politicalId;
         this.positionId = positionId;
         this.homeAddressId = homeAddressId;
-        this.mailAddressId = mailAddressId;
+        this.phoneEcommId = phoneEcommId;
         this.datetime = datetime;
         this.byWho = byWho;
         this.deleted = deleted;

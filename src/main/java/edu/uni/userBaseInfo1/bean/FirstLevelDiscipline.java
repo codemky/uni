@@ -1,18 +1,25 @@
-/**
- * Author: caiguangqian 8:27 2019/4/25
- * @param 
- * @return 
- * @apiNote:
- */
 package edu.uni.userBaseInfo1.bean;
 
-/**
- *  一级学科
- */
+import java.util.Date;
+
 public class FirstLevelDiscipline {
-    private Long id;//一级学科表id
-    private Long categoryId;//关联到学科类别表id
-    private String discipline;//具体的一级学科名称
+    private Long id;
+
+    private Long disciplineCategoryId;
+
+    private String code;
+
+    private String name;
+
+    private String ename;
+
+    private String description;
+
+    private Date datetime;
+
+    private Long byWho;
+
+    private Boolean deleted;
 
     public Long getId() {
         return id;
@@ -22,80 +29,67 @@ public class FirstLevelDiscipline {
         this.id = id;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Long getDisciplineCategoryId() {
+        return disciplineCategoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setDisciplineCategoryId(Long disciplineCategoryId) {
+        this.disciplineCategoryId = disciplineCategoryId;
     }
 
-    public String getDiscipline() {
-        return discipline;
+    public String getCode() {
+        return code;
     }
 
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline;
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
     }
 
-    public FirstLevelDiscipline() {
+    public String getName() {
+        return name;
     }
 
-    public FirstLevelDiscipline(Long id, Long categoryId, String discipline) {
-        this.id = id;
-        this.categoryId = categoryId;
-        this.discipline = discipline;
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    @Override
-    public String toString() {
-        return "FirstLevelDiscipline{" +
-                "id=" + id +
-                ", categoryId=" + categoryId +
-                ", discipline='" + discipline + '\'' +
-                '}';
+    public String getEname() {
+        return ename;
     }
 
-    //    //一级学科表id的get方法
-//    public Long getId() {
-//        return id;
-//    }
-//    //一级学科表id的set方法
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//    //关联到学科类别表id的get方法
-//    public Long getCategoryId() {
-//        return categoryId;
-//    }
-//    //关联到学科类别表id的set方法
-//    public void setCategoryId(Long categoryId) {
-//        this.categoryId = categoryId;
-//    }
-//    //具体的一级学科名称的get方法
-//    public String getDiscipline() {
-//        return discipline;
-//    }
-//    //具体的一级学科名称的set方法
-//    public void setDiscipline(String discipline) {
-//        this.discipline = discipline == null ? null : discipline.trim();
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "FirstLevelDiscipline{" +
-//                "id=" + id +
-//                ", categoryId=" + categoryId +
-//                ", discipline='" + discipline + '\'' +
-//                '}';
-//    }
-//
-//    public FirstLevelDiscipline(Long id, Long categoryId, String discipline) {
-//        this.id = id;
-//        this.categoryId = categoryId;
-//        this.discipline = discipline;
-//    }
-//
-//    public FirstLevelDiscipline() {
-//    }
+    public void setEname(String ename) {
+        this.ename = ename == null ? null : ename.trim();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
+
+    public Date getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
+    }
+
+    public Long getByWho() {
+        return byWho;
+    }
+
+    public void setByWho(Long byWho) {
+        this.byWho = byWho;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 }

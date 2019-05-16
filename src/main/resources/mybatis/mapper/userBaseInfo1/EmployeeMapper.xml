@@ -13,7 +13,7 @@
     <result column="political_id" property="politicalId" jdbcType="BIGINT" />
     <result column="position_id" property="positionId" jdbcType="BIGINT" />
     <result column="home_address_id" property="homeAddressId" jdbcType="BIGINT" />
-    <result column="mail_address_id" property="mailAddressId" jdbcType="BIGINT" />
+    <result column="phone_ecomm_id" property="phoneEcommId" jdbcType="BIGINT" />
     <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
     <result column="by_who" property="byWho" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
@@ -78,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, user_id, university_id, emp_no, department_id, subdepartment_id, employ_history_id, 
-    discipline_id, political_id, position_id, home_address_id, mail_address_id, datetime, 
+    discipline_id, political_id, position_id, home_address_id, phone_ecomm_id, datetime, 
     by_who, deleted
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample" >
@@ -118,12 +118,12 @@
     insert into employee (user_id, university_id, emp_no, 
       department_id, subdepartment_id, employ_history_id, 
       discipline_id, political_id, position_id, 
-      home_address_id, mail_address_id, datetime, 
+      home_address_id, phone_ecomm_id, datetime, 
       by_who, deleted)
     values (#{userId,jdbcType=BIGINT}, #{universityId,jdbcType=BIGINT}, #{empNo,jdbcType=VARCHAR}, 
       #{departmentId,jdbcType=BIGINT}, #{subdepartmentId,jdbcType=BIGINT}, #{employHistoryId,jdbcType=BIGINT}, 
       #{disciplineId,jdbcType=BIGINT}, #{politicalId,jdbcType=BIGINT}, #{positionId,jdbcType=BIGINT}, 
-      #{homeAddressId,jdbcType=BIGINT}, #{mailAddressId,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, 
+      #{homeAddressId,jdbcType=BIGINT}, #{phoneEcommId,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, 
       #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
@@ -162,8 +162,8 @@
       <if test="homeAddressId != null" >
         home_address_id,
       </if>
-      <if test="mailAddressId != null" >
-        mail_address_id,
+      <if test="phoneEcommId != null" >
+        phone_ecomm_id,
       </if>
       <if test="datetime != null" >
         datetime,
@@ -206,8 +206,8 @@
       <if test="homeAddressId != null" >
         #{homeAddressId,jdbcType=BIGINT},
       </if>
-      <if test="mailAddressId != null" >
-        #{mailAddressId,jdbcType=BIGINT},
+      <if test="phoneEcommId != null" >
+        #{phoneEcommId,jdbcType=BIGINT},
       </if>
       <if test="datetime != null" >
         #{datetime,jdbcType=TIMESTAMP},
@@ -262,8 +262,8 @@
       <if test="record.homeAddressId != null" >
         home_address_id = #{record.homeAddressId,jdbcType=BIGINT},
       </if>
-      <if test="record.mailAddressId != null" >
-        mail_address_id = #{record.mailAddressId,jdbcType=BIGINT},
+      <if test="record.phoneEcommId != null" >
+        phone_ecomm_id = #{record.phoneEcommId,jdbcType=BIGINT},
       </if>
       <if test="record.datetime != null" >
         datetime = #{record.datetime,jdbcType=TIMESTAMP},
@@ -292,7 +292,7 @@
       political_id = #{record.politicalId,jdbcType=BIGINT},
       position_id = #{record.positionId,jdbcType=BIGINT},
       home_address_id = #{record.homeAddressId,jdbcType=BIGINT},
-      mail_address_id = #{record.mailAddressId,jdbcType=BIGINT},
+      phone_ecomm_id = #{record.phoneEcommId,jdbcType=BIGINT},
       datetime = #{record.datetime,jdbcType=TIMESTAMP},
       by_who = #{record.byWho,jdbcType=BIGINT},
       deleted = #{record.deleted,jdbcType=BIT}
@@ -333,8 +333,8 @@
       <if test="homeAddressId != null" >
         home_address_id = #{homeAddressId,jdbcType=BIGINT},
       </if>
-      <if test="mailAddressId != null" >
-        mail_address_id = #{mailAddressId,jdbcType=BIGINT},
+      <if test="phoneEcommId != null" >
+        phone_ecomm_id = #{phoneEcommId,jdbcType=BIGINT},
       </if>
       <if test="datetime != null" >
         datetime = #{datetime,jdbcType=TIMESTAMP},
@@ -360,7 +360,7 @@
       political_id = #{politicalId,jdbcType=BIGINT},
       position_id = #{positionId,jdbcType=BIGINT},
       home_address_id = #{homeAddressId,jdbcType=BIGINT},
-      mail_address_id = #{mailAddressId,jdbcType=BIGINT},
+      phone_ecomm_id = #{phoneEcommId,jdbcType=BIGINT},
       datetime = #{datetime,jdbcType=TIMESTAMP},
       by_who = #{byWho,jdbcType=BIGINT},
       deleted = #{deleted,jdbcType=BIT}

@@ -775,63 +775,63 @@ public class EmployeeExample {
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdIsNull() {
-            addCriterion("mail_address_id is null");
+        public Criteria andPhoneEcommIdIsNull() {
+            addCriterion("phone_ecomm_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdIsNotNull() {
-            addCriterion("mail_address_id is not null");
+        public Criteria andPhoneEcommIdIsNotNull() {
+            addCriterion("phone_ecomm_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdEqualTo(Long value) {
-            addCriterion("mail_address_id =", value, "mailAddressId");
+        public Criteria andPhoneEcommIdEqualTo(Long value) {
+            addCriterion("phone_ecomm_id =", value, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdNotEqualTo(Long value) {
-            addCriterion("mail_address_id <>", value, "mailAddressId");
+        public Criteria andPhoneEcommIdNotEqualTo(Long value) {
+            addCriterion("phone_ecomm_id <>", value, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdGreaterThan(Long value) {
-            addCriterion("mail_address_id >", value, "mailAddressId");
+        public Criteria andPhoneEcommIdGreaterThan(Long value) {
+            addCriterion("phone_ecomm_id >", value, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("mail_address_id >=", value, "mailAddressId");
+        public Criteria andPhoneEcommIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("phone_ecomm_id >=", value, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdLessThan(Long value) {
-            addCriterion("mail_address_id <", value, "mailAddressId");
+        public Criteria andPhoneEcommIdLessThan(Long value) {
+            addCriterion("phone_ecomm_id <", value, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdLessThanOrEqualTo(Long value) {
-            addCriterion("mail_address_id <=", value, "mailAddressId");
+        public Criteria andPhoneEcommIdLessThanOrEqualTo(Long value) {
+            addCriterion("phone_ecomm_id <=", value, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdIn(List<Long> values) {
-            addCriterion("mail_address_id in", values, "mailAddressId");
+        public Criteria andPhoneEcommIdIn(List<Long> values) {
+            addCriterion("phone_ecomm_id in", values, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdNotIn(List<Long> values) {
-            addCriterion("mail_address_id not in", values, "mailAddressId");
+        public Criteria andPhoneEcommIdNotIn(List<Long> values) {
+            addCriterion("phone_ecomm_id not in", values, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdBetween(Long value1, Long value2) {
-            addCriterion("mail_address_id between", value1, value2, "mailAddressId");
+        public Criteria andPhoneEcommIdBetween(Long value1, Long value2) {
+            addCriterion("phone_ecomm_id between", value1, value2, "phoneEcommId");
             return (Criteria) this;
         }
 
-        public Criteria andMailAddressIdNotBetween(Long value1, Long value2) {
-            addCriterion("mail_address_id not between", value1, value2, "mailAddressId");
+        public Criteria andPhoneEcommIdNotBetween(Long value1, Long value2) {
+            addCriterion("phone_ecomm_id not between", value1, value2, "phoneEcommId");
             return (Criteria) this;
         }
 
