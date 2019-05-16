@@ -1,53 +1,95 @@
-/*
-author:  zhangzhanqiao
-create:  2019.4.24
-modified:  2019.4.24
-description：二级学科表
-*/
 package edu.uni.userBaseInfo1.bean;
 
-/*
-SecondLevelDiscipline实体类 二级学科表
-（如果有需要说明，可以放在这里）
-*/
+import java.util.Date;
+
 public class SecondLevelDiscipline {
-    // SecondLevelDiscipline数据表唯一编号ID
     private Long id;
-    // 关联到一级学科表id
-    private Long firstId;
-    // 具体的二级学科名称
-    private String categoryId;
-    // 获取SecondLevelDiscipline数据表唯一编号ID
+
+    private Long firstLevelDisciplineId;
+
+    private String code;
+
+    private String name;
+
+    private String ename;
+
+    private String description;
+
+    private Date datetime;
+
+    private Long byWho;
+
+    private Boolean deleted;
+
     public Long getId() {
         return id;
     }
-    // 设置SecondLevelDiscipline数据表唯一编号ID
+
     public void setId(Long id) {
         this.id = id;
     }
-    // 获取关联到一级学科表id
-    public Long getFirstId() {
-        return firstId;
+
+    public Long getFirstLevelDisciplineId() {
+        return firstLevelDisciplineId;
     }
-    // 设置关联到一级学科表id
-    public void setFirstId(Long firstId) {
-        this.firstId = firstId;
+
+    public void setFirstLevelDisciplineId(Long firstLevelDisciplineId) {
+        this.firstLevelDisciplineId = firstLevelDisciplineId;
     }
-    // 获取具体的二级学科名称
-    public String getCategoryId() {
-        return categoryId;
+
+    public String getCode() {
+        return code;
     }
-    // 设置具体的二级学科名称
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId == null ? null : categoryId.trim();
+
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
     }
-    //本实体类的toString()方法
-    @java.lang.Override
-    public java.lang.String toString() {
-        return "SecondLevelDiscipline{" +
-                "id=" + id +
-                ", firstId=" + firstId +
-                ", categoryId='" + categoryId + '\'' +
-                '}';
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public String getEname() {
+        return ename;
+    }
+
+    public void setEname(String ename) {
+        this.ename = ename == null ? null : ename.trim();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
+
+    public Date getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
+    }
+
+    public Long getByWho() {
+        return byWho;
+    }
+
+    public void setByWho(Long byWho) {
+        this.byWho = byWho;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

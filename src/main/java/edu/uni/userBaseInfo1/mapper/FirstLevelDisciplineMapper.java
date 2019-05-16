@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface FirstLevelDisciplineMapper {
-    //按条件计数
     int countByExample(FirstLevelDisciplineExample example);
 
     int deleteByExample(FirstLevelDisciplineExample example);

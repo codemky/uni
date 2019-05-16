@@ -1,46 +1,85 @@
 package edu.uni.userBaseInfo1.bean;
 
-/**
- * 学科类别表
- */
-public class DisciplineCategory {
-    //学科类别表id
-    private Long id;
-    //具体的学科类别名称
-    private String discipline;
+import java.util.Date;
 
-    //学科类别表id的get方法
+public class DisciplineCategory {
+    private Long id;
+
+    private String code;
+
+    private String name;
+
+    private String ename;
+
+    private String description;
+
+    private Date datetime;
+
+    private Long byWho;
+
+    private Boolean deleted;
+
     public Long getId() {
         return id;
     }
 
-    //具体的学科类别名称的set方法
     public void setId(Long id) {
         this.id = id;
     }
-    //具体的学科类别名称的get方法
-    public String getDiscipline() {
-        return discipline;
+
+    public String getCode() {
+        return code;
     }
 
-    //具体的学科类别名称的set方法
-    public void setDiscipline(String discipline) {
-        this.discipline = discipline == null ? null : discipline.trim();
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
     }
 
-    @Override
-    public String toString() {
-        return "DisciplineCategory{" +
-                "id=" + id +
-                ", discipline='" + discipline + '\'' +
-                '}';
+    public String getName() {
+        return name;
     }
 
-    public DisciplineCategory(Long id, String discipline) {
-        this.id = id;
-        this.discipline = discipline;
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    public DisciplineCategory() {
+    public String getEname() {
+        return ename;
+    }
+
+    public void setEname(String ename) {
+        this.ename = ename == null ? null : ename.trim();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
+
+    public Date getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
+    }
+
+    public Long getByWho() {
+        return byWho;
+    }
+
+    public void setByWho(Long byWho) {
+        this.byWho = byWho;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

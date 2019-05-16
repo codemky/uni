@@ -8,12 +8,12 @@
     <result column="stu_no" property="stuNo" jdbcType="VARCHAR" />
     <result column="begin_learn_date" property="beginLearnDate" jdbcType="TIMESTAMP" />
     <result column="grade" property="grade" jdbcType="CHAR" />
-    <result column="major_id" property="majorId" jdbcType="BIGINT" />
+    <result column="specialty_id" property="specialtyId" jdbcType="BIGINT" />
     <result column="class_id" property="classId" jdbcType="BIGINT" />
     <result column="political_id" property="politicalId" jdbcType="BIGINT" />
     <result column="live_room" property="liveRoom" jdbcType="BIGINT" />
-    <result column="home_address" property="homeAddress" jdbcType="BIGINT" />
-    <result column="mail_address" property="mailAddress" jdbcType="BIGINT" />
+    <result column="home_address_id" property="homeAddressId" jdbcType="BIGINT" />
+    <result column="phone_ecomm_id" property="phoneEcommId" jdbcType="BIGINT" />
     <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
     <result column="by_who" property="byWho" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
@@ -77,8 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_id, university_id, stu_no, begin_learn_date, grade, major_id, class_id, 
-    political_id, live_room, home_address, mail_address, datetime, by_who, deleted
+    id, user_id, university_id, stu_no, begin_learn_date, grade, specialty_id, class_id, 
+    political_id, live_room, home_address_id, phone_ecomm_id, datetime, by_who, deleted
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.StudentExample" >
     select
@@ -115,14 +115,14 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into student (user_id, university_id, stu_no, 
-      begin_learn_date, grade, major_id, 
+      begin_learn_date, grade, specialty_id, 
       class_id, political_id, live_room, 
-      home_address, mail_address, datetime, 
+      home_address_id, phone_ecomm_id, datetime, 
       by_who, deleted)
     values (#{userId,jdbcType=BIGINT}, #{universityId,jdbcType=BIGINT}, #{stuNo,jdbcType=VARCHAR}, 
-      #{beginLearnDate,jdbcType=TIMESTAMP}, #{grade,jdbcType=CHAR}, #{majorId,jdbcType=BIGINT}, 
+      #{beginLearnDate,jdbcType=TIMESTAMP}, #{grade,jdbcType=CHAR}, #{specialtyId,jdbcType=BIGINT}, 
       #{classId,jdbcType=BIGINT}, #{politicalId,jdbcType=BIGINT}, #{liveRoom,jdbcType=BIGINT}, 
-      #{homeAddress,jdbcType=BIGINT}, #{mailAddress,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, 
+      #{homeAddressId,jdbcType=BIGINT}, #{phoneEcommId,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, 
       #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Student" >
@@ -146,8 +146,8 @@
       <if test="grade != null" >
         grade,
       </if>
-      <if test="majorId != null" >
-        major_id,
+      <if test="specialtyId != null" >
+        specialty_id,
       </if>
       <if test="classId != null" >
         class_id,
@@ -158,11 +158,11 @@
       <if test="liveRoom != null" >
         live_room,
       </if>
-      <if test="homeAddress != null" >
-        home_address,
+      <if test="homeAddressId != null" >
+        home_address_id,
       </if>
-      <if test="mailAddress != null" >
-        mail_address,
+      <if test="phoneEcommId != null" >
+        phone_ecomm_id,
       </if>
       <if test="datetime != null" >
         datetime,
@@ -190,8 +190,8 @@
       <if test="grade != null" >
         #{grade,jdbcType=CHAR},
       </if>
-      <if test="majorId != null" >
-        #{majorId,jdbcType=BIGINT},
+      <if test="specialtyId != null" >
+        #{specialtyId,jdbcType=BIGINT},
       </if>
       <if test="classId != null" >
         #{classId,jdbcType=BIGINT},
@@ -202,11 +202,11 @@
       <if test="liveRoom != null" >
         #{liveRoom,jdbcType=BIGINT},
       </if>
-      <if test="homeAddress != null" >
-        #{homeAddress,jdbcType=BIGINT},
+      <if test="homeAddressId != null" >
+        #{homeAddressId,jdbcType=BIGINT},
       </if>
-      <if test="mailAddress != null" >
-        #{mailAddress,jdbcType=BIGINT},
+      <if test="phoneEcommId != null" >
+        #{phoneEcommId,jdbcType=BIGINT},
       </if>
       <if test="datetime != null" >
         #{datetime,jdbcType=TIMESTAMP},
@@ -246,8 +246,8 @@
       <if test="record.grade != null" >
         grade = #{record.grade,jdbcType=CHAR},
       </if>
-      <if test="record.majorId != null" >
-        major_id = #{record.majorId,jdbcType=BIGINT},
+      <if test="record.specialtyId != null" >
+        specialty_id = #{record.specialtyId,jdbcType=BIGINT},
       </if>
       <if test="record.classId != null" >
         class_id = #{record.classId,jdbcType=BIGINT},
@@ -258,11 +258,11 @@
       <if test="record.liveRoom != null" >
         live_room = #{record.liveRoom,jdbcType=BIGINT},
       </if>
-      <if test="record.homeAddress != null" >
-        home_address = #{record.homeAddress,jdbcType=BIGINT},
+      <if test="record.homeAddressId != null" >
+        home_address_id = #{record.homeAddressId,jdbcType=BIGINT},
       </if>
-      <if test="record.mailAddress != null" >
-        mail_address = #{record.mailAddress,jdbcType=BIGINT},
+      <if test="record.phoneEcommId != null" >
+        phone_ecomm_id = #{record.phoneEcommId,jdbcType=BIGINT},
       </if>
       <if test="record.datetime != null" >
         datetime = #{record.datetime,jdbcType=TIMESTAMP},
@@ -286,12 +286,12 @@
       stu_no = #{record.stuNo,jdbcType=VARCHAR},
       begin_learn_date = #{record.beginLearnDate,jdbcType=TIMESTAMP},
       grade = #{record.grade,jdbcType=CHAR},
-      major_id = #{record.majorId,jdbcType=BIGINT},
+      specialty_id = #{record.specialtyId,jdbcType=BIGINT},
       class_id = #{record.classId,jdbcType=BIGINT},
       political_id = #{record.politicalId,jdbcType=BIGINT},
       live_room = #{record.liveRoom,jdbcType=BIGINT},
-      home_address = #{record.homeAddress,jdbcType=BIGINT},
-      mail_address = #{record.mailAddress,jdbcType=BIGINT},
+      home_address_id = #{record.homeAddressId,jdbcType=BIGINT},
+      phone_ecomm_id = #{record.phoneEcommId,jdbcType=BIGINT},
       datetime = #{record.datetime,jdbcType=TIMESTAMP},
       by_who = #{record.byWho,jdbcType=BIGINT},
       deleted = #{record.deleted,jdbcType=BIT}
@@ -317,8 +317,8 @@
       <if test="grade != null" >
         grade = #{grade,jdbcType=CHAR},
       </if>
-      <if test="majorId != null" >
-        major_id = #{majorId,jdbcType=BIGINT},
+      <if test="specialtyId != null" >
+        specialty_id = #{specialtyId,jdbcType=BIGINT},
       </if>
       <if test="classId != null" >
         class_id = #{classId,jdbcType=BIGINT},
@@ -329,11 +329,11 @@
       <if test="liveRoom != null" >
         live_room = #{liveRoom,jdbcType=BIGINT},
       </if>
-      <if test="homeAddress != null" >
-        home_address = #{homeAddress,jdbcType=BIGINT},
+      <if test="homeAddressId != null" >
+        home_address_id = #{homeAddressId,jdbcType=BIGINT},
       </if>
-      <if test="mailAddress != null" >
-        mail_address = #{mailAddress,jdbcType=BIGINT},
+      <if test="phoneEcommId != null" >
+        phone_ecomm_id = #{phoneEcommId,jdbcType=BIGINT},
       </if>
       <if test="datetime != null" >
         datetime = #{datetime,jdbcType=TIMESTAMP},
@@ -354,12 +354,12 @@
       stu_no = #{stuNo,jdbcType=VARCHAR},
       begin_learn_date = #{beginLearnDate,jdbcType=TIMESTAMP},
       grade = #{grade,jdbcType=CHAR},
-      major_id = #{majorId,jdbcType=BIGINT},
+      specialty_id = #{specialtyId,jdbcType=BIGINT},
       class_id = #{classId,jdbcType=BIGINT},
       political_id = #{politicalId,jdbcType=BIGINT},
       live_room = #{liveRoom,jdbcType=BIGINT},
-      home_address = #{homeAddress,jdbcType=BIGINT},
-      mail_address = #{mailAddress,jdbcType=BIGINT},
+      home_address_id = #{homeAddressId,jdbcType=BIGINT},
+      phone_ecomm_id = #{phoneEcommId,jdbcType=BIGINT},
       datetime = #{datetime,jdbcType=TIMESTAMP},
       by_who = #{byWho,jdbcType=BIGINT},
       deleted = #{deleted,jdbcType=BIT}
