@@ -1,12 +1,9 @@
 package edu.uni.userBaseInfo1.controller;
 
-import edu.uni.administrativestructure.bean.Class;
-import edu.uni.administrativestructure.bean.Employ;
-import edu.uni.administrativestructure.service.ClassService;
-import edu.uni.administrativestructure.service.EmployService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.bean.Class;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;

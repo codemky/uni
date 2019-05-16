@@ -14,20 +14,12 @@ public class RequestMessage {
     private UserinfoApply userinfoApply;
     private LearningDegree learningDegree;
     private EmployeeHistory employeeHistory;
+    private Student student;
+    private Employee employee;
 
     public RequestMessage() {
     }
 
-    public RequestMessage(Ecomm ecomm, Address address, Picture picture, StudentRelation studentRelation, Long byWho, UserinfoApply userinfoApply, LearningDegree learningDegree, EmployeeHistory employeeHistory) {
-        this.ecomm = ecomm;
-        this.address = address;
-        this.picture = picture;
-        this.studentRelation = studentRelation;
-        this.byWho = byWho;
-        this.userinfoApply = userinfoApply;
-        this.learningDegree = learningDegree;
-        this.employeeHistory = employeeHistory;
-    }
 
     public Ecomm getEcomm() {
         return ecomm;
@@ -93,6 +85,35 @@ public class RequestMessage {
         this.employeeHistory = employeeHistory;
     }
 
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public RequestMessage(Ecomm ecomm, Address address, Picture picture, StudentRelation studentRelation, Long byWho, UserinfoApply userinfoApply, LearningDegree learningDegree, EmployeeHistory employeeHistory, Student student, Employee employee) {
+        this.ecomm = ecomm;
+        this.address = address;
+        this.picture = picture;
+        this.studentRelation = studentRelation;
+        this.byWho = byWho;
+        this.userinfoApply = userinfoApply;
+        this.learningDegree = learningDegree;
+        this.employeeHistory = employeeHistory;
+        this.student = student;
+        this.employee = employee;
+    }
+
     @Override
     public String toString() {
         return "RequestMessage{" +
@@ -104,6 +125,8 @@ public class RequestMessage {
                 ", userinfoApply=" + userinfoApply +
                 ", learningDegree=" + learningDegree +
                 ", employeeHistory=" + employeeHistory +
+                ", student=" + student +
+                ", employee=" + employee +
                 '}';
     }
 }

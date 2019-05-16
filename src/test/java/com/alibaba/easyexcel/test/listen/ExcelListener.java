@@ -30,7 +30,9 @@ public class ExcelListener extends AnalysisEventListener {
         doSomething();
     }
     public void doSomething(){
+        int i=0;
         for (Object o:data) {
+            i++;
             System.out.print(getFieldValueByName("userName", o)+" ");
             System.out.print(getFieldValueByName("identification", o)+" ");
             System.out.print(getFieldValueByName("userSex", o)+" ");
@@ -46,7 +48,12 @@ public class ExcelListener extends AnalysisEventListener {
             System.out.print(getFieldValueByName("political", o)+" ");
             System.out.print(getFieldValueByName("liveRoom", o)+" ");
             System.out.print(getFieldValueByName("homeAddress", o)+" ");
-            System.out.print(getFieldValueByName("mailEcomm", o)+" ");
+            System.out.println(getFieldValueByName("mailEcomm", o));
+            String userNumber = (String) getFieldValueByName("userNumber", o);
+            if(userNumber.length()!=12){
+                System.out.print("第"+i+"行第5列字段长度不符合，请检查");
+                System.exit(0);
+            }
             System.out.println();
 //           System.out.print(getFiledValues(o));
             //System.out.println(getFiledName(o).toString());
