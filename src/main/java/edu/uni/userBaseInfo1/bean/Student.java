@@ -27,18 +27,18 @@ public class Student {
     private Date beginLearnDate;
     // 当前年级
     private String grade;
-    // 当前主修专业
-    private Long majorId;
+    // 当前主修专业 specialty表id
+    private Long specialtyId;
     // 当前班级。专业班，行政班。除选修课外的大部分成绩单，都在本班输入
     private Long classId;
     // 关联到政治面貌id
     private Long politicalId;
     // 当前宿舍 field.id
     private Long liveRoom;
-    // 当前住址 关联address.id
-    private Long homeAddress;
-    // 当前通信地址 关联address.id
-    private Long mailAddress;
+    // 当前住址 地址表id
+    private Long homeAddressId;
+    // 联系方式 电子联系方式表id
+    private Long phoneEcommId;
     // 本记录的创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date datetime;
@@ -95,12 +95,12 @@ public class Student {
         this.grade = grade;
     }
 
-    public Long getMajorId() {
-        return majorId;
+    public Long getSpecialtyId() {
+        return specialtyId;
     }
 
-    public void setMajorId(Long majorId) {
-        this.majorId = majorId;
+    public void setSpecialtyId(Long specialtyId) {
+        this.specialtyId = specialtyId;
     }
 
     public Long getClassId() {
@@ -127,20 +127,20 @@ public class Student {
         this.liveRoom = liveRoom;
     }
 
-    public Long getHomeAddress() {
-        return homeAddress;
+    public Long getHomeAddressId() {
+        return homeAddressId;
     }
 
-    public void setHomeAddress(Long homeAddress) {
-        this.homeAddress = homeAddress;
+    public void setHomeAddressId(Long homeAddressId) {
+        this.homeAddressId = homeAddressId;
     }
 
-    public Long getMailAddress() {
-        return mailAddress;
+    public Long getPhoneEcommId() {
+        return phoneEcommId;
     }
 
-    public void setMailAddress(Long mailAddress) {
-        this.mailAddress = mailAddress;
+    public void setPhoneEcommId(Long phoneEcommId) {
+        this.phoneEcommId = phoneEcommId;
     }
 
     public Date getDatetime() {
@@ -176,31 +176,34 @@ public class Student {
                 ", stuNo='" + stuNo + '\'' +
                 ", beginLearnDate=" + beginLearnDate +
                 ", grade='" + grade + '\'' +
-                ", majorId=" + majorId +
+                ", specialtyId=" + specialtyId +
                 ", classId=" + classId +
                 ", politicalId=" + politicalId +
                 ", liveRoom=" + liveRoom +
-                ", homeAddress=" + homeAddress +
-                ", mailAddress=" + mailAddress +
+                ", homeAddressId=" + homeAddressId +
+                ", phoneEcommId=" + phoneEcommId +
                 ", datetime=" + datetime +
                 ", byWho=" + byWho +
                 ", deleted=" + deleted +
                 '}';
     }
 
-    public Student(Long id, Long userId, Long universityId, String stuNo, Date beginLearnDate, String grade, Long majorId, Long classId, Long politicalId, Long liveRoom, Long homeAddress, Long mailAddress, Date datetime, Long byWho, Boolean deleted) {
+    public Student() {
+    }
+
+    public Student(Long id, Long userId, Long universityId, String stuNo, Date beginLearnDate, String grade, Long specialtyId, Long classId, Long politicalId, Long liveRoom, Long homeAddressId, Long phoneEcommId, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
         this.userId = userId;
         this.universityId = universityId;
         this.stuNo = stuNo;
         this.beginLearnDate = beginLearnDate;
         this.grade = grade;
-        this.majorId = majorId;
+        this.specialtyId = specialtyId;
         this.classId = classId;
         this.politicalId = politicalId;
         this.liveRoom = liveRoom;
-        this.homeAddress = homeAddress;
-        this.mailAddress = mailAddress;
+        this.homeAddressId = homeAddressId;
+        this.phoneEcommId = phoneEcommId;
         this.datetime = datetime;
         this.byWho = byWho;
         this.deleted = deleted;

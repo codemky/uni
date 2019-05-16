@@ -3,8 +3,14 @@
 <mapper namespace="edu.uni.userBaseInfo1.mapper.SecondLevelDisciplineMapper" >
   <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.SecondLevelDiscipline" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="first_id" property="firstId" jdbcType="BIGINT" />
-    <result column="category_id" property="categoryId" jdbcType="CHAR" />
+    <result column="first_level_discipline_id" property="firstLevelDisciplineId" jdbcType="BIGINT" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="ename" property="ename" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
+    <result column="by_who" property="byWho" jdbcType="BIGINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,7 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, first_id, category_id
+    id, first_level_discipline_id, code, name, ename, description, datetime, by_who, 
+    deleted
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.SecondLevelDisciplineExample" >
     select
@@ -101,8 +108,12 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into second_level_discipline (first_id, category_id)
-    values (#{firstId,jdbcType=BIGINT}, #{categoryId,jdbcType=CHAR})
+    insert into second_level_discipline (first_level_discipline_id, code, name, 
+      ename, description, datetime, 
+      by_who, deleted)
+    values (#{firstLevelDisciplineId,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{ename,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{datetime,jdbcType=TIMESTAMP}, 
+      #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.SecondLevelDiscipline" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
@@ -110,19 +121,55 @@
     </selectKey>
     insert into second_level_discipline
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="firstId != null" >
-        first_id,
+      <if test="firstLevelDisciplineId != null" >
+        first_level_discipline_id,
       </if>
-      <if test="categoryId != null" >
-        category_id,
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="ename != null" >
+        ename,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="byWho != null" >
+        by_who,
+      </if>
+      <if test="deleted != null" >
+        deleted,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="firstId != null" >
-        #{firstId,jdbcType=BIGINT},
+      <if test="firstLevelDisciplineId != null" >
+        #{firstLevelDisciplineId,jdbcType=BIGINT},
       </if>
-      <if test="categoryId != null" >
-        #{categoryId,jdbcType=CHAR},
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null" >
+        #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -138,11 +185,29 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.firstId != null" >
-        first_id = #{record.firstId,jdbcType=BIGINT},
+      <if test="record.firstLevelDisciplineId != null" >
+        first_level_discipline_id = #{record.firstLevelDisciplineId,jdbcType=BIGINT},
       </if>
-      <if test="record.categoryId != null" >
-        category_id = #{record.categoryId,jdbcType=CHAR},
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ename != null" >
+        ename = #{record.ename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datetime != null" >
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null" >
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null" >
+        deleted = #{record.deleted,jdbcType=BIT},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -152,8 +217,14 @@
   <update id="updateByExample" parameterType="map" >
     update second_level_discipline
     set id = #{record.id,jdbcType=BIGINT},
-      first_id = #{record.firstId,jdbcType=BIGINT},
-      category_id = #{record.categoryId,jdbcType=CHAR}
+      first_level_discipline_id = #{record.firstLevelDisciplineId,jdbcType=BIGINT},
+      code = #{record.code,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      ename = #{record.ename,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=BIT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -161,19 +232,43 @@
   <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.SecondLevelDiscipline" >
     update second_level_discipline
     <set >
-      <if test="firstId != null" >
-        first_id = #{firstId,jdbcType=BIGINT},
+      <if test="firstLevelDisciplineId != null" >
+        first_level_discipline_id = #{firstLevelDisciplineId,jdbcType=BIGINT},
       </if>
-      <if test="categoryId != null" >
-        category_id = #{categoryId,jdbcType=CHAR},
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null" >
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.SecondLevelDiscipline" >
     update second_level_discipline
-    set first_id = #{firstId,jdbcType=BIGINT},
-      category_id = #{categoryId,jdbcType=CHAR}
+    set first_level_discipline_id = #{firstLevelDisciplineId,jdbcType=BIGINT},
+      code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ename = #{ename,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
