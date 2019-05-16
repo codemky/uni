@@ -443,25 +443,29 @@ public class UserServiceImpl implements UserService {
 //        userInfo.setUniversity(universityMapper.selectUniversityByid(user.getUniversityId()));
         //判断用户的类型
         int type = user.getUserType();
-        if(type == 0){
+        if(type == 0|| type == 3 || type == 4 || type == 5 || type == 6){
             return userInfo;
-        }else if(type == 1 || type == 3 || type == 4 || type == 5 || type == 6){
+        }else if(type == 1 ){
             //将该用户的学生主要信息加入UserInfo这个信息集合里面
             List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
             userInfo.setStudents(studentList);
             //将该学生的主修专业加入集合
             SecondLevelDiscipline secondLevelDiscipline = secondLevelDisciplineService
-                    .selectValidSecondLevelDisciplineById(userInfo.getStudents().get(0).getMajorId());
-            userInfo.setSecondLevelDiscipline(secondLevelDiscipline);
+                    .selectValidSecondLevelDisciplineById(userInfo.getStudents().get(0).getSpecialtyId());
+            List<SecondLevelDiscipline> secondLevelDisciplineList = new ArrayList<>();
+            secondLevelDisciplineList.add(secondLevelDiscipline);
+            userInfo.setSecondLevelDisciplines(secondLevelDisciplineList);
             //将该学生的政治面貌加入集合
-            userInfo.setPoliticalAffiliation(politicalAffiliationMapper
+            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
+            politicalAffiliationList.add(politicalAffiliationMapper
                     .selectByPrimaryKey(userInfo.getStudents().get(0).getPoliticalId()));
+            userInfo.setPoliticalAffiliations(politicalAffiliationList);
             //将该学生的宿舍加入集合
 
             //将该学生的当前住址、通信地址地址加入集合
             List<Address> addresses = new ArrayList<>();
-            addresses.add(addressService.selectValidAddressById(studentList.get(0).getHomeAddress()));
-            addresses.add(addressService.selectValidAddressById(studentList.get(0).getMailAddress()));
+            addresses.add(addressService.selectValidAddressById(studentList.get(0).getHomeAddressId()));
+            addresses.add(addressService.selectValidAddressById(studentList.get(0).getPhoneEcommId()));
             userInfo.setAddresses(addresses);
             //将该学生的地址的国家、省份、市、区、街道加入集合
             info = new GetAddrDetail().reviceAddrDetail(addresses);
@@ -484,17 +488,21 @@ public class UserServiceImpl implements UserService {
             //将雇员简历加入信息集合
             userInfo.setEmployeeHistories(employeeHistoryService.seleValidEmpHisByUserId(user_id));
             //将主修专业加入信息集合
-            userInfo.setSecondLevelDiscipline(secondLevelDisciplineService
+            List<SecondLevelDiscipline> secondLevelDisciplineList = new ArrayList<>();
+            secondLevelDisciplineList.add(secondLevelDisciplineService
                     .selectValidSecondLevelDisciplineById(employees.get(0).getDisciplineId()));
+            userInfo.setSecondLevelDisciplines(secondLevelDisciplineList);
             //将政治面貌加入信息集合
-            userInfo.setPoliticalAffiliation(politicalAffiliationMapper
+            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
+            politicalAffiliationList.add(politicalAffiliationMapper
                     .selectByPrimaryKey(userInfo.getStudents().get(0).getPoliticalId()));
+            userInfo.setPoliticalAffiliations(politicalAffiliationList);
             //将当前岗位加入信息集合
 
             //将教职工的地址加入信息集合
             List<Address> addresses = new ArrayList<>();
             addresses.add(addressService.selectValidAddressById(employees.get(0).getHomeAddressId()));
-            addresses.add(addressService.selectValidAddressById(employees.get(0).getMailAddressId()));
+            addresses.add(addressService.selectValidAddressById(employees.get(0).getPhoneEcommId()));
             userInfo.setAddresses(addresses);
             //将该教职工的地址的国家、省份、市、区、街道加入集合
             info = new GetAddrDetail().reviceAddrDetail(addresses);

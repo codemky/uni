@@ -276,7 +276,7 @@ public class UserController {
      * @return userInfo
      * @apiNote: 根据用户id获取用户所有信息
      */
-    @ApiOperation( value = "根据用户id获取用户所有信息",notes = "已测试" )
+    @ApiOperation( value = "根据用户id获取用户所有信息",notes = "未测试" )
     @GetMapping("userInfoListAll/{user_id}")
     @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
