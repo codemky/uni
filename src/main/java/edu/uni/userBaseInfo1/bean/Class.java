@@ -33,6 +33,27 @@ public class Class {
 
     private Boolean deleted;
 
+    public Class() {
+    }
+
+    public Class(Long id, Long universityId, Long departmentId, String name, String ename, Long specialtyId, String code, Integer cyear, Integer cmonth, Integer clength, Boolean cover, Long headteacher, Date datetime, Long byWho, Boolean deleted) {
+        this.id = id;
+        this.universityId = universityId;
+        this.departmentId = departmentId;
+        this.name = name;
+        this.ename = ename;
+        this.specialtyId = specialtyId;
+        this.code = code;
+        this.cyear = cyear;
+        this.cmonth = cmonth;
+        this.clength = clength;
+        this.cover = cover;
+        this.headteacher = headteacher;
+        this.datetime = datetime;
+        this.byWho = byWho;
+        this.deleted = deleted;
+    }
+
     public Long getId() {
         return id;
     }
@@ -62,7 +83,7 @@ public class Class {
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getEname() {
@@ -70,7 +91,7 @@ public class Class {
     }
 
     public void setEname(String ename) {
-        this.ename = ename == null ? null : ename.trim();
+        this.ename = ename;
     }
 
     public Long getSpecialtyId() {
@@ -86,7 +107,7 @@ public class Class {
     }
 
     public void setCode(String code) {
-        this.code = code == null ? null : code.trim();
+        this.code = code;
     }
 
     public Integer getCyear() {

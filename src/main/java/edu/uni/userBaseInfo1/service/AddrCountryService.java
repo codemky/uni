@@ -47,4 +47,11 @@ public interface AddrCountryService {
      * @apiNote : 用于删除AddrCountry表的某个记录
      */
     boolean deleteAddrCountry(long id);
+    /**
+     * Author: chenenru 18:33 2019/5/17
+     * @param countryName
+     * @return AddrCountry
+     * @apiNote: 根据国家名称查询国家
+     */
+    AddrCountry selectCountryByName(String countryName);
 }

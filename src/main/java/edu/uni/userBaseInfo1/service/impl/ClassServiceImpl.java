@@ -21,6 +21,12 @@ public class ClassServiceImpl implements ClassService {
     @Autowired
     private ClassMapper classMapper;
 
+    //查询班级信息
+    @Override
+    public Class select(long id) {
+        return classMapper.selectByPrimaryKey(id);
+    }
+
     @Override
     public Class selectClassByClassId(Long classId) {
         ClassExample classExample = new ClassExample();
@@ -41,5 +47,31 @@ public class ClassServiceImpl implements ClassService {
         }
         criteria.andHeadteacherEqualTo(employeeId);
         return  classMapper.selectByExample(classExample);
+    }
+
+    @Override
+    public List<Class> selectAllClassByDepartmentId(Long depaermentId) {
+        ClassExample classExample = new ClassExample();
+        ClassExample.Criteria criteria = classExample.createCriteria();
+        criteria.andDepartmentIdEqualTo(depaermentId);
+        criteria.andDeletedEqualTo(false);
+        return  classMapper.selectByExample(classExample);
+    }
+
+    @Override
+    public List<Class> selectClassByName(String Name) {
+        ClassExample classExample = new ClassExample();
+        ClassExample.Criteria criteria = classExample.createCriteria();
+        criteria.andNameEqualTo(Name);
+        criteria.andDeletedEqualTo(false);
+        return classMapper.selectByExample(classExample);
+    }
+
+    @Override
+    public List<Class> selectClassByyear(Integer year) {
+        ClassExample classExample = new ClassExample();
+        ClassExample.Criteria criteria = classExample.createCriteria();
+        criteria.andCyearEqualTo(year);
+        return classMapper.selectByExample(classExample);
     }
 }

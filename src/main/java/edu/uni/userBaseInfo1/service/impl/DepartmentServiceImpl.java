@@ -40,4 +40,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         //查询所有满足该条件的部门信息并返回
         return departmentMapper.selectByExample(departmentExample);
     }
+
+    @Override
+    public List<Department> selectDepartmentByName(String depaertmentName) {
+        //构造查询条件，条件为学校id、有效
+        DepartmentExample departmentExample = new DepartmentExample();
+        DepartmentExample.Criteria criteria = departmentExample.createCriteria();
+        criteria.andNameEqualTo(depaertmentName);
+        criteria.andDeletedEqualTo(false);
+        return  departmentMapper.selectByExample(departmentExample);
+    }
 }

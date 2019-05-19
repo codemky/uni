@@ -30,6 +30,7 @@ public class AddressUtil {
     private AddrAreaService addrArea;
     @Autowired
     private AddrStreetService addrStreet;
+
     private static AddrCountryService addrCountryService;
     private static AddrStateService addrStateService;
     private static AddrCityService addrCityService;

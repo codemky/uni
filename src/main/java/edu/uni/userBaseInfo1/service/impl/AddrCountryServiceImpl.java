@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.AddrCountry;
+import edu.uni.userBaseInfo1.bean.AddrCountryExample;
 import edu.uni.userBaseInfo1.mapper.AddrCountryMapper;
 import edu.uni.userBaseInfo1.service.AddrCountryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,5 +98,13 @@ public class AddrCountryServiceImpl implements AddrCountryService {
     @Override
     public boolean deleteAddrCountry(long id) {
         return addrCountryMapper.deleteByPrimaryKey(id) > 0 ? true :false;
+    }
+
+    @Override
+    public AddrCountry selectCountryByName(String countryName) {
+        AddrCountryExample example = new AddrCountryExample();
+        AddrCountryExample.Criteria criteria = example.createCriteria();
+        criteria.andCountryZhEqualTo(countryName);
+        return addrCountryMapper.selectByExample(example).get(0);
     }
 }

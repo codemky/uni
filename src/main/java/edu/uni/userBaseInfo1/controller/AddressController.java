@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.ReadTest;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.AddressUtil;
@@ -63,7 +64,9 @@ public class AddressController {
     @GetMapping("/test")
     @ResponseBody
     //@ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
-    public void test(){
+    public void test() throws IOException {
+        ReadTest readTest = new ReadTest();
+        readTest.printExecl();
         AddressUtil addressUtil = new AddressUtil();
         //System.out.println(new UserinfoApplyApprovalController().isDepartmentSame(727,0));
         System.out.println("所有国家："+addressUtil.SelectCountries().toString());

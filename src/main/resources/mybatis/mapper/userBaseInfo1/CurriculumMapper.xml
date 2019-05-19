@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.uni.userBaseInfo1.mapper.CurriculumMapper">
+  <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.Curriculum">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="university_id" jdbcType="BIGINT" property="universityId" />
+    <result column="canlendar_id" jdbcType="BIGINT" property="canlendarId" />
+    <result column="time_table_id" jdbcType="BIGINT" property="timeTableId" />
+    <result column="field_id" jdbcType="BIGINT" property="fieldId" />
+    <result column="class_id" jdbcType="BIGINT" property="classId" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="course_id" jdbcType="BIGINT" property="courseId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="datetime" jdbcType="TIMESTAMP" property="datetime" />
+    <result column="by_who" jdbcType="BIGINT" property="byWho" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, university_id, canlendar_id, time_table_id, field_id, class_id, employee_id, 
+    course_id, status, datetime, by_who, deleted
+  </sql>
+
+  <!--  <select id="selectCurriculumByDateAndTeacherId" parameterType="edu.uni.userBaseInfo1.bean.Curriculum" resultMap="test">
+     /* ca.the_date as cad,ti.name as tin,fi.name as fin,cl.name as cln,co.name as con*/
+        select cu.id as cuid,ca.id as caid,ti.id as tiid,fi.id as fiid,cl.id as clid,us.id as usid,co.id as coid,cu.university_id as cuunid,cu.status as cs
+        FROM ea_curriculum cu,ea_canlendar ca,ea_time_table ti,p_field fi,class cl,`user` us,course co
+        WHERE 1=1
+            AND cu.canlendar_id=ca.id
+            AND cu.time_table_id=ti.id
+            AND cu.field_id=fi.id
+            AND cu.class_id=cl.id
+            AND cu.employee_id=us.id
+            AND cu.course_id=co.id
+            AND cu.id=#{id}
+    </select>
+    <resultMap id="test" type="edu.uni.userBaseInfo1.VO.CurriculumVO">
+      <id property="id" column="cuid" />
+      <result property="universityId" column="cuunid" />
+      <result property="canlendarId" column="caid" />
+      <result property="timeTableId" column="tiid" />
+      <result property="fieldId" column="fiid" />
+      <result property="classId" column="clid" />
+      <result property="employeeId" column="usid" />
+      <result property="courseId" column="coid" />
+      <result property="status" column="cs" />
+      <association property="canlendarDate" column="caid" select="select1"/>
+      <association property="timeTableName" column="tiid" select="select2"/>
+      <association property="fieldName" column="fiid" select="select3"/>
+      <association property="className" column="clid" select="select4"/>
+      <association property="employeeName" column="usid" select="select5"/>
+      <association property="courseName" column="coid" select="select6"/>
+    </resultMap>
+    <select id="select1" parameterType="Long" resultType="java.util.Date">
+      select the_date From ea_canlendar where id=#{id}
+    </select>
+    <select id="select2" parameterType="Long" resultType="String">
+      select `name` From ea_time_table where id=#{id}
+    </select>
+    <select id="select3" parameterType="Long" resultType="String">
+      select `name` From p_field where id=#{id}
+    </select>
+    <select id="select4" parameterType="Long" resultType="String">
+      select `name` From class where id=#{id}
+    </select>
+    <select id="select5" parameterType="Long" resultType="String">
+      select user_name From `user` where id=#{id}
+    </select>
+    <select id="select6" parameterType="Long" resultType="String">
+      select `name` From course where id=#{id}
+    </select>-->
+  <select id="selectCurriculumNameByCondition" parameterType="edu.uni.userBaseInfo1.VO.CurriculumWithCondition" resultMap="test">
+    SELECT
+    <trim suffixOverrides=",">
+      <if test="Canlendar == true">
+        ca.the_date as ctd,ca.id as caid,
+      </if>
+      <if test="Timetable == true">
+        ti.`name` as tname,ti.id as tiid,
+      </if>
+      <if test="Field == true">
+        pf.`name` as pname,pf.id as pfid,
+      </if>
+      <if test="Class == true">
+        cl.`name` as cname,cl.id as clid,
+      </if>
+      <if test="Employee == true">
+        us.user_name as uname,us.id as usid,
+      </if>
+      <if test="Course == true">
+        co.`name` as coname,co.id as coid,
+      </if>
+      <if test="Canlendar == false and Timetable == false and Field == false and Class == false and Employee == false and Course == false">
+        ca.the_date as ctd,ca.id as caid,ti.`name` as tname,ti.id as tiid, pf.`name` as pname,pf.id as pfid,
+        cl.`name` as cname,cl.id as clid,us.user_name as uname,us.id as usid,co.`name` as coname,co.id as coid,
+      </if>
+    </trim>
+    FROM ea_curriculum as cu
+    INNER JOIN ea_canlendar as ca ON cu.canlendar_id=ca.id
+    INNER JOIN ea_time_table as ti ON cu.time_table_id=ti.id
+    INNER JOIN p_field as pf ON cu.field_id=pf.id
+    INNER JOIN class as cl ON cu.class_id=cl.id
+    INNER JOIN `user` as us ON cu.employee_id=us.id
+    INNER JOIN course as co ON cu.course_id=co.id
+    WHERE 1=1
+    <trim suffixOverrides=",">
+      <if test="universityId != null">
+        AND university_id=#{universityId},
+      </if>
+      <if test="canlendarId != null">
+        AND canlendar_id=#{canlendarId},
+      </if>
+      <if test="timeTableId != null">
+        AND time_table_id=#{timeTableId},
+      </if>
+      <if test="fieldId != null">
+        AND field_id=#{fieldId},
+      </if>
+      <if test="classId != null">
+        AND class_id=#{classId},
+      </if>
+      <if test="employeeId != null">
+        AND employee_id=#{employeeId},
+      </if>
+      <if test="courseId != null">
+        AND course_id=#{courseId},
+      </if>
+    </trim>
+    GROUP BY
+    <trim suffixOverrides=",">
+      <if test="Canlendar == true">
+        ctd,caid,
+      </if>
+      <if test="Timetable == true">
+        tname,tiid,
+      </if>
+      <if test="Field == true">
+        pname,pfid,
+      </if>
+      <if test="Class == true">
+        cname,clid,
+      </if>
+      <if test="Employee == true">
+        uname,usid,
+      </if>
+      <if test="Course == true">
+        coname,coid
+      </if>
+      <if test="Canlendar == false and Timetable == false and Field == false and Class == false and Employee == false and Course == false">
+        ctd,caid,tname,tiid,pname,pfid,cname,clid,uname,usid,coname,coid
+      </if>
+    </trim>
+  </select>
+  <resultMap id="test" type="edu.uni.userBaseInfo1.VO.CurriculumVO">
+    <id property="id" column="cu.id"/>
+    <result property="canlendarId" column="caid"/>
+    <result property="timeTableId" column="tiid"/>
+    <result property="fieldId" column="pfid"/>
+    <result property="classId" column="clid"/>
+    <result property="employeeId" column="usid"/>
+    <result property="courseId" column="coid"/>
+    <!--    <collection property="curriculumVOS" ofType="edu.uni.userBaseInfo1.VO.CurriculumVO">-->
+    <result property="canlendarDate" column="ctd"/>
+    <result property="timeTableName" column="tname"/>
+    <result property="fieldName" column="pname"/>
+    <result property="className" column="cname"/>
+    <result property="employeeName" column="uname"/>
+    <result property="courseName" column="coname"/>
+    <!--</collection>-->
+  </resultMap>
+
+  <select id="getCurriculumMsgList" parameterType="hashmap" resultMap="BaseResultMap">
+    SELECT * FROM ea_curriculum WHERE 1=1
+    <trim suffixOverrides=",">
+      <if test="semesterId != null and semesterId.size>0 ">
+        AND canlendar_id IN
+        (SELECT id FROM ea_canlendar WHERE 1=0 OR semester_id IN
+        <foreach collection="semesterId" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+        )
+      </if>
+      <if test="employeeId != null and employeeId.size>0 ">
+        AND employee_id IN
+        <foreach collection="employeeId" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+      <if test="courseId != null and courseId.size>0 ">
+        AND course_id IN
+        <foreach collection="courseId" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+      <if test="classId != null and classId.size>0 ">
+        AND class_id IN
+        <foreach collection="classId" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+    </trim>
+  </select>
+
+  <select id="selectByExample" parameterType="edu.uni.userBaseInfo1.bean.CurriculumExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ea_curriculum
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ea_curriculum
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ea_curriculum
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.userBaseInfo1.bean.CurriculumExample">
+    delete from ea_curriculum
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.Curriculum">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ea_curriculum (university_id, canlendar_id, time_table_id,
+    field_id, class_id, employee_id,
+    course_id, status, datetime,
+    by_who, deleted)
+    values (#{universityId,jdbcType=BIGINT}, #{canlendarId,jdbcType=BIGINT}, #{timeTableId,jdbcType=BIGINT},
+    #{fieldId,jdbcType=BIGINT}, #{classId,jdbcType=BIGINT}, #{employeeId,jdbcType=BIGINT},
+    #{courseId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, #{datetime,jdbcType=TIMESTAMP},
+    #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Curriculum">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ea_curriculum
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="universityId != null">
+        university_id,
+      </if>
+      <if test="canlendarId != null">
+        canlendar_id,
+      </if>
+      <if test="timeTableId != null">
+        time_table_id,
+      </if>
+      <if test="fieldId != null">
+        field_id,
+      </if>
+      <if test="classId != null">
+        class_id,
+      </if>
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="courseId != null">
+        course_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="datetime != null">
+        datetime,
+      </if>
+      <if test="byWho != null">
+        by_who,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="universityId != null">
+        #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="canlendarId != null">
+        #{canlendarId,jdbcType=BIGINT},
+      </if>
+      <if test="timeTableId != null">
+        #{timeTableId,jdbcType=BIGINT},
+      </if>
+      <if test="fieldId != null">
+        #{fieldId,jdbcType=BIGINT},
+      </if>
+      <if test="classId != null">
+        #{classId,jdbcType=BIGINT},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="courseId != null">
+        #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="datetime != null">
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null">
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.userBaseInfo1.bean.CurriculumExample" resultType="java.lang.Long">
+    select count(*) from ea_curriculum
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ea_curriculum
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.universityId != null">
+        university_id = #{record.universityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.canlendarId != null">
+        canlendar_id = #{record.canlendarId,jdbcType=BIGINT},
+      </if>
+      <if test="record.timeTableId != null">
+        time_table_id = #{record.timeTableId,jdbcType=BIGINT},
+      </if>
+      <if test="record.fieldId != null">
+        field_id = #{record.fieldId,jdbcType=BIGINT},
+      </if>
+      <if test="record.classId != null">
+        class_id = #{record.classId,jdbcType=BIGINT},
+      </if>
+      <if test="record.employeeId != null">
+        employee_id = #{record.employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.courseId != null">
+        course_id = #{record.courseId,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.datetime != null">
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null">
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null">
+        deleted = #{record.deleted,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ea_curriculum
+    set id = #{record.id,jdbcType=BIGINT},
+    university_id = #{record.universityId,jdbcType=BIGINT},
+    canlendar_id = #{record.canlendarId,jdbcType=BIGINT},
+    time_table_id = #{record.timeTableId,jdbcType=BIGINT},
+    field_id = #{record.fieldId,jdbcType=BIGINT},
+    class_id = #{record.classId,jdbcType=BIGINT},
+    employee_id = #{record.employeeId,jdbcType=BIGINT},
+    course_id = #{record.courseId,jdbcType=BIGINT},
+    status = #{record.status,jdbcType=INTEGER},
+    datetime = #{record.datetime,jdbcType=TIMESTAMP},
+    by_who = #{record.byWho,jdbcType=BIGINT},
+    deleted = #{record.deleted,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.Curriculum">
+    update ea_curriculum
+    <set>
+      <if test="universityId != null">
+        university_id = #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="canlendarId != null">
+        canlendar_id = #{canlendarId,jdbcType=BIGINT},
+      </if>
+      <if test="timeTableId != null">
+        time_table_id = #{timeTableId,jdbcType=BIGINT},
+      </if>
+      <if test="fieldId != null">
+        field_id = #{fieldId,jdbcType=BIGINT},
+      </if>
+      <if test="classId != null">
+        class_id = #{classId,jdbcType=BIGINT},
+      </if>
+      <if test="employeeId != null">
+        employee_id = #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="courseId != null">
+        course_id = #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="datetime != null">
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null">
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.Curriculum">
+    update ea_curriculum
+    set university_id = #{universityId,jdbcType=BIGINT},
+      canlendar_id = #{canlendarId,jdbcType=BIGINT},
+      time_table_id = #{timeTableId,jdbcType=BIGINT},
+      field_id = #{fieldId,jdbcType=BIGINT},
+      class_id = #{classId,jdbcType=BIGINT},
+      employee_id = #{employeeId,jdbcType=BIGINT},
+      course_id = #{courseId,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

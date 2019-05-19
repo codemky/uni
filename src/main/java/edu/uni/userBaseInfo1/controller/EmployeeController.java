@@ -66,6 +66,8 @@ public class EmployeeController {
     private ClassmateService classmateService;
     @Autowired
     StudentService studentService;
+    @Autowired
+    CurriculumService curriculumService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -431,25 +433,59 @@ public class EmployeeController {
                         System.out.println("classmates:"+classmates.iterator().toString());
                         System.out.println("students:"+students.iterator().toString());
                 }
-               if(classes!=null){
-                   userInfo.setClasses(classes);
-               }
-                if (classmates!=null){
-                    userInfo.setClassmates(classmates);
-                }
-                if (students!=null){
-                    userInfo.setStudents(students);
-                }
-                if (users!=null){
-                    userInfo.setUsers(users);
-                }
-                json = Result.build(ResultType.Success).appendData("userInfo", userInfo).convertIntoJSON();
-                cache.set(cacheName,json);
+               userInfo.setClasses(classes);
+               userInfo.setClassmates(classmates);
+               userInfo.setStudents(students);
+               userInfo.setUsers(users);
+               json = Result.build(ResultType.Success).appendData("userInfo", userInfo).convertIntoJSON();
+               cache.set(cacheName,json);
             }
         }
         response.getWriter().write(json);
 
     }
+
+    @ApiOperation(value="查询所授课班级学生信息", notes="未测试")
+    @ApiImplicitParam(name = "userId", value = "userId", required = false, dataType = "Long" , paramType = "path")
+    @GetMapping("employee/class/allClassmates/{userId}")
+    @ResponseBody
+    public  void selectStudentsByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException {
+
+        String cacheName = CacheNameHelper.ListAll_CacheName+"class"+"employee"+userId;
+        String json = cache.get(cacheName);
+        if(json ==null){
+            if (userId!=null){
+                Employee employee = employeeService.selectByUserId(userId).get(0);
+                List<Long> longs = new ArrayList<>();
+                UserInfo userInfo = new UserInfo();
+                List<Class> classes = new ArrayList<>();
+                longs.add(employee.getId());
+                List<Curriculum> curricula = curriculumService.selectCurriculumByCondition(null, longs, null, null);
+                List<Student> students = new ArrayList<>();
+                List<Classmate> classmates = new ArrayList<>();
+                List<User> users = new ArrayList<>();
+                for (Curriculum c:curricula) {
+                    Class aClass = classService.selectClassByClassId(c.getClassId());
+                    classes.add(aClass);
+                    classmates = classmateService.selectByClassId(aClass.getId());
+                    for (Classmate classmate : classmates) {
+                        Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
+                        User user = userService.selectUserById(student.getUserId());
+                        students.add(student);
+                        users.add(user);
+                    }
+                }
+                userInfo.setClasses(classes);
+                userInfo.setClassmates(classmates);
+                userInfo.setStudents(students);
+                userInfo.setUsers(users);
+                json = Result.build(ResultType.Success).appendData("userInfo", userInfo).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+        }
+        response.getWriter().write(json);
+    }
+
     /**
      * <p>
      *     上传文件方法
