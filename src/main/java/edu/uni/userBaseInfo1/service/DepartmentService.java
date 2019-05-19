@@ -21,6 +21,14 @@ public interface DepartmentService {
     List<Department> selectAllValidDepartment(Long university_id);
 
     /**
+     * Author: laizhouhao 15:28 2019/5/18
+     * @param depart_name
+     * @return Long
+     * @apiNote: 根据部门名查找有效的部门id
+     */
+    Long selectDepartIdByName(String depart_name);
+
+    /**
      * Author: chenenru 13:47 2019/5/18
      * @param depaertmentName
      * @return Department

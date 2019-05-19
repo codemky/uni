@@ -188,7 +188,8 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
         approvalStepInchargeExample.createCriteria().andStepEqualTo(step)
                 .andApprovalMainIdEqualTo(appoval_main_id);
         List<ApprovalStepIncharge> approvalStepInchargeList = new ArrayList<>();
-                approvalStepInchargeList = approvalStepInchargeMapper.selectByExample(approvalStepInchargeExample);
-        return approvalStepInchargeList.get(0).getRoleId();
+        approvalStepInchargeList = approvalStepInchargeMapper.selectByExample(approvalStepInchargeExample);
+        //判断是否搜索到有结果，返回角色id或者null
+        return approvalStepInchargeList.size()>=1?approvalStepInchargeList.get(0).getRoleId():null;
     }
 }

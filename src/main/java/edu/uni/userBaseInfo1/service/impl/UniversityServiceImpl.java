@@ -36,4 +36,21 @@ public class UniversityServiceImpl implements UniversityService {
         //查询所有符合该条件的信息并返回
         return universityMapper.selectByExample(universityExample);
     }
+
+    /**
+     * Author: laizhouhao 20:28 2019/5/19
+     * @param university_id
+     * @return University
+     * @apiNote: 根据学校id获取有效的学校信息
+     */
+    @Override
+    public University selectValidById(Long university_id) {
+        //构造查询条件
+        UniversityExample universityExample = new UniversityExample();
+        UniversityExample.Criteria criteria = universityExample.createCriteria();
+        criteria.andIdEqualTo(university_id).andDeletedEqualTo(false);
+        //查询所有的满足条件的学校
+        List<University> universityList = universityMapper.selectByExample(universityExample);
+        return universityList.size()>=1?universityList.get(0):null;
+    }
 }

@@ -15,13 +15,16 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -482,6 +485,65 @@ public class EmployeeController {
                 json = Result.build(ResultType.Success).appendData("userInfo", userInfo).convertIntoJSON();
                 cache.set(cacheName,json);
             }
+        }
+        response.getWriter().write(json);
+    }
+
+    /**
+     * Author: laizhouhao 18:52 2019/5/17
+     * @return response
+     * @apiNote: 人事处职员获取其所在学校的所有学院的所有职员的信息
+     */
+    @ApiOperation( value = "人事处职员获取其所在学校的所有学院的所有职员的信息",notes = "2019年5月18日 15:11:40 已通过测试" )
+    @GetMapping("selectAllEmployees/listAll")
+    @ResponseBody
+    public void selectAllEmployees(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        //获取session
+        HttpSession session = request.getSession();
+        //获取该职员的用户id
+        Long user_id = (Long) session.getAttribute("user_id");
+        List<Employee> employeeList = employeeService.selectValidEmployeeByUserId(Long.valueOf(0));
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = EmployeeController.CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        //判断是否存在时这个用户id的职员
+        if(employeeList.size()>=1){
+            //判断该职员是否是人事处职员
+            boolean isWorker = employeeService.checkEmployee(employeeList.get(0).getPositionId(), "人事处");
+            if(isWorker){
+                //获取该职员所在的学校id
+                Long university_id = employeeList.get(0).getUniversityId();
+                //获取所在学校的所有职员信息
+                List<Employee> employees = employeeService.selectValidEmployeeByUniId(university_id);
+                System.out.println(employees);
+                if (json == null) {
+                    json = Result.build(ResultType.Success)
+                            .appendData("employees", employees).convertIntoJSON();
+                    cache.set(cacheName, json);
+                }
+                response.getWriter().write(json);
+            }
+        }
+    }
+
+    /**
+     * Author: laizhouhao 18:52 2019/5/17
+     * @return response
+     * @apiNote: 根据学院名、科室名、姓名/教工号查询职员信息
+     */
+    @ApiOperation( value = "根据学院名、科室名、姓名、教工号查询职员信息",notes = "未测试" )
+    @GetMapping("selectEmployeesByThreePosition/listAll")
+    @ResponseBody
+    public void selectEmployeeByThreePositions(String depart_name, String subdepart_name,String emp_name, String emp_no,HttpServletResponse response) throws IOException {
+        UserInfo userInfo = new UserInfo();
+        userInfo = employeeService.selectEmployeeByFourPosition(depart_name, subdepart_name, emp_name, emp_no);
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = EmployeeController.CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        if (json == null) {
+            json = Result.build(ResultType.Success)
+                    .appendData("userInfo", userInfo).convertIntoJSON();
+            cache.set(cacheName, json);
         }
         response.getWriter().write(json);
     }

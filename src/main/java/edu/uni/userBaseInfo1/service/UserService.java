@@ -123,4 +123,12 @@ public interface UserService {
      * @apiNote: 根据用户id获取该用户的所有信息
      */
     UserInfo selectUserInfoAllByUserId(Long user_id);
+
+    /**
+     * Author: laizhouhao 15:47 2019/5/18
+     * @param user_name
+     * @return Long
+     * @apiNote: 根据用户名获取有效的用户id
+     */
+    List<User> selectIdByUserName(String user_name);
 }

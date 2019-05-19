@@ -41,6 +41,28 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentMapper.selectByExample(departmentExample);
     }
 
+    /**
+     * Author: laizhouhao 15:28 2019/5/18
+     * @param depart_name
+     * @return Long
+     * @apiNote: 根据部门名查找有效的部门id
+     */
+    @Override
+    public Long selectDepartIdByName(String depart_name) {
+        //构造查找条件
+        DepartmentExample departmentExample = new DepartmentExample();
+        departmentExample.createCriteria().andNameEqualTo(depart_name).andDeletedEqualTo(false);
+        //获取学院id
+        List<Department> departmentList = departmentMapper.selectByExample(departmentExample);
+        return departmentList.size()>=1?departmentList.get(0).getId():null;
+    }
+
+    /**
+     * Author: chenenru 13:47 2019/5/18
+     * @param depaertmentName
+     * @return Department
+     * @apiNote: 根据学院名称查询学院
+     */
     @Override
     public List<Department> selectDepartmentByName(String depaertmentName) {
         //构造查询条件，条件为学校id、有效

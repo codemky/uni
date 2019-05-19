@@ -77,7 +77,7 @@ public class StudentServiceImpl implements StudentService {
      * Author: laizhouhao 18:34 2019/5/6
      * @param user_id
      * @return List<Student>
-     * @apiNote: 根据用户id查找学生信息
+     * @apiNote: 根据用户id查找有效的学生信息
      */
     @Override
     public List<Student> selectByUserId(Long user_id) {
@@ -161,8 +161,8 @@ public class StudentServiceImpl implements StudentService {
         StudentExample studentExample = new StudentExample();
         studentExample.createCriteria().andStuNoEqualTo(stu_no).andDeletedEqualTo(false);
         List<Student> students = studentMapper.selectByExample(studentExample);
-        Long user_id = students.get(0).getUserId();
-        return user_id;
+        //查找出有结果则返回userId，没有则返回null
+        return students.size()>=1?students.get(0).getUserId():null;
     }
 
     /**
