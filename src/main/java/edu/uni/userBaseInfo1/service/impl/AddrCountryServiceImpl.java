@@ -101,10 +101,10 @@ public class AddrCountryServiceImpl implements AddrCountryService {
     }
 
     @Override
-    public AddrCountry selectCountryByName(String countryName) {
+    public List<AddrCountry> selectCountryByName(String countryName) {
         AddrCountryExample example = new AddrCountryExample();
         AddrCountryExample.Criteria criteria = example.createCriteria();
         criteria.andCountryZhEqualTo(countryName);
-        return addrCountryMapper.selectByExample(example).get(0);
+        return addrCountryMapper.selectByExample(example);
     }
 }
