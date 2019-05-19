@@ -5,8 +5,11 @@ import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.EmployeeMapper;
+import edu.uni.userBaseInfo1.mapper.PositionMapper;
 import edu.uni.userBaseInfo1.mapper.RoleMapper;
+import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +32,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private RoleMapper roleMapper;
     @Autowired
+    private PositionMapper positionMapper;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
     private ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired
     private UserinfoApplyApprovalService userinfoApplyApprovalService;
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
+    private DepartmentService departmentService;
+    @Autowired
     private UserinfoApplyService userinfoApplyService;
+    @Autowired
+    private  SubdepartmentService subdepartmentService;
+    @Autowired
+    private UserService userService;
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -134,12 +147,14 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public Employee selectEmployeeByEmpNo(String emp_no) {
+        //构造查询条件
         EmployeeExample employeeExample = new EmployeeExample();
         employeeExample.createCriteria().andEmpNoEqualTo(emp_no)
                 .andDeletedEqualTo(false);
         Employee employee = new Employee();
-        employee = employeeMapper.selectByExample(employeeExample).get(0);
-        return employee;
+        List<Employee> employeeList = employeeMapper.selectByExample(employeeExample);
+        //判断是否有结果，无结果则返回null
+        return employeeList.size()>=1?employeeList.get(0):null;
     }
 
     /**
@@ -238,5 +253,109 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeExample employeeExample = new EmployeeExample();
         employeeExample.createCriteria().andUserIdEqualTo(user_id).andDeletedEqualTo(false);
         return employeeMapper.selectByExample(employeeExample);
+    }
+
+    /**
+     * Author: laizhouhao 19:18 2019/5/17
+     * @param position_id
+     * @return boolean
+     * @apiNote: 判断该用户是否为某某部门在职的工作人员
+     */
+    @Override
+    public boolean checkEmployee(Long position_id, String position) {
+        //构造查询条件，部门为position、有效的信息
+        PositionExample positionExample = new PositionExample();
+        positionExample.createCriteria().andIdEqualTo(position_id)
+                .andNameLike("%"+position+"%").andDeletedEqualTo(false);
+        List<Position> positionList = positionMapper.selectByExample(positionExample);
+        //判断是否存在该部门职员
+        return positionList.size()>=1?true:false;
+    }
+
+    /**
+     * Author: laizhouhao 20:51 2019/5/17
+     * @param university_id
+     * @return List<Employee></Employee>
+     * @apiNote: 根据学校id获取该校所有的职员的信息
+     */
+    @Override
+    public List<Employee> selectValidEmployeeByUniId(Long university_id) {
+        //构造查询条件
+        EmployeeExample employeeExample = new EmployeeExample();
+        employeeExample.createCriteria().andUniversityIdEqualTo(university_id).andDeletedEqualTo(false);
+        return employeeMapper.selectByExample(employeeExample);
+    }
+
+    /**
+     * Author: laizhouhao 20:21 2019/5/17
+     * @param depart_name, subdepart_name, emp_name, emp_no
+     * @return List<UserInfo>
+     * @apiNote: 根据部门名、科室名、员工名、员工编号获取所有员工信息
+     */
+    @Override
+    public UserInfo selectEmployeeByFourPosition(String depart_name,String subdepart_name,String emp_name,String emp_no) {
+        UserInfo userInfo = new UserInfo();
+        Long depart_id = null;
+        Long subdepart_id = null;
+        List<Long> user_idList = new ArrayList<>();
+        //如果部门名不为空,查出该部门id
+        if(depart_name != null){
+            depart_id = departmentService.selectDepartIdByName(depart_name);
+        }
+        System.out.println(depart_id);
+        //如果科室名不为空，查出该科室id
+        if(subdepart_name != null){
+            subdepart_id = subdepartmentService.selectIdBySubdepartName(subdepart_name);
+        }
+        //如果姓名不为空，查出该姓名的用户id
+        if(emp_name != null){
+            List<User> userList = new ArrayList<>();
+            userList = userService.selectIdByUserName(emp_name);
+            for(int i=0; i<userList.size(); i++){
+                user_idList.add(userList.get(i).getId());
+            }
+        }
+        //根据部门名、科室名、员工名、员工编号获取所有员工信息
+        EmployeeExample employeeExample = new EmployeeExample();
+        EmployeeExample.Criteria criteria = employeeExample.createCriteria();
+        List<Employee> employeeList = new ArrayList<>();
+        if(user_idList.size() >= 1){
+            for(int i=0; i<user_idList.size(); i++){
+                //depart_id不为空时添加查询条件
+                if(depart_id != null){
+                    criteria.andDepartmentIdEqualTo(depart_id);
+                }
+                //subdepart_id不为空时添加查询条件
+                if(subdepart_id != null){
+                    criteria.andSubdepartmentIdEqualTo(subdepart_id);
+                }
+                criteria.andUserIdEqualTo(user_idList.get(i))
+                        .andEmpNoEqualTo(emp_no).andDeletedEqualTo(false);
+                //判断是否查找出满足该条件的雇员信息
+                List<Employee> employees = employeeMapper.selectByExample(employeeExample);
+                if(employees.size() >= 1){
+                    employeeList.add(employees.get(0));
+                }
+            }
+        }else{
+            //判断depart_id是否为空
+            if(depart_id != null){
+                //构造查询条件
+                criteria.andDepartmentIdEqualTo(depart_id);
+            }
+            //判断subdepart_id是否为空
+            if(subdepart_id != null){
+                //构造查询条件
+                criteria.andSubdepartmentIdEqualTo(subdepart_id);
+            }
+            criteria.andEmpNoEqualTo(emp_no).andDeletedEqualTo(false);
+            //判断查找的符合条件的employee是否为空
+            List<Employee> employees = employeeMapper.selectByExample(employeeExample);
+            if(employees.size() >= 1){
+                employeeList.add(employees.get(0));
+            }
+        }
+        userInfo.setEmployees(employeeList);
+        return userInfo;
     }
 }

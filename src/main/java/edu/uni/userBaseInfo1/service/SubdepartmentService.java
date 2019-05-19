@@ -20,4 +20,12 @@ public interface SubdepartmentService {
      * @apiNote: 根据部门id查询该部门的所有有效科室
      */
     List<Subdepartment> selectValidSubDepartByDepartId(Long department_id);
+
+    /**
+     * Author: laizhouhao 15:36 2019/5/18
+     * @param subdepart_name
+     * @return Long
+     * @apiNote: 根据科室名查找有效的部门的id
+     */
+    Long selectIdBySubdepartName(String subdepart_name);
 }

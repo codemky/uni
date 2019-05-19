@@ -153,7 +153,7 @@ public class AddressServiceImpl implements AddressService {
 //            System.out.println("oldId = "+oldId);
         //将要插入的记录设置为无效
         address.setDeleted(true);
-        //将新纪录插入Ecomm表
+        //将新纪录插入Address表
         addressMapper.insert(address);
         //新纪录的id
         Long newId = address.getId();
@@ -222,7 +222,7 @@ public class AddressServiceImpl implements AddressService {
      * Author: laizhouhao 20:22 2019/5/15
      * @param id
      * @return Address
-     * @apiNote: 根据用户id获取有效的地址信息
+     * @apiNote: 根据id获取有效的地址信息
      */
     @Override
     public Address selectValidAddressById(Long id) {

@@ -3,6 +3,7 @@ package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Employee;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 
 import java.util.List;
 
@@ -90,4 +91,28 @@ public interface EmployeeService {
      * @apiNote: 根据用户id获取有效的职员信息
      */
     List<Employee> selectValidByUserId(Long user_id);
+
+    /**
+     * Author: laizhouhao 19:18 2019/5/17
+     * @param position_id
+     * @return boolean
+     * @apiNote: 判断该用户是否为某部门的职员
+     */
+    boolean checkEmployee(Long position_id, String position);
+
+    /**
+     * Author: laizhouhao 20:51 2019/5/17
+     * @param university_id
+     * @return List<Employee></Employee>
+     * @apiNote: 根据学校id获取该校所有的职员的信息
+     */
+    List<Employee> selectValidEmployeeByUniId(Long university_id);
+
+    /**
+     * Author: laizhouhao 20:21 2019/5/17
+     * @param depart_name, subdepart_name, emp_name, emp_no
+     * @return List<UserInfo>
+     * @apiNote: 根据部门名、科室名、员工名、员工编号获取所有员工信息
+     */
+    UserInfo selectEmployeeByFourPosition(String depart_name,String subdepart_name,String emp_name,String emp_no);
 }

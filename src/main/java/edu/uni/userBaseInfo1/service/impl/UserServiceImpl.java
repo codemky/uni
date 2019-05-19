@@ -514,4 +514,21 @@ public class UserServiceImpl implements UserService {
         }
         return userInfo;
     }
+
+    /**
+     * Author: laizhouhao 15:47 2019/5/18
+     * @param user_name
+     * @return Long
+     * @apiNote: 根据用户名获取有效的用户id
+     */
+    @Override
+    public List<User> selectIdByUserName(String user_name) {
+        //构造查询条件
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUserNameEqualTo(user_name);
+        //查找id
+        List<User> userList = new ArrayList<>();
+        userList = userMapper.selectByExample(userExample);
+        return userList;
+    }
 }

@@ -17,4 +17,12 @@ public interface UniversityService {
      * @apiNote: 获取所有有效的学校信息
      */
     List<University> selectAllValidUniversities();
+
+    /**
+     * Author: laizhouhao 20:28 2019/5/19
+     * @param university_id
+     * @return University
+     * @apiNote: 根据学校id获取有效的学校信息
+     */
+    University selectValidById(Long university_id);
 }
