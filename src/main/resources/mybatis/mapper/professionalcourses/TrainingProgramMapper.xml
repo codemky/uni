@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.uni.professionalcourses.mapper.TrainingProgramMapper" >
+  <resultMap id="BaseResultMap" type="edu.uni.professionalcourses.bean.TrainingProgram" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="university_id" property="universityId" jdbcType="BIGINT" />
+    <result column="specialty_id" property="specialtyId" jdbcType="BIGINT" />
+    <result column="training_target" property="trainingTarget" jdbcType="VARCHAR" />
+    <result column="training_specifications" property="trainingSpecifications" jdbcType="VARCHAR" />
+    <result column="total_credits" property="totalCredits" jdbcType="INTEGER" />
+    <result column="gpa" property="gpa" jdbcType="DOUBLE" />
+    <result column="compilsory_credits" property="compilsoryCredits" jdbcType="INTEGER" />
+    <result column="compilsory_gpa" property="compilsoryGpa" jdbcType="DOUBLE" />
+    <result column="elective_credits" property="electiveCredits" jdbcType="INTEGER" />
+    <result column="elective_gpa" property="electiveGpa" jdbcType="DOUBLE" />
+    <result column="practice_credits" property="practiceCredits" jdbcType="INTEGER" />
+    <result column="practice_gpa" property="practiceGpa" jdbcType="DOUBLE" />
+    <result column="educate_credits" property="educateCredits" jdbcType="INTEGER" />
+    <result column="educate_gpa" property="educateGpa" jdbcType="DOUBLE" />
+    <result column="version" property="version" jdbcType="CHAR" />
+    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
+    <result column="by_who" property="byWho" jdbcType="BIGINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, university_id, specialty_id, training_target, training_specifications, total_credits, 
+    gpa, compilsory_credits, compilsory_gpa, elective_credits, elective_gpa, practice_credits, 
+    practice_gpa, educate_credits, educate_gpa, version, datetime, by_who, deleted
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.professionalcourses.bean.TrainingProgramExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from training_program
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from training_program
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from training_program
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.professionalcourses.bean.TrainingProgramExample" >
+    delete from training_program
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.professionalcourses.bean.TrainingProgram" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into training_program (university_id, specialty_id, training_target, 
+      training_specifications, total_credits, gpa, 
+      compilsory_credits, compilsory_gpa, elective_credits, 
+      elective_gpa, practice_credits, practice_gpa, 
+      educate_credits, educate_gpa, version, 
+      datetime, by_who, deleted
+      )
+    values (#{universityId,jdbcType=BIGINT}, #{specialtyId,jdbcType=BIGINT}, #{trainingTarget,jdbcType=VARCHAR}, 
+      #{trainingSpecifications,jdbcType=VARCHAR}, #{totalCredits,jdbcType=INTEGER}, #{gpa,jdbcType=DOUBLE}, 
+      #{compilsoryCredits,jdbcType=INTEGER}, #{compilsoryGpa,jdbcType=DOUBLE}, #{electiveCredits,jdbcType=INTEGER}, 
+      #{electiveGpa,jdbcType=DOUBLE}, #{practiceCredits,jdbcType=INTEGER}, #{practiceGpa,jdbcType=DOUBLE}, 
+      #{educateCredits,jdbcType=INTEGER}, #{educateGpa,jdbcType=DOUBLE}, #{version,jdbcType=CHAR}, 
+      #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.professionalcourses.bean.TrainingProgram" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into training_program
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        university_id,
+      </if>
+      <if test="specialtyId != null" >
+        specialty_id,
+      </if>
+      <if test="trainingTarget != null" >
+        training_target,
+      </if>
+      <if test="trainingSpecifications != null" >
+        training_specifications,
+      </if>
+      <if test="totalCredits != null" >
+        total_credits,
+      </if>
+      <if test="gpa != null" >
+        gpa,
+      </if>
+      <if test="compilsoryCredits != null" >
+        compilsory_credits,
+      </if>
+      <if test="compilsoryGpa != null" >
+        compilsory_gpa,
+      </if>
+      <if test="electiveCredits != null" >
+        elective_credits,
+      </if>
+      <if test="electiveGpa != null" >
+        elective_gpa,
+      </if>
+      <if test="practiceCredits != null" >
+        practice_credits,
+      </if>
+      <if test="practiceGpa != null" >
+        practice_gpa,
+      </if>
+      <if test="educateCredits != null" >
+        educate_credits,
+      </if>
+      <if test="educateGpa != null" >
+        educate_gpa,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="byWho != null" >
+        by_who,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="specialtyId != null" >
+        #{specialtyId,jdbcType=BIGINT},
+      </if>
+      <if test="trainingTarget != null" >
+        #{trainingTarget,jdbcType=VARCHAR},
+      </if>
+      <if test="trainingSpecifications != null" >
+        #{trainingSpecifications,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCredits != null" >
+        #{totalCredits,jdbcType=INTEGER},
+      </if>
+      <if test="gpa != null" >
+        #{gpa,jdbcType=DOUBLE},
+      </if>
+      <if test="compilsoryCredits != null" >
+        #{compilsoryCredits,jdbcType=INTEGER},
+      </if>
+      <if test="compilsoryGpa != null" >
+        #{compilsoryGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="electiveCredits != null" >
+        #{electiveCredits,jdbcType=INTEGER},
+      </if>
+      <if test="electiveGpa != null" >
+        #{electiveGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="practiceCredits != null" >
+        #{practiceCredits,jdbcType=INTEGER},
+      </if>
+      <if test="practiceGpa != null" >
+        #{practiceGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="educateCredits != null" >
+        #{educateCredits,jdbcType=INTEGER},
+      </if>
+      <if test="educateGpa != null" >
+        #{educateGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=CHAR},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.professionalcourses.bean.TrainingProgramExample" resultType="java.lang.Integer" >
+    select count(*) from training_program
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update training_program
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.universityId != null" >
+        university_id = #{record.universityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.specialtyId != null" >
+        specialty_id = #{record.specialtyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.trainingTarget != null" >
+        training_target = #{record.trainingTarget,jdbcType=VARCHAR},
+      </if>
+      <if test="record.trainingSpecifications != null" >
+        training_specifications = #{record.trainingSpecifications,jdbcType=VARCHAR},
+      </if>
+      <if test="record.totalCredits != null" >
+        total_credits = #{record.totalCredits,jdbcType=INTEGER},
+      </if>
+      <if test="record.gpa != null" >
+        gpa = #{record.gpa,jdbcType=DOUBLE},
+      </if>
+      <if test="record.compilsoryCredits != null" >
+        compilsory_credits = #{record.compilsoryCredits,jdbcType=INTEGER},
+      </if>
+      <if test="record.compilsoryGpa != null" >
+        compilsory_gpa = #{record.compilsoryGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="record.electiveCredits != null" >
+        elective_credits = #{record.electiveCredits,jdbcType=INTEGER},
+      </if>
+      <if test="record.electiveGpa != null" >
+        elective_gpa = #{record.electiveGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="record.practiceCredits != null" >
+        practice_credits = #{record.practiceCredits,jdbcType=INTEGER},
+      </if>
+      <if test="record.practiceGpa != null" >
+        practice_gpa = #{record.practiceGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="record.educateCredits != null" >
+        educate_credits = #{record.educateCredits,jdbcType=INTEGER},
+      </if>
+      <if test="record.educateGpa != null" >
+        educate_gpa = #{record.educateGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=CHAR},
+      </if>
+      <if test="record.datetime != null" >
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null" >
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null" >
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update training_program
+    set id = #{record.id,jdbcType=BIGINT},
+      university_id = #{record.universityId,jdbcType=BIGINT},
+      specialty_id = #{record.specialtyId,jdbcType=BIGINT},
+      training_target = #{record.trainingTarget,jdbcType=VARCHAR},
+      training_specifications = #{record.trainingSpecifications,jdbcType=VARCHAR},
+      total_credits = #{record.totalCredits,jdbcType=INTEGER},
+      gpa = #{record.gpa,jdbcType=DOUBLE},
+      compilsory_credits = #{record.compilsoryCredits,jdbcType=INTEGER},
+      compilsory_gpa = #{record.compilsoryGpa,jdbcType=DOUBLE},
+      elective_credits = #{record.electiveCredits,jdbcType=INTEGER},
+      elective_gpa = #{record.electiveGpa,jdbcType=DOUBLE},
+      practice_credits = #{record.practiceCredits,jdbcType=INTEGER},
+      practice_gpa = #{record.practiceGpa,jdbcType=DOUBLE},
+      educate_credits = #{record.educateCredits,jdbcType=INTEGER},
+      educate_gpa = #{record.educateGpa,jdbcType=DOUBLE},
+      version = #{record.version,jdbcType=CHAR},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.professionalcourses.bean.TrainingProgram" >
+    update training_program
+    <set >
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="specialtyId != null" >
+        specialty_id = #{specialtyId,jdbcType=BIGINT},
+      </if>
+      <if test="trainingTarget != null" >
+        training_target = #{trainingTarget,jdbcType=VARCHAR},
+      </if>
+      <if test="trainingSpecifications != null" >
+        training_specifications = #{trainingSpecifications,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCredits != null" >
+        total_credits = #{totalCredits,jdbcType=INTEGER},
+      </if>
+      <if test="gpa != null" >
+        gpa = #{gpa,jdbcType=DOUBLE},
+      </if>
+      <if test="compilsoryCredits != null" >
+        compilsory_credits = #{compilsoryCredits,jdbcType=INTEGER},
+      </if>
+      <if test="compilsoryGpa != null" >
+        compilsory_gpa = #{compilsoryGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="electiveCredits != null" >
+        elective_credits = #{electiveCredits,jdbcType=INTEGER},
+      </if>
+      <if test="electiveGpa != null" >
+        elective_gpa = #{electiveGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="practiceCredits != null" >
+        practice_credits = #{practiceCredits,jdbcType=INTEGER},
+      </if>
+      <if test="practiceGpa != null" >
+        practice_gpa = #{practiceGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="educateCredits != null" >
+        educate_credits = #{educateCredits,jdbcType=INTEGER},
+      </if>
+      <if test="educateGpa != null" >
+        educate_gpa = #{educateGpa,jdbcType=DOUBLE},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=CHAR},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.professionalcourses.bean.TrainingProgram" >
+    update training_program
+    set university_id = #{universityId,jdbcType=BIGINT},
+      specialty_id = #{specialtyId,jdbcType=BIGINT},
+      training_target = #{trainingTarget,jdbcType=VARCHAR},
+      training_specifications = #{trainingSpecifications,jdbcType=VARCHAR},
+      total_credits = #{totalCredits,jdbcType=INTEGER},
+      gpa = #{gpa,jdbcType=DOUBLE},
+      compilsory_credits = #{compilsoryCredits,jdbcType=INTEGER},
+      compilsory_gpa = #{compilsoryGpa,jdbcType=DOUBLE},
+      elective_credits = #{electiveCredits,jdbcType=INTEGER},
+      elective_gpa = #{electiveGpa,jdbcType=DOUBLE},
+      practice_credits = #{practiceCredits,jdbcType=INTEGER},
+      practice_gpa = #{practiceGpa,jdbcType=DOUBLE},
+      educate_credits = #{educateCredits,jdbcType=INTEGER},
+      educate_gpa = #{educateGpa,jdbcType=DOUBLE},
+      version = #{version,jdbcType=CHAR},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

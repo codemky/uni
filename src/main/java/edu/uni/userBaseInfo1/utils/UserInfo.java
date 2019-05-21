@@ -1,7 +1,11 @@
 package edu.uni.userBaseInfo1.utils;
 
+import edu.uni.administrativestructure.bean.Class;
+import edu.uni.administrativestructure.bean.Classmate;
+import edu.uni.professionalcourses.bean.Academic;
+import edu.uni.professionalcourses.bean.AcademicDegree;
+import edu.uni.professionalcourses.bean.SecondLevelDiscipline;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.bean.Class;
 
 import java.util.List;
 

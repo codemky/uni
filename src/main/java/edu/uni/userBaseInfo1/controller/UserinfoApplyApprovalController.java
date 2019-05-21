@@ -1,9 +1,10 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.bean.Class;
+import edu.uni.administrativestructure.bean.Employ;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.bean.Class;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,11 +45,11 @@ public class UserinfoApplyApprovalController {
     @Autowired
     private UserinfoApplyService userinfoApplyService;
     @Autowired
-    private ClassService classService;
+    private OtherClassService otherClassService;
     @Autowired
     EmployeeService employeeService;
     @Autowired
-    EmployService employService;
+    OtherEmployService otherEmployService;
     @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
     private StudentService studentService;
     @Autowired
@@ -66,6 +68,22 @@ public class UserinfoApplyApprovalController {
     private EmployeeHistoryService employeeHistoryService;
     @Autowired
     private UserUploadFileService userUploadFileService;
+    @Autowired
+    private AddrCountryService addrCountryService;
+    @Autowired
+    private AddrStateService addrStateService;
+    @Autowired
+    private AddrCityService addrCityService;
+    @Autowired
+    private AddrAreaService addrAreaService;
+    @Autowired
+    private AddrStreetService addrStreetService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
+    @Autowired
+    private MyAcademicService myAcademicService;
+    @Autowired
+    private MyAcademicDegreeService myAcademicDegreeService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -79,6 +97,12 @@ public class UserinfoApplyApprovalController {
     }
 
 
+    /**
+     * Author: mokuanyuan 19:13 2019/5/16
+     * @param userinfoApplyApproval
+     * @param response
+     * @apiNote: 根据审核结果和信息类型和用户角色查询所有的审批记录
+     */
     @ApiOperation( value = "根据审核结果和信息类型和用户角色查询所有的审批记录",notes = "未测试" )
     @PostMapping("/getByRoleName")
     @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户信息审批流程详情实体", required = true, dataType = "UserinfoApplyApproval")
@@ -122,7 +146,15 @@ public class UserinfoApplyApprovalController {
             }
         } ) ;
 
-        String json = Result.build(ResultType.Success).appendData("apply_list",show_apply).convertIntoJSON();
+        List<String> apply_name = new ArrayList<>();
+        show_apply.forEach( item -> {
+            apply_name.add(userService.selectUserById(item.getApplyUserId()).getUserName());
+        } );
+
+
+
+        String json = Result.build(ResultType.Success).appendData("apply_list",show_apply).
+                appendData("Name",apply_name).convertIntoJSON();
 
         response.getWriter().write(json);
 
@@ -131,19 +163,19 @@ public class UserinfoApplyApprovalController {
 
     /**
      * Author: mokuanyuan 18:33 2019/5/14
-     * @param userinfoApplyApproval
+     * @param applyId
      * @param response
      * @return 旧纪录（如果有的话） 和 新纪录
      * @apiNote: 根据信息类型和新旧记录的id查询出 旧纪录（如果有的话） 和 新纪录
      */
     @ApiOperation( value = "据信息类型和新旧记录的id查询出 旧纪录（如果有的话） 和 新纪录",notes = "未测试" )
-    @PostMapping("/getOldInfoAndNewInfoByApply")
-    @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户信息审批流程详情实体", required = true, dataType = "UserinfoApplyApproval")
+    @GetMapping("/getOldInfoAndNewInfoByApply/{applyId}")
+    @ApiImplicitParam(name = "applyId", value = "userinfoApply表的一个id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void getOldInfoAndNewInfoByApply(@RequestBody UserinfoApplyApproval userinfoApplyApproval ,
+    public void getOldInfoAndNewInfoByApply(@PathVariable Long applyId ,
                                             HttpServletResponse response ) throws IOException{
         response.setContentType("application/json;charset=utf-8");
-        UserinfoApply userinfoApply = userinfoApplyService.selectUserinfoApplyById(userinfoApplyApproval.getUserinfoApplyId());
+        UserinfoApply userinfoApply = userinfoApplyService.selectUserinfoApplyById(applyId);
         Long old_id = userinfoApply.getOldInfoId();
         Long new_id = userinfoApply.getNewInfoId();
 
@@ -152,51 +184,155 @@ public class UserinfoApplyApprovalController {
         //根据信息类型调用相应的service层的查询方法
         switch ( userinfoApply.getInfoType() ) {
             case 0: //0为联系方式
-                if( old_id != null)
-                    result.appendData("old_info",ecommService.selectById(old_id));
-                result.appendData("new_info",ecommService.selectById(new_id));
+                if( old_id != null){
+                    Ecomm ecomm = ecommService.selectById(old_id);
+                    if(ecomm != null)
+                        result.appendData("old_info",ecomm);
+                }
+                Ecomm ecomm = ecommService.selectById(new_id);
+                if( ecomm != null)
+                    result.appendData("new_info",ecomm);
+                break;
             case 1: //1为地址
-                if( old_id != null)
-                    result.appendData("old_info",addressService.selectById(old_id));
-                result.appendData("new_info",addressService.selectById(new_id));
+                if( old_id != null){
+                   Address address = addressService.selectById(old_id);
+                   if(address != null){
+                       HashMap<String,Object> map = new HashMap<>();
+                       map.put("country", addrCountryService.selectAddrCountryById(address.getCountry()).getCountryZh() );
+                       map.put("state", addrStateService.selectAddrStateById( address.getState()).getStateZh() );
+                       map.put("city", addrCityService.selectAddrCityById(address.getCity()).getCityZh() );
+                       map.put("area", addrAreaService.selectAddrAreaById(address.getArea()).getAreaZh() );
+                       map.put("street", addrStreetService.selectAddrStreetById(address.getStreet()).getStreetZh() );
+                       map.put("detail", address.getDetail() );
+                       map.put("zip_code",address.getZipCode());
+                       map.put("telephone",address.getTelephone());
+                       map.put("flag",address.getFlag());
+                       result.appendData("old_info", map );
+                   }
+                }
+                Address address = addressService.selectById(new_id);
+                if(address !=null){
+                    HashMap<String,Object> new_map = new HashMap<>();
+                    new_map.put("country", addrCountryService.selectAddrCountryById(address.getCountry()).getCountryZh() );
+                    new_map.put("state", addrStateService.selectAddrStateById( address.getState()).getStateZh() );
+                    new_map.put("city", addrCityService.selectAddrCityById(address.getCity()).getCityZh() );
+                    new_map.put("area", addrAreaService.selectAddrAreaById(address.getArea()).getAreaZh() );
+                    new_map.put("street", addrStreetService.selectAddrStreetById(address.getStreet()).getStreetZh() );
+                    new_map.put("detail", address.getDetail() );
+                    new_map.put("zip_code",address.getZipCode());
+                    new_map.put("telephone",address.getTelephone());
+                    new_map.put("flag",address.getFlag());
+                    result.appendData("new_info",new_map);
+                }
+
+                break;
             case 2: //2为照片
-                if( old_id != null)
-                    result.appendData("old_info",pictureService.selectById(old_id));
-                result.appendData("new_info",pictureService.selectById(new_id));
+                if( old_id != null){
+                    Picture picture = pictureService.selectById(old_id);
+                    if(picture !=null)
+                        result.appendData("old_info",picture);
+                }
+                Picture picture = pictureService.selectById(new_id);
+                if(picture !=null)
+                    result.appendData("new_info",picture);
+                break;
             case 3: //3为学生亲属
-                if( old_id != null)
-                    result.appendData("old_info",studentRelationService.selectById(old_id));
-                result.appendData("new_info",studentRelationService.selectById(new_id));
+                if( old_id != null){
+                    StudentRelation studentRelation = studentRelationService.selectById(old_id);
+                    if(studentRelation !=null){
+                        User user = userService.selectUserById(studentRelation.getRelaId());
+                        if(user !=null)
+                            result.appendData("old_info",user);
+                    }
+                }
+                StudentRelation studentRelation = studentRelationService.selectById(new_id);
+                if(studentRelation!=null){
+                    User user = userService.selectUserById(studentRelation.getRelaId());
+                    if(user!=null)
+                        result.appendData("new_info",user);
+                }
+
+                break;
             case 4: //4为学历
-                if( old_id != null)
-                    result.appendData("old_info",learningDegreeSerevice.selectLearningDegreeById(old_id));
-                result.appendData("new_info",learningDegreeSerevice.selectLearningDegreeById(new_id));
+                if( old_id != null ){
+                    LearningDegree learningDegree = learningDegreeSerevice.selectLearningDegreeById(old_id);
+                    if(learningDegree!=null){
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("country",addrCountryService.selectAddrCountryById(learningDegree.getCountryId()));
+                        map.put("city",addrCityService.selectAddrCityById(learningDegree.getCityId()));
+                        map.put("school", otherUniversityService.selectValidById(learningDegree.getSchoolId()));
+                        map.put("academic", myAcademicService.selectById(learningDegree.getAcademicId()));
+                        map.put("degree", myAcademicDegreeService.selectById(learningDegree.getDegreeId()));
+                        result.appendData("old_info",map);
+                    }
+                }
+                LearningDegree learningDegree = learningDegreeSerevice.selectLearningDegreeById(new_id);
+                if(learningDegree!=null){
+                    HashMap<String, Object> new_degree = new HashMap<>();
+                    new_degree.put("country",addrCountryService.selectAddrCountryById(learningDegree.getCountryId()));
+                    new_degree.put("city",addrCityService.selectAddrCityById(learningDegree.getCityId()));
+                    new_degree.put("school", otherUniversityService.selectValidById(learningDegree.getSchoolId()));
+                    new_degree.put("academic", myAcademicService.selectById(learningDegree.getAcademicId()));
+                    new_degree.put("degree", myAcademicDegreeService.selectById(learningDegree.getDegreeId()));
+                    result.appendData("new_info",new_degree);
+                }
+                break;
             case 5: //5为简历
-                if( old_id != null)
-                    result.appendData("old_info",learningDegreeSerevice.selectLearningDegreeById(old_id));
-                result.appendData("new_info",learningDegreeSerevice.selectLearningDegreeById(new_id));
+                if( old_id != null){
+                    EmployeeHistory employeeHistory = employeeHistoryService.selectById(old_id);
+                    if(employeeHistory!=null)
+                        result.appendData("old_info",employeeHistory);
+                }
+                EmployeeHistory employeeHistory = employeeHistoryService.selectById(new_id);
+                if(employeeHistory!=null)
+                    result.appendData("new_info",employeeHistory);
+                break;
             case 6: //6为学生信息
                 if( old_id != null)
                     result.appendData("old_info",studentService.selectById(old_id));
                 result.appendData("new_info",studentService.selectById(new_id));
+                break;
             case 7: //7为教职工信息
                 if( old_id != null)
                     result.appendData("old_info",employeeService.selectEmployeeById(old_id));
                 result.appendData("new_info",employeeService.selectEmployeeById(new_id));
+                break;
             case 8: //8为用户个人信息
                 if( old_id != null)
                     result.appendData("old_info",userService.selectUserById(old_id));
                 result.appendData("new_info",userService.selectUserById(new_id));
-            case 9: //9为学生excel表
+                break;
+            case 9: //9为学生信息excel表
                 if( old_id != null)
                     result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
                 result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
-            case 10:  //10为教职工信息
+                break;
+            case 10:  //10为教职工信息excel表
                 if( old_id != null)
                     result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
                 result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
+                break;
 
         }
+
+        //获取申请人信息
+        result.appendData("user_info",userService.selectUserById(userinfoApply.getByWho()));
+        //申请理由
+        result.appendData("reason",userinfoApply.getApplyReason());
+        //如果是第n步审核(n>1)，则搜索出之前的所有审核流程记录
+        //根据申请表id查询所有的审批流程
+        List<UserinfoApplyApproval> userinfoApplyApprovals =
+                userinfoApplyApprovalService.selectByApplyId(userinfoApply.getId());
+        result.appendData("apply_approval",userinfoApplyApprovals);
+        //再把每一步审批人的信息也查出来
+//        List<User> approvers = new ArrayList<>();
+        List<String> approversName = new ArrayList<>();
+        userinfoApplyApprovals.forEach(item -> {
+            User user = userService.selectUserById(item.getCheckWho());
+            if( user != null )
+                approversName.add(user.getUserName());
+        });
+        result.appendData("approversName",approversName);
 
         String json = result.convertIntoJSON();
 
@@ -287,6 +423,7 @@ public class UserinfoApplyApprovalController {
         }
         return Result.build(ResultType.ParamError);
     }
+
     /**
      * Author: chenenru 23:50 2019/4/29
      * @param id
@@ -343,17 +480,17 @@ public class UserinfoApplyApprovalController {
         //审批人
         System.out.println("-->"+employeeService.selectByUserId(userId));
         Employee employee = employeeService.selectByUserId(userId).get(0);
-        Employ employ = employService.selectEmployByEmployeeId(employee.getId(),employee.getUniversityId());
+        Employ employ = otherEmployService.selectEmployByEmployeeId(employee.getId(),employee.getUniversityId());
         System.out.println(employ.getDepartmentId());
-        //申请人为小学生才行
+        //申请人为学生才行
         Student student = studentService.selectByUserId(studentId).get(0);
-        Class aClass = classService.selectClassByClassId( student.getClassId() );
+        Class aClass = otherClassService.selectClassByClassId( student.getClassId() );
         System.out.println(aClass.getDepartmentId()+"--->");
         if( employ.getDepartmentId().equals(aClass.getDepartmentId()) ) {
-            System.out.println("是同一个学院");
+//            System.out.println("是同一个学院");
             return true;
         }else{
-            System.out.println("不是同一个学院");
+//            System.out.println("不是同一个学院");
             return false;
         }
     }

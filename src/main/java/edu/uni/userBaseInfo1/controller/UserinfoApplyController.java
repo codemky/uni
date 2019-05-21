@@ -44,6 +44,8 @@ public class UserinfoApplyController {
     UserinfoApplyService userinfoApplyService;
     @Autowired
     UserService userService;
+    @Autowired
+    UserinfoApplyApprovalController userinfoApplyApprovalController;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -73,25 +75,32 @@ public class UserinfoApplyController {
     public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
-        //拼接缓存键名（字符串）
-        String cacheName = UserinfoApplyController.CacheNameHelper.Receive_CacheNamePrefix + id;
-        //尝试在缓存中通过键名获取相应的键值
-        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-        String json = cache.get(cacheName);
-        //如果在缓存中找不到，那就从数据库里找
-        if(json == null){
-            UserinfoApply userinfoApply = userinfoApplyService.selectUserinfoApplyById(id);
-            //把查询到的结果用Result工具类转换成json格式的字符串
-            json = Result.build(ResultType.Success).appendData("userinfoApply",userinfoApply).convertIntoJSON();
-            //如果有查询到数据，就把在数据库查到的数据放到缓存中
-            if(userinfoApply != null){
-                cache.set(cacheName,json);
-            }
-        }
-        //到最后通过response对象返回json格式字符串的数据
+
+        userinfoApplyApprovalController.getOldInfoAndNewInfoByApply(id,response);
+    }
+
+
+    @ApiOperation( value = "根据信息类型，申请结果和用户id查询该用户的所有申请信息",notes = "未测试" )
+    @PostMapping("userinfoApplys/listAll")
+    @ApiImplicitParam(name = "userinfoApply", value = "用户信息申请详情实体", required = true, dataType = "UserinfoApply")
+    @ResponseBody
+    public void selectAllByUserId(@RequestBody UserinfoApply userinfoApply ,
+                                  HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+
+        long user_id = 100;
+
+        String json = Result.build(ResultType.Success)
+                    .appendData("userinfoApplys",userinfoApplyService.
+                            selectByTypeAndResultAndUserId(userinfoApply,user_id)).convertIntoJSON();
+
         response.getWriter().write(json);
 
     }
+
+
+
+
     /**
      * Author: chenenru 23:44 2019/4/29
      * @param response

@@ -4,14 +4,11 @@ import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
-import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @Author chenenru
@@ -42,9 +38,9 @@ public class LearningDegreeController {
     @Autowired
     LearningDegreeSerevice learningDegreeService;
     @Autowired
-    AcademicDegreeService academicDegreeService;
+    MyAcademicDegreeService myAcademicDegreeService;
     @Autowired
-    AcademicService academicService;
+    MyAcademicService myAcademicService;
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
@@ -233,10 +229,10 @@ public class LearningDegreeController {
             List<LearningDegree> learningDegrees = learningDegreeService.selectByUserId(userId);
 
             //查询受教育表的所有记录
-            List<Academic> academics = academicService.selectAll();
+            List<Academic> academics = myAcademicService.selectAll();
 
             //查询学位表
-            List<AcademicDegree> academicDegrees = academicDegreeService.selectAll();
+            List<AcademicDegree> academicDegrees = myAcademicDegreeService.selectAll();
 
             //放入到工具类里面
             userInfo.setLearningDegrees(learningDegrees);

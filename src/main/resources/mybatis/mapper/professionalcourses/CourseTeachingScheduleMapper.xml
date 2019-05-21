@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.uni.professionalcourses.mapper.CourseTeachingScheduleMapper" >
+  <resultMap id="BaseResultMap" type="edu.uni.professionalcourses.bean.CourseTeachingSchedule" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="university_id" property="universityId" jdbcType="BIGINT" />
+    <result column="week" property="week" jdbcType="VARCHAR" />
+    <result column="chapter" property="chapter" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="teach_hour" property="teachHour" jdbcType="INTEGER" />
+    <result column="experiment_hour" property="experimentHour" jdbcType="INTEGER" />
+    <result column="homework" property="homework" jdbcType="VARCHAR" />
+    <result column="actual_progress" property="actualProgress" jdbcType="VARCHAR" />
+    <result column="out_of_plan_reason" property="outOfPlanReason" jdbcType="VARCHAR" />
+    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
+    <result column="by_who" property="byWho" jdbcType="BIGINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, university_id, week, chapter, content, teach_hour, experiment_hour, homework, 
+    actual_progress, out_of_plan_reason, datetime, by_who, deleted
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.professionalcourses.bean.CourseTeachingScheduleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from course_teaching_schedule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from course_teaching_schedule
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from course_teaching_schedule
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.professionalcourses.bean.CourseTeachingScheduleExample" >
+    delete from course_teaching_schedule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.professionalcourses.bean.CourseTeachingSchedule" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course_teaching_schedule (university_id, week, chapter, 
+      content, teach_hour, experiment_hour, 
+      homework, actual_progress, out_of_plan_reason, 
+      datetime, by_who, deleted
+      )
+    values (#{universityId,jdbcType=BIGINT}, #{week,jdbcType=VARCHAR}, #{chapter,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{teachHour,jdbcType=INTEGER}, #{experimentHour,jdbcType=INTEGER}, 
+      #{homework,jdbcType=VARCHAR}, #{actualProgress,jdbcType=VARCHAR}, #{outOfPlanReason,jdbcType=VARCHAR}, 
+      #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.professionalcourses.bean.CourseTeachingSchedule" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course_teaching_schedule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        university_id,
+      </if>
+      <if test="week != null" >
+        week,
+      </if>
+      <if test="chapter != null" >
+        chapter,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="teachHour != null" >
+        teach_hour,
+      </if>
+      <if test="experimentHour != null" >
+        experiment_hour,
+      </if>
+      <if test="homework != null" >
+        homework,
+      </if>
+      <if test="actualProgress != null" >
+        actual_progress,
+      </if>
+      <if test="outOfPlanReason != null" >
+        out_of_plan_reason,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="byWho != null" >
+        by_who,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="week != null" >
+        #{week,jdbcType=VARCHAR},
+      </if>
+      <if test="chapter != null" >
+        #{chapter,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="teachHour != null" >
+        #{teachHour,jdbcType=INTEGER},
+      </if>
+      <if test="experimentHour != null" >
+        #{experimentHour,jdbcType=INTEGER},
+      </if>
+      <if test="homework != null" >
+        #{homework,jdbcType=VARCHAR},
+      </if>
+      <if test="actualProgress != null" >
+        #{actualProgress,jdbcType=VARCHAR},
+      </if>
+      <if test="outOfPlanReason != null" >
+        #{outOfPlanReason,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.professionalcourses.bean.CourseTeachingScheduleExample" resultType="java.lang.Integer" >
+    select count(*) from course_teaching_schedule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update course_teaching_schedule
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.universityId != null" >
+        university_id = #{record.universityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.week != null" >
+        week = #{record.week,jdbcType=VARCHAR},
+      </if>
+      <if test="record.chapter != null" >
+        chapter = #{record.chapter,jdbcType=VARCHAR},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teachHour != null" >
+        teach_hour = #{record.teachHour,jdbcType=INTEGER},
+      </if>
+      <if test="record.experimentHour != null" >
+        experiment_hour = #{record.experimentHour,jdbcType=INTEGER},
+      </if>
+      <if test="record.homework != null" >
+        homework = #{record.homework,jdbcType=VARCHAR},
+      </if>
+      <if test="record.actualProgress != null" >
+        actual_progress = #{record.actualProgress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outOfPlanReason != null" >
+        out_of_plan_reason = #{record.outOfPlanReason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datetime != null" >
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null" >
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null" >
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update course_teaching_schedule
+    set id = #{record.id,jdbcType=BIGINT},
+      university_id = #{record.universityId,jdbcType=BIGINT},
+      week = #{record.week,jdbcType=VARCHAR},
+      chapter = #{record.chapter,jdbcType=VARCHAR},
+      content = #{record.content,jdbcType=VARCHAR},
+      teach_hour = #{record.teachHour,jdbcType=INTEGER},
+      experiment_hour = #{record.experimentHour,jdbcType=INTEGER},
+      homework = #{record.homework,jdbcType=VARCHAR},
+      actual_progress = #{record.actualProgress,jdbcType=VARCHAR},
+      out_of_plan_reason = #{record.outOfPlanReason,jdbcType=VARCHAR},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.professionalcourses.bean.CourseTeachingSchedule" >
+    update course_teaching_schedule
+    <set >
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="week != null" >
+        week = #{week,jdbcType=VARCHAR},
+      </if>
+      <if test="chapter != null" >
+        chapter = #{chapter,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="teachHour != null" >
+        teach_hour = #{teachHour,jdbcType=INTEGER},
+      </if>
+      <if test="experimentHour != null" >
+        experiment_hour = #{experimentHour,jdbcType=INTEGER},
+      </if>
+      <if test="homework != null" >
+        homework = #{homework,jdbcType=VARCHAR},
+      </if>
+      <if test="actualProgress != null" >
+        actual_progress = #{actualProgress,jdbcType=VARCHAR},
+      </if>
+      <if test="outOfPlanReason != null" >
+        out_of_plan_reason = #{outOfPlanReason,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.professionalcourses.bean.CourseTeachingSchedule" >
+    update course_teaching_schedule
+    set university_id = #{universityId,jdbcType=BIGINT},
+      week = #{week,jdbcType=VARCHAR},
+      chapter = #{chapter,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      teach_hour = #{teachHour,jdbcType=INTEGER},
+      experiment_hour = #{experimentHour,jdbcType=INTEGER},
+      homework = #{homework,jdbcType=VARCHAR},
+      actual_progress = #{actualProgress,jdbcType=VARCHAR},
+      out_of_plan_reason = #{outOfPlanReason,jdbcType=VARCHAR},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.uni.professionalcourses.mapper.SyllabusTeachingContentMapper" >
+  <resultMap id="BaseResultMap" type="edu.uni.professionalcourses.bean.SyllabusTeachingContent" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="university_id" property="universityId" jdbcType="BIGINT" />
+    <result column="course_syllabus_description_id" property="courseSyllabusDescriptionId" jdbcType="BIGINT" />
+    <result column="teach_goal_require" property="teachGoalRequire" jdbcType="VARCHAR" />
+    <result column="teach_important_point" property="teachImportantPoint" jdbcType="VARCHAR" />
+    <result column="teach_difficult_point" property="teachDifficultPoint" jdbcType="VARCHAR" />
+    <result column="teach_method" property="teachMethod" jdbcType="VARCHAR" />
+    <result column="chapter_content" property="chapterContent" jdbcType="VARCHAR" />
+    <result column="reflection_question" property="reflectionQuestion" jdbcType="VARCHAR" />
+    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
+    <result column="by_who" property="byWho" jdbcType="BIGINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, university_id, course_syllabus_description_id, teach_goal_require, teach_important_point, 
+    teach_difficult_point, teach_method, chapter_content, reflection_question, datetime, 
+    by_who, deleted
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.professionalcourses.bean.SyllabusTeachingContentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from syllabus_teaching_content
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from syllabus_teaching_content
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from syllabus_teaching_content
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.professionalcourses.bean.SyllabusTeachingContentExample" >
+    delete from syllabus_teaching_content
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.professionalcourses.bean.SyllabusTeachingContent" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into syllabus_teaching_content (university_id, course_syllabus_description_id, 
+      teach_goal_require, teach_important_point, 
+      teach_difficult_point, teach_method, chapter_content, 
+      reflection_question, datetime, by_who, 
+      deleted)
+    values (#{universityId,jdbcType=BIGINT}, #{courseSyllabusDescriptionId,jdbcType=BIGINT}, 
+      #{teachGoalRequire,jdbcType=VARCHAR}, #{teachImportantPoint,jdbcType=VARCHAR}, 
+      #{teachDifficultPoint,jdbcType=VARCHAR}, #{teachMethod,jdbcType=VARCHAR}, #{chapterContent,jdbcType=VARCHAR}, 
+      #{reflectionQuestion,jdbcType=VARCHAR}, #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, 
+      #{deleted,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.professionalcourses.bean.SyllabusTeachingContent" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into syllabus_teaching_content
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        university_id,
+      </if>
+      <if test="courseSyllabusDescriptionId != null" >
+        course_syllabus_description_id,
+      </if>
+      <if test="teachGoalRequire != null" >
+        teach_goal_require,
+      </if>
+      <if test="teachImportantPoint != null" >
+        teach_important_point,
+      </if>
+      <if test="teachDifficultPoint != null" >
+        teach_difficult_point,
+      </if>
+      <if test="teachMethod != null" >
+        teach_method,
+      </if>
+      <if test="chapterContent != null" >
+        chapter_content,
+      </if>
+      <if test="reflectionQuestion != null" >
+        reflection_question,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="byWho != null" >
+        by_who,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="courseSyllabusDescriptionId != null" >
+        #{courseSyllabusDescriptionId,jdbcType=BIGINT},
+      </if>
+      <if test="teachGoalRequire != null" >
+        #{teachGoalRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="teachImportantPoint != null" >
+        #{teachImportantPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="teachDifficultPoint != null" >
+        #{teachDifficultPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="teachMethod != null" >
+        #{teachMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="chapterContent != null" >
+        #{chapterContent,jdbcType=VARCHAR},
+      </if>
+      <if test="reflectionQuestion != null" >
+        #{reflectionQuestion,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.professionalcourses.bean.SyllabusTeachingContentExample" resultType="java.lang.Integer" >
+    select count(*) from syllabus_teaching_content
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update syllabus_teaching_content
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.universityId != null" >
+        university_id = #{record.universityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.courseSyllabusDescriptionId != null" >
+        course_syllabus_description_id = #{record.courseSyllabusDescriptionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.teachGoalRequire != null" >
+        teach_goal_require = #{record.teachGoalRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teachImportantPoint != null" >
+        teach_important_point = #{record.teachImportantPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teachDifficultPoint != null" >
+        teach_difficult_point = #{record.teachDifficultPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teachMethod != null" >
+        teach_method = #{record.teachMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="record.chapterContent != null" >
+        chapter_content = #{record.chapterContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reflectionQuestion != null" >
+        reflection_question = #{record.reflectionQuestion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datetime != null" >
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null" >
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null" >
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update syllabus_teaching_content
+    set id = #{record.id,jdbcType=BIGINT},
+      university_id = #{record.universityId,jdbcType=BIGINT},
+      course_syllabus_description_id = #{record.courseSyllabusDescriptionId,jdbcType=BIGINT},
+      teach_goal_require = #{record.teachGoalRequire,jdbcType=VARCHAR},
+      teach_important_point = #{record.teachImportantPoint,jdbcType=VARCHAR},
+      teach_difficult_point = #{record.teachDifficultPoint,jdbcType=VARCHAR},
+      teach_method = #{record.teachMethod,jdbcType=VARCHAR},
+      chapter_content = #{record.chapterContent,jdbcType=VARCHAR},
+      reflection_question = #{record.reflectionQuestion,jdbcType=VARCHAR},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.professionalcourses.bean.SyllabusTeachingContent" >
+    update syllabus_teaching_content
+    <set >
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="courseSyllabusDescriptionId != null" >
+        course_syllabus_description_id = #{courseSyllabusDescriptionId,jdbcType=BIGINT},
+      </if>
+      <if test="teachGoalRequire != null" >
+        teach_goal_require = #{teachGoalRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="teachImportantPoint != null" >
+        teach_important_point = #{teachImportantPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="teachDifficultPoint != null" >
+        teach_difficult_point = #{teachDifficultPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="teachMethod != null" >
+        teach_method = #{teachMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="chapterContent != null" >
+        chapter_content = #{chapterContent,jdbcType=VARCHAR},
+      </if>
+      <if test="reflectionQuestion != null" >
+        reflection_question = #{reflectionQuestion,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.professionalcourses.bean.SyllabusTeachingContent" >
+    update syllabus_teaching_content
+    set university_id = #{universityId,jdbcType=BIGINT},
+      course_syllabus_description_id = #{courseSyllabusDescriptionId,jdbcType=BIGINT},
+      teach_goal_require = #{teachGoalRequire,jdbcType=VARCHAR},
+      teach_important_point = #{teachImportantPoint,jdbcType=VARCHAR},
+      teach_difficult_point = #{teachDifficultPoint,jdbcType=VARCHAR},
+      teach_method = #{teachMethod,jdbcType=VARCHAR},
+      chapter_content = #{chapterContent,jdbcType=VARCHAR},
+      reflection_question = #{reflectionQuestion,jdbcType=VARCHAR},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

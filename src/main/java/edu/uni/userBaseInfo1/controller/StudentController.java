@@ -1,19 +1,16 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.bean.Class;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.bean.Class;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,7 +43,7 @@ public class StudentController {
         @Autowired
         private EcommService ecommService;
         @Autowired
-        private ClassService classService;
+        private OtherClassService otherClassService;
         @Autowired
         private PoliticalAffiliationService politicalAffiliationService;
         @Autowired
@@ -242,7 +239,7 @@ public class StudentController {
     public void selectDepartmentIdByStudentId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
         if(user_id != null){
             Student student = studentService.selectByUserId(user_id).get(0);
-            Class aClass = classService.selectClassByClassId(student.getClassId());
+            Class aClass = otherClassService.selectClassByClassId(student.getClassId());
             System.out.println(aClass.getDepartmentId()+"--->");
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");

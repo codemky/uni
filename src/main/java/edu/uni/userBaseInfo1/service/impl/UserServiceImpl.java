@@ -3,6 +3,7 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.professionalcourses.bean.SecondLevelDiscipline;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.*;
 import edu.uni.userBaseInfo1.service.*;
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
     @Autowired
-    private SecondLevelDisciplineService secondLevelDisciplineService;
+    private MySecondLevelDisciplineService mySecondLevelDisciplineService;
     @Autowired
     private StudentService studentService;
     @Autowired
@@ -450,7 +451,7 @@ public class UserServiceImpl implements UserService {
             List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
             userInfo.setStudents(studentList);
             //将该学生的主修专业加入集合
-            SecondLevelDiscipline secondLevelDiscipline = secondLevelDisciplineService
+            SecondLevelDiscipline secondLevelDiscipline = mySecondLevelDisciplineService
                     .selectValidSecondLevelDisciplineById(userInfo.getStudents().get(0).getSpecialtyId());
             List<SecondLevelDiscipline> secondLevelDisciplineList = new ArrayList<>();
             secondLevelDisciplineList.add(secondLevelDiscipline);
@@ -489,7 +490,7 @@ public class UserServiceImpl implements UserService {
             userInfo.setEmployeeHistories(employeeHistoryService.seleValidEmpHisByUserId(user_id));
             //将主修专业加入信息集合
             List<SecondLevelDiscipline> secondLevelDisciplineList = new ArrayList<>();
-            secondLevelDisciplineList.add(secondLevelDisciplineService
+            secondLevelDisciplineList.add(mySecondLevelDisciplineService
                     .selectValidSecondLevelDisciplineById(employees.get(0).getDisciplineId()));
             userInfo.setSecondLevelDisciplines(secondLevelDisciplineList);
             //将政治面貌加入信息集合

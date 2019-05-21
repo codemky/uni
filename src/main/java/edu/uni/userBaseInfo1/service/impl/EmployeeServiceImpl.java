@@ -2,10 +2,12 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.administrativestructure.bean.Position;
+import edu.uni.administrativestructure.bean.PositionExample;
+import edu.uni.administrativestructure.mapper.PositionMapper;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.EmployeeMapper;
-import edu.uni.userBaseInfo1.mapper.PositionMapper;
 import edu.uni.userBaseInfo1.mapper.RoleMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.*;
@@ -24,6 +26,7 @@ import java.util.List;
  * @Version 1.0
  **/
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到=
+@SuppressWarnings("ALL")
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     //持久层接口的对象
@@ -42,11 +45,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
-    private DepartmentService departmentService;
+    private OtherDepartmentService otherDepartmentService;
     @Autowired
     private UserinfoApplyService userinfoApplyService;
     @Autowired
-    private  SubdepartmentService subdepartmentService;
+    private OtherSubdepartmentService otherSubdepartmentService;
     @Autowired
     private UserService userService;
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
@@ -300,12 +303,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Long> user_idList = new ArrayList<>();
         //如果部门名不为空,查出该部门id
         if(depart_name != null){
-            depart_id = departmentService.selectDepartIdByName(depart_name);
+            depart_id = otherDepartmentService.selectDepartIdByName(depart_name);
         }
         System.out.println(depart_id);
         //如果科室名不为空，查出该科室id
         if(subdepart_name != null){
-            subdepart_id = subdepartmentService.selectIdBySubdepartName(subdepart_name);
+            subdepart_id = otherSubdepartmentService.selectIdBySubdepartName(subdepart_name);
         }
         //如果姓名不为空，查出该姓名的用户id
         if(emp_name != null){

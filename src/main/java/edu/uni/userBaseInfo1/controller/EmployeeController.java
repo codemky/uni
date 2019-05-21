@@ -1,12 +1,13 @@
 package edu.uni.userBaseInfo1.controller;
 
-import edu.uni.userBaseInfo1.bean.Class;
-import edu.uni.userBaseInfo1.bean.Employ;
-import edu.uni.userBaseInfo1.service.ClassService;
-import edu.uni.userBaseInfo1.service.ClassmateService;
-import edu.uni.userBaseInfo1.service.EmployService;
-import edu.uni.userBaseInfo1.bean.Employ;
-import edu.uni.userBaseInfo1.service.EmployService;
+import edu.uni.administrativestructure.bean.Class;
+import edu.uni.administrativestructure.bean.Classmate;
+import edu.uni.administrativestructure.bean.Employ;
+import edu.uni.educateAffair.bean.Curriculum;
+import edu.uni.educateAffair.service.CurriculumService;
+import edu.uni.userBaseInfo1.service.OtherClassService;
+import edu.uni.userBaseInfo1.service.OtherClassmateService;
+import edu.uni.userBaseInfo1.service.OtherEmployService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
@@ -15,7 +16,6 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,7 +52,7 @@ public class EmployeeController {
     @Autowired
     UserService userService;
     @Autowired
-    EmployService employService;
+    OtherEmployService otherEmployService;
     @Autowired
     ApprovalMainService approvalMainService;
     @Autowired
@@ -64,9 +64,9 @@ public class EmployeeController {
     @Autowired
     ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired
-    ClassService classService;
+    OtherClassService otherClassService;
     @Autowired
-    private ClassmateService classmateService;
+    private OtherClassmateService otherClassmateService;
     @Autowired
     StudentService studentService;
     @Autowired
@@ -278,7 +278,7 @@ public class EmployeeController {
     @ResponseBody
     public void selectDepartmentIdByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
         Employee employee = employeeService.selectByUserId(userId).get(0);
-        Employ employ = employService.selectEmployByEmployeeId(employee.getUserId() , employee.getUniversityId());
+        Employ employ = otherEmployService.selectEmployByEmployeeId(employee.getUserId() , employee.getUniversityId());
         System.out.println(employ.getDepartmentId());
         //设置返回的数据格式
         response.setContentType("application/json;charset=utf-8");
@@ -420,12 +420,12 @@ public class EmployeeController {
                 Employee employee = employeeService.selectByUserId(userId).get(0);
                 //userInfo.setEmployees(employee);
                 System.out.println(" ."+year+". ."+className+".");
-                List<Class> classes = classService.selectClassesByEmployeeId(employee.getId(),year,className);
+                List<Class> classes = otherClassService.selectClassesByEmployeeId(employee.getId(),year,className);
                 List<Student> students = new ArrayList<>();
                 List<Classmate> classmates = new ArrayList<>();
                 List<User> users = new ArrayList<>();
                 for (Class cclass:classes) {
-                        classmates = classmateService.selectByClassId(cclass.getId());
+                        classmates = otherClassmateService.selectByClassId(cclass.getId());
                         for (Classmate classmate : classmates) {
                             Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
                             User user = userService.selectUserById(student.getUserId());
@@ -468,9 +468,9 @@ public class EmployeeController {
                 List<Classmate> classmates = new ArrayList<>();
                 List<User> users = new ArrayList<>();
                 for (Curriculum c:curricula) {
-                    Class aClass = classService.selectClassByClassId(c.getClassId());
+                    Class aClass = otherClassService.selectClassByClassId(c.getClassId());
                     classes.add(aClass);
-                    classmates = classmateService.selectByClassId(aClass.getId());
+                    classmates = otherClassmateService.selectByClassId(aClass.getId());
                     for (Classmate classmate : classmates) {
                         Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
                         User user = userService.selectUserById(student.getUserId());

@@ -24,6 +24,15 @@ public interface UserinfoApplyApprovalService {
      * @apiNote: 查询所有的用户信息审批流程
      */
     List<UserinfoApplyApproval> selectAllUserinfoApplyApprovals();
+
+    /**
+     * Author: mokuanyuan 19:55 2019/5/16
+     * @param applyId
+     * @return List<UserinfoApplyApproval>
+     * @apiNote: 根据申请表id查询所有的审批流程记录
+     */
+    public List<UserinfoApplyApproval> selectByApplyId(Long applyId);
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param id

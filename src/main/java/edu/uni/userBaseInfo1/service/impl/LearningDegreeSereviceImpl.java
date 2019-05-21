@@ -64,11 +64,11 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
      */
     @Override
     public LearningDegree selectLearningDegreeById(long id) {
-        LearningDegreeExample example = new LearningDegreeExample();
-        LearningDegreeExample.Criteria criteria = example.createCriteria();
-        criteria.andDegreeIdEqualTo(id);
-        //return learningDegreeMapper.selectByPrimaryKey(id);
-        return  learningDegreeMapper.selectByExample(example).get(0);
+//        LearningDegreeExample example = new LearningDegreeExample();
+//        LearningDegreeExample.Criteria criteria = example.createCriteria();
+//        criteria.andDegreeIdEqualTo(id);
+        return learningDegreeMapper.selectByPrimaryKey(id);
+//        return  learningDegreeMapper.selectByExample(example).get(0);
     }
 
     /**

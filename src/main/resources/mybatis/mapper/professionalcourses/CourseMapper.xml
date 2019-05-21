@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.uni.professionalcourses.mapper.CourseMapper" >
+  <resultMap id="BaseResultMap" type="edu.uni.professionalcourses.bean.Course" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="university_id" property="universityId" jdbcType="BIGINT" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="ename" property="ename" jdbcType="VARCHAR" />
+    <result column="species_id" property="speciesId" jdbcType="BIGINT" />
+    <result column="category_id" property="categoryId" jdbcType="BIGINT" />
+    <result column="classification_id" property="classificationId" jdbcType="BIGINT" />
+    <result column="exam_type_id" property="examTypeId" jdbcType="BIGINT" />
+    <result column="exam_mode_id" property="examModeId" jdbcType="BIGINT" />
+    <result column="hour" property="hour" jdbcType="INTEGER" />
+    <result column="credit" property="credit" jdbcType="REAL" />
+    <result column="syllabus_hour" property="syllabusHour" jdbcType="INTEGER" />
+    <result column="experiment_hour" property="experimentHour" jdbcType="INTEGER" />
+    <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+    <result column="teach_goal" property="teachGoal" jdbcType="VARCHAR" />
+    <result column="teach_require" property="teachRequire" jdbcType="VARCHAR" />
+    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
+    <result column="by_who" property="byWho" jdbcType="BIGINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, university_id, number, name, ename, species_id, category_id, classification_id, 
+    exam_type_id, exam_mode_id, hour, credit, syllabus_hour, experiment_hour, introduction, 
+    teach_goal, teach_require, datetime, by_who, deleted
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.professionalcourses.bean.CourseExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from course
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from course
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.professionalcourses.bean.CourseExample" >
+    delete from course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.professionalcourses.bean.Course" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course (university_id, number, name, 
+      ename, species_id, category_id, 
+      classification_id, exam_type_id, exam_mode_id, 
+      hour, credit, syllabus_hour, 
+      experiment_hour, introduction, teach_goal, 
+      teach_require, datetime, by_who, 
+      deleted)
+    values (#{universityId,jdbcType=BIGINT}, #{number,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{ename,jdbcType=VARCHAR}, #{speciesId,jdbcType=BIGINT}, #{categoryId,jdbcType=BIGINT}, 
+      #{classificationId,jdbcType=BIGINT}, #{examTypeId,jdbcType=BIGINT}, #{examModeId,jdbcType=BIGINT}, 
+      #{hour,jdbcType=INTEGER}, #{credit,jdbcType=REAL}, #{syllabusHour,jdbcType=INTEGER}, 
+      #{experimentHour,jdbcType=INTEGER}, #{introduction,jdbcType=VARCHAR}, #{teachGoal,jdbcType=VARCHAR}, 
+      #{teachRequire,jdbcType=VARCHAR}, #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, 
+      #{deleted,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.professionalcourses.bean.Course" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        university_id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="ename != null" >
+        ename,
+      </if>
+      <if test="speciesId != null" >
+        species_id,
+      </if>
+      <if test="categoryId != null" >
+        category_id,
+      </if>
+      <if test="classificationId != null" >
+        classification_id,
+      </if>
+      <if test="examTypeId != null" >
+        exam_type_id,
+      </if>
+      <if test="examModeId != null" >
+        exam_mode_id,
+      </if>
+      <if test="hour != null" >
+        hour,
+      </if>
+      <if test="credit != null" >
+        credit,
+      </if>
+      <if test="syllabusHour != null" >
+        syllabus_hour,
+      </if>
+      <if test="experimentHour != null" >
+        experiment_hour,
+      </if>
+      <if test="introduction != null" >
+        introduction,
+      </if>
+      <if test="teachGoal != null" >
+        teach_goal,
+      </if>
+      <if test="teachRequire != null" >
+        teach_require,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="byWho != null" >
+        by_who,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="universityId != null" >
+        #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null" >
+        #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="speciesId != null" >
+        #{speciesId,jdbcType=BIGINT},
+      </if>
+      <if test="categoryId != null" >
+        #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="classificationId != null" >
+        #{classificationId,jdbcType=BIGINT},
+      </if>
+      <if test="examTypeId != null" >
+        #{examTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="examModeId != null" >
+        #{examModeId,jdbcType=BIGINT},
+      </if>
+      <if test="hour != null" >
+        #{hour,jdbcType=INTEGER},
+      </if>
+      <if test="credit != null" >
+        #{credit,jdbcType=REAL},
+      </if>
+      <if test="syllabusHour != null" >
+        #{syllabusHour,jdbcType=INTEGER},
+      </if>
+      <if test="experimentHour != null" >
+        #{experimentHour,jdbcType=INTEGER},
+      </if>
+      <if test="introduction != null" >
+        #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="teachGoal != null" >
+        #{teachGoal,jdbcType=VARCHAR},
+      </if>
+      <if test="teachRequire != null" >
+        #{teachRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.professionalcourses.bean.CourseExample" resultType="java.lang.Integer" >
+    select count(*) from course
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update course
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.universityId != null" >
+        university_id = #{record.universityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.number != null" >
+        number = #{record.number,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ename != null" >
+        ename = #{record.ename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.speciesId != null" >
+        species_id = #{record.speciesId,jdbcType=BIGINT},
+      </if>
+      <if test="record.categoryId != null" >
+        category_id = #{record.categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="record.classificationId != null" >
+        classification_id = #{record.classificationId,jdbcType=BIGINT},
+      </if>
+      <if test="record.examTypeId != null" >
+        exam_type_id = #{record.examTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.examModeId != null" >
+        exam_mode_id = #{record.examModeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.hour != null" >
+        hour = #{record.hour,jdbcType=INTEGER},
+      </if>
+      <if test="record.credit != null" >
+        credit = #{record.credit,jdbcType=REAL},
+      </if>
+      <if test="record.syllabusHour != null" >
+        syllabus_hour = #{record.syllabusHour,jdbcType=INTEGER},
+      </if>
+      <if test="record.experimentHour != null" >
+        experiment_hour = #{record.experimentHour,jdbcType=INTEGER},
+      </if>
+      <if test="record.introduction != null" >
+        introduction = #{record.introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teachGoal != null" >
+        teach_goal = #{record.teachGoal,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teachRequire != null" >
+        teach_require = #{record.teachRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datetime != null" >
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null" >
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null" >
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update course
+    set id = #{record.id,jdbcType=BIGINT},
+      university_id = #{record.universityId,jdbcType=BIGINT},
+      number = #{record.number,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      ename = #{record.ename,jdbcType=VARCHAR},
+      species_id = #{record.speciesId,jdbcType=BIGINT},
+      category_id = #{record.categoryId,jdbcType=BIGINT},
+      classification_id = #{record.classificationId,jdbcType=BIGINT},
+      exam_type_id = #{record.examTypeId,jdbcType=BIGINT},
+      exam_mode_id = #{record.examModeId,jdbcType=BIGINT},
+      hour = #{record.hour,jdbcType=INTEGER},
+      credit = #{record.credit,jdbcType=REAL},
+      syllabus_hour = #{record.syllabusHour,jdbcType=INTEGER},
+      experiment_hour = #{record.experimentHour,jdbcType=INTEGER},
+      introduction = #{record.introduction,jdbcType=VARCHAR},
+      teach_goal = #{record.teachGoal,jdbcType=VARCHAR},
+      teach_require = #{record.teachRequire,jdbcType=VARCHAR},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.professionalcourses.bean.Course" >
+    update course
+    <set >
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null" >
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="speciesId != null" >
+        species_id = #{speciesId,jdbcType=BIGINT},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=BIGINT},
+      </if>
+      <if test="classificationId != null" >
+        classification_id = #{classificationId,jdbcType=BIGINT},
+      </if>
+      <if test="examTypeId != null" >
+        exam_type_id = #{examTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="examModeId != null" >
+        exam_mode_id = #{examModeId,jdbcType=BIGINT},
+      </if>
+      <if test="hour != null" >
+        hour = #{hour,jdbcType=INTEGER},
+      </if>
+      <if test="credit != null" >
+        credit = #{credit,jdbcType=REAL},
+      </if>
+      <if test="syllabusHour != null" >
+        syllabus_hour = #{syllabusHour,jdbcType=INTEGER},
+      </if>
+      <if test="experimentHour != null" >
+        experiment_hour = #{experimentHour,jdbcType=INTEGER},
+      </if>
+      <if test="introduction != null" >
+        introduction = #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="teachGoal != null" >
+        teach_goal = #{teachGoal,jdbcType=VARCHAR},
+      </if>
+      <if test="teachRequire != null" >
+        teach_require = #{teachRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null" >
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.professionalcourses.bean.Course" >
+    update course
+    set university_id = #{universityId,jdbcType=BIGINT},
+      number = #{number,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ename = #{ename,jdbcType=VARCHAR},
+      species_id = #{speciesId,jdbcType=BIGINT},
+      category_id = #{categoryId,jdbcType=BIGINT},
+      classification_id = #{classificationId,jdbcType=BIGINT},
+      exam_type_id = #{examTypeId,jdbcType=BIGINT},
+      exam_mode_id = #{examModeId,jdbcType=BIGINT},
+      hour = #{hour,jdbcType=INTEGER},
+      credit = #{credit,jdbcType=REAL},
+      syllabus_hour = #{syllabusHour,jdbcType=INTEGER},
+      experiment_hour = #{experimentHour,jdbcType=INTEGER},
+      introduction = #{introduction,jdbcType=VARCHAR},
+      teach_goal = #{teachGoal,jdbcType=VARCHAR},
+      teach_require = #{teachRequire,jdbcType=VARCHAR},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

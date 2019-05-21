@@ -72,8 +72,6 @@ public class ApprovalMainController {
             json = Result.build(ResultType.Success).appendData("approvalMains",approvalMains).convertIntoJSON();
         }
 
-
-
         response.getWriter().write(json);
 
     }

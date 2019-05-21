@@ -8,6 +8,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @MapperScan({"edu.uni.example.mapper",
         "edu.uni.userBaseInfo1.mapper",
+        "edu.uni.administrativestructure.mapper",
+        "edu.uni.educateAffair.mapper",
+        "edu.uni.professionalcourses.mapper",
+
 })
 @EnableSwagger2
 public class UniApplication {

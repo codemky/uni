@@ -4,9 +4,7 @@ import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
-import edu.uni.userBaseInfo1.utils.GetAddrDetail;
 import edu.uni.userBaseInfo1.utils.UserInfo;
-import edu.uni.utils.CommonUtils;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,9 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @Author chenenru
@@ -56,9 +51,9 @@ public class UserController {
     @Autowired
     private AddressService addressService;
     @Autowired
-    private AcademicService academicService;
+    private MyAcademicService myAcademicService;
     @Autowired
-    private AcademicDegreeService academicDegreeService;
+    private MyAcademicDegreeService myAcademicDegreeService;
     @Autowired
     private EmployeeHistoryService employeeHistoryService;
 

@@ -5,7 +5,17 @@ import edu.uni.userBaseInfo1.bean.UserinfoApply;
 
 import java.util.List;
 
-public interface UserinfoApplyService {
+public interface UserinfoApplyService  {
+
+    /**
+     * Author: mokuanyuan 10:17 2019/5/17
+     * @param userinfoApply
+     * @param userId
+     * @return List<UserinfoApply>
+     * @apiNote: 根据信息类型，申请结果和用户id查询该用户的所有申请信息
+     */
+    List<UserinfoApply> selectByTypeAndResultAndUserId( UserinfoApply userinfoApply , Long userId );
+
     /**
      * Author: chenenru 23:59 2019/4/29
      * @param

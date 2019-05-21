@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
+import edu.uni.userBaseInfo1.bean.UserinfoApplyExample;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyMapper;
 import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,34 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
     private ExampleConfig config;
 
     /**
+     * Author: mokuanyuan 10:17 2019/5/17
+     * @param userinfoApply
+     * @param userId
+     * @return List<UserinfoApply>
+     * @apiNote: 根据信息类型，申请结果和用户id查询该用户的所有申请信息
+     */
+    @Override
+    public List<UserinfoApply> selectByTypeAndResultAndUserId( UserinfoApply userinfoApply , Long userId ) {
+        UserinfoApplyExample example = new UserinfoApplyExample();
+        UserinfoApplyExample.Criteria criteria = example.createCriteria();
+        example.setOrderByClause("start_time ASC");
+        if(userinfoApply.getInfoType() != null)
+            criteria.andInfoTypeEqualTo(userinfoApply.getInfoType());
+
+        //筛选审批结果的记录
+        if(userinfoApply.getId() == null){
+            if(userinfoApply.getApplyResult() != null)
+                criteria.andApplyResultEqualTo(userinfoApply.getApplyResult());
+            if(userinfoApply.getApplyResult() == null)
+                criteria.andApplyResultIsNull();
+        }
+
+        criteria.andByWhoEqualTo(userId).andDeletedEqualTo(false);
+
+        return userinfoApplyMapper.selectByExample(example);
+    }
+
+    /**
      * Author: chenenru 0:10 2019/4/30
      * @param
      * @return  List<UserinfoApply>
@@ -43,7 +72,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
      * Author: chenenru 0:10 2019/4/30
      * @param id
      * @return UserinfoApply
-     * @apiNote: 通过id查询一个一级学科记录
+     * @apiNote: 通过id查询一个用户信息申请记录
      */
     @Override
     public UserinfoApply selectUserinfoApplyById(long id) {
@@ -53,7 +82,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
      * Author: chenenru 0:10 2019/4/30
      * @param pageNum
      * @return  PageInfo<UserinfoApply>
-     * @apiNote: 分页查询所有一级学科记录
+     * @apiNote: 分页查询所有用户信息申请记录
      */
     @Override
     public PageInfo<UserinfoApply> selectUserinfoApplyByPage(int pageNum) {
@@ -72,7 +101,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
      * Author: chenenru 0:10 2019/4/30
      * @param UserinfoApply
      * @return boolean
-     * @apiNote: 插入一条一级学科记录
+     * @apiNote: 插入一条用户信息申请记录
      */
     @Override
     public boolean insertUserinfoApply(UserinfoApply UserinfoApply) {
@@ -82,7 +111,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
      * Author: chenenru 0:10 2019/4/30
      * @param UserinfoApply
      * @return boolean
-     * @apiNote: 更新一条一级学科记录
+     * @apiNote: 更新一条用户信息申请记录
      */
     @Override
     public boolean updateUserinfoApply(UserinfoApply UserinfoApply) {
@@ -92,7 +121,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
      * Author: chenenru 0:10 2019/4/30
      * @param id
      * @return boolean
-     * @apiNote:  删除一条一级学科记录
+     * @apiNote:  删除一条用户信息申请记录
      */
     @Override
     public boolean deleteUserinfoApply(long id) {
