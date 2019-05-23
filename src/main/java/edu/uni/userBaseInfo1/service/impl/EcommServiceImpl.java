@@ -103,7 +103,9 @@ public class EcommServiceImpl implements EcommService {
      * @apiNote: 插入一条电子通信记录
      */
     public int insert(Ecomm ecomm) {
-        return ecommMapper.insertSelective(ecomm);
+//        return  ecommMapper.insert(ecomm);
+        //System.out.println("ecomm==="+ecomm);
+         return ecommMapper.insertSelective(ecomm);
 
     }
 

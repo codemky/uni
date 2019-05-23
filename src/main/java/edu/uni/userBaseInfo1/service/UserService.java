@@ -131,4 +131,12 @@ public interface UserService {
      * @apiNote: 根据用户名获取有效的用户id
      */
     List<User> selectIdByUserName(String user_name);
+
+    /**
+     * Author: chenenru 8:49 2019/5/22
+     * @param user
+     * @return  UId
+     * @apiNote: 插入一条用户记录并获取新插入记录的自增id的值
+     */
+    Long insertAndGetUId(User user);
 }

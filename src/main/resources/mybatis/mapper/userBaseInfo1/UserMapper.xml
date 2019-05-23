@@ -107,10 +107,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.User" >
-    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.User" useGeneratedKeys="true">
     insert into user (user_name, identification, user_sex, 
       user_birthday, name, pwd, 
       salt, university_id, user_type, 
@@ -119,11 +116,11 @@
       #{userBirthday,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, 
       #{salt,jdbcType=VARCHAR}, #{universityId,jdbcType=BIGINT}, #{userType,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{regist,jdbcType=TIMESTAMP})
-  </insert>
-  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.User" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
+      SELECT LAST_INSERT_ID()  AS id
     </selectKey>
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.User" useGeneratedKeys="true">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="userName != null" >
@@ -195,6 +192,9 @@
         #{regist,jdbcType=TIMESTAMP},
       </if>
     </trim>
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()  AS id
+    </selectKey>
   </insert>
   <select id="countByExample" parameterType="edu.uni.userBaseInfo1.bean.UserExample" resultType="java.lang.Integer" >
     select count(*) from user

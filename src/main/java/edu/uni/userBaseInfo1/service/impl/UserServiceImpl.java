@@ -532,4 +532,9 @@ public class UserServiceImpl implements UserService {
         userList = userMapper.selectByExample(userExample);
         return userList;
     }
+
+    @Override
+    public Long insertAndGetUId(User user) {
+        return Long.valueOf(userMapper.insert(user));
+    }
 }
