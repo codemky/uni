@@ -74,7 +74,7 @@ public class ExcelController {
         public static final String ListAll_CacheName = "ub1_e_excel_listAll";
     }
 
-    @ApiOperation(value = "测试student的excel上传", notes = "2019-5-21 22:02:31测试通过")
+    @ApiOperation(value = "测试student的excel校验", notes = "2019-5-21 22:02:31测试通过")
     //@ApiImplicitParam(name = "filePath", value = "文件的路径或文件名", required = false, dataType = "String" )
     @GetMapping("/student/checkoutexcel")
     @ResponseBody
@@ -148,7 +148,7 @@ public class ExcelController {
         }
         response.getWriter().write(json);
     }
-    @ApiOperation(value = "测试employee的excel上传", notes = "未测试")
+    @ApiOperation(value = "测试employee的excel校验", notes = "未测试")
     @GetMapping("/employee/checkoutexcel")
     @ResponseBody
     public void checkoutEmployeeExcel(String filePath, HttpServletResponse response) throws IOException{
