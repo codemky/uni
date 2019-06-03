@@ -1,9 +1,15 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.bean.*;
 import edu.uni.administrativestructure.bean.Class;
-import edu.uni.administrativestructure.bean.Employ;
+import edu.uni.administrativestructure.service.DepartmentService;
+import edu.uni.administrativestructure.service.EmployPositionService;
+import edu.uni.administrativestructure.service.PositionService;
+import edu.uni.administrativestructure.service.SubdepartmentService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.place.service.FieldService;
+import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
@@ -18,10 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author chenenru
@@ -84,6 +92,25 @@ public class UserinfoApplyApprovalController {
     private MyAcademicService myAcademicService;
     @Autowired
     private MyAcademicDegreeService myAcademicDegreeService;
+    @Autowired
+    private ApprovalMainService  approvalMainService;
+    @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
+    private FieldService fieldService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private SubdepartmentService subdepartmentService;
+    @Autowired
+    private MySecondLevelDisciplineService mySecondLevelDisciplineService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
+    @Autowired
+    private PositionService positionService;
+
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -111,6 +138,8 @@ public class UserinfoApplyApprovalController {
                                  HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json;charset=utf-8");
+
+        System.out.println(userinfoApplyApproval.toString());
 
         Long schoolId = (long) 1 ;
         Long user_id = (long) 1720 ;
@@ -150,7 +179,6 @@ public class UserinfoApplyApprovalController {
         show_apply.forEach( item -> {
             apply_name.add(userService.selectUserById(item.getApplyUserId()).getUserName());
         } );
-
 
 
         String json = Result.build(ResultType.Success).appendData("apply_list",show_apply).
@@ -198,34 +226,18 @@ public class UserinfoApplyApprovalController {
                    Address address = addressService.selectById(old_id);
                    if(address != null){
                        HashMap<String,Object> map = new HashMap<>();
-                       map.put("country", addrCountryService.selectAddrCountryById(address.getCountry()).getCountryZh() );
-                       map.put("state", addrStateService.selectAddrStateById( address.getState()).getStateZh() );
-                       map.put("city", addrCityService.selectAddrCityById(address.getCity()).getCityZh() );
-                       map.put("area", addrAreaService.selectAddrAreaById(address.getArea()).getAreaZh() );
-                       map.put("street", addrStreetService.selectAddrStreetById(address.getStreet()).getStreetZh() );
-                       map.put("detail", address.getDetail() );
-                       map.put("zip_code",address.getZipCode());
-                       map.put("telephone",address.getTelephone());
-                       map.put("flag",address.getFlag());
+                       addressService.selectAllInfoToMap(map,address);
                        result.appendData("old_info", map );
                    }
                 }
                 Address address = addressService.selectById(new_id);
                 if(address !=null){
                     HashMap<String,Object> new_map = new HashMap<>();
-                    new_map.put("country", addrCountryService.selectAddrCountryById(address.getCountry()).getCountryZh() );
-                    new_map.put("state", addrStateService.selectAddrStateById( address.getState()).getStateZh() );
-                    new_map.put("city", addrCityService.selectAddrCityById(address.getCity()).getCityZh() );
-                    new_map.put("area", addrAreaService.selectAddrAreaById(address.getArea()).getAreaZh() );
-                    new_map.put("street", addrStreetService.selectAddrStreetById(address.getStreet()).getStreetZh() );
-                    new_map.put("detail", address.getDetail() );
-                    new_map.put("zip_code",address.getZipCode());
-                    new_map.put("telephone",address.getTelephone());
-                    new_map.put("flag",address.getFlag());
+                    addressService.selectAllInfoToMap(new_map,address);
                     result.appendData("new_info",new_map);
                 }
-
                 break;
+
             case 2: //2为照片
                 if( old_id != null){
                     Picture picture = pictureService.selectById(old_id);
@@ -239,41 +251,35 @@ public class UserinfoApplyApprovalController {
             case 3: //3为学生亲属
                 if( old_id != null){
                     StudentRelation studentRelation = studentRelationService.selectById(old_id);
+                    result.appendData("relation",studentRelation);
                     if(studentRelation !=null){
                         User user = userService.selectUserById(studentRelation.getRelaId());
                         if(user !=null)
                             result.appendData("old_info",user);
                     }
                 }
+
                 StudentRelation studentRelation = studentRelationService.selectById(new_id);
+                result.appendData("relation",studentRelation);
                 if(studentRelation!=null){
                     User user = userService.selectUserById(studentRelation.getRelaId());
                     if(user!=null)
                         result.appendData("new_info",user);
                 }
-
                 break;
             case 4: //4为学历
                 if( old_id != null ){
                     LearningDegree learningDegree = learningDegreeSerevice.selectLearningDegreeById(old_id);
                     if(learningDegree!=null){
                         HashMap<String, Object> map = new HashMap<>();
-                        map.put("country",addrCountryService.selectAddrCountryById(learningDegree.getCountryId()));
-                        map.put("city",addrCityService.selectAddrCityById(learningDegree.getCityId()));
-                        map.put("school", otherUniversityService.selectValidById(learningDegree.getSchoolId()));
-                        map.put("academic", myAcademicService.selectById(learningDegree.getAcademicId()));
-                        map.put("degree", myAcademicDegreeService.selectById(learningDegree.getDegreeId()));
+                        learningDegreeSerevice.selectAllInfoToMap(map,learningDegree);
                         result.appendData("old_info",map);
                     }
                 }
                 LearningDegree learningDegree = learningDegreeSerevice.selectLearningDegreeById(new_id);
                 if(learningDegree!=null){
                     HashMap<String, Object> new_degree = new HashMap<>();
-                    new_degree.put("country",addrCountryService.selectAddrCountryById(learningDegree.getCountryId()));
-                    new_degree.put("city",addrCityService.selectAddrCityById(learningDegree.getCityId()));
-                    new_degree.put("school", otherUniversityService.selectValidById(learningDegree.getSchoolId()));
-                    new_degree.put("academic", myAcademicService.selectById(learningDegree.getAcademicId()));
-                    new_degree.put("degree", myAcademicDegreeService.selectById(learningDegree.getDegreeId()));
+                    learningDegreeSerevice.selectAllInfoToMap(new_degree,learningDegree);
                     result.appendData("new_info",new_degree);
                 }
                 break;
@@ -288,14 +294,82 @@ public class UserinfoApplyApprovalController {
                     result.appendData("new_info",employeeHistory);
                 break;
             case 6: //6为学生信息
-                if( old_id != null)
-                    result.appendData("old_info",studentService.selectById(old_id));
-                result.appendData("new_info",studentService.selectById(new_id));
+                if( old_id != null){ //旧信息
+                    HashMap<String, Object> map = new HashMap<>();
+                    Student student = studentService.selectById(old_id);
+                    map.put("user",userService.selectUserById(student.getUserId()));
+                    map.put("student_no",student.getStuNo());
+//                    System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(student.getBeginLearnDate()));
+                    map.put("begin_learn_date",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(student.getBeginLearnDate()));
+                    map.put("grade",student.getGrade());
+                    map.put("specialty",specialtyService.select(student.getSpecialtyId()).getName());
+                    map.put("class",otherClassService.select(student.getClassId()).getName());
+                    map.put("political",politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId()).getPolitical());
+                    map.put("live_room",fieldService.select(student.getLiveRoom()).getName());
+//                    Address home_address = addressService.selectById(student.getHomeAddressId());
+//                    HashMap<String, Object> address_map = new HashMap<>();
+//                    addressService.selectAllInfoToMap(address_map,home_address);
+//                    map.put("home_address",address_map);
+//                    map.put("ecomm",student.getPhoneEcommId());
+                    result.appendData("old_info",map);
+                }
+                //放入新信息
+                HashMap<String, Object> new_map = new HashMap<>();
+                Student student = studentService.selectById(new_id);
+                new_map.put("user",userService.selectUserById(student.getUserId()));
+                new_map.put("student_no",student.getStuNo());
+                new_map.put("begin_learn_date",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(student.getBeginLearnDate()));
+                new_map.put("grade",student.getGrade());
+                new_map.put("specialty",specialtyService.select(student.getSpecialtyId()).getName());
+                new_map.put("class",otherClassService.select(student.getClassId()).getName());
+                new_map.put("political",politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId()).getPolitical());
+                new_map.put("live_room",fieldService.select(student.getLiveRoom()).getName());
+//                Address home_address = addressService.selectById(student.getHomeAddressId());
+//                HashMap<String, Object> address_new_map = new HashMap<>();
+//                addressService.selectAllInfoToMap(address_new_map,home_address);
+//                new_map.put("home_address",address_new_map);
+//                new_map.put("ecomm",student.getPhoneEcommId());
+                result.appendData("new_info",new_map);
                 break;
             case 7: //7为教职工信息
-                if( old_id != null)
-                    result.appendData("old_info",employeeService.selectEmployeeById(old_id));
-                result.appendData("new_info",employeeService.selectEmployeeById(new_id));
+                if( old_id != null){
+                    Employee employee = employeeService.selectEmployeeById(old_id);
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("user",userService.selectUserById(employee.getUserId()));
+                    map.put("employee_no",employee.getEmpNo());
+                    map.put("department", departmentService.select(employee.getDepartmentId()).getName());
+                    map.put("subdepartment", subdepartmentService.select(employee.getSubdepartmentId()).getName());
+                    map.put("employ_history",employeeHistoryService.selectById(employee.getEmployHistoryId()));
+                    map.put("discipline",mySecondLevelDisciplineService.
+                            selectSecondLevelDisciplineById(employee.getDisciplineId()).getName());
+                    map.put("political",politicalAffiliationService.
+                            selectPoliticalAffiliationById(employee.getPositionId()).getPolitical());
+                    List<EmployPosition> employPositions =
+                            otherEmployPositionService.selectByEmployeeId(employee.getId());
+                    List<String> positions = new ArrayList<>();
+                    for(EmployPosition employPosition : employPositions)
+                        positions.add(positionService.select(employPosition.getPositionId()).getName());
+                    map.put("positions",positions);
+                    result.appendData("old_info",map);
+                }
+                Employee employee = employeeService.selectEmployeeById(new_id);
+                HashMap<String, Object> new_employee = new HashMap<>();
+                new_employee.put("user",userService.selectUserById(employee.getUserId()));
+                new_employee.put("employee_no",employee.getEmpNo());
+                new_employee.put("department", departmentService.select(employee.getDepartmentId()).getName());
+                new_employee.put("subdepartment", subdepartmentService.select(employee.getSubdepartmentId()).getName());
+                new_employee.put("employ_history",employeeHistoryService.selectById(employee.getEmployHistoryId()));
+                new_employee.put("discipline",mySecondLevelDisciplineService.
+                        selectSecondLevelDisciplineById(employee.getDisciplineId()).getName());
+                new_employee.put("political",politicalAffiliationService.
+                        selectPoliticalAffiliationById(employee.getPositionId()).getPolitical());
+                List<EmployPosition> employPositions =
+                        otherEmployPositionService.selectByEmployeeId(employee.getId());
+                List<String> positions = new ArrayList<>();
+                for(EmployPosition employPosition : employPositions)
+                    positions.add(positionService.select(employPosition.getPositionId()).getName());
+                new_employee.put("positions",positions);
+                result.appendData("new_info",new_employee);
                 break;
             case 8: //8为用户个人信息
                 if( old_id != null)

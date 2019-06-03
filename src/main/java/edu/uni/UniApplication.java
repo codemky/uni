@@ -11,6 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
         "edu.uni.administrativestructure.mapper",
         "edu.uni.educateAffair.mapper",
         "edu.uni.professionalcourses.mapper",
+        "edu.uni.place.mapper"
 
 })
 @EnableSwagger2

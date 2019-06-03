@@ -270,13 +270,16 @@ public class EcommController {
             String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 //              String path = ResourceUtils.getURL("classpath:").getPath() ;
             //文件上传路径
-            String path = "/E:/" ;
+            String path = "E://" ;
+            //进行路径转义
+//            path=path.replace(":", "%3A").replace("/", "%2F");
+            System.out.println(path.replace(":", "%3A").replace("/", "%2F"));
             //文件名（都用UUID命名吧）
             String fileName = UUID.randomUUID() + suffix;
             //传入路径和文件名这两个参数
             file.transferTo(new File(path, fileName));
             response.getWriter().write(Result.build(ResultType.Success).
-                    appendData("path", "/E:/" + fileName).
+                    appendData("path", "E://" + fileName).
                     appendData("fileName", fileName).
                     convertIntoJSON());
             }

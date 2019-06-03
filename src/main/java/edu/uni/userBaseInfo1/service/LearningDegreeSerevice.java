@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.LearningDegree;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface LearningDegreeSerevice {
@@ -80,4 +81,12 @@ public interface LearningDegreeSerevice {
      * @apiNote: 用户点击申请修改学历
      */
     boolean clickApplyLearningDegree(RequestMessage requestMessage);
+
+    /**
+     * Author: mokuanyuan 20:27 2019/6/2
+     * @param map
+     * @param learningDegree
+     * @apiNote: 传入一个HashMap和LearningDegree对象，把LearningDegree里的id字段对应的信息内容放入到map里
+     */
+    public void selectAllInfoToMap(HashMap map,LearningDegree learningDegree);
 }

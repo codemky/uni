@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
  * @Date 15:49 2019/4/29
  **/
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -33,6 +34,17 @@ public class AddressServiceImpl implements AddressService {
     private RoleMapper roleMapper;
     @Autowired
     private UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private AddrCountryService addrCountryService;
+    @Autowired
+    private AddrStateService addrStateService;
+    @Autowired
+    private AddrCityService addrCityService;
+    @Autowired
+    private AddrAreaService addrAreaService;
+    @Autowired
+    private AddrStreetService addrStreetService;
+
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
@@ -233,5 +245,23 @@ public class AddressServiceImpl implements AddressService {
         return addressList==null?null:addressList.get(0);
     }
 
+    /**
+     * Author: mokuanyuan 20:14 2019/6/2
+     * @param map
+     * @param address
+     * @apiNote: 传入一个HashMap和Address对象，把Address里的id字段对应的信息内容放入到map里
+     */
+    @Override
+    public void selectAllInfoToMap(HashMap map, Address address) {
+        map.put("country", addrCountryService.selectAddrCountryById(address.getCountry()).getCountryZh() );
+        map.put("state", addrStateService.selectAddrStateById( address.getState()).getStateZh() );
+        map.put("city", addrCityService.selectAddrCityById(address.getCity()).getCityZh() );
+        map.put("area", addrAreaService.selectAddrAreaById(address.getArea()).getAreaZh() );
+        map.put("street", addrStreetService.selectAddrStreetById(address.getStreet()).getStreetZh() );
+        map.put("detail", address.getDetail() );
+        map.put("zip_code",address.getZipCode());
+        map.put("telephone",address.getTelephone());
+        map.put("flag",address.getFlag());
 
+    }
 }

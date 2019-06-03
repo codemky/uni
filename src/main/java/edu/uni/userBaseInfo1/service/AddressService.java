@@ -7,6 +7,7 @@ package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface AddressService {
@@ -96,4 +97,12 @@ public interface AddressService {
      * @apiNote: 根据用户id获取有效的地址信息
      */
     Address selectValidAddressById(Long id);
+
+    /**
+     * Author: mokuanyuan 20:14 2019/6/2
+     * @param map
+     * @param address
+     * @apiNote: 传入一个HashMap和Address对象，把Address里的id字段对应的信息内容放入到map里
+     */
+    public void selectAllInfoToMap(HashMap map, Address address);
 }

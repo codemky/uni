@@ -9,13 +9,18 @@ import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -197,25 +202,38 @@ public class PictureController {
         return Result.build(ResultType.ParamError);
     }
 
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-        //String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-        //String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
+    @ApiOperation(value = "处理获取图片请求")
+    @GetMapping(value = "download")
+    public void download(
+            HttpServletResponse response,
+            @ApiParam(value = "绝对地址")
+            @RequestParam(value = "path") String path) throws IOException {
+        System.out.println(path);
+
+        path=path.replace("%3A", ":").replace("%2F", "/");
+
+        File file = new File(path);
+        if(!file.exists()){
+            System.out.println("图片文件不存在");
+
+        }else{
+            FileInputStream fileInputStream = new FileInputStream(file);
+        }
     }
+
+    @ApiOperation(value="获取图片", notes="未测试")
+    @ApiImplicitParam(name = "path", value = "图片绝对路径", required = true, dataType = "String")
+    @GetMapping(value = "/getImage",produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody
+    public byte[] getImage(@ApiParam(value = "绝对地址")
+                               @RequestParam(value = "path") String path) throws IOException {
+        File file = new File(path.replace("%3A", ":")
+                .replace("%2F", "/"));
+        System.out.println(file.getName());
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[inputStream.available()];
+        inputStream.read(bytes, 0, inputStream.available());
+        return bytes;
+    }
+
 }

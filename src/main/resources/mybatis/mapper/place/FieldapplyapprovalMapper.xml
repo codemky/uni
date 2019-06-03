@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.uni.place.mapper.FieldapplyapprovalMapper">
+  <resultMap id="BaseResultMap" type="edu.uni.place.bean.Fieldapplyapproval">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="university_id" jdbcType="BIGINT" property="universityId" />
+    <result column="field_apply_id" jdbcType="BIGINT" property="fieldApplyId" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="result" jdbcType="INTEGER" property="result" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="pre_approval_id" jdbcType="BIGINT" property="preApprovalId" />
+    <result column="datetime" jdbcType="TIMESTAMP" property="datetime" />
+    <result column="by_who" jdbcType="BIGINT" property="byWho" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, university_id, field_apply_id, employee_id, result, content, pre_approval_id, 
+    datetime, by_who, deleted
+  </sql>
+  <select id="selectByExample" parameterType="edu.uni.place.bean.FieldapplyapprovalExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from p_field_apply_approval
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from p_field_apply_approval
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from p_field_apply_approval
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="edu.uni.place.bean.FieldapplyapprovalExample">
+    delete from p_field_apply_approval
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="edu.uni.place.bean.Fieldapplyapproval">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into p_field_apply_approval (university_id, field_apply_id, employee_id, 
+      result, content, pre_approval_id, 
+      datetime, by_who, deleted
+      )
+    values (#{universityId,jdbcType=BIGINT}, #{fieldApplyId,jdbcType=BIGINT}, #{employeeId,jdbcType=BIGINT}, 
+      #{result,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{preApprovalId,jdbcType=BIGINT}, 
+      #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="edu.uni.place.bean.Fieldapplyapproval">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into p_field_apply_approval
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="universityId != null">
+        university_id,
+      </if>
+      <if test="fieldApplyId != null">
+        field_apply_id,
+      </if>
+      <if test="employeeId != null">
+        employee_id,
+      </if>
+      <if test="result != null">
+        result,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="preApprovalId != null">
+        pre_approval_id,
+      </if>
+      <if test="datetime != null">
+        datetime,
+      </if>
+      <if test="byWho != null">
+        by_who,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="universityId != null">
+        #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="fieldApplyId != null">
+        #{fieldApplyId,jdbcType=BIGINT},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="result != null">
+        #{result,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="preApprovalId != null">
+        #{preApprovalId,jdbcType=BIGINT},
+      </if>
+      <if test="datetime != null">
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null">
+        #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="edu.uni.place.bean.FieldapplyapprovalExample" resultType="java.lang.Long">
+    select count(*) from p_field_apply_approval
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update p_field_apply_approval
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.universityId != null">
+        university_id = #{record.universityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.fieldApplyId != null">
+        field_apply_id = #{record.fieldApplyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.employeeId != null">
+        employee_id = #{record.employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.result != null">
+        result = #{record.result,jdbcType=INTEGER},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.preApprovalId != null">
+        pre_approval_id = #{record.preApprovalId,jdbcType=BIGINT},
+      </if>
+      <if test="record.datetime != null">
+        datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.byWho != null">
+        by_who = #{record.byWho,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleted != null">
+        deleted = #{record.deleted,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update p_field_apply_approval
+    set id = #{record.id,jdbcType=BIGINT},
+      university_id = #{record.universityId,jdbcType=BIGINT},
+      field_apply_id = #{record.fieldApplyId,jdbcType=BIGINT},
+      employee_id = #{record.employeeId,jdbcType=BIGINT},
+      result = #{record.result,jdbcType=INTEGER},
+      content = #{record.content,jdbcType=VARCHAR},
+      pre_approval_id = #{record.preApprovalId,jdbcType=BIGINT},
+      datetime = #{record.datetime,jdbcType=TIMESTAMP},
+      by_who = #{record.byWho,jdbcType=BIGINT},
+      deleted = #{record.deleted,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.place.bean.Fieldapplyapproval">
+    update p_field_apply_approval
+    <set>
+      <if test="universityId != null">
+        university_id = #{universityId,jdbcType=BIGINT},
+      </if>
+      <if test="fieldApplyId != null">
+        field_apply_id = #{fieldApplyId,jdbcType=BIGINT},
+      </if>
+      <if test="employeeId != null">
+        employee_id = #{employeeId,jdbcType=BIGINT},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="preApprovalId != null">
+        pre_approval_id = #{preApprovalId,jdbcType=BIGINT},
+      </if>
+      <if test="datetime != null">
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="byWho != null">
+        by_who = #{byWho,jdbcType=BIGINT},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="edu.uni.place.bean.Fieldapplyapproval">
+    update p_field_apply_approval
+    set university_id = #{universityId,jdbcType=BIGINT},
+      field_apply_id = #{fieldApplyId,jdbcType=BIGINT},
+      employee_id = #{employeeId,jdbcType=BIGINT},
+      result = #{result,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      pre_approval_id = #{preApprovalId,jdbcType=BIGINT},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      by_who = #{byWho,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
