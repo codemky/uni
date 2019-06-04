@@ -3,6 +3,7 @@ package edu.uni.utils;
 import edu.uni.config.GlobalConfig;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -69,7 +70,8 @@ public class FileUtil {
             file.getParentFile().mkdirs();
         }
         //文件写入指定路径
-        multipartFile.transferTo(file);
+//        multipartFile.transferTo(file);
+        FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), file);
         //log.info("【文件工具】保存文件成功，filePath={}", fIlePath);
         System.out.println("【文件工具】保存文件成功，filePath={}"+fIlePath);
         return fIlePath;
@@ -157,9 +159,9 @@ public class FileUtil {
         String suffixName =
                 originalFilename.substring(originalFilename.lastIndexOf("."));
        /* log.info("【文件工具】后缀, suffixName = {}", suffixName);*/
-        System.out.println("【文件工具】后缀, suffixName = {}"+suffixName);
         // 防止文件重复
         String path = uploadRootDir + fileName + "_" + filePrefix + suffixName;
+        System.out.println("【文件工具】后缀, suffixName = {}"+suffixName+" path:-->"+path);
         return path;
     }
 

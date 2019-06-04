@@ -177,7 +177,7 @@ public class StudentUpload {
          if (classes.size()>=1){
              aClass = classes.get(0);
          }
-
+         //插入其他相同的部分
         insertSame(o);
 
         student.setUserId(user.getId());

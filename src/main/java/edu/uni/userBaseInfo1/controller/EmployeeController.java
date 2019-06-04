@@ -455,7 +455,8 @@ public class EmployeeController {
     public  void selectStudentsByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException {
 
         String cacheName = CacheNameHelper.ListAll_CacheName+"class"+"employee"+userId;
-        String json = cache.get(cacheName);
+        //String json = cache.get(cacheName);
+        String json = null;
         if(json ==null){
             if (userId!=null){
                 Employee employee = employeeService.selectByUserId(userId).get(0);
@@ -464,18 +465,21 @@ public class EmployeeController {
                 List<Class> classes = new ArrayList<>();
                 longs.add(employee.getId());
                 List<Curriculum> curricula = curriculumService.selectCurriculumByCondition(null, longs, null, null);
+                System.out.println("curricula---->"+curricula);
                 List<Student> students = new ArrayList<>();
                 List<Classmate> classmates = new ArrayList<>();
                 List<User> users = new ArrayList<>();
                 for (Curriculum c:curricula) {
                     Class aClass = otherClassService.selectClassByClassId(c.getClassId());
                     classes.add(aClass);
-                    classmates = otherClassmateService.selectByClassId(aClass.getId());
-                    for (Classmate classmate : classmates) {
+                    List<Classmate> classmates1 = otherClassmateService.selectByClassId(aClass.getId());
+                    System.out.println("classmate---->"+classmates1);
+                    for (Classmate classmate : classmates1) {
                         Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
                         User user = userService.selectUserById(student.getUserId());
                         students.add(student);
                         users.add(user);
+                        classmates.add(classmate);
                     }
                 }
                 userInfo.setClasses(classes);

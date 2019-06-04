@@ -42,6 +42,9 @@ public class FileExampleController {
     @Autowired
     private ExampleConfig exampleConfig;
 
+    @Autowired
+    private ExcelController excelController;
+
     @ApiOperation(value="文件上传", notes = "")
     @PostMapping("/upload")
     public Result uploadFile(MultipartFile file, HttpServletRequest request) {
@@ -55,6 +58,13 @@ public class FileExampleController {
         String filePath;
         try {
             filePath = fileUtil.uploadFile(file, request);
+            file.getInputStream();
+            //校验职员
+            excelController.checkoutEmployeeExcel(file.getInputStream(), request);
+            excelController.insertEmployeeExcel(file.getInputStream(), request);
+            //校验学生
+            excelController.checkoutStudentExcel(file.getInputStream(),request);
+            excelController.insertStudentExcel(file.getInputStream(),request);
         } catch (IOException e) {
             return Result.build(ResultType.Failed);
         }

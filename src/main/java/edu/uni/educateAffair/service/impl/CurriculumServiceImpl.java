@@ -148,7 +148,7 @@ public class CurriculumServiceImpl implements CurriculumService {
         System.out.println("classId:" + curriculumMap.get("classId"));*/
 
         List<Curriculum> curriculumList = curriculumMapper.getCurriculumMsgList(curriculumMap);
-        System.out.println(curriculumList);
+        //System.out.println(curriculumList);
         return curriculumList;
     }
 }

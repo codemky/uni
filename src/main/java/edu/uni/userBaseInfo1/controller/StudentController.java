@@ -3,6 +3,9 @@ package edu.uni.userBaseInfo1.controller;
 import edu.uni.administrativestructure.bean.Class;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.professionalcourses.bean.Specialty;
+import edu.uni.professionalcourses.service.SpecialtyService;
+import edu.uni.userBaseInfo1.PageBean.ClassmateBean;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
@@ -57,6 +60,14 @@ public class StudentController {
         private RoleService roleService;
         @Autowired
         ApprovalStepInchargeService approvalStepInchargeService;
+        @Autowired
+        private OtherClassmateService otherClassmateService;
+        @Autowired
+        private OtherClassmatePositionService otherClassmatePositionService;
+        @Autowired
+        private SpecialtyService specialtyService;
+        @Autowired
+        private PositionService positionService;
 
         @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
         private RedisCache cache;
@@ -335,7 +346,7 @@ public class StudentController {
 
     /**
      * Author: laizhouhao 20:50 2019/5/9
-     * @param userinfoApplyApproval,user_id
+     * @param
      * @return Result
      * @apiNote: 审批修改学生主要信息的申请, 点击不通过时
      */
@@ -393,6 +404,65 @@ public class StudentController {
             response.getWriter().write(json);
         }
     }
+    @ApiOperation(value="根据班级的id查询所有的学生信息", notes="未测试")
+    @ApiImplicitParam(name = "classId", value = "classId", required = false, dataType = "Long" , paramType = "path")
+    @GetMapping("student/allClassmates/{classId}")
+    @ResponseBody
+    public  void selectClassesByClassId(@PathVariable Long classId, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+        String json = null;
+        List<ClassmateBean> classmateBeans = new ArrayList<>();
+
+        List<Classmate> classmates = otherClassmateService.selectByClassId(classId);
+        for (Classmate cm:classmates) {
+            Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
+            UserInfo userInfo = userService.selectUserInfoAllByUserId(student.getUserId());
+            //ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateIdAndPositionId(cm.getId(), null);
+            ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
+            ClassmateBean classmateBean = new ClassmateBean();
+            //学号
+            classmateBean.setStudentNo(student.getStuNo());
+            //姓名
+            classmateBean.setStudentName(userInfo.getUsers().get(0).getUserName());
+            //入学日期
+            classmateBean.setBeginLearnDate(student.getBeginLearnDate());
+            //主修专业
+            Specialty select = specialtyService.select(student.getSpecialtyId());
+            classmateBean.setSpecialty(select.getName());
+            //所在年级
+            classmateBean.setGrade(student.getGrade());
+            //性别
+            if (userInfo.getUsers().get(0).getUserSex().equals(0)){
+                classmateBean.setSex("女");
+            }else {
+                classmateBean.setSex("男");
+            }
+            //联系方式
+            Ecomm ecomm = ecommService.selectById(student.getPhoneEcommId());
+            classmateBean.setPhone(ecomm.getContent());
+            //政治面貌
+            PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
+            classmateBean.setPolitical(politicalAffiliation.getPolitical());
+            //岗位
+            if (classmatePosition!=null){
+                List<Position> positions = positionService.selectAll();
+                for (Position p:positions) {
+                    if (p.getId().equals(classmatePosition.getPositionId())){
+                        classmateBean.setPosition(p.getName());
+                        break;
+                    }else {
+                        continue;
+                    }
+                }
+            }
+            //subcalss.add(classmatePosition.getId().toString());
+            classmateBeans.add(classmateBean);
+        }
+        System.out.println(classmateBeans);
+        json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans).convertIntoJSON();
+        response.getWriter().write(json);
+    }
+
         /**
          * <p>
          *     上传文件方法
