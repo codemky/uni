@@ -54,5 +54,13 @@ public interface OtherClassService  {
      */
     List<Class> selectClassByyear(Integer year);
 
+    /**
+     * Author: chenenru 21:02 2019/6/4
+     * @param classCode
+     * @return Class
+     * @apiNote: 根据班级classCode查询对应的班级
+     */
+    Class selectByClassCode(String classCode);
+
 
 }

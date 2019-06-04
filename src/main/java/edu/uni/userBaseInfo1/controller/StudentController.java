@@ -413,14 +413,14 @@ public class StudentController {
     }
     @ApiOperation(value="根据班级的id查询所有的学生信息", notes="未测试")
     @ApiImplicitParam(name = "classId", value = "classId", required = false, dataType = "Long" , paramType = "path")
-    @GetMapping("student/allClassmates/{classId}")
+    @GetMapping("student/allClassmates/{classCode}")
     @ResponseBody
-    public  void selectClassesByClassId(@PathVariable Long classId, HttpServletResponse response) throws IOException {
+    public  void selectClassesByClassId(@PathVariable String classCode, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         String json = null;
         List<ClassmateBean> classmateBeans = new ArrayList<>();
-
-        List<Classmate> classmates = otherClassmateService.selectByClassId(classId);
+        Class aClass = otherClassService.selectByClassCode(classCode);
+        List<Classmate> classmates = otherClassmateService.selectByClassId(aClass.getId());
         for (Classmate cm:classmates) {
             Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
             UserInfo userInfo = userService.selectUserInfoAllByUserId(student.getUserId());
