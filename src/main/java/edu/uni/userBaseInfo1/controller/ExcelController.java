@@ -81,19 +81,10 @@ public class ExcelController {
     @GetMapping("/student/checkoutexcel")
     @ResponseBody
     public void checkoutStudentExcel(InputStream inputStream, HttpServletRequest request) throws IOException {
+        request.setCharacterEncoding("utf-8");
         StringBuffer stringBuffer = new StringBuffer();
-        //response.setContentType("application/json;charset=utf-8");
-        //String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix +"student"+ "checkout";
-        //String json = cache.get(cacheName);
-        //if (json == null) {
-            //if (WDWUtil.isExcel2007(filePath)) {
-                //InputStream inputStream = FileUtil.getResourcesFileInputStream(filePath);
-                ExcelListener excelListener = new ExcelListener();
                 StudentUpload studentUpload = new StudentUpload();
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), excelListener);
-//            List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 0));
                 List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, StudentModel.class));
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, StudentModel.class), excelListener);
                 for (Object o : data) {
                     stringBuffer.append(studentUpload.checkoutStudent(o));
                 }
@@ -105,68 +96,30 @@ public class ExcelController {
                     System.out.println("校验通过");
                 }
                 inputStream.close();
-                //print(data);
-            //}
-            /*json = Result.build(ResultType.Success).appendData("message",stringBuffer).convertIntoJSON();
-            cache.set(json, cacheName);*/
-        //}
-        //response.getWriter().write(json);
-
     }
     @ApiOperation(value = "测试student的excel写入数据库", notes = "2019-5-21 23:25:01测试通过")
     //@ApiImplicitParam(name = "filePath", value = "文件的路径或文件名", required = false, dataType = "String" )
     @GetMapping("/student/inserttexcel")
     @ResponseBody
     public void insertStudentExcel(InputStream inputStream,HttpServletRequest request) throws IOException {
+        request.setCharacterEncoding("utf-8");
         StringBuffer stringBuffer= new StringBuffer();
-        //response.setContentType("application/json;charset=utf-8");
-        //String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + "student"+ "insert";
-       // String json = cache.get(cacheName);
-        //if (json == null) {
-            //if (WDWUtil.isExcel2007(filePath)) {
-                //InputStream inputStream = FileUtil.getResourcesFileInputStream(filePath);
                 StudentUpload studentUpload = new StudentUpload();
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), excelListener);
-//            List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 0));
                 List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, StudentModel.class));
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, StudentModel.class), excelListener);
                 for (Object o : data) {
                     stringBuffer.append(studentUpload.insertStudent(o));
                 }
-                /*if (stringBuffer != null && !stringBuffer.equals("") && stringBuffer.length() > 0) {
-                    if (stringBuffer.toString().contains("插入失败")){
-                        //stringBuffer.delete(0,stringBuffer.length());
-                        int roe = stringBuffer.indexOf("失败");
-                        stringBuffer.append("第"+stringBuffer.indexOf("插入")+"条记录插入不成功");
-                    }
-                    stringBuffer.delete(0,stringBuffer.length());
-                    stringBuffer.append("插入成功");
-                }*/
                 System.out.println(stringBuffer);
                 inputStream.close();
-            //}
-            /*json = Result.build(ResultType.Success).appendData("message",stringBuffer).convertIntoJSON();
-            cache.set(json, cacheName);
-        }
-        response.getWriter().write(json);*/
     }
     @ApiOperation(value = "测试employee的excel校验", notes = "未测试")
     @GetMapping("/employee/checkoutexcel")
     @ResponseBody
         public void checkoutEmployeeExcel(InputStream inputStream, HttpServletRequest request) throws IOException{
+        request.setCharacterEncoding("utf-8");
         StringBuffer stringBuffer = new StringBuffer();
-        /*response.setContentType("application/json;charset=utf-8");
-        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + "employee" +"checkout";
-        String json = cache.get(cacheName);
-        if (json == null) {*/
-            //if (WDWUtil.isExcel2007(filePath)) {
-                //InputStream inputStream = FileUtil.getResourcesFileInputStream(filePath);
-                ExcelListener excelListener = new ExcelListener();
                 StudentUpload studentUpload = new StudentUpload();
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), excelListener);
-//            List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 0));
                 List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, EmployeeModel.class));
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, StudentModel.class), excelListener);
                 for (Object o : data) {
                     stringBuffer.append(studentUpload.checkoutEmployee(o));
                 }
@@ -178,48 +131,20 @@ public class ExcelController {
                     System.out.println("校验通过");
                 }
                 inputStream.close();
-                //print(data);
-            //}
-            /*json = Result.build(ResultType.Success).appendData("message",stringBuffer).convertIntoJSON();
-            cache.set(json, cacheName);
-        }
-        response.getWriter().write(json);*/
     }
     @ApiOperation(value = "测试employee的excel写入数据库", notes = "未测试")
     //@ApiImplicitParam(name = "filePath", value = "文件的路径或文件名", required = false, dataType = "String" )
     @GetMapping("/employee/insertexcel")
     @ResponseBody
     public void insertEmployeeExcel(InputStream inputStream,HttpServletRequest request) throws  IOException{
+        request.setCharacterEncoding("utf-8");
         StringBuffer stringBuffer= new StringBuffer();
-        /*response.setContentType("application/json;charset=utf-8");
-        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + "employee"+ "insert";
-        String json = cache.get(cacheName);
-        if (json == null) {*/
-            //if (WDWUtil.isExcel2007(filePath)) {
-                //InputStream inputStream = FileUtil.getResourcesFileInputStream(filePath);
                 StudentUpload studentUpload = new StudentUpload();
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), excelListener);
-//            List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 0));
                 List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, EmployeeModel.class));
-                //EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, StudentModel.class), excelListener);
                 for (Object o : data) {
                     stringBuffer.append(studentUpload.insertEmployee(o));
                 }
-                /*if (stringBuffer != null && !stringBuffer.equals("") && stringBuffer.length() > 0) {
-                    if (stringBuffer.toString().contains("插入失败")){
-                        //stringBuffer.delete(0,stringBuffer.length());
-                        int roe = stringBuffer.indexOf("失败");
-                        stringBuffer.append("第"+stringBuffer.indexOf("插入")+"条记录插入不成功");
-                    }
-                    stringBuffer.delete(0,stringBuffer.length());
-                    stringBuffer.append("插入成功");
-                }*/
                 System.out.println(stringBuffer);
                 inputStream.close();
-            //}
-            /*json = Result.build(ResultType.Success).appendData("message",stringBuffer).convertIntoJSON();
-            cache.set(json, cacheName);
-        }
-        response.getWriter().write(json);*/
     }
 }

@@ -79,6 +79,7 @@ public class OtherClassController {
                 if (classmatePosition!=null){
                     Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
                     User user1 = userService.selectUserById(student.getUserId());
+                    classBean.setClassId(c.getClassId());
                     classBean.setMoniter(user1.getUserName());
                     classBean.setCode(aClass.getCode());
                     classBean.setName(aClass.getName());

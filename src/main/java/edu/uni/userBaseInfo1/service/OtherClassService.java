@@ -45,7 +45,7 @@ public interface OtherClassService  {
      * @return Class
      * @apiNote: 根据班级的名称查询某班级
      */
-    List<Class> selectClassByName(String Name);
+    Class selectClassByName(String Name);
     /**
      * Author: chenenru 15:55 2019/5/18
      * @param year

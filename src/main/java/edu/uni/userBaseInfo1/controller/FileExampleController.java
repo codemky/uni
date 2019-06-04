@@ -58,7 +58,6 @@ public class FileExampleController {
         String filePath;
         try {
             filePath = fileUtil.uploadFile(file, request);
-            file.getInputStream();
             //校验职员
             excelController.checkoutEmployeeExcel(file.getInputStream(), request);
             excelController.insertEmployeeExcel(file.getInputStream(), request);

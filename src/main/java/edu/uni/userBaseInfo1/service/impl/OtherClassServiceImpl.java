@@ -59,12 +59,13 @@ public class OtherClassServiceImpl implements OtherClassService {
     }
 
     @Override
-    public List<Class> selectClassByName(String Name) {
+    public Class selectClassByName(String Name) {
         ClassExample classExample = new ClassExample();
         ClassExample.Criteria criteria = classExample.createCriteria();
         criteria.andNameEqualTo(Name);
         criteria.andDeletedEqualTo(false);
-        return classMapper.selectByExample(classExample);
+        List<Class> classes = classMapper.selectByExample(classExample);
+        return classes.size()<=0?null:classes.get(0);
     }
 
     @Override

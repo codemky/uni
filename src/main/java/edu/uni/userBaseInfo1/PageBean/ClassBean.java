@@ -8,6 +8,7 @@ package edu.uni.userBaseInfo1.PageBean;
  * @Version 1.0
  **/
 public class ClassBean {
+    private Long classId;
     private String code;
     private String name;
     private Integer number;
@@ -17,12 +18,21 @@ public class ClassBean {
     public ClassBean() {
     }
 
-    public ClassBean(String code, String name, Integer number, String headteacher, String moniter) {
+    public ClassBean(Long classId, String code, String name, Integer number, String headteacher, String moniter) {
+        this.classId = classId;
         this.code = code;
         this.name = name;
         this.number = number;
         this.headteacher = headteacher;
         this.moniter = moniter;
+    }
+
+    public Long getClassId() {
+        return classId;
+    }
+
+    public void setClassId(Long classId) {
+        this.classId = classId;
     }
 
     public String getCode() {
@@ -68,7 +78,8 @@ public class ClassBean {
     @Override
     public String toString() {
         return "ClassBean{" +
-                "code='" + code + '\'' +
+                "classId=" + classId +
+                ", code='" + code + '\'' +
                 ", name='" + name + '\'' +
                 ", number=" + number +
                 ", headteacher='" + headteacher + '\'' +

@@ -1,6 +1,10 @@
 package edu.uni.userBaseInfo1.controller;
 
 import edu.uni.administrativestructure.bean.Class;
+import edu.uni.administrativestructure.bean.Classmate;
+import edu.uni.administrativestructure.bean.ClassmatePosition;
+import edu.uni.administrativestructure.bean.Position;
+import edu.uni.administrativestructure.service.PositionService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.professionalcourses.bean.Specialty;
@@ -205,6 +209,7 @@ public class StudentController {
     @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
     public void receiveStudentDetailInfo(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
         //检验页面传来的id是否存在
         if(user_id != null){
             UserInfo userInfo = new UserInfo();
@@ -249,6 +254,7 @@ public class StudentController {
     @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
     public void selectDepartmentIdByStudentId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
+        response.setContentType("application/json;charset=utf-8");
         if(user_id != null){
             Student student = studentService.selectByUserId(user_id).get(0);
             Class aClass = otherClassService.selectClassByClassId(student.getClassId());
@@ -384,6 +390,7 @@ public class StudentController {
     @GetMapping(value = "getStuInfoDetailByStuNO/{stu_no}")
     @ResponseBody
     public void refuseApplyModifyStudent(@PathVariable String stu_no,HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
         if (stu_no != null) {
             UserInfo userInfo = new UserInfo();
             userInfo = userService.selectStuDetailInfoByStuNo(stu_no);
@@ -450,8 +457,6 @@ public class StudentController {
                     if (p.getId().equals(classmatePosition.getPositionId())){
                         classmateBean.setPosition(p.getName());
                         break;
-                    }else {
-                        continue;
                     }
                 }
             }
