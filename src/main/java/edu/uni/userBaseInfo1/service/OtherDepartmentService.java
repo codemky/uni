@@ -35,4 +35,12 @@ public interface OtherDepartmentService  {
      * @apiNote: 根据学院名称查询学院
      */
     List<Department> selectDepartmentByName(String depaertmentName);
+
+    /**
+     * Author: laizhouhao 20:39 2019/5/19
+     * @param id
+     * @return List<Department></>
+     * @apiNote: 根据id获取有效的学院信息
+     */
+    List<Department> selectValidById(Long id);
 }

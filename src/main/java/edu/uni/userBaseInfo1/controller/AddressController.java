@@ -364,7 +364,7 @@ public class AddressController {
             boolean success = addressService.clickApplyAddress(requestMessage);
             if(success){
                 //清除相应的缓存
-                cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifyAddress");
+                cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifyAddress111");
                 cache.delete(AddressController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{

@@ -2,8 +2,13 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.administrativestructure.bean.Department;
+import edu.uni.administrativestructure.bean.Subdepartment;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.professionalcourses.bean.SecondLevelDiscipline;
+import edu.uni.professionalcourses.bean.Specialty;
+import edu.uni.professionalcourses.mapper.SpecialtyMapper;
+import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.*;
 import edu.uni.userBaseInfo1.service.*;
@@ -33,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private RoleMapper roleMapper;
     @Autowired
     private EcommMapper ecommMapper;
+    @Autowired
+    private SpecialtyMapper specialtyMapper;
     @Autowired
     private StudentRelationMapper studentRelationMapper;
     @Autowired
@@ -66,9 +73,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmployeeService employeeService;
     @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
     private StudentRelationService studentRelationService;
     @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
     private EmployeeHistoryService employeeHistoryService;
+    @Autowired
+    private OtherDepartmentService otherDepartmentService;
+    @Autowired
+    private OtherSubdepartmentService otherSubdepartmentService;
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -482,10 +497,15 @@ public class UserServiceImpl implements UserService {
             //根据用户id查找有效的职员信息，加入信息集合中
             List<Employee> employees = employeeService.selectValidByUserId(user_id);
             userInfo.setEmployees(employees);
-            //将所属学院信息加入信息集合
-
-            //将当前所在科室加入信息集合
-
+            if(employees.size()>=1) {
+                //将所属学院信息加入信息集合
+                List<Department> departmentList = otherDepartmentService.selectValidById(employees.get(0).getDepartmentId());
+                userInfo.setDepartments(departmentList);
+                //将当前所在科室加入信息集合
+                List<Subdepartment> subdepartmentList = otherSubdepartmentService
+                        .selectValidSubDepartByDepartId(employees.get(0).getSubdepartmentId());
+                userInfo.setSubdepartmentList(subdepartmentList);
+            }
             //将雇员简历加入信息集合
             userInfo.setEmployeeHistories(employeeHistoryService.seleValidEmpHisByUserId(user_id));
             //将主修专业加入信息集合
@@ -536,5 +556,57 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long insertAndGetUId(User user) {
         return Long.valueOf(userMapper.insert(user));
+    }
+
+    /**
+     * Author: laizhouhao 21:22 2019/6/2
+     * @param stu_no
+     * @return 学生详细信息
+     * @apiNote: 根据学号获取学生的详细信息
+     */
+    @Override
+    public UserInfo selectStuDetailInfoByStuNo(String stu_no) {
+        UserInfo userInfo = new UserInfo();
+        //根据学号获取学生实体
+        Student student = studentService.selectValidStuByStuNo(stu_no);
+        //将查询出来的学生实体存入数据集
+        List<Student> studentList = new ArrayList<>();
+        studentList.add(student);
+        userInfo.setStudents(studentList);
+
+        //判断是否有该学生
+        if(student != null) {
+            //查询该学生的用户id
+            Long user_id = student.getUserId();
+            //查询该学生在用户表的信息
+            User user = userMapper.selectByPrimaryKey(user_id);
+            //将查询出来的数据存入数据集
+            List<User> userList = new ArrayList<>();
+            userList.add(user);
+            userInfo.setUsers(userList);
+
+            //根据专业id获取专业实体
+            List<Specialty> specialtyList = new ArrayList<>();
+            specialtyList.add(specialtyMapper.selectByPrimaryKey(student.getSpecialtyId()));
+            //存入数据集
+            userInfo.setSpecialtyList(specialtyList);
+
+            //查询政治面貌
+            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
+            PoliticalAffiliation politicalAffiliation = politicalAffiliationService
+                    .selectPoliticalAffiliationById(student.getPoliticalId());
+            politicalAffiliationList.add(politicalAffiliation);
+            //存入数据集
+            userInfo.setPoliticalAffiliations(politicalAffiliationList);
+
+            //查找电话号码
+            Ecomm ecomm = new Ecomm();
+            ecomm = ecommMapper.selectByPrimaryKey(student.getPhoneEcommId());
+            List<Ecomm> ecommList = new ArrayList<>();
+            ecommList.add(ecomm);
+            //存入数据集
+            userInfo.setEcomms(ecommList);
+        }
+        return userInfo;
     }
 }

@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.List;
@@ -114,4 +115,12 @@ public interface StudentService {
          * @apiNote: 根据学生id获取学生实体信息
          */
         Student selectValidStudentByStuId(Long student_id);
+
+        /**
+         * Author: laizhouhao 21:33 2019/6/2
+         * @param stu_no
+         * @return 学生实体
+         * @apiNote: 根据学号获取学生实体
+         */
+        Student selectValidStuByStuNo(String stu_no);
 }

@@ -93,4 +93,12 @@ public interface SpecialtyService {
      * @return
      */
     List<Specialty> selectAll();
+
+    /**
+     * Author: laizhouhao 21:44 2019/6/2
+     * @param id
+     * @return 专业实体
+     * @apiNote: 根据id获取专业实体
+     */
+    List<Specialty> selectValidSpeciatyById(Long id);
 }

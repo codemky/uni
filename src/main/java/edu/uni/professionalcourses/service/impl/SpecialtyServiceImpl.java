@@ -254,4 +254,19 @@ public class SpecialtyServiceImpl implements SpecialtyService {
         criteria.andDeletedEqualTo(false);
         return specialtyMapper.selectByExample(example);
     }
+
+    /**
+     * Author: laizhouhao 21:44 2019/6/2
+     * @param id
+     * @return 专业实体
+     * @apiNote: 根据id获取专业实体
+     */
+    @Override
+    public List<Specialty> selectValidSpeciatyById(Long id) {
+        //构造查询条件
+        SpecialtyExample specialtyExample = new SpecialtyExample();
+        specialtyExample.createCriteria().andIdEqualTo(id).andDeletedEqualTo(false);
+        List<Specialty> specialtyList = specialtyMapper.selectByExample(specialtyExample);
+        return specialtyList;
+    }
 }

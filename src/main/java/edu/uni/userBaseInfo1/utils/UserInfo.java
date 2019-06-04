@@ -2,9 +2,12 @@ package edu.uni.userBaseInfo1.utils;
 
 import edu.uni.administrativestructure.bean.Class;
 import edu.uni.administrativestructure.bean.Classmate;
+import edu.uni.administrativestructure.bean.Department;
+import edu.uni.administrativestructure.bean.Subdepartment;
 import edu.uni.professionalcourses.bean.Academic;
 import edu.uni.professionalcourses.bean.AcademicDegree;
 import edu.uni.professionalcourses.bean.SecondLevelDiscipline;
+import edu.uni.professionalcourses.bean.Specialty;
 import edu.uni.userBaseInfo1.bean.*;
 
 import java.util.List;
@@ -35,13 +38,16 @@ public class UserInfo {
     List<AcademicDegree> academicDegrees;
     List<GetAddrDetail>getAddrDetails;
     List<SecondLevelDiscipline> secondLevelDisciplines;
+    List<Department> departments;
+    List<Subdepartment> subdepartmentList;
+    List<Specialty> specialtyList;
     private List<Class> classes;
     private List<Classmate> classmates;
 
     public UserInfo() {
     }
 
-    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies, List<PoliticalAffiliation> politicalAffiliations, List<AddrCountry> addrCountries, List<AddrState> addrStates, List<AddrCity> addrCities, List<AddrArea> addrAreas, List<AddrStreet> addrStreets, List<Academic> academics, List<AcademicDegree> academicDegrees, List<GetAddrDetail> getAddrDetails, List<SecondLevelDiscipline> secondLevelDisciplines, List<Class> classes, List<Classmate> classmates) {
+    public UserInfo(List<User> users, List<Ecomm> ecomms, List<Address> addresses, List<Picture> pictures, List<StudentRelation> studentRelations, List<LearningDegree> learningDegrees, List<EmployeeHistory> employeeHistories, List<Student> students, List<Employee> employees, List<UserinfoApply> userinfoApplies, List<PoliticalAffiliation> politicalAffiliations, List<AddrCountry> addrCountries, List<AddrState> addrStates, List<AddrCity> addrCities, List<AddrArea> addrAreas, List<AddrStreet> addrStreets, List<Academic> academics, List<AcademicDegree> academicDegrees, List<GetAddrDetail> getAddrDetails, List<SecondLevelDiscipline> secondLevelDisciplines, List<Department> departments, List<Subdepartment> subdepartmentList, List<Class> classes, List<Classmate> classmates) {
         this.users = users;
         this.ecomms = ecomms;
         this.addresses = addresses;
@@ -62,8 +68,34 @@ public class UserInfo {
         this.academicDegrees = academicDegrees;
         this.getAddrDetails = getAddrDetails;
         this.secondLevelDisciplines = secondLevelDisciplines;
+        this.departments = departments;
+        this.subdepartmentList = subdepartmentList;
         this.classes = classes;
         this.classmates = classmates;
+    }
+
+    public List<Specialty> getSpecialtyList() {
+        return specialtyList;
+    }
+
+    public void setSpecialtyList(List<Specialty> specialtyList) {
+        this.specialtyList = specialtyList;
+    }
+
+    public List<Subdepartment> getSubdepartmentList() {
+        return subdepartmentList;
+    }
+
+    public void setSubdepartmentList(List<Subdepartment> subdepartmentList) {
+        this.subdepartmentList = subdepartmentList;
+    }
+
+    public List<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
     }
 
     public List<User> getUsers() {
@@ -265,6 +297,8 @@ public class UserInfo {
                 ", academicDegrees=" + academicDegrees +
                 ", getAddrDetails=" + getAddrDetails +
                 ", secondLevelDisciplines=" + secondLevelDisciplines +
+                ", departments=" + departments +
+                ", subdepartmentList=" + subdepartmentList +
                 ", classes=" + classes +
                 ", classmates=" + classmates +
                 '}';

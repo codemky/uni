@@ -93,5 +93,4 @@ public interface EcommService {
      * @apiNote: 根据用户id查询电子通信方式，并把结果赋值到工具类UserInfo的相应属性中
      */
     public void getEcommByUserIdToUserInfo(UserInfo userInfo , Long user_id);
-
 }

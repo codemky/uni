@@ -9,8 +9,10 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,8 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author laizhouhao
@@ -291,7 +292,7 @@ public class StudentController {
      * @param userinfoApplyApproval, user_id
      * @return Result
      * @apiNote: 审批修改学生主要信息的申请, 点击通过时
-     *//*
+     */
     @ApiOperation(value="审批修改学生主要信息的申请, 点击通过时", notes="未测试")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
@@ -332,12 +333,12 @@ public class StudentController {
         return Result.build(ResultType.ParamError);
     }
 
-    *//**
+    /**
      * Author: laizhouhao 20:50 2019/5/9
      * @param userinfoApplyApproval,user_id
      * @return Result
      * @apiNote: 审批修改学生主要信息的申请, 点击不通过时
-     *//*
+     */
     @ApiOperation(value="审批修改学生主要信息的申请, 点击不通过时", notes="未测试")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
@@ -359,8 +360,39 @@ public class StudentController {
             }
         }
         return Result.build(ResultType.ParamError);
-    }*/
+    }
 
+    /**
+     * Author: laizhouhao 22:06 2019/6/2
+     * @param stu_no
+     * @return 学生详细信息
+     * @apiNote: 根据学号获取学生详细信息
+     */
+    @ApiOperation(value="根据学号获取学生详细信息", notes="未测试")
+    @ApiImplicitParam(name = "stu_no", value = "学号", required = false, dataType = "String" , paramType = "path")
+    @GetMapping(value = "getStuInfoDetailByStuNO/{stu_no}")
+    @ResponseBody
+    public void refuseApplyModifyStudent(@PathVariable String stu_no,HttpServletResponse response) throws IOException {
+        if (stu_no != null) {
+            UserInfo userInfo = new UserInfo();
+            userInfo = userService.selectStuDetailInfoByStuNo(stu_no);
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix + "stuDetailInfo" + stu_no;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if (json == null) {
+                json = Result.build(ResultType.Success)
+                        .appendData("userInfo", userInfo).convertIntoJSON();
+                cache.set(cacheName, json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
+    }
         /**
          * <p>
          *     上传文件方法
@@ -382,6 +414,5 @@ public class StudentController {
             file.transferTo(serverFile);
             return filename;
         }
-
 
     }

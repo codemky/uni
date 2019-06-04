@@ -72,4 +72,18 @@ public class OtherDepartmentServiceImpl implements OtherDepartmentService {
         criteria.andDeletedEqualTo(false);
         return  departmentMapper.selectByExample(departmentExample);
     }
+
+    /**
+     * Author: laizhouhao 20:39 2019/5/19
+     * @param id
+     * @return List<Department></>
+     * @apiNote: 根据id获取有效的学院信息
+     */
+    @Override
+    public List<Department> selectValidById(Long id) {
+        //构造查询条件
+        DepartmentExample departmentExample = new DepartmentExample();
+        departmentExample.createCriteria().andIdEqualTo(id).andDeletedEqualTo(false);
+        return departmentMapper.selectByExample(departmentExample);
+    }
 }

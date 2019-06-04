@@ -133,6 +133,14 @@ public interface UserService {
     List<User> selectIdByUserName(String user_name);
 
     /**
+     * Author: laizhouhao 21:22 2019/6/2
+     * @param stu_no
+     * @return 学生详细信息
+     * @apiNote: 根据学号获取学生的详细信息
+     */
+    UserInfo selectStuDetailInfoByStuNo(String stu_no);
+
+    /**
      * Author: chenenru 8:49 2019/5/22
      * @param user
      * @return  UId

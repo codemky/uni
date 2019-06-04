@@ -27,4 +27,5 @@ public interface OtherSubdepartmentService {
      * @apiNote: 根据科室名查找有效的部门的id
      */
     Long selectIdBySubdepartName(String subdepart_name);
+
 }

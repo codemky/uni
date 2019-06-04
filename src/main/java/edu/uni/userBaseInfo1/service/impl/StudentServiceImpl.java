@@ -6,7 +6,9 @@ import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.RoleMapper;
 import edu.uni.userBaseInfo1.mapper.StudentMapper;
+import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class StudentServiceImpl implements StudentService {
     //持久层接口的对象
     @Autowired
     private StudentMapper studentMapper;  //爆红时由于编译器问题，不影响运行
+    @Autowired
+    private UserMapper userMapper;
     @Autowired
     private RoleMapper roleMapper;
     @Autowired
@@ -265,4 +269,20 @@ public class StudentServiceImpl implements StudentService {
         studentList = studentMapper.selectByExample(studentExample);
         return studentList==null?null:studentList.get(0);
     }
+
+    /**
+     * Author: laizhouhao 21:33 2019/6/2
+     * @param stu_no
+     * @return 学生实体
+     * @apiNote: 根据学号获取学生实体
+     */
+    @Override
+    public Student selectValidStuByStuNo(String stu_no) {
+        //构造查询条件
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria().andStuNoEqualTo(stu_no).andDeletedEqualTo(false);
+        List<Student> studentList = studentMapper.selectByExample(studentExample);
+        return studentList.size()>=1?studentList.get(0):null;
+    }
+
 }
