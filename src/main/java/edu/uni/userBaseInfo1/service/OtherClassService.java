@@ -60,7 +60,7 @@ public interface OtherClassService  {
      * @return Class
      * @apiNote: 根据班级classCode查询对应的班级
      */
-    Class selectByClassCode(String classCode);
+    Class selectClassByClassCode(String classCode);
 
 
 }

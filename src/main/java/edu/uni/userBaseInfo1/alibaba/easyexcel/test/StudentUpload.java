@@ -173,10 +173,8 @@ public class StudentUpload {
         //宿舍
         String liveRoom = (String) getFieldValueByName("liveRoom", o);
 
-        classes =  classService.selectClassByName(className);
-         if (classes.size()>=1){
-             aClass = classes.get(0);
-         }
+        aClass = classService.selectClassByName(className);
+
          //插入其他相同的部分
         insertSame(o);
 

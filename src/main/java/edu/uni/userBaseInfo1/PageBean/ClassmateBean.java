@@ -10,6 +10,7 @@ import java.util.Date;
  * @Version 1.0
  **/
 public class ClassmateBean {
+    private Long studentId;
     private String studentNo;
     private String studentName;
     private Date BeginLearnDate;
@@ -23,7 +24,8 @@ public class ClassmateBean {
     public ClassmateBean() {
     }
 
-    public ClassmateBean(String studentNo, String studentName, Date beginLearnDate, String specialty, String grade, String sex, String phone, String political, String position) {
+    public ClassmateBean(Long studentId, String studentNo, String studentName, Date beginLearnDate, String specialty, String grade, String sex, String phone, String political, String position) {
+        this.studentId = studentId;
         this.studentNo = studentNo;
         this.studentName = studentName;
         BeginLearnDate = beginLearnDate;
@@ -33,6 +35,14 @@ public class ClassmateBean {
         this.phone = phone;
         this.political = political;
         this.position = position;
+    }
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
     }
 
     public String getStudentNo() {
@@ -110,7 +120,8 @@ public class ClassmateBean {
     @Override
     public String toString() {
         return "ClassmateBean{" +
-                "studentNo='" + studentNo + '\'' +
+                "studentId=" + studentId +
+                ", studentNo='" + studentNo + '\'' +
                 ", studentName='" + studentName + '\'' +
                 ", BeginLearnDate=" + BeginLearnDate +
                 ", specialty='" + specialty + '\'' +

@@ -77,12 +77,12 @@ public class OtherClassServiceImpl implements OtherClassService {
     }
 
     @Override
-    public Class selectByClassCode(String classCode) {
+    public Class selectClassByClassCode(String classCode) {
         ClassExample classExample = new ClassExample();
         ClassExample.Criteria criteria = classExample.createCriteria();
         criteria.andCodeEqualTo(classCode);
         criteria.andDeletedEqualTo(false);
         List<Class> classes = classMapper.selectByExample(classExample);
-        return classes.size()>=0?null:classes.get(0);
+        return classes.size()<=0?null:classes.get(0);
     }
 }

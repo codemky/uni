@@ -412,14 +412,15 @@ public class StudentController {
         }
     }
     @ApiOperation(value="根据班级的id查询所有的学生信息", notes="未测试")
-    @ApiImplicitParam(name = "classId", value = "classId", required = false, dataType = "Long" , paramType = "path")
+    @ApiImplicitParam(name = "classCode", value = "classCode", required = false, dataType = "Long" , paramType = "path")
     @GetMapping("student/allClassmates/{classCode}")
     @ResponseBody
     public  void selectClassesByClassId(@PathVariable String classCode, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         String json = null;
         List<ClassmateBean> classmateBeans = new ArrayList<>();
-        Class aClass = otherClassService.selectByClassCode(classCode);
+        Class aClass = otherClassService.selectClassByClassCode(classCode);
+        //System.out.println("bji---->"+aClass.getId());
         List<Classmate> classmates = otherClassmateService.selectByClassId(aClass.getId());
         for (Classmate cm:classmates) {
             Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
@@ -427,6 +428,8 @@ public class StudentController {
             //ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateIdAndPositionId(cm.getId(), null);
             ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
             ClassmateBean classmateBean = new ClassmateBean();
+            //学生id
+            classmateBean.setStudentId(student.getId());
             //学号
             classmateBean.setStudentNo(student.getStuNo());
             //姓名
