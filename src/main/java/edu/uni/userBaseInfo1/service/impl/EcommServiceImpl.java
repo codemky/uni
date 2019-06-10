@@ -248,12 +248,24 @@ public class EcommServiceImpl implements EcommService {
             if(ecommList.get(i).getDeleted() == false){
                 int ecommType = ecommList.get(i).getFlag();
                 switch (ecommType){
-                    case 0: map.put("QQ", ecommList.get(i).getContent()); break;
-                    case 1: map.put("WeChat", ecommList.get(i).getContent());break;
-                    case 2: map.put("Email",ecommList.get(i).getContent());break;
-                    case 3: map.put("MobailPhone", ecommList.get(i).getContent());break;
-                    case 4: map.put("OfficePhone", ecommList.get(i).getContent());break;
-                    case 5: map.put("HomePhone", ecommList.get(i).getContent());break;
+                    case 0:
+                        map.put("QQEcomm", ecommList.get(i));
+                        break;
+                    case 1:
+                        map.put("WeChatEcomm",ecommList.get(i));
+                        break;
+                    case 2:
+                        map.put("EmailEcomm",ecommList.get(i).getId());
+                        break;
+                    case 3:
+                        map.put("MobailPhoneEcomm",ecommList.get(i));
+                        break;
+                    case 4:
+                        map.put("OfficePhoneEcomm",ecommList.get(i));
+                        break;
+                    case 5:
+                        map.put("HomePhoneEcomm",ecommList.get(i));
+                        break;
                 }
             }
         }

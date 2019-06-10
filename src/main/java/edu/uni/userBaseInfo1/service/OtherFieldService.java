@@ -21,4 +21,12 @@ public interface OtherFieldService {
      */
     public List<Field> selectAllDormitoriesBySchoolId(Long schoolId);
 
+    /**
+     * Author: laizhouhao 19:19 2019/6/10
+     * @param id
+     * @return
+     * @apiNote:
+     */
+    public Field selectById(Long id);
+
 }

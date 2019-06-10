@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Author laizhouhao
@@ -367,6 +370,45 @@ public class EmployeeHistoryController {
         }
         return Result.build(ResultType.ParamError);
     }*/
+
+    /**
+     * Author: laizhouhao 18:41 2019/6/10
+     * @param user_id
+     * @return 用户的所有有效的简历信息
+     * @apiNote: 根据用户id获取用户所有的简历信息
+     */
+    @ApiOperation( value = "根据用户id获取用户所有的简历信息",notes = "2019年6月10日 18:47:54 已通过测试" )
+    @GetMapping("/getEmployHistory/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(user_id != null){
+            //查找该用户的所有简历实体
+            List<EmployeeHistory> employeeHistoryList = new ArrayList<>();
+            employeeHistoryList = employeeHistoryService.seleValidEmpHisByUserId(user_id);
+            //获取该用户的所有简历信息详情
+            HashMap<String,Object>map = new HashMap<>();
+            employeeHistoryService.getEmployHistory(map, employeeHistoryList);
+
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"pictureUserId"+ user_id;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("employHistory",map).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
+    }
+
 
     /**
      * <p>

@@ -553,4 +553,43 @@ public class StudentController {
         json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans).convertIntoJSON();
         response.getWriter().write(json);
     }
+
+    /**
+     * Author: laizhouhao 19:35 2019/6/10
+     * @param user_id
+     * @return 学生信息
+     * @apiNote: 根据用户id查找用户的详细信息
+     */
+    @ApiOperation( value = "根据用户id查找学生的详细信息",notes = "2019年6月10日 19:45:11 已通过" )
+    @GetMapping("/getStudentInfo/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(user_id != null){
+            //查找出学生实体
+            List<Student>studentList = new ArrayList<>();
+            studentList = studentService.selectByUserId(user_id);
+            //查找出学生信息
+            HashMap<String,Object>map = new HashMap<>();
+            studentService.getStudent(map, studentList);
+
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"studentInfo"+ user_id;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("studentInfo",map).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
+    }
+
 }

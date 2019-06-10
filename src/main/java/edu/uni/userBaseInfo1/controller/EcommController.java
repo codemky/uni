@@ -300,12 +300,12 @@ public class EcommController {
             //根据用户id查找该用户有多少个通信方式
             List<Ecomm> ecommList = ecommService.selectByUserId(user_id);
             //用户的通信方式详情
-            HashMap<String, Object> map = new HashMap<>();
+            HashMap<String, Object> map = new LinkedHashMap<>();
             ecommService.getUserEcomm(map, ecommList);
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"----"+ user_id;
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"-------"+ user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);

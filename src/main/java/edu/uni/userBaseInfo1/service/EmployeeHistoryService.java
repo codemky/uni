@@ -8,6 +8,7 @@ import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.EmployeeHistory;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface EmployeeHistoryService {
@@ -80,4 +81,12 @@ public interface EmployeeHistoryService {
      * @apiNote: 用户点击申请修改简历
      */
     boolean clickApplyEmployeeHistory(RequestMessage requestMessage);
+
+    /**
+     * Author: laizhouhao 18:33 2019/6/10
+     * @param employeeHistories
+     * @return 用户的所有的有效简历信息
+     * @apiNote: 根据用户简历实体获取用户所有的有效简历的信息详情
+     */
+    void getEmployHistory(HashMap<String,Object>map,List<EmployeeHistory>employeeHistories);
 }

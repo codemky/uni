@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
  * @Description employeeHistory实体类的service层接口的实现类
  * @Date 15:49 2019/4/29
  **/
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -207,5 +209,24 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
         boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
         System.out.println("aaa="+applyApproval);
         return successInfoApply && successApplyApproval;
+    }
+
+    /**
+     * Author: laizhouhao 18:33 2019/6/10
+     * @param employeeHistories
+     * @return 用户的所有的有效简历信息
+     * @apiNote: 根据用户简历实体获取用户所有的有效简历的信息详情
+     */
+    @Override
+    public void getEmployHistory(HashMap<String, Object> map, List<EmployeeHistory> employeeHistories) {
+        //获取用户的所有简历信息，并将放入map中
+        for (int i=0; i<employeeHistories.size(); i++){
+            //判断该简历信息是否有效，有效则加入
+            if(employeeHistories.get(i).getDeleted() == false){
+                map.put("BeginTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(employeeHistories.get(i).getBeginTime()));
+                map.put("EndTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(employeeHistories.get(i).getEndTime()));
+                map.put("Discript", employeeHistories.get(i).getDescript());
+            }
+        }
     }
 }

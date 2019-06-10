@@ -363,7 +363,7 @@ public class LearningDegreeController {
      * @return 用户的学历信息详情
      * @apiNote: 根据用户id获取用户的所有学历信息详情
      */
-    @ApiOperation( value = "根据用户id获取用户的所有学历信息详情",notes = "" )
+    @ApiOperation( value = "根据用户id获取用户的所有学历信息详情",notes = "2019年6月10日 18:32:10 已通过测试" )
     @GetMapping("/getUserDegree/{user_id}")
     @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
@@ -379,7 +379,7 @@ public class LearningDegreeController {
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"pictureUserId"+ user_id;
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"learningDegrees"+ user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);

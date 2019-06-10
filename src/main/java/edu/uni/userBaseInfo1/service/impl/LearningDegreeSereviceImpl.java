@@ -11,6 +11,7 @@ import edu.uni.userBaseInfo1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -264,13 +265,13 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
             //判断该学历信息是否有效，有效则加入
             if(learningDgreeList.get(i).getDeleted() == false){
                 map.put("id", learningDgreeList.get(i).getId());
-                map.put("BeginTime",learningDgreeList.get(i).getBeginTime());
-                map.put("EndTime", learningDgreeList.get(i).getEndTime());
-                map.put("Country",addrCountryService.selectAddrCountryById(learningDgreeList.get(i).getCountryId()));
-                map.put("City", addrCityService.selectAddrCityById(learningDgreeList.get(i).getCityId()));
+                map.put("BeginTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(learningDgreeList.get(i).getBeginTime()));
+                map.put("EndTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(learningDgreeList.get(i).getEndTime()));
+                map.put("Country",addrCountryService.selectAddrCountryById(learningDgreeList.get(i).getCountryId()).getCountryZh());
+                map.put("City", addrCityService.selectAddrCityById(learningDgreeList.get(i).getCityId()).getCityZh());
                 map.put("School","肇庆学院");
-                map.put("Acdemic", myAcademicService.selectById(learningDgreeList.get(i).getAcademicId()));
-                map.put("AcademicDegree", myAcademicDegreeService.selectById(learningDgreeList.get(i).getDegreeId()));
+                map.put("Acdemic", myAcademicService.selectById(learningDgreeList.get(i).getAcademicId()).getName());
+                map.put("AcademicDegree", myAcademicDegreeService.selectById(learningDgreeList.get(i).getDegreeId()).getName());
             }
         }
     }

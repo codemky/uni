@@ -47,10 +47,15 @@ public class OtherFieldServiceImpl implements OtherFieldService {
         }
         else
             return null;
+    }
 
-
-
-
-
+    /**
+     * Author: laizhouhao 19:19 2019/6/10
+     * @param id
+     * @return
+     * @apiNote:
+     */
+    public Field selectById(Long id){
+        return fieldMapper.selectByPrimaryKey(id);
     }
 }

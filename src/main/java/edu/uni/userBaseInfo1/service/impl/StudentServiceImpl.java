@@ -2,6 +2,7 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.administrativestructure.service.UniversityService;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.place.service.FieldService;
 import edu.uni.professionalcourses.service.SpecialtyService;
@@ -43,6 +44,8 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
+    private UniversityService universityService;
+    @Autowired
     private UserinfoApplyService userinfoApplyService;
     @Autowired
     private SpecialtyService specialtyService;
@@ -52,6 +55,10 @@ public class StudentServiceImpl implements StudentService {
     private FieldService fieldService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private OtherFieldService otherFieldService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
     @Autowired
     private EcommService ecommService;
     @Autowired
@@ -319,6 +326,42 @@ public class StudentServiceImpl implements StudentService {
         studentExample.createCriteria().andStuNoEqualTo(stu_no).andDeletedEqualTo(false);
         List<Student> studentList = studentMapper.selectByExample(studentExample);
         return studentList.size()>=1?studentList.get(0):null;
+    }
+
+    /**
+     * Author: laizhouhao 18:55 2019/6/10
+     * @param studentList
+     * @return 用户的有效的学生信息详情
+     * @apiNote: 根据用户的学生实体获取用户的所有有效的学生信息详情
+     */
+    @Override
+    public void getStudent(HashMap<String, Object> map, List<Student> studentList) {
+        //获取用户的学生信息详情，并将放入map中
+        for (int i=0; i<studentList.size(); i++){
+            //判断该学生信息是否有效，有效则加入
+            if(studentList.get(i).getDeleted() == false){
+                map.put("id", studentList.get(i).getId());
+                map.put("University", otherUniversityService.selectValidById(studentList.get(i).getUniversityId()).getName());
+                map.put("StudentNo", studentList.get(i).getStuNo());
+                map.put("BeginLearnDate",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                        .format(studentList.get(i).getBeginLearnDate()));
+                map.put("Grade", studentList.get(i).getGrade());
+                map.put("Sprcialty", specialtyService.selectValidSpeciatyById(studentList.get(i).getSpecialtyId()).get(0).getName());
+                map.put("Class", otherClassService.selectClassByClassId(studentList.get(i).getClassId()).getName());
+                map.put("Politicial", politicalAffiliationService
+                        .selectPoliticalAffiliationById(studentList.get(i).getPoliticalId()).getPolitical());
+                map.put("Field", otherFieldService.selectById(studentList.get(i).getLiveRoom()).getName());
+                //查找该用户的详细地址
+                List<Address> addressList = new ArrayList<>();
+                addressList.add(addressService.selectById(studentList.get(i).getHomeAddressId()));
+                //存放地址
+                HashMap<String, Object> addrMap = new HashMap<>();
+                addressService.getAddress(addrMap, addressList);
+                map.put("Address",addrMap.get("CurAddr"));
+
+                map.put("Ecomm", ecommService.selectById(studentList.get(i).getPhoneEcommId()).getContent());
+            }
+        }
     }
 
 }
