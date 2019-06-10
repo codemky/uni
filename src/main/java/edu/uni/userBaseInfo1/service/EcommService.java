@@ -11,6 +11,7 @@ import edu.uni.userBaseInfo1.bean.Ecomm;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface EcommService {
@@ -93,4 +94,12 @@ public interface EcommService {
      * @apiNote: 根据用户id查询电子通信方式，并把结果赋值到工具类UserInfo的相应属性中
      */
     public void getEcommByUserIdToUserInfo(UserInfo userInfo , Long user_id);
+
+    /**
+     * Author: laizhouhao 20:21 2019/6/9
+     * @param ecommList
+     * @return 用户通信方式
+     * @apiNote: 根据用户id获取用户的通信方式
+     */
+    public void getUserEcomm(HashMap<String, Object>map, List<Ecomm> ecommList);
 }

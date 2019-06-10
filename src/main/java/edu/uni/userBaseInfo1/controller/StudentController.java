@@ -411,6 +411,7 @@ public class StudentController {
             response.getWriter().write(json);
         }
     }
+
     @ApiOperation(value="根据班级的id查询所有的学生信息", notes="未测试")
     @ApiImplicitParam(name = "classCode", value = "classCode", required = false, dataType = "Long" , paramType = "path")
     @GetMapping("student/allClassmates/{classCode}")
@@ -424,7 +425,8 @@ public class StudentController {
         List<Classmate> classmates = otherClassmateService.selectByClassId(aClass.getId());
         for (Classmate cm:classmates) {
             Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
-            UserInfo userInfo = userService.selectUserInfoAllByUserId(student.getUserId());
+            //UserInfo userInfo = userService.selectUserInfoAllByUserId(student.getUserId());
+            User user = userService.selectUserById(student.getUserId());
             //ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateIdAndPositionId(cm.getId(), null);
             ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
             ClassmateBean classmateBean = new ClassmateBean();
@@ -433,7 +435,7 @@ public class StudentController {
             //学号
             classmateBean.setStudentNo(student.getStuNo());
             //姓名
-            classmateBean.setStudentName(userInfo.getUsers().get(0).getUserName());
+            classmateBean.setStudentName(user.getUserName());
             //入学日期
             classmateBean.setBeginLearnDate(student.getBeginLearnDate());
             //主修专业
@@ -442,7 +444,7 @@ public class StudentController {
             //所在年级
             classmateBean.setGrade(student.getGrade());
             //性别
-            if (userInfo.getUsers().get(0).getUserSex().equals(0)){
+            if (user.getUserSex().equals(0)){
                 classmateBean.setSex("女");
             }else {
                 classmateBean.setSex("男");

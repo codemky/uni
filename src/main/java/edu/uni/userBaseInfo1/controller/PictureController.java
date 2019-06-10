@@ -23,6 +23,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Author laizhouhao
@@ -234,6 +237,44 @@ public class PictureController {
         byte[] bytes = new byte[inputStream.available()];
         inputStream.read(bytes, 0, inputStream.available());
         return bytes;
+    }
+
+    /**
+     * Author: laizhouhao 22:07 2019/6/9
+     * @param user_id
+     * @return 用户所有的照片信息详情
+     * @apiNote: 根据用户id获取用户各种种类照片信息详情
+     */
+    @ApiOperation( value = "根据用户id获取用户各种种类对照片信息详情",notes = "2019年6月10日 15:53:48 已通过测试" )
+    @GetMapping("/getPicture/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(user_id != null){
+            //获取用户的所有照片实体
+            List<Picture> pictureList = new ArrayList<>();
+            pictureList = pictureService.selectByUserId(user_id);
+            //获取用户的所有照片的详细信息
+            HashMap<String,Object>pictureMap = new HashMap<>();
+            pictureService.getUserPitutre(pictureMap, pictureList);
+
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"Pictures"+ user_id;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("userPicture",pictureMap).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
     }
 
 }

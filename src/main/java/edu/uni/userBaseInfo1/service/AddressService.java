@@ -105,4 +105,12 @@ public interface AddressService {
      * @apiNote: 传入一个HashMap和Address对象，把Address里的id字段对应的信息内容放入到map里
      */
     public void selectAllInfoToMap(HashMap map, Address address);
+
+    /**
+     * Author: laizhouhao 21:09 2019/6/9
+     * @param
+     * @return 用户的所有地址的详细信息
+     * @apiNote: 根据用户的地址主要信息获取所有地址的详细信息
+     */
+    public void getAddress(HashMap<String,Object>map, List<Address> addressList);
 }

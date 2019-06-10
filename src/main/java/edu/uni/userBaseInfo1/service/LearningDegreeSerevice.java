@@ -89,4 +89,12 @@ public interface LearningDegreeSerevice {
      * @apiNote: 传入一个HashMap和LearningDegree对象，把LearningDegree里的id字段对应的信息内容放入到map里
      */
     public void selectAllInfoToMap(HashMap map,LearningDegree learningDegree);
+
+    /**
+     * Author: laizhouhao 16:28 2019/6/10
+     * @param learningDgreeList
+     * @return 用户的学历信息
+     * @apiNote: 根据用户的所有学历信息实体获取用户的所有学历信息详情
+     */
+    void getLearningDegree(HashMap<String,Object>map,List<LearningDegree>learningDgreeList);
 }

@@ -3,6 +3,7 @@ package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -99,4 +100,11 @@ public interface StudentRelationService {
          */
         boolean clickApplyStudentRelation(RequestMessage requestMessage);
 
+        /**
+         * Author: laizhouhao 15:58 2019/6/10
+         * @param studentRelationList
+         * @return 用户的亲属信息
+         * @apiNote: 根据用户的亲属实体获取用户所有亲属的详细信息
+         */
+        void getStuRelationInfo(HashMap<String, Object>map, List<StudentRelation>studentRelationList);
 }

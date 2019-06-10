@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
  * @Description picture实体类的service层接口的实现类
  * @Date 15:49 2019/4/29
  **/
+import java.util.HashMap;
 import java.util.List;
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -140,5 +141,27 @@ public class PictureServiceImpl implements PictureService {
         //根据照片查询
         List<Picture> pictures = pictureMapper.selectByExample(pictureExample);
         return pictures.size()>=1?pictures.get(0):null;
+    }
+
+    /**
+     * Author: laizhouhao 21:59 2019/6/9
+     * @param pictureList
+     * @return 用户的照片信息
+     * @apiNote: 根据用户的照片实体获取照片的详情
+     */
+    @Override
+    public void getUserPitutre(HashMap<String, Object> map, List<Picture> pictureList) {
+        //获取用户的各种照片信息，并将放入map中
+        for (int i=0; i<pictureList.size(); i++){
+            //判断该联系方式是否有效，有效则加入
+            if(pictureList.get(i).getDeleted() == false){
+                boolean pictureType = pictureList.get(i).getFlag();
+                if(pictureType == false){
+                    map.put("PaperPicture", pictureList.get(i).getPictureName());
+                }else{
+                    map.put("LifePicture", pictureList.get(i).getPictureName());
+                }
+            }
+        }
     }
 }

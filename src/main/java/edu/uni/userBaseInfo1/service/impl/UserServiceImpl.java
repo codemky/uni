@@ -445,96 +445,11 @@ public class UserServiceImpl implements UserService {
      * @return UserInfo
      * @apiNote: 根据用户id获取该用户的所有信息
      */
-    @Override
-    public UserInfo selectUserInfoAllByUserId(Long user_id) {
-        UserInfo userInfo = new UserInfo();
-        UserInfo info = new UserInfo();
-        //根据id获取用户在user表的主要信息
-        User user = userMapper.selectByPrimaryKey(user_id);
-        //将用户主要信息加入UserInfo这个信息集合里面
-        List<User> userList = new ArrayList<>();
-        userList.add(user);
-        userInfo.setUsers(userList);
-        //将该用户的学校信息加入UserInfo这个信息集合里面,
-//        userInfo.setUniversity(universityMapper.selectUniversityByid(user.getUniversityId()));
-        //判断用户的类型
-        int type = user.getUserType();
-        if(type == 0|| type == 3 || type == 4 || type == 5 || type == 6){
-            return userInfo;
-        }else if(type == 1 ){
-            //将该用户的学生主要信息加入UserInfo这个信息集合里面
-            List<Student> studentList = studentService.selectValidStudentByUserId(user_id);
-            userInfo.setStudents(studentList);
-            //将该学生的主修专业加入集合
-            SecondLevelDiscipline secondLevelDiscipline = mySecondLevelDisciplineService
-                    .selectValidSecondLevelDisciplineById(userInfo.getStudents().get(0).getSpecialtyId());
-            List<SecondLevelDiscipline> secondLevelDisciplineList = new ArrayList<>();
-            secondLevelDisciplineList.add(secondLevelDiscipline);
-            userInfo.setSecondLevelDisciplines(secondLevelDisciplineList);
-            //将该学生的政治面貌加入集合
-            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
-            politicalAffiliationList.add(politicalAffiliationMapper
-                    .selectByPrimaryKey(userInfo.getStudents().get(0).getPoliticalId()));
-            userInfo.setPoliticalAffiliations(politicalAffiliationList);
-            //将该学生的宿舍加入集合
-
-            //将该学生的当前住址、通信地址地址加入集合
-            List<Address> addresses = new ArrayList<>();
-            addresses.add(addressService.selectValidAddressById(studentList.get(0).getHomeAddressId()));
-            addresses.add(addressService.selectValidAddressById(studentList.get(0).getPhoneEcommId()));
-            userInfo.setAddresses(addresses);
-            //将该学生的地址的国家、省份、市、区、街道加入集合
-            info = new GetAddrDetail().reviceAddrDetail(addresses);
-            userInfo.setAddrCountries(info.getAddrCountries());
-            userInfo.setAddrStates(info.getAddrStates());
-            userInfo.setAddrCities(info.getAddrCities());
-            userInfo.setAddrAreas(info.getAddrAreas());
-            userInfo.setAddrStreets(info.getAddrStreets());
-            //将该学生的亲属信息加入集合
-            userInfo.setStudentRelations(studentRelationService.selectValidRelaByUserId(user_id));
-            //将学生的班级信息加入集合
-        }else if(type == 2){
-            //根据用户id查找有效的职员信息，加入信息集合中
-            List<Employee> employees = employeeService.selectValidByUserId(user_id);
-            userInfo.setEmployees(employees);
-            if(employees.size()>=1) {
-                //将所属学院信息加入信息集合
-                List<Department> departmentList = otherDepartmentService.selectValidById(employees.get(0).getDepartmentId());
-                userInfo.setDepartments(departmentList);
-                //将当前所在科室加入信息集合
-                List<Subdepartment> subdepartmentList = otherSubdepartmentService
-                        .selectValidSubDepartByDepartId(employees.get(0).getSubdepartmentId());
-                userInfo.setSubdepartmentList(subdepartmentList);
-            }
-            //将雇员简历加入信息集合
-            userInfo.setEmployeeHistories(employeeHistoryService.seleValidEmpHisByUserId(user_id));
-            //将主修专业加入信息集合
-            List<SecondLevelDiscipline> secondLevelDisciplineList = new ArrayList<>();
-            secondLevelDisciplineList.add(mySecondLevelDisciplineService
-                    .selectValidSecondLevelDisciplineById(employees.get(0).getDisciplineId()));
-            userInfo.setSecondLevelDisciplines(secondLevelDisciplineList);
-            //将政治面貌加入信息集合
-            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
-            politicalAffiliationList.add(politicalAffiliationMapper
-                    .selectByPrimaryKey(userInfo.getStudents().get(0).getPoliticalId()));
-            userInfo.setPoliticalAffiliations(politicalAffiliationList);
-            //将当前岗位加入信息集合
-
-            //将教职工的地址加入信息集合
-            List<Address> addresses = new ArrayList<>();
-            addresses.add(addressService.selectValidAddressById(employees.get(0).getHomeAddressId()));
-            addresses.add(addressService.selectValidAddressById(employees.get(0).getPhoneEcommId()));
-            userInfo.setAddresses(addresses);
-            //将该教职工的地址的国家、省份、市、区、街道加入集合
-            info = new GetAddrDetail().reviceAddrDetail(addresses);
-            userInfo.setAddrCountries(info.getAddrCountries());
-            userInfo.setAddrStates(info.getAddrStates());
-            userInfo.setAddrCities(info.getAddrCities());
-            userInfo.setAddrAreas(info.getAddrAreas());
-            userInfo.setAddrStreets(info.getAddrStreets());
-        }
-        return userInfo;
-    }
+//    @Override
+//    public UserInfo selectUserInfoAllByUserId(Long user_id) {
+//
+//        return null;
+//    }
 
     /**
      * Author: laizhouhao 15:47 2019/5/18
@@ -556,6 +471,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long insertAndGetUId(User user) {
         return Long.valueOf(userMapper.insert(user));
+    }
+
+    /**
+     * Author: laizhouhao 19:56 2019/6/9
+     * @param user_id
+     * @return 根据用户id查找用户的类型
+     * @apiNote:
+     */
+    @Override
+    public String getUserType(Long user_id) {
+        User user = userMapper.selectByPrimaryKey(user_id);
+        int type = user.getUserType();
+        switch (type){
+            case 0: return "游客";
+            case 1: return "学生";
+            case 2: return "教职员工";
+            case 3: return "校外员工";
+            case 4: return "学生亲属";
+            case 5: return "系统运营者";
+            case 6: return "学校信息主管";
+        }
+        return null;
     }
 
     /**

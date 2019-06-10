@@ -264,4 +264,84 @@ public class AddressServiceImpl implements AddressService {
         map.put("flag",address.getFlag());
 
     }
+
+    /**
+     * Author: laizhouhao 21:09 2019/6/9
+     * @param
+     * @return 用户的所有地址的详细信息
+     * @apiNote: 根据用户的地址主要信息获取所有地址的详细信息
+     */
+    @Override
+    public void getAddress(HashMap<String, Object> map, List<Address> addressList) {
+        HashMap<String,Object> eachMap = new HashMap<>();
+        //获取用户的各种地址信息
+        for (int i=0; i<addressList.size(); i++){
+            //判断该地址信息是否有效，有效则加入
+            if(addressList.get(i).getDeleted() == false){
+                int addressType = addressList.get(i).getFlag();
+                switch (addressType){
+                    //查找当前住址
+                    case 0:
+                        eachMap.put("Country", addrCountryService.selectAddrCountryById(addressList.get(i).getCountry()).getCountryZh());
+                        eachMap.put("State",addrStateService.selectAddrStateById(addressList.get(i).getState()).getStateZh());
+                        eachMap.put("City",addrCityService.selectAddrCityById(addressList.get(i).getCity()).getCityZh());
+                        eachMap.put("Area", addrAreaService.selectAddrAreaById(addressList.get(i).getArea()).getAreaZh());
+                        eachMap.put("Street", addressList.get(i).getStreet());
+                        eachMap.put("Detail",addressList.get(i).getDetail());
+                        eachMap.put("ZipCode", addressList.get(i).getZipCode());
+                        eachMap.put("Phone", addressList.get(i).getTelephone());
+                        map.put("CurAddr", eachMap);
+                        break;
+                    //查找收货地址
+                    case 1:
+                        eachMap.put("Country", addrCountryService.selectAddrCountryById(addressList.get(i).getCountry()).getCountryZh());
+                        eachMap.put("State",addrStateService.selectAddrStateById(addressList.get(i).getState()).getStateZh());
+                        eachMap.put("City",addrCityService.selectAddrCityById(addressList.get(i).getCity()).getCityZh());
+                        eachMap.put("Area", addrAreaService.selectAddrAreaById(addressList.get(i).getArea()).getAreaZh());
+                        eachMap.put("Street", addressList.get(i).getStreet());
+                        eachMap.put("Detail",addressList.get(i).getDetail());
+                        eachMap.put("ZipCode", addressList.get(i).getZipCode());
+                        eachMap.put("Phone", addressList.get(i).getTelephone());
+                        map.put("ReciveAddr", eachMap);
+                        break;
+                    //查找曾今住址
+                    case 2:
+                        eachMap.put("Country", addrCountryService.selectAddrCountryById(addressList.get(i).getCountry()).getCountryZh());
+                        eachMap.put("State",addrStateService.selectAddrStateById(addressList.get(i).getState()).getStateZh());
+                        eachMap.put("City",addrCityService.selectAddrCityById(addressList.get(i).getCity()).getCityZh());
+                        eachMap.put("Area", addrAreaService.selectAddrAreaById(addressList.get(i).getArea()).getAreaZh());
+                        eachMap.put("Street", addressList.get(i).getStreet());
+                        eachMap.put("Detail",addressList.get(i).getDetail());
+                        eachMap.put("ZipCode", addressList.get(i).getZipCode());
+                        eachMap.put("Phone", addressList.get(i).getTelephone());
+                        map.put("PreAddr", eachMap);
+                        break;
+                    //查找通信地址
+                    case 3:
+                        eachMap.put("Country", addrCountryService.selectAddrCountryById(addressList.get(i).getCountry()).getCountryZh());
+                        eachMap.put("State",addrStateService.selectAddrStateById(addressList.get(i).getState()).getStateZh());
+                        eachMap.put("City",addrCityService.selectAddrCityById(addressList.get(i).getCity()).getCityZh());
+                        eachMap.put("Area", addrAreaService.selectAddrAreaById(addressList.get(i).getArea()).getAreaZh());
+                        eachMap.put("Street", addressList.get(i).getStreet());
+                        eachMap.put("Detail",addressList.get(i).getDetail());
+                        eachMap.put("ZipCode", addressList.get(i).getZipCode());
+                        eachMap.put("Phone", addressList.get(i).getTelephone());
+                        map.put("EcommAddr", eachMap);
+                        break;
+                    //查找办公地址
+                    case 4:
+                        eachMap.put("Country", addrCountryService.selectAddrCountryById(addressList.get(i).getCountry()).getCountryZh());
+                        eachMap.put("State",addrStateService.selectAddrStateById(addressList.get(i).getState()).getStateZh());
+                        eachMap.put("City",addrCityService.selectAddrCityById(addressList.get(i).getCity()).getCityZh());
+                        eachMap.put("Area", addrAreaService.selectAddrAreaById(addressList.get(i).getArea()).getAreaZh());
+                        eachMap.put("Street", addressList.get(i).getStreet());
+                        eachMap.put("Detail",addressList.get(i).getDetail());
+                        eachMap.put("ZipCode", addressList.get(i).getZipCode());
+                        eachMap.put("Phone", addressList.get(i).getTelephone());
+                        map.put("OfficeAddr", eachMap);
+                        break;
+                }
+            }
+        }
+    }
 }

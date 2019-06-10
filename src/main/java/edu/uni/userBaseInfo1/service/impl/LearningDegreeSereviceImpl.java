@@ -250,4 +250,28 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
         map.put("degree", myAcademicDegreeService.selectById(learningDegree.getDegreeId()).getName());
 
     }
+
+    /**
+     * Author: laizhouhao 16:28 2019/6/10
+     * @param learningDgreeList
+     * @return 用户的学历信息
+     * @apiNote: 根据用户的所有学历信息实体获取用户的所有学历信息详情
+     */
+    @Override
+    public void getLearningDegree(HashMap<String, Object> map, List<LearningDegree> learningDgreeList) {
+        //获取用户的所有学历信息，并将放入map中
+        for (int i=0; i<learningDgreeList.size(); i++){
+            //判断该学历信息是否有效，有效则加入
+            if(learningDgreeList.get(i).getDeleted() == false){
+                map.put("id", learningDgreeList.get(i).getId());
+                map.put("BeginTime",learningDgreeList.get(i).getBeginTime());
+                map.put("EndTime", learningDgreeList.get(i).getEndTime());
+                map.put("Country",addrCountryService.selectAddrCountryById(learningDgreeList.get(i).getCountryId()));
+                map.put("City", addrCityService.selectAddrCityById(learningDgreeList.get(i).getCityId()));
+                map.put("School","肇庆学院");
+                map.put("Acdemic", myAcademicService.selectById(learningDgreeList.get(i).getAcademicId()));
+                map.put("AcademicDegree", myAcademicDegreeService.selectById(learningDgreeList.get(i).getDegreeId()));
+            }
+        }
+    }
 }

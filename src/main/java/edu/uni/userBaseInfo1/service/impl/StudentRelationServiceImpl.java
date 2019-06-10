@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -239,6 +240,53 @@ public class StudentRelationServiceImpl implements StudentRelationService {
         applyApproval.setApplyUserId(byWho);
         boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
         return successInfoApply && successApplyApproval;
+    }
+
+    /**
+     * Author: laizhouhao 15:58 2019/6/10
+     * @param studentRelationList
+     * @return 用户的亲属信息
+     * @apiNote: 根据用户的亲属实体获取用户所有亲属的详细信息
+     */
+    @Override
+    public void getStuRelationInfo(HashMap<String, Object> map, List<StudentRelation> studentRelationList) {
+        //获取用户的所有亲属信息，并将放入map中
+        for (int i=0; i<studentRelationList.size(); i++){
+            //判断该亲属信息是否有效，有效则加入
+            if(studentRelationList.get(i).getDeleted() == false){
+                int stuRelationType = studentRelationList.get(i).getRelationship();
+                switch (stuRelationType){
+                    case 0:
+                        map.put("MotherName",studentRelationList.get(i).getRelaName());
+                        map.put("MotherRelation", "母亲");
+                        break;
+                    case 1:
+                        map.put("FatherName",studentRelationList.get(i).getRelaName());
+                        map.put("FatherRelation", "父亲");
+                        break;
+                    case 2:
+                        map.put("OldBrotherName",studentRelationList.get(i).getRelaName());
+                        map.put("OldBrotherRelation", "哥哥");
+                        break;
+                    case 3:
+                        map.put("LitBrotherName",studentRelationList.get(i).getRelaName());
+                        map.put("LitBrotherRelation", "弟弟");
+                        break;
+                    case 4:
+                        map.put("OldSisterName",studentRelationList.get(i).getRelaName());
+                        map.put("OldSisterRelation", "姐姐");
+                        break;
+                    case 5:
+                        map.put("LitSisterName",studentRelationList.get(i).getRelaName());
+                        map.put("LitSisterRelation", "妹妹");
+                        break;
+                    case 6:
+                        map.put("OtherName",studentRelationList.get(i).getRelaName());
+                        map.put("OtherRelation", "其他");
+                        break;
+                }
+            }
+        }
     }
 
 }

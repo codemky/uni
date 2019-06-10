@@ -8,6 +8,7 @@ import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Picture;
 import edu.uni.userBaseInfo1.bean.PictureExample;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface PictureService {
@@ -83,10 +84,11 @@ public interface PictureService {
     Picture selectPictureByUserId(Long user_id);
 
     /**
-     * Author: laizhouhao 15:39 2019/5/14
-     * @param requestMessage
-     * @return boolean
-     * @apiNote: 用户点击申请修改照片信息
+     * Author: laizhouhao 21:59 2019/6/9
+     * @param pictureList
+     * @return 用户的照片信息
+     * @apiNote: 根据用户的照片实体获取照片的详情
      */
+    void getUserPitutre(HashMap<String,Object>map, List<Picture> pictureList);
 
 }

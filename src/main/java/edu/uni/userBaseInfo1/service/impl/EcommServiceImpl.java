@@ -20,6 +20,7 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
@@ -231,5 +232,30 @@ public class EcommServiceImpl implements EcommService {
 
 
 
+    }
+
+    /**
+     * Author: laizhouhao 20:21 2019/6/9
+     * @param ecommList
+     * @return 用户通信方式
+     * @apiNote: 根据用户id获取用户的通信方式
+     */
+    @Override
+    public void getUserEcomm(HashMap<String, Object> map, List<Ecomm> ecommList) {
+        //获取用户的各种通信方式，并将放入map中
+        for (int i=0; i<ecommList.size(); i++){
+            //判断该联系方式是否有效，有效则加入
+            if(ecommList.get(i).getDeleted() == false){
+                int ecommType = ecommList.get(i).getFlag();
+                switch (ecommType){
+                    case 0: map.put("QQ", ecommList.get(i).getContent()); break;
+                    case 1: map.put("WeChat", ecommList.get(i).getContent());break;
+                    case 2: map.put("Email",ecommList.get(i).getContent());break;
+                    case 3: map.put("MobailPhone", ecommList.get(i).getContent());break;
+                    case 4: map.put("OfficePhone", ecommList.get(i).getContent());break;
+                    case 5: map.put("HomePhone", ecommList.get(i).getContent());break;
+                }
+            }
+        }
     }
 }

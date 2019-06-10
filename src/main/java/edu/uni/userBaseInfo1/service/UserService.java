@@ -116,13 +116,13 @@ public interface UserService {
      */
     List<User> selectTouristByIdentification(String identification);
 
-    /**
-     * Author: laizhouhao 19:24 2019/5/15
-     * @param user_id
-     * @return UserInfo
-     * @apiNote: 根据用户id获取该用户的所有信息
-     */
-    UserInfo selectUserInfoAllByUserId(Long user_id);
+//    /**
+//     * Author: laizhouhao 19:24 2019/5/15
+//     * @param user_id
+//     * @return UserInfo
+//     * @apiNote: 根据用户id获取该用户的所有信息
+//     */
+//    UserInfo selectUserInfoAllByUserId(Long user_id);
 
     /**
      * Author: laizhouhao 15:47 2019/5/18
@@ -147,4 +147,12 @@ public interface UserService {
      * @apiNote: 插入一条用户记录并获取新插入记录的自增id的值
      */
     Long insertAndGetUId(User user);
+
+    /**
+     * Author: laizhouhao 19:56 2019/6/9
+     * @param user_id
+     * @return 根据用户id查找用户的类型
+     * @apiNote:
+     */
+    String getUserType(Long user_id);
 }

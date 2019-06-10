@@ -266,20 +266,20 @@ public class UserController {
     }
 
     /**
-     * Author: laizhouhao 16:26 2019/5/10
+     * Author: laizhouhao 19:53 2019/6/9
      * @param user_id
-     * @return userInfo
-     * @apiNote: 根据用户id获取用户所有信息
+     * @return userType
+     * @apiNote: 根据用户id获取用户类型
      */
-    @ApiOperation( value = "根据用户id获取用户所有信息",notes = "未测试" )
-    @GetMapping("userInfoListAll/{user_id}")
+    @ApiOperation( value = "根据用户id获取用户类型",notes = "2019年6月9日 20:09:47 已通过测试" )
+    @GetMapping("/getUserType/{user_id}")
     @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
     @ResponseBody
     public void receiveUserInfoListAll(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
-        //检验页面传来的id是否存在
+        //检验页面传来的user_id是否存在
         if(user_id != null){
-            UserInfo userInfo = new UserInfo();
-            userInfo = userService.selectUserInfoAllByUserId(user_id);
+            //查找用户类型
+            String userType = userService.getUserType(user_id);
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
@@ -290,7 +290,7 @@ public class UserController {
             //如果在缓存中找不到，那就从数据库里找
             if(json == null){
                 json = Result.build(ResultType.Success)
-                        .appendData("userInfo",userInfo).convertIntoJSON();
+                        .appendData("userType",userType).convertIntoJSON();
                 cache.set(cacheName,json);
             }
             //到最后通过response对象返回json格式字符串的数据

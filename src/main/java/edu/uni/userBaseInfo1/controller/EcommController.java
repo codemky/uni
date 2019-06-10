@@ -10,6 +10,7 @@ import edu.uni.bean.ResultType;
 import edu.uni.config.GlobalConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,7 @@ import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 //填写description内容可以在测试模块显示相应的文字和模块
 @Api(description = "电子通信模块")
@@ -284,6 +282,42 @@ public class EcommController {
                     convertIntoJSON());
             }
 
+    }
+
+    /**
+     * Author: laizhouhao 20:40 2019/6/9
+     * @param user_id
+     * @return 用户通信方式
+     * @apiNote: 根据用户id获取用户的通信方式
+     */
+    @ApiOperation( value = "根据用户id获取用户的通信方式",notes = "2019年6月9日 21:05:01 已通过测试" )
+    @GetMapping("/getUserEcomm/{user_id}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
+        //检验页面传来的id是否存在
+        if(user_id != null){
+            //根据用户id查找该用户有多少个通信方式
+            List<Ecomm> ecommList = ecommService.selectByUserId(user_id);
+            //用户的通信方式详情
+            HashMap<String, Object> map = new HashMap<>();
+            ecommService.getUserEcomm(map, ecommList);
+            //设置返回的数据格式
+            response.setContentType("application/json;charset=utf-8");
+            //拼接缓存键名（字符串）
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"----"+ user_id;
+            //尝试在缓存中通过键名获取相应的键值
+            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+            String json = cache.get(cacheName);
+            //如果在缓存中找不到，那就从数据库里找
+            if(json == null){
+                json = Result.build(ResultType.Success)
+                        .appendData("userEcomm",map).convertIntoJSON();
+                cache.set(cacheName,json);
+            }
+            //到最后通过response对象返回json格式字符串的数据
+            response.getWriter().write(json);
+        }
     }
 
     /**
