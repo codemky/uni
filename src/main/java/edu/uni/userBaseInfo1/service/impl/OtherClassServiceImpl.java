@@ -85,4 +85,25 @@ public class OtherClassServiceImpl implements OtherClassService {
         List<Class> classes = classMapper.selectByExample(classExample);
         return classes.size()<=0?null:classes.get(0);
     }
+
+    /**
+     * Author: mokuanyuan 17:48 2019/6/7
+     * @param grade
+     * @param SpecialtyId
+     * @return List<Class>
+     * @apiNote: 根据年级和专业id查询相应的班级
+     */
+    @Override
+    public List<Class> selectClassByGradeAndSpecialtyId(Integer grade, Long SpecialtyId) {
+        ClassExample example = new ClassExample();
+        ClassExample.Criteria criteria = example.createCriteria();
+        criteria.andSpecialtyIdEqualTo(SpecialtyId);
+        criteria.andCyearEqualTo(grade);
+        criteria.andDeletedEqualTo(false);
+
+        //注意！！！该方法没有加学校id就进行搜索时因为是先选择了相应的专业后再调用这个方法的（搜索专业时有加学校条件搜索）
+        //既然都已经选了某个学校的专业了，那对应的班级应该也是同一个学校的才对
+        return classMapper.selectByExample(example);
+
+    }
 }

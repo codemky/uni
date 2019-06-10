@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -157,7 +158,7 @@ public class ApprovalMainController {
     }
 
     /**
-     * Author: laizhouhao 16:40 2019/4/29
+     * Author: laizhouhao 16:40 2019/4/29  Modified：mokuanyuan
      * @param approvalMain
      * @return 新增审批步骤规定信息结果
      * @apiNote 新增审批步骤规定信息
@@ -168,37 +169,23 @@ public class ApprovalMainController {
     @ResponseBody
     public Result create(@RequestBody(required = false)ApprovalMain approvalMain){
         if(approvalMain!=null){
-            boolean success = approvalMainService.insert(approvalMain);
-            if(success){
-                cache.delete(ApprovalMainController.CacheNameHelper.ListAll_CacheName);
+            approvalMain.setDatetime(new Date());
+            approvalMain.setByWho((long) 1);
+            approvalMain.setDeleted(false);
+            approvalMain.setUniversityId((long) 1);
+            System.out.println(approvalMain);
+            int success = approvalMainService.insert(approvalMain);
+            if(success == 1){
                 return Result.build(ResultType.Success);
             }else{
-                return Result.build(ResultType.Failed);
+                if(success == 0)
+                    return Result.build(ResultType.Failed);
+                if(success == -1)
+                    return Result.build(ResultType.Disallow);
             }
         }
         return Result.build(ResultType.ParamError);
     }
-
-//    /**
-//     * Author: laizhouhao 16:47 2019/4/29
-//     * @param id
-//     * @return 删除审批规定信息结果
-//     */
-//    @ApiOperation(value="删除审批规定信息", notes="2019年5月6日 18:05:43 已通过测试")
-//    @ApiImplicitParam(name = "id", value = "审批规定id", required = true, dataType = "Long", paramType = "path")
-//    @DeleteMapping("/approvalMain/{id}")   //delete请求
-//    @ResponseBody
-//    public Result destroy(@PathVariable long id){
-//        boolean success = approvalMainService.delete(id);
-//        if(success){
-//            // 清空相关缓存
-//            cache.delete(ApprovalMainController.CacheNameHelper.ListAll_CacheName);
-//            return Result.build(ResultType.Success);
-//        }else{
-//            return Result.build(ResultType.Failed);
-//        }
-//    }
-
 
 
     /**
@@ -213,7 +200,11 @@ public class ApprovalMainController {
     @ResponseBody
     public Result update(@RequestBody(required = false)ApprovalMain approvalMain){
         if(approvalMain != null && approvalMain.getId() != null){
-            boolean success = approvalMainService.update(approvalMain);
+            ApprovalMain new_approvalMain = approvalMainService.selectById(approvalMain.getId());
+            new_approvalMain.setType(approvalMain.getType());
+            new_approvalMain.setName(approvalMain.getName());
+
+            boolean success = approvalMainService.update(new_approvalMain);
             if(success){
                 //清除相应的缓存
                 cache.delete(ApprovalMainController.CacheNameHelper.Receive_CacheNamePrefix + approvalMain.getId());
@@ -226,25 +217,5 @@ public class ApprovalMainController {
         return Result.build(ResultType.ParamError);
     }
 
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-        //String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-        //String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
-    }
+
 }

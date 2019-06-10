@@ -3,16 +3,21 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.place.service.FieldService;
+import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.RoleMapper;
 import edu.uni.userBaseInfo1.mapper.StudentMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
+import org.apache.shiro.crypto.hash.Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -39,10 +44,40 @@ public class StudentServiceImpl implements StudentService {
     private ApprovalMainService approvalMainService;
     @Autowired
     private UserinfoApplyService userinfoApplyService;
+    @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
+    private FieldService fieldService;
+    @Autowired
+    private AddressService addressService;
+    @Autowired
+    private EcommService ecommService;
+    @Autowired
+    private OtherClassService otherClassService;
+
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
+
+    /**
+     * Author: mokuanyuan 20:02 2019/6/9
+     * @param map
+     * @param userId
+     * @apiNote: 把student对象里的id信息内容查询出来，并把相应的信息放进map里
+     */
+    public void selectByUserIdToMap(HashMap map , Student student){
+        map.put("student_no",student.getStuNo());
+        map.put("begin_learn", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(student.getBeginLearnDate()));
+        map.put("grade",student.getGrade());
+        map.put("specialty", specialtyService.select(student.getSpecialtyId()).getName());
+        map.put("political", politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId()).getPolitical());
+        map.put("dormitory", fieldService.select(student.getLiveRoom()).getName());
+        map.put("class",otherClassService.select(student.getClassId()).getName());
+
+    }
 
     /**
      * Author: laizhouhao 10:14 2019/4/30
@@ -203,15 +238,15 @@ public class StudentServiceImpl implements StudentService {
 //            System.out.println("oldId = "+oldId);
         //将要插入的记录设置为无效
         student.setDeleted(true);
-        //将新纪录插入Ecomm表
+        //将新纪录插入student表
         studentMapper.insert(student);
         //新纪录的id
         Long newId = student.getId();
         //向userinfoApply增加审批业务id
         userInfo_apply.setApprovalMainId(approvalMainService.
                 selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改学生主要信息"));
-        //设置用户信息申请种类
-        userInfo_apply.setInfoType(0);
+        //设置用户信息申请种类  学生信息的信息种类为6
+        userInfo_apply.setInfoType(6);
         //设置用户信息申请旧信息记录id
         userInfo_apply.setOldInfoId(oldId);
         //设置用户信息申请新信息记录id
@@ -243,11 +278,12 @@ public class StudentServiceImpl implements StudentService {
         //设置申请信息的种类
         applyApproval.setInfoType(userInfo_apply.getInfoType());
         //设置审批的角色名
-        int st = applyApproval.getStep();
+        int step = applyApproval.getStep();
         Long mainId = userInfo_apply.getApprovalMainId();
         Long roleId = approvalStepInchargeService
-                .selectRoleIdByStepAppovalId(st,mainId);
+                .selectRoleIdByStepAppovalId(step,mainId);
         Role role = roleMapper.selectByPrimaryKey(roleId);
+        applyApproval.setRoleName(role.getDescription());
         //设置申请人的用户id
         applyApproval.setApplyUserId(byWho);
         boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);

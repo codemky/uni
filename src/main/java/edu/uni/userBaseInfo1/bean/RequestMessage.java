@@ -10,12 +10,13 @@ public class RequestMessage {
     private Address address;
     private Picture picture;
     private StudentRelation studentRelation;
-    private Long byWho;
-    private UserinfoApply userinfoApply;
     private LearningDegree learningDegree;
     private EmployeeHistory employeeHistory;
     private Student student;
     private Employee employee;
+    private UserUploadFile userUploadFile;
+    private Long byWho;
+    private UserinfoApply userinfoApply;
 
     public RequestMessage() {
     }
@@ -101,17 +102,12 @@ public class RequestMessage {
         this.employee = employee;
     }
 
-    public RequestMessage(Ecomm ecomm, Address address, Picture picture, StudentRelation studentRelation, Long byWho, UserinfoApply userinfoApply, LearningDegree learningDegree, EmployeeHistory employeeHistory, Student student, Employee employee) {
-        this.ecomm = ecomm;
-        this.address = address;
-        this.picture = picture;
-        this.studentRelation = studentRelation;
-        this.byWho = byWho;
-        this.userinfoApply = userinfoApply;
-        this.learningDegree = learningDegree;
-        this.employeeHistory = employeeHistory;
-        this.student = student;
-        this.employee = employee;
+    public UserUploadFile getUserUploadFile() {
+        return userUploadFile;
+    }
+
+    public void setUserUploadFile(UserUploadFile userUploadFile) {
+        this.userUploadFile = userUploadFile;
     }
 
     @Override
@@ -121,12 +117,27 @@ public class RequestMessage {
                 ", address=" + address +
                 ", picture=" + picture +
                 ", studentRelation=" + studentRelation +
-                ", byWho=" + byWho +
-                ", userinfoApply=" + userinfoApply +
                 ", learningDegree=" + learningDegree +
                 ", employeeHistory=" + employeeHistory +
                 ", student=" + student +
                 ", employee=" + employee +
+                ", userUploadFile=" + userUploadFile +
+                ", byWho=" + byWho +
+                ", userinfoApply=" + userinfoApply +
                 '}';
+    }
+
+    public RequestMessage(Ecomm ecomm, Address address, Picture picture, StudentRelation studentRelation, LearningDegree learningDegree, EmployeeHistory employeeHistory, Student student, Employee employee, UserUploadFile userUploadFile, Long byWho, UserinfoApply userinfoApply) {
+        this.ecomm = ecomm;
+        this.address = address;
+        this.picture = picture;
+        this.studentRelation = studentRelation;
+        this.learningDegree = learningDegree;
+        this.employeeHistory = employeeHistory;
+        this.student = student;
+        this.employee = employee;
+        this.userUploadFile = userUploadFile;
+        this.byWho = byWho;
+        this.userinfoApply = userinfoApply;
     }
 }

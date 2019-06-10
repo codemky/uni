@@ -141,18 +141,21 @@ public class UserinfoApplyApprovalController {
 
         System.out.println(userinfoApplyApproval.toString());
 
+        //学校id，用户id和用户权限先写死
         Long schoolId = (long) 1 ;
         Long user_id = (long) 1720 ;
-
         List<String > roles = new ArrayList<>();
         roles.add("辅导员");
         roles.add("院长");
+        roles.add("运维者");
+        roles.add("学校信息管理者");
+        roles.add("测试角色");
 
         List<UserinfoApplyApproval> userinfoApplyApprovalList =
                 userinfoApplyApprovalService.selectAllByApprovalAndRole(userinfoApplyApproval,roles);
 
+        //筛选查询出来的审批记录，符合条件才放入List里
         List<UserinfoApplyApproval> show_apply = new ArrayList<>();
-
         userinfoApplyApprovalList.forEach( item -> {
             //先检验是否是同一个学校
             if( item.getUniversityId().equals(schoolId) ) {
@@ -175,12 +178,13 @@ public class UserinfoApplyApprovalController {
             }
         } ) ;
 
+        //搜索申请人姓名
         List<String> apply_name = new ArrayList<>();
         show_apply.forEach( item -> {
             apply_name.add(userService.selectUserById(item.getApplyUserId()).getUserName());
         } );
 
-
+        //把审核记录和申请人姓名放入json串
         String json = Result.build(ResultType.Success).appendData("apply_list",show_apply).
                 appendData("Name",apply_name).convertIntoJSON();
 
@@ -203,7 +207,9 @@ public class UserinfoApplyApprovalController {
     public void getOldInfoAndNewInfoByApply(@PathVariable Long applyId ,
                                             HttpServletResponse response ) throws IOException{
         response.setContentType("application/json;charset=utf-8");
+        //获取申请记录详情
         UserinfoApply userinfoApply = userinfoApplyService.selectUserinfoApplyById(applyId);
+        //通过申请记录找到新旧记录的id，但还不知道要去查哪个表，后面根据申请记录的信息类型再去查相应的表记录
         Long old_id = userinfoApply.getOldInfoId();
         Long new_id = userinfoApply.getNewInfoId();
 
@@ -398,7 +404,7 @@ public class UserinfoApplyApprovalController {
         List<UserinfoApplyApproval> userinfoApplyApprovals =
                 userinfoApplyApprovalService.selectByApplyId(userinfoApply.getId());
         result.appendData("apply_approval",userinfoApplyApprovals);
-        //再把每一步审批人的信息也查出来
+        //再把每一步审批人的姓名也查出来
 //        List<User> approvers = new ArrayList<>();
         List<String> approversName = new ArrayList<>();
         userinfoApplyApprovals.forEach(item -> {

@@ -84,6 +84,11 @@ public class UserServiceImpl implements UserService {
     private OtherDepartmentService otherDepartmentService;
     @Autowired
     private OtherSubdepartmentService otherSubdepartmentService;
+    @Autowired
+    private ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private RoleService roleService;
+
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -217,12 +222,11 @@ public class UserServiceImpl implements UserService {
         //更新用户信息审批流程表
         userinfoApplyApproval.setResult(true);
         userinfoApplyApproval.setCheckWho(user_id);
-        Date checkTime = new Date();
-        userinfoApplyApproval.setCheckTime(checkTime);
+        userinfoApplyApproval.setCheckTime(new Date());
         int firstSuccess = userinfoApplyApprovalMapper.updateByPrimaryKeySelective(userinfoApplyApproval);
         //更新用户申请表
         UserinfoApply userinfoApply = userinfoApplyMapper.selectByPrimaryKey(userinfoApplyApproval.getUserinfoApplyId());
-        userinfoApply.setEndTime(checkTime);
+        userinfoApply.setEndTime(new Date());
         userinfoApply.setApplyResult(true);
         System.out.println("时间"+userinfoApply.getEndTime()+"结果"+userinfoApply.getApplyResult());
         int secondSuccess = userinfoApplyMapper.updateByPrimaryKeySelective(userinfoApply);
@@ -262,7 +266,6 @@ public class UserServiceImpl implements UserService {
         applyApproval.setDeleted(false);
         //设置步骤编号
         applyApproval.setStep(userinfoApplyApproval.getStep()+1);
-        System.out.println("creat5");
         //设置下一步审核的角色名
         UserinfoApply userinfoApply = new UserinfoApply();
         //根据id查找出UserinfoApply的一条记录
@@ -272,17 +275,22 @@ public class UserServiceImpl implements UserService {
         approvalStepInchargeExample.createCriteria().andApprovalMainIdEqualTo(userinfoApply.getApprovalMainId())
                 .andStepEqualTo(applyApproval.getStep()).andDeletedEqualTo(false);
         System.out.println("步数"+applyApproval.getStep());
-        //审批人条件
-        List<ApprovalStepIncharge> approvalStepInchargeList = approvalStepInchargeMapper
-                .selectByExample(approvalStepInchargeExample);
-        //判断是否有这个审批人
-        if(approvalStepInchargeList.size()>=1) {
-            Long roleId = approvalStepInchargeList.get(0).getRoleId();
-            //审批人姓名
-            String roleName = roleMapper.selectByPrimaryKey(roleId).getName();
-            applyApproval.setRoleName(roleName);
-        }
+//        //审批人条件
+//        List<ApprovalStepIncharge> approvalStepInchargeList = approvalStepInchargeMapper
+//                .selectByExample(approvalStepInchargeExample);
+//        //判断是否有这个审批人
+//        if(approvalStepInchargeList.size()>=1) {
+//            Long roleId = approvalStepInchargeList.get(0).getRoleId();
+//            //审批人姓名
+//            String roleName = roleMapper.selectByPrimaryKey(roleId).getName();
+//            applyApproval.setRoleName(roleName);
+//        }
+        //设置审批人的角色名
+//        approvalStepInchargeService.selectRoleIdByMainIdAndStep()
         //设置申请信息类型
+        Long roleId = approvalStepInchargeService.selectRoleIdByMainIdAndStep(userinfoApply.getApprovalMainId(), applyApproval.getStep());
+        applyApproval.setRoleName(roleService.selectById(roleId).getDescription());
+
         applyApproval.setInfoType(userinfoApplyApproval.getInfoType());
         //设置申请人用户id
         applyApproval.setApplyUserId(userinfoApplyApproval.getApplyUserId());

@@ -163,7 +163,6 @@ public class ApprovalStepInchargeServiceImpl implements ApprovalStepInchargeServ
         return approvalStepInchargeMapper.updateByPrimaryKey(approvalStepIncharge) > 0 ? true : false;
     }
 
-
     /**
      * Author: laizhouhao 15:47 2019/4/29
      * @param id

@@ -15,4 +15,5 @@ public interface OtherClassmateService  {
      */
     List<Classmate> selectByClassId(Long classId);
 
+
 }

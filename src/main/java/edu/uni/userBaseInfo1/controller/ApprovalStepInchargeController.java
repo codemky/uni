@@ -4,8 +4,10 @@ import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.ApprovalMain;
 import edu.uni.userBaseInfo1.bean.ApprovalStepIncharge;
+import edu.uni.userBaseInfo1.bean.Role;
 import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.userBaseInfo1.service.ApprovalStepInchargeService;
+import edu.uni.userBaseInfo1.service.RoleService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +42,8 @@ public class ApprovalStepInchargeController {
     private ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired
     private ApprovalMainService approvalMainService;
+    @Autowired
+    private RoleService roleService;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired
@@ -52,44 +57,13 @@ public class ApprovalStepInchargeController {
         public static final String ListAll_CacheName = "ub1_a_approvalStepIncharge_listAll";
     }
 
+
     /**
-     * Author: laizhouhao 9:55 2019/4/30
-     * @param id
-     * @return response
-     * @apiNote: 获取某审批某步骤详情信息详细
+     * Author: mokuanyuan 15:37 2019/6/4
+     * @param mainId
+     * @param response
+     * @apiNote: 以一个审批规定id获取所有关于该审批规定的步骤详情
      */
-    //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
-    //@ApiOperation：用于在swagger2页面显示方法的提示信息
-    //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
-    //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
-    //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条某审批某步骤详情记录详情",notes = "2019年5月6日 18:07:20 已通过测试" )
-    @GetMapping("approvalStepIncharge/{id}")
-    @ApiImplicitParam(name = "id", value = "ApprovalStepIncharge表的一个id", required = false, dataType = "Long" , paramType = "path")
-    @ResponseBody
-    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        //设置返回的数据格式
-        response.setContentType("application/json;charset=utf-8");
-        //拼接缓存键名（字符串）
-        String cacheName = ApprovalStepInchargeController.CacheNameHelper.Receive_CacheNamePrefix + id;
-        //尝试在缓存中通过键名获取相应的键值
-        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-        String json = cache.get(cacheName);
-        //如果在缓存中找不到，那就从数据库里找
-        if(json == null){
-            ApprovalStepIncharge approvalStepIncharge = approvalStepInchargeService.selectById(id);
-            //把查询到的结果用Result工具类转换成json格式的字符串
-            json = Result.build(ResultType.Success).appendData("approvalStepIncharge",approvalStepIncharge).convertIntoJSON();
-            //如果有查询到数据，就把在数据库查到的数据放到缓存中
-            if(approvalStepIncharge != null){
-                cache.set(cacheName,json);
-            }
-        }
-        //到最后通过response对象返回json格式字符串的数据
-        response.getWriter().write(json);
-
-    }
-
     @ApiOperation( value = "以一个审批规定id获取所有关于该审批规定的步骤详情",notes = "未测试" )
     @GetMapping("approvalStepIncharge/list/{mainId}")
     @ApiImplicitParam(name = "mainId", value = "ApprovalMain表的id", required = true, dataType = "Long" , paramType = "path")
@@ -97,44 +71,14 @@ public class ApprovalStepInchargeController {
     public void selectByMainId(@PathVariable Long mainId, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
 
-//        String cacheName = ApprovalStepInchargeController.CacheNameHelper.Receive_CacheNamePrefix + "mainId_" + mainId;
-//        String json = cache.get(cacheName);
         List<ApprovalStepIncharge> approvalStepIncharges = approvalStepInchargeService.selectByMainId(mainId);
-        String json = Result.build(ResultType.Success).appendData("approvalStepIncharges",approvalStepIncharges).convertIntoJSON();
-//        if(json == null){
-//            approvalStepIncharges = approvalStepInchargeService.selectByMainId(mainId);
-//            //把查询到的结果用Result工具类转换成json格式的字符串
-//            json = Result.build(ResultType.Success).appendData("approvalStepIncharges",approvalStepIncharges).convertIntoJSON();
-//            //如果有查询到数据，就把在数据库查到的数据放到缓存中
-//            if(approvalStepIncharges != null){
-//                cache.set(cacheName,json);
-//            }
-//            cache.delete(cacheName);cache.
-//        }
-//        cache.delete(cacheName);
-        //到最后通过response对象返回json格式字符串的数据
+        List<Role> roles = roleService.selectAll();
+        String json = Result.build(ResultType.Success).appendData("roles",roles)
+                .appendData("approvalStepIncharges",approvalStepIncharges).convertIntoJSON();
         response.getWriter().write(json);
 
     }
 
-
-    /**
-     * Author: laizhouhao 16:26 2019/4/29
-     * @apiNote: 查询某审批某步骤详情的所有记录
-     */
-    @ApiOperation( value = "获取所有某审批某步骤详情记录的内容",notes = "2019年5月6日 18:07:47 已通过测试" )
-    @GetMapping("approvalStepIncharges/listAll")
-    @ResponseBody
-    public void selectAll(HttpServletResponse response)throws Exception{
-        response.setContentType("application/json;charset=utf-8");
-        String cacheName = CacheNameHelper.ListAll_CacheName;
-        String json = cache.get(cacheName);
-        if(json==null){
-            json = Result.build(ResultType.Success).appendData("approvalStepIncharges", approvalStepInchargeService.selectAll()).convertIntoJSON();
-            cache.set(json, cacheName);
-        }
-        response.getWriter().write(json);
-    }
 
     /**
      * Author: laizhouhao 16:40 2019/4/29
@@ -147,16 +91,20 @@ public class ApprovalStepInchargeController {
     @ResponseBody
     public Result create(@RequestBody(required = false)ApprovalStepIncharge approvalStepIncharge){
 
-        if(approvalStepIncharge!=null){
+        if(approvalStepIncharge != null && approvalStepIncharge.getApprovalMainId() != null ){
             ApprovalMain approvalMain = approvalMainService.selectById(approvalStepIncharge.getApprovalMainId());
             int step = approvalMain.getStepCnt();
             approvalStepIncharge.setStep(step+1);
             approvalMain.setStepCnt(step+1);
             boolean main_success = approvalMainService.updateForStepIncharge(approvalMain);
 
+            approvalStepIncharge.setByWho((long) 1);
+            approvalStepIncharge.setDatetime(new Date());
+            approvalStepIncharge.setDeleted(false);
+            approvalStepIncharge.setUniversityId((long) 1);
             boolean success = approvalStepInchargeService.insert(approvalStepIncharge);
+
             if(success || main_success){
-                cache.delete(ApprovalStepInchargeController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
                 return Result.build(ResultType.Failed);
@@ -178,7 +126,7 @@ public class ApprovalStepInchargeController {
         boolean success = approvalStepInchargeService.updateToInvalidById(id);
         if(success){
             // 清空相关缓存
-            cache.delete(ApprovalStepInchargeController.CacheNameHelper.ListAll_CacheName);
+
             return Result.build(ResultType.Success);
         }else{
             return Result.build(ResultType.Failed);
@@ -196,11 +144,12 @@ public class ApprovalStepInchargeController {
     @ResponseBody
     public Result update(@RequestBody(required = false) ApprovalStepIncharge approvalStepIncharge){
         if(approvalStepIncharge != null && approvalStepIncharge.getId() != null){
-            boolean success = approvalStepInchargeService.update(approvalStepIncharge);
+            ApprovalStepIncharge new_approvalStepIncharge = approvalStepInchargeService.selectById(approvalStepIncharge.getId());
+            new_approvalStepIncharge.setName(approvalStepIncharge.getName());
+            new_approvalStepIncharge.setRoleId(approvalStepIncharge.getRoleId());
+
+            boolean success = approvalStepInchargeService.update(new_approvalStepIncharge);
             if(success){
-                //清除相应的缓存
-                cache.delete(ApprovalStepInchargeController.CacheNameHelper.Receive_CacheNamePrefix + approvalStepIncharge.getId());
-                cache.delete(ApprovalStepInchargeController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
             }else{
                 return Result.build(ResultType.Failed);
@@ -209,25 +158,66 @@ public class ApprovalStepInchargeController {
         return Result.build(ResultType.ParamError);
     }
 
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-        //String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-        //String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
-    }
+
+
+
+//    /**
+//     * Author: laizhouhao 9:55 2019/4/30
+//     * @param id
+//     * @return response
+//     * @apiNote: 获取某审批某步骤详情信息详细
+//     */
+//    //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
+//    //@ApiOperation：用于在swagger2页面显示方法的提示信息
+//    //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
+//    //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
+//    //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
+//    @ApiOperation( value = "以一个id获取一条某审批某步骤详情记录详情",notes = "2019年5月6日 18:07:20 已通过测试" )
+//    @GetMapping("approvalStepIncharge/{id}")
+//    @ApiImplicitParam(name = "id", value = "ApprovalStepIncharge表的一个id", required = false, dataType = "Long" , paramType = "path")
+//    @ResponseBody
+//    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
+//        //设置返回的数据格式
+//        response.setContentType("application/json;charset=utf-8");
+//        //拼接缓存键名（字符串）
+//        String cacheName = ApprovalStepInchargeController.CacheNameHelper.Receive_CacheNamePrefix + id;
+//        //尝试在缓存中通过键名获取相应的键值
+//        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+//        String json = cache.get(cacheName);
+//        //如果在缓存中找不到，那就从数据库里找
+//        if(json == null){
+//            ApprovalStepIncharge approvalStepIncharge = approvalStepInchargeService.selectById(id);
+//            //把查询到的结果用Result工具类转换成json格式的字符串
+//            json = Result.build(ResultType.Success).appendData("approvalStepIncharge",approvalStepIncharge).convertIntoJSON();
+//            //如果有查询到数据，就把在数据库查到的数据放到缓存中
+//            if(approvalStepIncharge != null){
+//                cache.set(cacheName,json);
+//            }
+//        }
+//        //到最后通过response对象返回json格式字符串的数据
+//        response.getWriter().write(json);
+//
+//    }
+
+
+//    /**
+//     * Author: laizhouhao 16:26 2019/4/29
+//     * @apiNote: 查询某审批某步骤详情的所有记录
+//     */
+//    @ApiOperation( value = "获取所有某审批某步骤详情记录的内容",notes = "2019年5月6日 18:07:47 已通过测试" )
+//    @GetMapping("approvalStepIncharges/listAll")
+//    @ResponseBody
+//    public void selectAll(HttpServletResponse response)throws Exception{
+//        response.setContentType("application/json;charset=utf-8");
+//        String cacheName = CacheNameHelper.ListAll_CacheName;
+//        String json = cache.get(cacheName);
+//        if(json==null){
+//            json = Result.build(ResultType.Success).appendData("approvalStepIncharges", approvalStepInchargeService.selectAll()).convertIntoJSON();
+//            cache.set(json, cacheName);
+//        }
+//        response.getWriter().write(json);
+//    }
+
+
+
 }

@@ -71,15 +71,30 @@ public class AddressServiceImpl implements AddressService {
         return addressMapper.selectByPrimaryKey(id);
     }
 
+//    /**
+//     * Author: chenenru 1:24 2019/5/5
+//     * @param userId
+//     * @return Address
+//     * @apiNote: 根据用户的id查询出地址信息
+//     */
+//    @Override
+//    public List<Address> selectByUserId(Long userId) {
+//        return addressMapper.selectByUserId(userId);
+//    }
+
     /**
-     * Author: chenenru 1:24 2019/5/5
+     * Author: mokuanyuan 16:21 2019/6/7
      * @param userId
      * @return Address
-     * @apiNote: 根据用户的id查询出地址信息
+     * @apiNote: 根据用户的id查询出地址信息且信息是有效的
      */
     @Override
     public List<Address> selectByUserId(Long userId) {
-        return addressMapper.selectByUserId(userId);
+        AddressExample addressExample = new AddressExample();
+        AddressExample.Criteria criteria = addressExample.createCriteria();
+        criteria.andDeletedEqualTo(false);
+        criteria.andUserIdEqualTo(userId);
+        return addressMapper.selectByExample(addressExample);
     }
 
     /**

@@ -5,6 +5,7 @@ import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.hibernate.validator.constraints.br.CNPJ;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,6 +14,14 @@ import java.util.List;
  * @Date 10:01 2019/4/30
  **/
 public interface StudentService {
+
+        /**
+         * Author: mokuanyuan 20:02 2019/6/9
+         * @param map
+         * @param student
+         * @apiNote: 把student对象里的id信息内容查询出来，并把相应的信息放进map里
+         */
+        public void selectByUserIdToMap(HashMap map , Student student);
 
         /**
          * Author: laizhouhao 10:04 2019/4/30

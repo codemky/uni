@@ -62,5 +62,14 @@ public interface OtherClassService  {
      */
     Class selectClassByClassCode(String classCode);
 
+    /**
+     * Author: mokuanyuan 17:48 2019/6/7
+     * @param grade
+     * @param SpecialtyId
+     * @return List<Class>
+     * @apiNote: 根据年级和专业id查询相应的班级
+     */
+    List<Class> selectClassByGradeAndSpecialtyId(Integer grade,Long SpecialtyId);
+
 
 }

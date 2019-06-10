@@ -37,10 +37,10 @@ public interface ApprovalMainService {
     /**
      * Author: laizhouhao 15:44 2019/4/29
      * @param approvalMain
-     * @return boolean
+     * @return Integer
      * @apiNote: 用于增加ApprovalMain表的一个记录
      */
-    boolean insert(ApprovalMain approvalMain);
+    Integer insert(ApprovalMain approvalMain);
 
     /**
      * Author: laizhouhao 15:46 2019/4/29

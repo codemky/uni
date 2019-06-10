@@ -30,4 +30,20 @@ public class OtherSpecialtyServiceImpl implements OtherSpecialtyService {
         criteria.andDeletedEqualTo(false);
         return specialtyMapper.selectByExample(example);
     }
+
+    /**
+     * Author: mokuanyuan 22:39 2019/6/7
+     * @param schoolId
+     * @param specialtyName
+     * @return List<Specialty>
+     * @apiNote: 根据学校id和专业名称（模糊）查询相应的专业
+     */
+    @Override
+    public List<Specialty> selectBySchoolIdAndSpecialtyName(Long schoolId, String specialtyName) {
+        SpecialtyExample specialtyExample = new SpecialtyExample();
+        specialtyExample.createCriteria().andUniversityIdEqualTo(schoolId).
+                andNameLike("%" + specialtyName + "%").andDeletedEqualTo(false);
+        return specialtyMapper.selectByExample(specialtyExample);
+
+    }
 }
