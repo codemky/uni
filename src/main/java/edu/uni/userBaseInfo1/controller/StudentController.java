@@ -14,13 +14,23 @@ import edu.uni.userBaseInfo1.PageBean.ClassmateBean;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.*;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConversionException;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.Converter;
+import org.apache.commons.beanutils.converters.DateConverter;
+import org.apache.commons.beanutils.locale.converters.DateLocaleConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -74,6 +84,11 @@ public class StudentController {
 
         @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
         private RedisCache cache;
+
+
+
+
+
 
         //内部类，专门用来管理每个get方法所对应缓存的名称。
         static class CacheNameHelper{
@@ -373,12 +388,27 @@ public class StudentController {
     @ApiImplicitParam( name = "map"  )
     @PostMapping("/applyModifyStudent")
     @ResponseBody
-    public Result ApplyModifyStudent(@RequestBody Map<String,Object> map){
-        Student student = (Student) map.get("student");
+    public Result ApplyModifyStudent(@RequestBody Map<String,Object> map) throws InvocationTargetException, IllegalAccessException {
+
+        System.out.println(map.toString());
+
+        Student student = new Student();
+
+        String reason = (String) map.get("reason");
+
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),student);
+
+
+//        Student student = (Student) map.get("applyStudent");
+
+//        BeanUtils.copyProperties(student,student);
+
+        System.out.println(student.toString());
 
 //        //判断前端传过来的值是否为空
 //        if(true){
-//            if(requestMessage.getStudent()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
+//            //暂时无法整合session去获取登录人的信息 requestMessage.getByWho()
+//            if(student =null && requestMessage.getUserinfoApply()!=null){
 //                boolean success = studentService.clickApplyStudent(requestMessage);
 //                return success ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
 //            }

@@ -7,6 +7,16 @@ import java.util.List;
 
 public interface UserinfoApplyService  {
 
+
+    /**
+     * Author: mokuanyuan 21:21 2019/6/10
+     * @param userInfo_apply
+     * @param oldId
+     * @param newId
+     * @apiNote: 创建申请记录（由于发出申请时产生）
+     */
+    public boolean createForApply(UserinfoApply userInfo_apply , Long oldId , Long newId);
+
     /**
      * Author: mokuanyuan 10:17 2019/5/17
      * @param userinfoApply

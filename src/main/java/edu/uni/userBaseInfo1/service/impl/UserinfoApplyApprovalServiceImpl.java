@@ -3,9 +3,8 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
-import edu.uni.userBaseInfo1.bean.User;
-import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
-import edu.uni.userBaseInfo1.bean.UserinfoApplyApprovalExample;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.mapper.RoleMapper;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
 import edu.uni.userBaseInfo1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,42 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
     //持久层接口的对象
     @Autowired
     private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
+    @Autowired
+    private RoleMapper roleMapper;
+    @Autowired
+    private ApprovalStepInchargeService approvalStepInchargeService;
+
+
+
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
 
+    @Override
+    public boolean createForApply(UserinfoApplyApproval applyApproval,UserinfoApply userinfoApply) {
+        //设置学校id
+        applyApproval.setUniversityId(userinfoApply.getUniversityId());
+        //设置申请表id
+        applyApproval.setUserinfoApplyId(userinfoApply.getId());
+        //设置步骤，初始化为1
+        applyApproval.setStep(1);
+        //设置时间
+        applyApproval.setDatetime(userinfoApply.getStartTime());
+
+        //设置为有效
+        applyApproval.setDeleted(false);
+        //设置申请信息的种类
+        applyApproval.setInfoType(userinfoApply.getInfoType());
+        //设置审批的角色名
+        int step = applyApproval.getStep();
+        Long mainId = userinfoApply.getApprovalMainId();
+        Long roleId = approvalStepInchargeService
+                .selectRoleIdByStepAppovalId(step,mainId);
+        Role role = roleMapper.selectByPrimaryKey(roleId);
+        applyApproval.setRoleName(role.getDescription());
+
+        return insertUserinfoApplyApproval(applyApproval);
+    }
 
     /**
      * Author: mokuanyuan 16:54 2019/5/11

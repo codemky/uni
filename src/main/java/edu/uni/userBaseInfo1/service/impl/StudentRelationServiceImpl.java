@@ -30,8 +30,6 @@ public class StudentRelationServiceImpl implements StudentRelationService {
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private UserinfoApplyService userinfoApplyService;
     @Autowired
     private ApprovalStepInchargeService approvalStepInchargeService;
@@ -39,6 +37,8 @@ public class StudentRelationServiceImpl implements StudentRelationService {
     private UserinfoApplyApprovalService userinfoApplyApprovalService;
     @Autowired
     private RoleMapper roleMapper;
+    @Autowired
+    private UserService userService;
 
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
@@ -69,12 +69,14 @@ public class StudentRelationServiceImpl implements StudentRelationService {
     /**
      * Author: chenenru 1:24 2019/5/5
      * @param userId
-     * @return StudentRelation
-     * @apiNote: 根据用户的id查询出一条地址信息
+     * @return List<StudentRelation>
+     * @apiNote: 根据user_id查询所有的有效的学生亲属信息集合
      */
     @Override
     public List<StudentRelation> selectByUserId(Long userId) {
-        return studentRelationMapper.selectByUserId(userId);
+        StudentRelationExample studentRelationExample = new StudentRelationExample();
+        studentRelationExample.createCriteria().andUserIdEqualTo(userId).andDeletedEqualTo(false);
+        return studentRelationMapper.selectByExample(studentRelationExample);
     }
 
     /**
@@ -252,45 +254,76 @@ public class StudentRelationServiceImpl implements StudentRelationService {
      */
     @Override
     public void getStuRelationInfo(HashMap<String, Object> map, List<StudentRelation> studentRelationList) {
-        HashMap<String, Object> map1 = new HashMap<>();
-        HashMap<String,Object> map2 = new HashMap<>();
         //获取用户的所有亲属信息，并将放入map中
-        for (int i=0; i<studentRelationList.size(); i++){
-            //判断该亲属信息是否有效，有效则加入
-            if(studentRelationList.get(i).getDeleted() == false){
-                int stuRelationType = studentRelationList.get(i).getRelationship();
-                User user = userService.selectUserById(studentRelationList.get(i).getRelaId());
-                //查找用户的姓名、身份证、性别、生日
-                map2.put("Name",user.getUserName());
-                map2.put("Identification", user.getIdentification());
-                map2.put("Sex", user.getUserSex());
-                map2.put("Birth", user.getUserBirthday());
-                map1.put("Relation", studentRelationList.get(i));
-                map1.put("User", map2);
-                switch (stuRelationType){
-                    case 0:
-                        map.put("Mother",map1);
-                        break;
-                    case 1:
-                        map.put("Father",map1);
-                        break;
-                    case 2:
-                        map.put("OldBrother",map1);
-                        break;
-                    case 3:
-                        map.put("LitBrother",map1);
-                        break;
-                    case 4:
-                        map.put("OldSistere",map1);
-                        break;
-                    case 5:
-                        map.put("LitSister",map1);
-                        break;
-                    case 6:
-                        map.put("Other",map1);
-                        break;
+        if(studentRelationList.size() > 0){
+            ArrayList<HashMap<String, Object>> itemList = new ArrayList<>();
+            for (int i=0; i<studentRelationList.size(); i++){
+                //判断该亲属信息是否有效，有效则加入
+                if(studentRelationList.get(i).getDeleted() == false){
+                    Long relationUserId = studentRelationList.get(i).getRelaId();
+                    User relationUser = userService.selectUserById(relationUserId);
+                    HashMap<String, Object> relationMap = new HashMap<>();
+                    //写入亲属的user表id
+                    relationMap.put("relationUserId",relationUserId);
+
+                    relationMap.put("relationName",relationUser.getUserName());
+                    //写入亲属人性别
+                    String relationSex = "不详";
+                    if(relationUser.getUserType() == 0)
+                        relationSex = "女";
+                    if(relationUser.getUserType() == 1)
+                        relationSex = "男";
+                    relationMap.put("relationSex",relationSex);
+
+                    //写入亲属关系类型 关系0：母  1：父 2：兄  3：弟 4：姐  5：妹6: 其他
+                    String relationType = "其他";
+                    switch (studentRelationList.get(i).getRelationship()){
+                        case 0 : relationType = "母";break;
+                        case 1 : relationType = "父";break;
+                        case 2 : relationType = "兄";break;
+                        case 3 : relationType = "弟";break;
+                        case 4 : relationType = "姐";break;
+                        case 5 : relationType = "妹";
+                    }
+                    relationMap.put("relationType",relationType);
+
+                    itemList.add(relationMap);
+
+//                    int stuRelationType = studentRelationList.get(i).getRelationship();
+//                    switch (stuRelationType){
+//                        case 0:
+//                            map.put("MotherName",studentRelationList.get(i).getRelaName());
+//                            map.put("MotherRelation", "母亲");
+//                            break;
+//                        case 1:
+//                            map.put("FatherName",studentRelationList.get(i).getRelaName());
+//                            map.put("FatherRelation", "父亲");
+//                            break;
+//                        case 2:
+//                            map.put("OldBrotherName",studentRelationList.get(i).getRelaName());
+//                            map.put("OldBrotherRelation", "哥哥");
+//                            break;
+//                        case 3:
+//                            map.put("LitBrotherName",studentRelationList.get(i).getRelaName());
+//                            map.put("LitBrotherRelation", "弟弟");
+//                            break;
+//                        case 4:
+//                            map.put("OldSisterName",studentRelationList.get(i).getRelaName());
+//                            map.put("OldSisterRelation", "姐姐");
+//                            break;
+//                        case 5:
+//                            map.put("LitSisterName",studentRelationList.get(i).getRelaName());
+//                            map.put("LitSisterRelation", "妹妹");
+//                            break;
+//                        case 6:
+//                            map.put("OtherName",studentRelationList.get(i).getRelaName());
+//                            map.put("OtherRelation", "其他");
+//                            break;
+//                    }
                 }
             }
+
+            map.put("relationList",itemList);
         }
     }
 

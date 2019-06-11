@@ -249,53 +249,21 @@ public class StudentServiceImpl implements StudentService {
         studentMapper.insert(student);
         //新纪录的id
         Long newId = student.getId();
-        //向userinfoApply增加审批业务id
-        userInfo_apply.setApprovalMainId(approvalMainService.
-                selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改学生主要信息"));
         //设置用户信息申请种类  学生信息的信息种类为6
         userInfo_apply.setInfoType(6);
-        //设置用户信息申请旧信息记录id
-        userInfo_apply.setOldInfoId(oldId);
-        //设置用户信息申请新信息记录id
-        userInfo_apply.setNewInfoId(newId);
-        //设置用户信息申请开始时间
-        userInfo_apply.setStartTime(student.getDatetime());
-        //设置用户信息创建时间
-        userInfo_apply.setDatetime(student.getDatetime());
         //设置用户信息申请写入者
         userInfo_apply.setByWho(byWho);
-        //设置用户信息申请为有效
-        userInfo_apply.setDeleted(false);
-        //插入新的userinfoApply记录
-        boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
         //向审批流程表插入一条数据
         UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
-        //设置学校id
-        applyApproval.setUniversityId(userInfo_apply.getUniversityId());
-        //设置申请表id
-        applyApproval.setUserinfoApplyId(userInfo_apply.getId());
-        //设置步骤，初始化为1
-        applyApproval.setStep(1);
-        //设置时间
-        applyApproval.setDatetime(userInfo_apply.getStartTime());
+
+        boolean forApply = userinfoApplyApprovalService.createForApply(applyApproval, userInfo_apply);
         //设置写入者
         applyApproval.setByWho(byWho);
-        //设置为有效
-        applyApproval.setDeleted(false);
-        //设置申请信息的种类
-        applyApproval.setInfoType(userInfo_apply.getInfoType());
-        //设置审批的角色名
-        int step = applyApproval.getStep();
-        Long mainId = userInfo_apply.getApprovalMainId();
-        Long roleId = approvalStepInchargeService
-                .selectRoleIdByStepAppovalId(step,mainId);
-        Role role = roleMapper.selectByPrimaryKey(roleId);
-        applyApproval.setRoleName(role.getDescription());
         //设置申请人的用户id
         applyApproval.setApplyUserId(byWho);
-        boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
+
         System.out.println("aaa="+applyApproval);
-        return successInfoApply && successApplyApproval;
+        return forApply ;
     }
 
     /**

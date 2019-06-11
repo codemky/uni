@@ -325,27 +325,13 @@ public class StudentRelationController {
         //检验页面传来的id是否存在
         if(user_id != null){
             //获取该用户的所有亲属实体
-            List<StudentRelation> studentRelationList = new ArrayList<>();
-            studentRelationList = studentRelationService.selectByUserId(user_id);
+            List<StudentRelation> studentRelationList = studentRelationService.selectByUserId(user_id);
             //获取用户所有有效的亲属信息
             HashMap<String, Object>map = new HashMap<>();
             studentRelationService.getStuRelationInfo(map, studentRelationList);
-
-            //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
-            //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"UserRelations"+ user_id;
-            //尝试在缓存中通过键名获取相应的键值
-            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-            String json = cache.get(cacheName);
-            //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
-                json = Result.build(ResultType.Success)
-                        .appendData("userRelation",map).convertIntoJSON();
-                cache.set(cacheName,json);
-            }
-            //到最后通过response对象返回json格式字符串的数据
-            response.getWriter().write(json);
+            response.getWriter().write(Result.build(ResultType.Success)
+                    .appendData("Relation",map).convertIntoJSON());
         }
     }
 

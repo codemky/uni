@@ -6,10 +6,12 @@ import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyExample;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyMapper;
+import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.userBaseInfo1.service.UserinfoApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,9 +28,33 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
     //持久层接口的对象
     @Autowired
     private UserinfoApplyMapper userinfoApplyMapper;
+    @Autowired
+    private ApprovalMainService approvalMainService;
+
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
+
+
+    @Override
+    public boolean createForApply(UserinfoApply userInfo_apply , Long oldId , Long newId) {
+        //向userinfoApply增加审批业务id
+        userInfo_apply.setApprovalMainId(approvalMainService.
+                selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改学生主要信息"));
+        //设置用户信息申请旧信息记录id
+        userInfo_apply.setOldInfoId(oldId);
+        //设置用户信息申请新信息记录id
+        userInfo_apply.setNewInfoId(newId);
+        //设置用户信息申请开始时间
+        userInfo_apply.setStartTime(new Date());
+        //设置用户信息创建时间
+        userInfo_apply.setDatetime(new Date());
+        //设置用户信息申请为有效
+        userInfo_apply.setDeleted(false);
+        //插入新的userinfoApply记录
+        return insertUserinfoApply(userInfo_apply);
+
+    }
 
     /**
      * Author: mokuanyuan 10:17 2019/5/17

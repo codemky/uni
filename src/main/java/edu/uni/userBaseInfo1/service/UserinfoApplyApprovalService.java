@@ -1,11 +1,20 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
+import edu.uni.userBaseInfo1.bean.UserinfoApply;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
 
 import java.util.List;
 
 public interface UserinfoApplyApprovalService {
+
+
+    /**
+     * Author: mokuanyuan 21:03 2019/6/10
+     * @apiNote: 创建审批流程记录（由于发出申请时产生的第一条记录）
+     */
+    public boolean createForApply(UserinfoApplyApproval applyApproval,UserinfoApply userinfoApply);
+
 
     /**
      * Author: mokuanyuan 16:54 2019/5/11
