@@ -1,6 +1,11 @@
-package edu.uni.userBaseInfo1.bean;
+package edu.uni.auth.bean;
 
 public class Role {
+    public static final String Operator = "Operator";
+    public static final String UnivInfoSUP = "UnivInfoSUP";
+    public static final long OperatorId = 1;
+    public static final long UnivInfoSUPId = 2;
+
     private Long id;
 
     private String name;
@@ -51,14 +56,14 @@ public class Role {
         this.status = status;
     }
 
-    public Role(Long id, String name, String description, Long universityId, Integer status) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.universityId = universityId;
-        this.status = status;
-    }
-
-    public Role() {
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", universityId=" + universityId +
+                ", status=" + status +
+                '}';
     }
 }

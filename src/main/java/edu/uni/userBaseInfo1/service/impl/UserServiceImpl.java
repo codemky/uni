@@ -2,11 +2,8 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import edu.uni.administrativestructure.bean.Department;
-import edu.uni.administrativestructure.bean.Subdepartment;
+import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.example.config.ExampleConfig;
-import edu.uni.professionalcourses.bean.SecondLevelDiscipline;
-import edu.uni.professionalcourses.bean.Specialty;
 import edu.uni.professionalcourses.mapper.SpecialtyMapper;
 import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.bean.*;
@@ -89,7 +86,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired
-    private RoleService roleService;
+    private OtherRoleService otherRoleService;
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
@@ -291,7 +288,7 @@ public class UserServiceImpl implements UserService {
 //        approvalStepInchargeService.selectRoleIdByMainIdAndStep()
         //设置申请信息类型
         Long roleId = approvalStepInchargeService.selectRoleIdByMainIdAndStep(userinfoApply.getApprovalMainId(), applyApproval.getStep());
-        applyApproval.setRoleName(roleService.selectById(roleId).getDescription());
+        applyApproval.setRoleName(otherRoleService.selectById(roleId).getDescription());
 
         applyApproval.setInfoType(userinfoApplyApproval.getInfoType());
         //设置申请人用户id

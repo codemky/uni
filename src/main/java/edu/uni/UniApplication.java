@@ -6,14 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
-@MapperScan({"edu.uni.example.mapper",
-        "edu.uni.userBaseInfo1.mapper",
-        "edu.uni.administrativestructure.mapper",
-        "edu.uni.educateAffair.mapper",
-        "edu.uni.professionalcourses.mapper",
-        "edu.uni.place.mapper"
-
-})
+@MapperScan({"edu.uni.*.mapper"})
 @EnableSwagger2
 public class UniApplication {
 

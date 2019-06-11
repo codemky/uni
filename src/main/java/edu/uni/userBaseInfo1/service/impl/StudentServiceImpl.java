@@ -2,17 +2,17 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mysql.cj.log.Log;
 import edu.uni.administrativestructure.service.UniversityService;
+import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.place.service.FieldService;
 import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.mapper.RoleMapper;
 import edu.uni.userBaseInfo1.mapper.StudentMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.*;
-import edu.uni.userBaseInfo1.utils.UserInfo;
-import org.apache.shiro.crypto.hash.Hash;
+import edu.uni.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +30,8 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Service
 public class StudentServiceImpl implements StudentService {
+    private LogUtils logUilts = new LogUtils(this.getClass());
+
     //持久层接口的对象
     @Autowired
     private StudentMapper studentMapper;  //爆红时由于编译器问题，不影响运行
@@ -228,42 +230,42 @@ public class StudentServiceImpl implements StudentService {
 
 
     /**
-     * Author: chenenru 13:05 2019/5/14
-     * @param requestMessage
+     * Author: mokuanyuan 18:33 2019/6/11
+     * @param student
+     * @param userInfo_apply
      * @return boolean
      * @apiNote: 用户点击申请修改学生主要信息
      */
     @Override
-    public boolean clickApplyStudent(RequestMessage requestMessage) {
-        Student student = requestMessage.getStudent();
-        Long byWho = requestMessage.getByWho();
-        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
+    public boolean clickApplyStudent(Student student , UserinfoApply userInfo_apply) {
         //获取被修改的用户id
         Long user_id = student.getUserId();
         //旧记录id
         Long oldId = student.getId();
-//            System.out.println("oldId = "+oldId);
         //将要插入的记录设置为无效
         student.setDeleted(true);
         //将新纪录插入student表
         studentMapper.insert(student);
-        //新纪录的id
-        Long newId = student.getId();
         //设置用户信息申请种类  学生信息的信息种类为6
         userInfo_apply.setInfoType(6);
-        //设置用户信息申请写入者
-        userInfo_apply.setByWho(byWho);
+        //设置新旧记录的记录id
+        userInfo_apply.setOldInfoId(oldId);
+        userInfo_apply.setNewInfoId(student.getId());
+
+        boolean createApply = userinfoApplyService.createForApply(userInfo_apply, 0);
+
         //向审批流程表插入一条数据
         UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+        boolean createApplyApproval = userinfoApplyApprovalService.createForApply(applyApproval, userInfo_apply);
 
-        boolean forApply = userinfoApplyApprovalService.createForApply(applyApproval, userInfo_apply);
-        //设置写入者
-        applyApproval.setByWho(byWho);
-        //设置申请人的用户id
-        applyApproval.setApplyUserId(byWho);
+        if(createApply == false)
+            logUilts.warn("创建申请表记录失败");
+        if(createApplyApproval == false)
+            logUilts.warn("创建申请流程表记录失败");
 
-        System.out.println("aaa="+applyApproval);
-        return forApply ;
+        System.out.println(userInfo_apply + "\n" + applyApproval);
+
+        return createApply && createApplyApproval ;
     }
 
     /**

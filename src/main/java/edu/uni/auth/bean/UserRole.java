@@ -1,4 +1,4 @@
-package edu.uni.userBaseInfo1.bean;
+package edu.uni.auth.bean;
 
 public class UserRole {
     private Long id;

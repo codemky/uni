@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 功能描述：redis工具类
+ * redis工具类
+ * @Author 何亮
+ * @date 2019/4/3
  */
 @Component
 public class RedisCache {

@@ -1,10 +1,16 @@
 package edu.uni.utils;
 
+import org.springframework.http.HttpStatus;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.MessageDigest;
 import java.util.UUID;
 
 /**
  * 常用工具类的封装，md5,uuid等
+ * @Author 何亮
+ * @date 2019/4/3
  */
 public class CommonUtils {
 
@@ -38,5 +44,21 @@ public class CommonUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 設置跨域請求頭
+     * @param request
+     * @param response
+     */
+    public static void setCrossingHeader(HttpServletRequest request, HttpServletResponse response){
+        //跨域的header设置
+        response.setHeader("Access-control-Allow-Origin", request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Headers", request.getHeader("Access-Control-Request-Headers"));
+        //防止乱码，适用于传输JSON数据
+        response.setContentType("textml;charset=UTF-8");
+        response.setStatus(HttpStatus.OK.value());
     }
 }

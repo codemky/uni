@@ -6,7 +6,9 @@
 package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.*;
+import sun.java2d.cmm.kcms.CMM;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,6 +107,14 @@ public interface AddressService {
      * @apiNote: 传入一个HashMap和Address对象，把Address里的id字段对应的信息内容放入到map里
      */
     public void selectAllInfoToMap(HashMap map, Address address);
+
+    /**
+     * Author: mokuanyuan 16:12 2019/6/11
+     * @param map
+     * @param address
+     * @apiNote: 传入一个List集合对象，其集合元素为HashMap<String, Object>，把地址中的id和name包装成map放到List集合中
+     */
+    public void selectAllInfoToList(HashMap<String, Object> map , List<Address> address);
 
     /**
      * Author: laizhouhao 21:09 2019/6/9

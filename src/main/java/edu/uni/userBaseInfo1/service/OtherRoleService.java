@@ -1,6 +1,6 @@
 package edu.uni.userBaseInfo1.service;
 
-import edu.uni.userBaseInfo1.bean.Role;
+import edu.uni.auth.bean.Role;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * @Description Role实体的Service层接口
  * @Date 13:53 2019/5/11
  **/
-public interface RoleService {
+public interface OtherRoleService {
     /**
      * Author: laizhouhao 13:53 2019/5/11
      * @param id

@@ -2,10 +2,14 @@ package edu.uni.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
+/**
+ * 常用JSON工具类
+ * @Author 何亮
+ * @date 2019/4/3
+ */
 public class JsonUtils {
 
     private static ObjectMapper objectMapper = new ObjectMapper();

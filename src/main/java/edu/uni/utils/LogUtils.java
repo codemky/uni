@@ -3,6 +3,11 @@ package edu.uni.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 常用日志工具类
+ * @Author 何亮
+ * @date 2019/4/3
+ */
 public class LogUtils {
 	private Logger logger;
 	

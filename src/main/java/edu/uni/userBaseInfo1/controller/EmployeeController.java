@@ -63,7 +63,7 @@ public class EmployeeController {
     @Autowired
     UserinfoApplyApprovalService userinfoApplyApprovalService;
     @Autowired
-    private RoleService roleService;
+    private OtherRoleService otherRoleService;
     @Autowired
     ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired

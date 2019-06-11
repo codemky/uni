@@ -7,10 +7,8 @@ import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,7 +45,7 @@ public class EmployeeHistoryController {
     @Autowired
     UserinfoApplyApprovalService userinfoApplyApprovalService;
     @Autowired
-    private RoleService roleService;
+    private OtherRoleService otherRoleService;
     @Autowired
     private UserService userService;
     @Autowired

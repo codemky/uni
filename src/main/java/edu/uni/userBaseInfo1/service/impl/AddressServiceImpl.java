@@ -2,10 +2,11 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.auth.bean.Role;
+import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.AddressMapper;
-import edu.uni.userBaseInfo1.mapper.RoleMapper;
 import edu.uni.userBaseInfo1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -277,6 +278,72 @@ public class AddressServiceImpl implements AddressService {
         map.put("zip_code",address.getZipCode());
         map.put("telephone",address.getTelephone());
         map.put("flag",address.getFlag());
+
+    }
+
+    /**
+     * Author: mokuanyuan 16:12 2019/6/11
+     * @param addressMap
+     * @param addressList
+     * @apiNote: 传入一个Address对象和一个List集合对象，其集合元素为HashMap<String, Object>，把Address对象中的id和name包装成map放到List集合中
+     */
+    @Override
+    public void selectAllInfoToList(HashMap<String, Object> addressMap, List<Address> address) {
+
+        if(address.size() > 0 ){
+            List<HashMap<String, Object>> addressList = new ArrayList<HashMap<String, Object>>();
+            for(int i=0 ; i < address.size() ; i++){
+
+                //国家
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("id",addrCountryService.selectAddrCountryById(address.get(i).getCountry()).getId());
+                map.put("name", addrCountryService.selectAddrCountryById(address.get(i).getCountry()).getCountryZh() );
+                addressList.add(map);
+
+                //省份
+                map = new HashMap<>();
+                map.put("id",addrStateService.selectAddrStateById( address.get(i).getState()).getId());
+                map.put("name", addrStateService.selectAddrStateById( address.get(i).getState()).getStateZh() );
+                addressList.add(map);
+
+                //城市
+                map = new HashMap<>();
+                map.put("id", addrCityService.selectAddrCityById(address.get(i).getCity()).getId() );
+                map.put("name", addrCityService.selectAddrCityById(address.get(i).getCity()).getCityZh() );
+                addressList.add(map);
+
+                //县或区
+                map = new HashMap<>();
+                map.put("id", addrAreaService.selectAddrAreaById(address.get(i).getArea()).getId());
+                map.put("name", addrAreaService.selectAddrAreaById(address.get(i).getArea()).getAreaZh() );
+                addressList.add(map);
+
+                //街道或村
+                map = new HashMap<>();
+                map.put("id", addrStreetService.selectAddrStreetById(address.get(i).getStreet()).getId() );
+                map.put("name", addrStreetService.selectAddrStreetById(address.get(i).getStreet()).getStreetZh() );
+                addressList.add(map);
+
+                map = new HashMap<>();
+                map.put("detail", address.get(i).getDetail() );
+                addressList.add(map);
+
+                map = new HashMap<>();
+                map.put("zip_code",address.get(i).getZipCode());
+                addressList.add(map);
+
+                map = new HashMap<>();
+                map.put("telephone",address.get(i).getTelephone());
+                addressList.add(map);
+
+                map = new HashMap<>();
+                map.put("flag",address.get(i).getFlag());
+                addressList.add(map);
+
+            }
+            addressMap.put("address",addressList);
+
+        }
 
     }
 

@@ -110,12 +110,13 @@ public interface StudentService {
          */
         List<Student> selectValidStudentByUserId(Long user_id);
         /**
-         * Author: chenenru 18:35 2019/5/13
-         * @param requestMessage
+         * Author: mokuanyuan 18:33 2019/6/11
+         * @param student
+         * @param userInfo_apply
          * @return boolean
          * @apiNote: 用户点击申请修改学生主要信息
          */
-        boolean clickApplyStudent(RequestMessage requestMessage);
+        boolean clickApplyStudent(Student student , UserinfoApply userInfo_apply);
 
         /**
          * Author: chenenru 15:44 2019/5/16

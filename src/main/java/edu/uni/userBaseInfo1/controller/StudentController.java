@@ -5,6 +5,7 @@ import edu.uni.administrativestructure.bean.Classmate;
 import edu.uni.administrativestructure.bean.ClassmatePosition;
 import edu.uni.administrativestructure.bean.Position;
 import edu.uni.administrativestructure.service.PositionService;
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.place.bean.Field;
@@ -17,20 +18,12 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.*;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConversionException;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.Converter;
-import org.apache.commons.beanutils.converters.DateConverter;
-import org.apache.commons.beanutils.locale.converters.DateLocaleConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -65,7 +58,7 @@ public class StudentController {
         @Autowired
         UserinfoApplyApprovalService userinfoApplyApprovalService;
         @Autowired
-        private RoleService roleService;
+        private OtherRoleService otherRoleService;
         @Autowired
         ApprovalStepInchargeService approvalStepInchargeService;
         @Autowired
@@ -80,6 +73,8 @@ public class StudentController {
         private PositionService positionService;
         @Autowired
         private OtherFieldService otherFieldService;
+        @Autowired
+        private AuthService authService;
 
 
         @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -379,7 +374,7 @@ public class StudentController {
     }
 
     /**
-     * Author: chenenru 20:50 2019/5/9
+     * Author: 莫宽元 16点34分 2019/6/11
      * @param map
      * @return Result
      * @apiNote: 申请修改学生主要信息, 点击确认申请时
@@ -391,30 +386,29 @@ public class StudentController {
     public Result ApplyModifyStudent(@RequestBody Map<String,Object> map) throws InvocationTargetException, IllegalAccessException {
 
         System.out.println(map.toString());
-
-        Student student = new Student();
-
+        Student new_student = new Student();
+        //获取前台参数
         String reason = (String) map.get("reason");
-
-        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),student);
-
-
-//        Student student = (Student) map.get("applyStudent");
-
-//        BeanUtils.copyProperties(student,student);
-
-        System.out.println(student.toString());
-
-//        //判断前端传过来的值是否为空
-//        if(true){
-//            //暂时无法整合session去获取登录人的信息 requestMessage.getByWho()
-//            if(student =null && requestMessage.getUserinfoApply()!=null){
-//                boolean success = studentService.clickApplyStudent(requestMessage);
-//                return success ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-//            }
-//        }
-//        else
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),new_student);
+        //检验参数是否合法
+        if(Student.isValidForApply(new_student) == false || reason == null)
             return Result.build(ResultType.ParamError);
+
+        edu.uni.auth.bean.User user = authService.getUser();
+        if(user == null){
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
+        Student old_student = studentService.selectById(new_student.getId());
+        Student.copyPropertiesForApply(new_student,old_student);
+        UserinfoApply userinfoApply = new UserinfoApply();
+        userinfoApply.setApplyReason(reason);
+        userinfoApply.setUniversityId(user.getUniversityId());
+        //设置用户信息申请写入者
+        userinfoApply.setByWho(user.getId());
+
+        boolean applyResult = studentService.clickApplyStudent(new_student, userinfoApply);
+        return applyResult ? Result.build(ResultType.Success) : Result.build(ResultType.ParamError);
+
     }
 
     /**

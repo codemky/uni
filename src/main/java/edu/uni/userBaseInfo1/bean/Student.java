@@ -208,4 +208,23 @@ public class Student {
         this.byWho = byWho;
         this.deleted = deleted;
     }
+
+    public static boolean isValidForApply(Student student){
+        if(student.getId() == null || student.getStuNo() == null || student.getBeginLearnDate() == null ||
+                student.getGrade() == null || student.getSpecialtyId() == null || student.getClassId()== null ||
+                student.getPoliticalId() == null || student.getLiveRoom() == null )
+            return false;
+        return true;
+    }
+
+    public static void copyPropertiesForApply(Student new_student, Student old_student){
+        new_student.setUniversityId(old_student.getUniversityId());
+        new_student.setUserId(old_student.getUserId());
+        new_student.setHomeAddressId(old_student.getHomeAddressId());
+        new_student.setPhoneEcommId(old_student.getPhoneEcommId());
+        new_student.setDatetime(old_student.getDatetime());
+        new_student.setByWho(old_student.getByWho());
+        new_student.setId(old_student.getId());
+        new_student.setDeleted(true);
+    }
 }

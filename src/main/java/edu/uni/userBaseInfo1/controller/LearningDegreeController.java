@@ -51,7 +51,7 @@ public class LearningDegreeController {
     @Autowired
     UserinfoApplyApprovalService userinfoApplyApprovalService;
     @Autowired
-    private RoleService roleService;
+    private OtherRoleService otherRoleService;
     @Autowired
     private UserService userService;
     @Autowired

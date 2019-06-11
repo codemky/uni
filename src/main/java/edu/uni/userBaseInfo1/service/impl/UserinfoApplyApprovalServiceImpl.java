@@ -2,9 +2,10 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.auth.bean.Role;
+import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
-import edu.uni.userBaseInfo1.mapper.RoleMapper;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
 import edu.uni.userBaseInfo1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,6 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
         applyApproval.setStep(1);
         //设置时间
         applyApproval.setDatetime(userinfoApply.getStartTime());
-
         //设置为有效
         applyApproval.setDeleted(false);
         //设置申请信息的种类
@@ -57,7 +57,11 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
         Long roleId = approvalStepInchargeService
                 .selectRoleIdByStepAppovalId(step,mainId);
         Role role = roleMapper.selectByPrimaryKey(roleId);
-        applyApproval.setRoleName(role.getDescription());
+        applyApproval.setRoleName(role.getName());
+        //设置写入者
+        applyApproval.setByWho(userinfoApply.getByWho());
+        //设置申请人的用户id
+        applyApproval.setApplyUserId(userinfoApply.getByWho());
 
         return insertUserinfoApplyApproval(applyApproval);
     }

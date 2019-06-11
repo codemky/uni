@@ -1,13 +1,13 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.auth.bean.Role;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.ApprovalMain;
 import edu.uni.userBaseInfo1.bean.ApprovalStepIncharge;
-import edu.uni.userBaseInfo1.bean.Role;
 import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.userBaseInfo1.service.ApprovalStepInchargeService;
-import edu.uni.userBaseInfo1.service.RoleService;
+import edu.uni.userBaseInfo1.service.OtherRoleService;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -15,12 +15,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +40,7 @@ public class ApprovalStepInchargeController {
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
-    private RoleService roleService;
+    private OtherRoleService otherRoleService;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired
@@ -72,7 +69,7 @@ public class ApprovalStepInchargeController {
         response.setContentType("application/json;charset=utf-8");
 
         List<ApprovalStepIncharge> approvalStepIncharges = approvalStepInchargeService.selectByMainId(mainId);
-        List<Role> roles = roleService.selectAll();
+        List<Role> roles = otherRoleService.selectAll();
         String json = Result.build(ResultType.Success).appendData("roles",roles)
                 .appendData("approvalStepIncharges",approvalStepIncharges).convertIntoJSON();
         response.getWriter().write(json);

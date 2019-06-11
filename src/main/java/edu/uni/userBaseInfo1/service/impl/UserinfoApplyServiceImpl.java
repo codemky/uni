@@ -2,12 +2,14 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.auth.service.AuthService;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyExample;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyMapper;
 import edu.uni.userBaseInfo1.service.ApprovalMainService;
 import edu.uni.userBaseInfo1.service.UserinfoApplyService;
+import edu.uni.userBaseInfo1.utils.StaticInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,21 +32,33 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
     private UserinfoApplyMapper userinfoApplyMapper;
     @Autowired
     private ApprovalMainService approvalMainService;
+    @Autowired
+    private AuthService authService;
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
 
 
+    /**
+     * Author: mokuanyuan 21:21 2019/6/10
+     * @param userInfo_apply
+     * @param flag 说明是修改还是增加
+     * @apiNote: 创建申请记录（由于发出申请时产生）
+     */
     @Override
-    public boolean createForApply(UserinfoApply userInfo_apply , Long oldId , Long newId) {
+    public boolean createForApply(UserinfoApply userInfo_apply , Integer flag ) {
+        edu.uni.auth.bean.User user = authService.getUser();
+        if(user == null)
+            return false;
+
+        //根据flag（说明是修改还是增加还是批量增加）、登录用户的用户类型、申请的信息类型获取审批业务的名称
+        String approvalName = StaticInformation.getApprovalString(user.getUserType(),
+                userInfo_apply.getInfoType(),flag);
+
         //向userinfoApply增加审批业务id
         userInfo_apply.setApprovalMainId(approvalMainService.
-                selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改学生主要信息"));
-        //设置用户信息申请旧信息记录id
-        userInfo_apply.setOldInfoId(oldId);
-        //设置用户信息申请新信息记录id
-        userInfo_apply.setNewInfoId(newId);
+                selectIdByName(userInfo_apply.getUniversityId(), approvalName));
         //设置用户信息申请开始时间
         userInfo_apply.setStartTime(new Date());
         //设置用户信息创建时间

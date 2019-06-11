@@ -10,18 +10,14 @@ import edu.uni.bean.ResultType;
 import edu.uni.config.GlobalConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
-import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -47,7 +43,7 @@ public class EcommController {
     @Autowired
     UserinfoApplyApprovalService userinfoApplyApprovalService;
     @Autowired
-    private RoleService roleService;
+    private OtherRoleService otherRoleService;
     @Autowired
     private UserService userService;
     @Autowired

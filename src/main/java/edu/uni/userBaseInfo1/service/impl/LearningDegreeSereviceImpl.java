@@ -3,6 +3,8 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.administrativestructure.service.UniversityService;
+import edu.uni.auth.bean.Role;
+import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.bean.LearningDegree;

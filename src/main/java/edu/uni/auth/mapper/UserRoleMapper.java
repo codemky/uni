@@ -1,10 +1,9 @@
-package edu.uni.userBaseInfo1.mapper;
+package edu.uni.auth.mapper;
 
-import edu.uni.userBaseInfo1.bean.UserRole;
-import edu.uni.userBaseInfo1.bean.UserRoleExample;
-import org.apache.ibatis.annotations.Param;
-
+import edu.uni.auth.bean.UserRole;
+import edu.uni.auth.bean.UserRoleExample;
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface UserRoleMapper {
     int countByExample(UserRoleExample example);

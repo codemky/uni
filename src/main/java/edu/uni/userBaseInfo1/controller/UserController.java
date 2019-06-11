@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
@@ -56,9 +57,12 @@ public class UserController {
     private MyAcademicDegreeService myAcademicDegreeService;
     @Autowired
     private EmployeeHistoryService employeeHistoryService;
-
     @Autowired
     private LearningDegreeSerevice learningDegreeSerevice;
+    @Autowired
+    private AuthService authService;
+
+
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -68,6 +72,17 @@ public class UserController {
         public static final String Receive_CacheNamePrefix = "ub1_e_user_";
         // ub1_e_Users_listAll
         public static final String ListAll_CacheName = "ub1_e_user_listAll";
+    }
+
+    @ApiOperation( value = "获取登录信息",notes = "未测试" )
+    @GetMapping("getLoginInfo")
+    @ResponseBody
+    public Result getLoginInfo(){
+        edu.uni.auth.bean.User user = authService.getUser();
+        if(user == null){
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
+        return Result.build(ResultType.Success).appendData("user", user);
     }
 
     /**

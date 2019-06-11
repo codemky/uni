@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,6 +49,8 @@ public class AddressController {
     private UserinfoApplyApprovalService userinfoApplyApprovalService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthService authService;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired
@@ -76,6 +80,42 @@ public class AddressController {
 //        System.out.println("根据县/区编码查询所有街道："+addressUtil.SelectStreets(110101).toString());
 //
 //    }
+
+    /**
+     * Author: mokuanyuan 16:05 2019/6/11
+     * @param response
+     * @return Result
+     * @apiNote: 根据用户id获取地址信息 ，但user_id为-1时为根据登录状态的用户信息获取相应的地址信息（只查询自己的内容）
+     */
+    @GetMapping("getOwnAddress/{userId}")
+    @ResponseBody
+    public Result getAddressByUserId(@PathVariable Integer userId , HttpServletResponse response){
+        //设置返回的数据格式
+        response.setContentType("application/json;charset=utf-8");
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        if(userId == -1 ){
+            edu.uni.auth.bean.User user = authService.getUser();
+            if(user == null){
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            }else
+                userId = Integer.parseInt(user.getId().toString());
+
+        }
+
+        if(userId != null){
+            List<Address> addresses = addressService.selectByUserId((long) userId);
+            HashMap<String, Object> addressMap = new HashMap<>();
+            addressService.selectAllInfoToList(addressMap,addresses);
+            return Result.build(ResultType.Success).appendData("addresses",addressMap);
+        }
+        else
+            return Result.build(ResultType.ParamError);
+
+
+
+    }
+
 
     /**
      * Author: chenenru 18:50 2019/5/10

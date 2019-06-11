@@ -6,6 +6,9 @@ import edu.uni.administrativestructure.service.DepartmentService;
 import edu.uni.administrativestructure.service.EmployPositionService;
 import edu.uni.administrativestructure.service.PositionService;
 import edu.uni.administrativestructure.service.SubdepartmentService;
+import edu.uni.auth.bean.Role;
+import edu.uni.auth.service.AuthService;
+import edu.uni.auth.service.RoleService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.place.service.FieldService;
@@ -110,6 +113,10 @@ public class UserinfoApplyApprovalController {
     private OtherEmployPositionService otherEmployPositionService;
     @Autowired
     private PositionService positionService;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private RoleService roleService;
 
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -134,22 +141,24 @@ public class UserinfoApplyApprovalController {
     @PostMapping("/getByRoleName")
     @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户信息审批流程详情实体", required = true, dataType = "UserinfoApplyApproval")
     @ResponseBody
-    public void selectByRoleName(@RequestBody UserinfoApplyApproval userinfoApplyApproval,
+    public Result selectByRoleName(@RequestBody UserinfoApplyApproval userinfoApplyApproval,
                                  HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json;charset=utf-8");
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(loginUser == null){
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
 
         System.out.println(userinfoApplyApproval.toString());
 
-        //学校id，用户id和用户权限先写死
-        Long schoolId = (long) 1 ;
-        Long user_id = (long) 1720 ;
+        Long schoolId = loginUser.getUniversityId() ;
+//        Long user_id = (long) 1720 ;
+        Long user_id = loginUser.getId();
+
+        List<Role> rolesBean = roleService.selectByUidAndUniversityId(schoolId, user_id);
         List<String > roles = new ArrayList<>();
-        roles.add("辅导员");
-        roles.add("院长");
-        roles.add("运维者");
-        roles.add("学校信息管理者");
-        roles.add("测试角色");
+        rolesBean.forEach( item -> { roles.add(item.getName()); } );
 
         List<UserinfoApplyApproval> userinfoApplyApprovalList =
                 userinfoApplyApprovalService.selectAllByApprovalAndRole(userinfoApplyApproval,roles);
@@ -184,11 +193,14 @@ public class UserinfoApplyApprovalController {
             apply_name.add(userService.selectUserById(item.getApplyUserId()).getUserName());
         } );
 
-        //把审核记录和申请人姓名放入json串
-        String json = Result.build(ResultType.Success).appendData("apply_list",show_apply).
-                appendData("Name",apply_name).convertIntoJSON();
+//        //把审核记录和申请人姓名放入json串
+//        String json = Result.build(ResultType.Success).appendData("apply_list",show_apply).
+//                appendData("Name",apply_name).convertIntoJSON();
+//
+//        response.getWriter().write(json);
 
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("apply_list",show_apply).
+                appendData("Name",apply_name);
 
     }
 
@@ -575,25 +587,4 @@ public class UserinfoApplyApprovalController {
         }
     }
 
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-//        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-//        String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
-    }
 }
