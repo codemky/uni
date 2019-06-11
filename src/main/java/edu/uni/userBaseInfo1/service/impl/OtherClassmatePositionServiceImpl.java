@@ -34,12 +34,12 @@ public class OtherClassmatePositionServiceImpl implements OtherClassmatePosition
     }
 
     @Override
-    public ClassmatePosition selectclassmatePositionByClassmateId(Long classMateId) {
+    public List<ClassmatePosition> selectclassmatePositionByClassmateId(Long classMateId) {
         ClassmatePositionExample example = new ClassmatePositionExample();
         ClassmatePositionExample.Criteria criteria = example.createCriteria();
         criteria.andClassmateIdEqualTo(classMateId);
         criteria.andDeletedEqualTo(false);
         List<ClassmatePosition> classmatePositions = classmatePositionMapper.selectByExample(example);
-        return classmatePositions.size()<=0?null:classmatePositions.get(0);
+        return classmatePositions.size()<=0?null:classmatePositions;
     }
 }

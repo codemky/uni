@@ -513,7 +513,7 @@ public class StudentController {
             //UserInfo userInfo = userService.selectUserInfoAllByUserId(student.getUserId());
             User user = userService.selectUserById(student.getUserId());
             //ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateIdAndPositionId(cm.getId(), null);
-            ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
+            List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
             ClassmateBean classmateBean = new ClassmateBean();
             //学生id
             classmateBean.setStudentId(student.getId());
@@ -541,14 +541,19 @@ public class StudentController {
             PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
             classmateBean.setPolitical(politicalAffiliation.getPolitical());
             //岗位
-            if (classmatePosition!=null){
+            if (classmatePositions!=null){
+                StringBuffer position = new StringBuffer();
                 List<Position> positions = positionService.selectAll();
                 for (Position p:positions) {
-                    if (p.getId().equals(classmatePosition.getPositionId())){
-                        classmateBean.setPosition(p.getName());
-                        break;
+                    for (ClassmatePosition cp:classmatePositions) {
+                        if (p.getId().equals(cp.getPositionId())){
+//                            classmateBean.setPosition(p.getName());
+                            position.append(p.getName());
+                            //break;
+                        }
                     }
                 }
+                classmateBean.setPosition(String.valueOf(position));
             }
             //subcalss.add(classmatePosition.getId().toString());
             classmateBeans.add(classmateBean);

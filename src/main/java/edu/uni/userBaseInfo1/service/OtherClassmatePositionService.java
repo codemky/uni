@@ -2,6 +2,8 @@ package edu.uni.userBaseInfo1.service;
 
 import edu.uni.administrativestructure.bean.ClassmatePosition;
 
+import java.util.List;
+
 public interface OtherClassmatePositionService {
     /**
      * Author: chenenru 20:45 2019/6/3
@@ -17,7 +19,7 @@ public interface OtherClassmatePositionService {
      * @return ClassmatePosition
      * @apiNote: 根据班级成员的id查询有效的学生的岗位
      */
-    ClassmatePosition selectclassmatePositionByClassmateId(Long classMateId);
+    List<ClassmatePosition> selectclassmatePositionByClassmateId(Long classMateId);
 
 
 }
