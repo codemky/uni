@@ -20,6 +20,7 @@ import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.web.session.HttpServletSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +32,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author chenenru
@@ -567,6 +567,70 @@ public class EmployeeController {
         response.getWriter().write(json);
     }
 
+    //年级
+    //所有专业
+    //所有班级
+    //所有岗位
+    //政治面貌
+    @ApiOperation(value = "进行高级搜索的前戏", notes = "未测试")
+    @GetMapping("/filter/all")
+    @ResponseBody
+    public void selectAllToFilter(Long userId, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+        String json = null;
+        HashMap<String,Object> filtermessage = new HashMap<>();
+        List<Employee> employees = employeeService.selectByUserId(userId);
+        if (employees != null) {
+            Employ employ = otherEmployService.selectEmployByEmployeeId(employees.get(0).getId(), employees.get(0).getUniversityId());
+            List<Department> departments = otherDepartmentService.selectValidById(employ.getDepartmentId());
+            if (departments != null) {
+                List<String> className = new ArrayList<>();
+                Set<String> specialtyName = new HashSet<>();
+                Set<String> cyaer = new HashSet<>();
+                Set<String> political = new HashSet<>();
+                Set<String> position = new HashSet<>();
+                //查询所有的班级class、专业Specialty、年级student、岗位Position 和 政治面貌politicalAffiliation
+                List<Class> classes = otherClassService.selectAllClassByDepartmentId(departments.get(0).getId());
+                for (Class c:classes) {
+                    //所有班级
+                    className.add(c.getName());
+                    //所有专业
+                    Specialty select = specialtyService.select(c.getSpecialtyId());
+                    specialtyName.add(select.getName());
+                    //所有年级
+                    cyaer.add(String.valueOf(c.getCyear()));
+                    //所有岗位
+                    List<Classmate> classmates = otherClassmateService.selectByClassId(c.getId());
+                    for (Classmate cm : classmates) {
+                        Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
+                        List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
+                        if (classmatePositions != null) {
+                            List<Position> positions = positionService.selectAll();
+                            for (Position p : positions) {
+                                for (ClassmatePosition cp : classmatePositions) {
+                                    if (p.getId().equals(cp.getPositionId())) {
+                                        position.add(p.getName());
+                                    }
+                                }
+                            }
+                        }
+                        //所有政治面貌
+                        PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
+                        political.add(politicalAffiliation.getPolitical());
+                    }
+                }
+                filtermessage.put("className", className);
+                filtermessage.put("specialtyName", specialtyName);
+                filtermessage.put("gradeName",cyaer);
+                filtermessage.put("politicalName", political);
+                filtermessage.put("positionName", position);
+
+            }
+        }
+        json = Result.build(ResultType.Success).appendData("filterMessage", filtermessage).convertIntoJSON();
+        response.getWriter().write(json);
+
+    }
 
     //班级名称class，年级student,主修专业Specialty，性别user，姓名user，学号student，政治面貌politicalAffiliation，岗位Position
     @ApiOperation(value = "领导查询某班的所有学生，可进行高级搜索(代码垃圾，不要看了)", notes = "未测试")

@@ -29,7 +29,7 @@ public interface EmployeeService {
      * @return List<Employee>
      * @apiNote: 根据用户id查询职工主要信息
      */
-    List<Employee>selectByUserId(Long user_id);
+    List<Employee> selectByUserId(Long user_id);
 
     /**
      * Author: chenenru 0:00 2019/4/30
