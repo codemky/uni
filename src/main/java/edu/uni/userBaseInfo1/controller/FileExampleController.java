@@ -45,9 +45,10 @@ public class FileExampleController {
     @Autowired
     private ExcelController excelController;
 
-    @ApiOperation(value="文件上传", notes = "")
-    @PostMapping("/upload")
-    public Result uploadFile(MultipartFile file, HttpServletRequest request) {
+    @ApiOperation(value="上传职员文件并校验，校验通过就写入数据库", notes = "")
+    @PostMapping("/upload/employee")
+    public Result uploadEmployeeFile(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
         if (file == null || file.isEmpty()) {
             return Result.build(ResultType.ParamError);
         }
@@ -59,11 +60,10 @@ public class FileExampleController {
         try {
             filePath = fileUtil.uploadFile(file, request);
             //校验职员
-            excelController.checkoutEmployeeExcel(file.getInputStream(), request);
-            excelController.insertEmployeeExcel(file.getInputStream(), request);
-            //校验学生
-            excelController.checkoutStudentExcel(file.getInputStream(),request);
-            excelController.insertStudentExcel(file.getInputStream(),request);
+            stringBuffer = excelController.checkoutEmployeeExcel(file.getInputStream(), request);
+            if (stringBuffer.equals("校验通过")){
+                stringBuffer = excelController.insertEmployeeExcel(file.getInputStream(), request);
+            }
         } catch (IOException e) {
             return Result.build(ResultType.Failed);
         }
@@ -71,7 +71,34 @@ public class FileExampleController {
         System.out.println("成功"+filePath);
         // service层方法把文件路径存储在数据库中
 
-        return Result.build(ResultType.Success);
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
+    }
+    @ApiOperation(value="上传学生文件并校验，校验通过就写入数据库", notes = "")
+    @PostMapping("/upload/student")
+    public Result uploadStudentFile(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError);
+        }
+        // 全局上传路径
+//        FileUtil fileUtil = new FileUtil(globalConfig.getUploadRootDir());
+        // excel上传路径
+        FileUtil fileUtil = new FileUtil(exampleConfig.getAbsoluteExcelDir());
+        String filePath;
+        try {
+            filePath = fileUtil.uploadFile(file, request);
+            //校验学生
+            stringBuffer = excelController.checkoutStudentExcel(file.getInputStream(),request);
+            if (stringBuffer.equals("校验通过")) {
+                stringBuffer = excelController.insertStudentExcel(file.getInputStream(),request);
+            }
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed);
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
     }
 
 

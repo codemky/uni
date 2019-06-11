@@ -672,9 +672,7 @@ public class EmployeeController {
                                 }
                                 if (position!=null&&!position.equals("")){
                                     if (classmateBean.getPosition()!=null){
-                                        int lastIndexOf = classmateBean.getPosition().lastIndexOf(position);
                                         int indexOf = classmateBean.getPosition().indexOf(position);
-                                        System.out.println("index: "+indexOf+" last:"+lastIndexOf);
                                         if (!(indexOf<=2&&indexOf>=0)){
                                             continue;
                                         }

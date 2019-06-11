@@ -43,26 +43,6 @@ import java.util.List;
 //标志这个类是一个controller类，用于被Spring扫描然后配置添加和配置相应的bean
 @RestController
 public class ExcelController {
-    @Autowired
-    private OtherDepartmentService departmentservice;
-    @Autowired
-    private OtherClassService cclassservice;
-    @Autowired
-    private PoliticalAffiliationService politicalAffiliationservice;
-    @Autowired
-    private AddrCountryService addrCountryservice;
-    @Autowired
-    private AddrStateService addrStateservice;
-    @Autowired
-    private AddrCityService addrCityservice;
-    @Autowired
-    private AddrAreaService addrAreaservice;
-    @Autowired
-    private AddrStreetService addrStreetservice;
-    @Autowired
-    private OtherSpecialtyService specialtyservice;
-    @Autowired
-    private UserService userservice;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired
@@ -77,74 +57,79 @@ public class ExcelController {
     }
 
     @ApiOperation(value = "测试student的excel校验", notes = "2019-5-21 22:02:31测试通过")
-    //@ApiImplicitParam(name = "filePath", value = "文件的路径或文件名", required = false, dataType = "String" )
     @GetMapping("/student/checkoutexcel")
     @ResponseBody
-    public void checkoutStudentExcel(InputStream inputStream, HttpServletRequest request) throws IOException {
+    public StringBuffer checkoutStudentExcel(InputStream inputStream, HttpServletRequest request) throws IOException {
         request.setCharacterEncoding("utf-8");
         StringBuffer stringBuffer = new StringBuffer();
-                StudentUpload studentUpload = new StudentUpload();
-                List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, StudentModel.class));
-                for (Object o : data) {
-                    stringBuffer.append(studentUpload.checkoutStudent(o));
-                }
-                if (stringBuffer != null && !stringBuffer.equals("") && stringBuffer.length() > 0) {
-                    System.out.println("报错信息：");
-                    System.out.println(stringBuffer);
-                } else {
-                    stringBuffer.append("校验通过");
-                    System.out.println("校验通过");
-                }
-                inputStream.close();
+        StudentUpload studentUpload = new StudentUpload();
+        List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, StudentModel.class));
+        for (Object o : data) {
+            stringBuffer.append(studentUpload.checkoutStudent(o));
+        }
+        if (stringBuffer != null && !stringBuffer.equals("") && stringBuffer.length() > 0) {
+            System.out.println("报错信息：");
+            System.out.println(stringBuffer);
+        } else {
+            stringBuffer.append("校验通过");
+            System.out.println("校验通过");
+        }
+        inputStream.close();
+        return stringBuffer;
     }
+
     @ApiOperation(value = "测试student的excel写入数据库", notes = "2019-5-21 23:25:01测试通过")
-    //@ApiImplicitParam(name = "filePath", value = "文件的路径或文件名", required = false, dataType = "String" )
     @GetMapping("/student/inserttexcel")
     @ResponseBody
-    public void insertStudentExcel(InputStream inputStream,HttpServletRequest request) throws IOException {
+    public StringBuffer insertStudentExcel(InputStream inputStream, HttpServletRequest request) throws IOException {
         request.setCharacterEncoding("utf-8");
-        StringBuffer stringBuffer= new StringBuffer();
-                StudentUpload studentUpload = new StudentUpload();
-                List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, StudentModel.class));
-                for (Object o : data) {
-                    stringBuffer.append(studentUpload.insertStudent(o));
-                }
-                System.out.println(stringBuffer);
-                inputStream.close();
+        StringBuffer stringBuffer = new StringBuffer();
+        StudentUpload studentUpload = new StudentUpload();
+        List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, StudentModel.class));
+        for (Object o : data) {
+            stringBuffer.append(studentUpload.insertStudent(o));
+        }
+        System.out.println(stringBuffer);
+        inputStream.close();
+        return stringBuffer;
     }
+
     @ApiOperation(value = "测试employee的excel校验", notes = "未测试")
     @GetMapping("/employee/checkoutexcel")
     @ResponseBody
-        public void checkoutEmployeeExcel(InputStream inputStream, HttpServletRequest request) throws IOException{
+    public StringBuffer checkoutEmployeeExcel(InputStream inputStream, HttpServletRequest request) throws IOException {
         request.setCharacterEncoding("utf-8");
         StringBuffer stringBuffer = new StringBuffer();
-                StudentUpload studentUpload = new StudentUpload();
-                List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, EmployeeModel.class));
-                for (Object o : data) {
-                    stringBuffer.append(studentUpload.checkoutEmployee(o));
-                }
-                if (stringBuffer != null && !stringBuffer.equals("") && stringBuffer.length() > 0) {
-                    System.out.println("报错信息：");
-                    System.out.println(stringBuffer);
-                } else {
-                    stringBuffer.append("校验通过");
-                    System.out.println("校验通过");
-                }
-                inputStream.close();
+        StudentUpload studentUpload = new StudentUpload();
+        List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, EmployeeModel.class));
+        for (Object o : data) {
+            stringBuffer.append(studentUpload.checkoutEmployee(o));
+        }
+        if (stringBuffer != null && !stringBuffer.equals("") && stringBuffer.length() > 0) {
+            System.out.println("报错信息：");
+            System.out.println(stringBuffer);
+        } else {
+            stringBuffer.append("校验通过");
+            System.out.println("校验通过");
+        }
+        inputStream.close();
+        return stringBuffer;
     }
+
     @ApiOperation(value = "测试employee的excel写入数据库", notes = "未测试")
-    //@ApiImplicitParam(name = "filePath", value = "文件的路径或文件名", required = false, dataType = "String" )
     @GetMapping("/employee/insertexcel")
     @ResponseBody
-    public void insertEmployeeExcel(InputStream inputStream,HttpServletRequest request) throws  IOException{
+    public StringBuffer insertEmployeeExcel(InputStream inputStream, HttpServletRequest request) throws IOException {
         request.setCharacterEncoding("utf-8");
-        StringBuffer stringBuffer= new StringBuffer();
-                StudentUpload studentUpload = new StudentUpload();
-                List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, EmployeeModel.class));
-                for (Object o : data) {
-                    stringBuffer.append(studentUpload.insertEmployee(o));
-                }
-                System.out.println(stringBuffer);
-                inputStream.close();
+        StringBuffer stringBuffer = new StringBuffer();
+        StudentUpload studentUpload = new StudentUpload();
+        List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, EmployeeModel.class));
+        for (Object o : data) {
+            stringBuffer.append(studentUpload.insertEmployee(o));
+        }
+        System.out.println(stringBuffer);
+        inputStream.close();
+        return stringBuffer;
     }
+
 }
