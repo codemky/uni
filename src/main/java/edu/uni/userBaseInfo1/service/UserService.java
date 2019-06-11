@@ -1,11 +1,13 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
+import edu.uni.userBaseInfo1.bean.Student;
 import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.bean.UserExample;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface UserService {
@@ -134,11 +136,11 @@ public interface UserService {
 
     /**
      * Author: laizhouhao 21:22 2019/6/2
-     * @param stu_no
+     * @param student
      * @return 学生详细信息
      * @apiNote: 根据学号获取学生的详细信息
      */
-    UserInfo selectStuDetailInfoByStuNo(String stu_no);
+    void selectStuDetailInfoByStuNo(HashMap<String,Object>map, Student student);
 
     /**
      * Author: chenenru 8:49 2019/5/22

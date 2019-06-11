@@ -30,6 +30,8 @@ public class StudentRelationServiceImpl implements StudentRelationService {
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
+    private UserService userService;
+    @Autowired
     private UserinfoApplyService userinfoApplyService;
     @Autowired
     private ApprovalStepInchargeService approvalStepInchargeService;
@@ -250,39 +252,42 @@ public class StudentRelationServiceImpl implements StudentRelationService {
      */
     @Override
     public void getStuRelationInfo(HashMap<String, Object> map, List<StudentRelation> studentRelationList) {
+        HashMap<String, Object> map1 = new HashMap<>();
+        HashMap<String,Object> map2 = new HashMap<>();
         //获取用户的所有亲属信息，并将放入map中
         for (int i=0; i<studentRelationList.size(); i++){
             //判断该亲属信息是否有效，有效则加入
             if(studentRelationList.get(i).getDeleted() == false){
                 int stuRelationType = studentRelationList.get(i).getRelationship();
+                User user = userService.selectUserById(studentRelationList.get(i).getRelaId());
+                //查找用户的姓名、身份证、性别、生日
+                map2.put("Name",user.getUserName());
+                map2.put("Identification", user.getIdentification());
+                map2.put("Sex", user.getUserSex());
+                map2.put("Birth", user.getUserBirthday());
+                map1.put("Relation", studentRelationList.get(i));
+                map1.put("User", map2);
                 switch (stuRelationType){
                     case 0:
-                        map.put("MotherName",studentRelationList.get(i).getRelaName());
-                        map.put("MotherRelation", "母亲");
+                        map.put("Mother",map1);
                         break;
                     case 1:
-                        map.put("FatherName",studentRelationList.get(i).getRelaName());
-                        map.put("FatherRelation", "父亲");
+                        map.put("Father",map1);
                         break;
                     case 2:
-                        map.put("OldBrotherName",studentRelationList.get(i).getRelaName());
-                        map.put("OldBrotherRelation", "哥哥");
+                        map.put("OldBrother",map1);
                         break;
                     case 3:
-                        map.put("LitBrotherName",studentRelationList.get(i).getRelaName());
-                        map.put("LitBrotherRelation", "弟弟");
+                        map.put("LitBrother",map1);
                         break;
                     case 4:
-                        map.put("OldSisterName",studentRelationList.get(i).getRelaName());
-                        map.put("OldSisterRelation", "姐姐");
+                        map.put("OldSistere",map1);
                         break;
                     case 5:
-                        map.put("LitSisterName",studentRelationList.get(i).getRelaName());
-                        map.put("LitSisterRelation", "妹妹");
+                        map.put("LitSister",map1);
                         break;
                     case 6:
-                        map.put("OtherName",studentRelationList.get(i).getRelaName());
-                        map.put("OtherRelation", "其他");
+                        map.put("Other",map1);
                         break;
                 }
             }

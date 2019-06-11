@@ -475,18 +475,22 @@ public class StudentController {
      * @return 学生详细信息
      * @apiNote: 根据学号获取学生详细信息
      */
-    @ApiOperation(value="根据学号获取学生详细信息", notes="未测试")
+    @ApiOperation(value="根据学号获取学生详细信息", notes="2019年6月11日 12:17:39 已通过测试")
     @ApiImplicitParam(name = "stu_no", value = "学号", required = false, dataType = "String" , paramType = "path")
-    @GetMapping(value = "getStuInfoDetailByStuNO/{stu_no}")
+    @GetMapping(value = "/getStuInfoDetailByStuNO/{stu_no}")
     @ResponseBody
     public void selectStudentDetailByStuNo(@PathVariable String stu_no,HttpServletResponse response) throws IOException {
         if (stu_no != null) {
-            UserInfo userInfo = new UserInfo();
-            userInfo = userService.selectStuDetailInfoByStuNo(stu_no);
+            //根据学号查询出该学生
+            Student student = new Student();
+            student = studentService.selectValidStuByStuNo(stu_no);
+            //查找该学生的详细信息
+            HashMap<String,Object>map = new LinkedHashMap<>();
+            userService.selectStuDetailInfoByStuNo(map,student);
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             String json = Result.build(ResultType.Success)
-                        .appendData("userInfo", userInfo).convertIntoJSON();
+                        .appendData("studentInfo", map).convertIntoJSON();
 
             //到最后通过response对象返回json格式字符串的数据
             response.getWriter().write(json);

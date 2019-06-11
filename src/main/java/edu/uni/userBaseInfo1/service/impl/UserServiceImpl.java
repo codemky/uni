@@ -17,8 +17,10 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -505,53 +507,27 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Author: laizhouhao 21:22 2019/6/2
-     * @param stu_no
+     * @param student
      * @return 学生详细信息
      * @apiNote: 根据学号获取学生的详细信息
      */
     @Override
-    public UserInfo selectStuDetailInfoByStuNo(String stu_no) {
-        UserInfo userInfo = new UserInfo();
-        //根据学号获取学生实体
-        Student student = studentService.selectValidStuByStuNo(stu_no);
-        //将查询出来的学生实体存入数据集
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(student);
-        userInfo.setStudents(studentList);
-
-        //判断是否有该学生
-        if(student != null) {
-            //查询该学生的用户id
-            Long user_id = student.getUserId();
-            //查询该学生在用户表的信息
-            User user = userMapper.selectByPrimaryKey(user_id);
-            //将查询出来的数据存入数据集
-            List<User> userList = new ArrayList<>();
-            userList.add(user);
-            userInfo.setUsers(userList);
-
-            //根据专业id获取专业实体
-            List<Specialty> specialtyList = new ArrayList<>();
-            specialtyList.add(specialtyMapper.selectByPrimaryKey(student.getSpecialtyId()));
-            //存入数据集
-            userInfo.setSpecialtyList(specialtyList);
-
-            //查询政治面貌
-            List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
-            PoliticalAffiliation politicalAffiliation = politicalAffiliationService
-                    .selectPoliticalAffiliationById(student.getPoliticalId());
-            politicalAffiliationList.add(politicalAffiliation);
-            //存入数据集
-            userInfo.setPoliticalAffiliations(politicalAffiliationList);
-
-            //查找电话号码
-            Ecomm ecomm = new Ecomm();
-            ecomm = ecommMapper.selectByPrimaryKey(student.getPhoneEcommId());
-            List<Ecomm> ecommList = new ArrayList<>();
-            ecommList.add(ecomm);
-            //存入数据集
-            userInfo.setEcomms(ecommList);
+    public void selectStuDetailInfoByStuNo(HashMap<String,Object>map,Student student) {
+        //将学生的信息放入map
+        if(student!=null){
+            map.put("StuNo", student.getStuNo());
+            User user = new User();
+            user = userMapper.selectByPrimaryKey(student.getUserId());
+            map.put("Name",user.getUserName());
+            map.put("Identityfication", user.getIdentification());
+            map.put("EnterSchoolTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(student.getBeginLearnDate()));
+            //主修专业
+            map.put("Specialty", specialtyMapper.selectByPrimaryKey(student.getSpecialtyId()).getName());
+            map.put("Grade", student.getGrade());
+            map.put("Sex", user.getUserSex());
+            map.put("Ecomm", ecommMapper.selectByPrimaryKey(student.getPhoneEcommId()).getContent());
+            //政治面貌
+            map.put("Political",politicalAffiliationMapper.selectByPrimaryKey(student.getPoliticalId()).getPolitical());
         }
-        return userInfo;
     }
 }
