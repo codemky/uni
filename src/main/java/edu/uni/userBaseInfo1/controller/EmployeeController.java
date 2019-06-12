@@ -576,6 +576,7 @@ public class EmployeeController {
     @GetMapping("/filter/all")
     @ResponseBody
     public void selectAllToFilter(Long userId, HttpServletResponse response) throws IOException {
+        //System.out.println(new Date());
         response.setContentType("application/json;charset=utf-8");
         String json = null;
         HashMap<String,Object> filtermessage = new HashMap<>();
@@ -605,14 +606,17 @@ public class EmployeeController {
                         Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
                         List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
                         if (classmatePositions != null) {
-                            List<Position> positions = positionService.selectAll();
-                            for (Position p : positions) {
+                            //List<Position> positions = positionService.selectAll();
+                            //for (Position p : positions) {
                                 for (ClassmatePosition cp : classmatePositions) {
-                                    if (p.getId().equals(cp.getPositionId())) {
-                                        position.add(p.getName());
-                                    }
+                                    //if (p.getId().equals(cp.getPositionId())) {
+                                        Position position1 = positionService.select(cp.getPositionId());
+                                        if (position1!=null){
+                                            position.add(position1.getName());
+                                        }
+                                    //}
                                 }
-                            }
+                            //}
                         }
                         //所有政治面貌
                         PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
@@ -627,17 +631,28 @@ public class EmployeeController {
 
             }
         }
+        //System.out.println(new Date());
+        //System.out.println(filtermessage);
         json = Result.build(ResultType.Success).appendData("filterMessage", filtermessage).convertIntoJSON();
         response.getWriter().write(json);
 
     }
 
-    //班级名称class，年级student,主修专业Specialty，性别user，姓名user，学号student，政治面貌politicalAffiliation，岗位Position
+    //所有班级名称class，所有年级student,所有主修专业Specialty，性别user，姓名user，学号student，所有政治面貌politicalAffiliation，所有岗位Position
     @ApiOperation(value = "领导查询某班的所有学生，可进行高级搜索(代码垃圾，不要看了)", notes = "未测试")
     @GetMapping("student/allClassmates/{userId}")
     @ResponseBody
-    public void selectClassesByClassId(@PathVariable Long userId, String className, String cyear, String specialty, String user_sex, String studentName, String studentNo, String political, String position, HttpServletResponse response) throws IOException {
+    /*public void selectClassesByClassId(@PathVariable Long userId,@RequestParam(value ="className[]") List<String> className,
+                                       @RequestParam(value ="cyear[]") List<String> cyear, @RequestParam(value ="specialty[]") List<String> specialty, String user_sex, String studentName,String studentNo,
+                                       @RequestParam(value ="political[]") List<String> political, @RequestParam(value ="position[]") List<String> position, HttpServletResponse response) throws IOException {*/
+    public void selectClassesByClassId(@PathVariable Long userId,String[] classNames,
+                                       String[] cyears, String[] specialtys, String user_sex, String studentName,String studentNo,
+                                       String[] politicals, String[] positions, HttpServletResponse response) throws IOException {
+        //System.out.println(new Date());
         response.setContentType("application/json;charset=utf-8");
+        /*System.out.println(userId+" "+classNames+" "+cyears+" "+specialtys+" "+user_sex
+        +" "+studentName+" "+studentNo+" "+politicals+" "+positions);*/
+        int flag = 0;
         String json = null;
         List<ClassmateBean> classmateBeans = new ArrayList<>();
         //该领导为自己学院的领导
@@ -650,9 +665,11 @@ public class EmployeeController {
                 List<Class> classes = otherClassService.selectAllClassByDepartmentId(departments.get(0).getId());
                 if (classes != null) {
                     for (Class c : classes) {
-                        if (className != null && !className.equals("")) {
-                            if (!className.equals(c.getName())) {
-                                continue;
+                        if (classNames != null && !classNames.equals("")) {
+                            for (int i=0;i<classNames.length;i++){
+                                if (!classNames[i].equals(c.getName())) {
+                                    continue;
+                                }
                             }
                         }
                         List<Classmate> classmates = otherClassmateService.selectByClassId(c.getId());
@@ -662,6 +679,8 @@ public class EmployeeController {
                                 User user = userService.selectUserById(student.getUserId());
                                 List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
                                 ClassmateBean classmateBean = new ClassmateBean();
+                                //学生的用户id
+                                classmateBean.setUserId(user.getId());
                                 //学生id
                                 classmateBean.setStudentId(student.getId());
                                 //学号
@@ -691,27 +710,42 @@ public class EmployeeController {
                                 //}
                                 //岗位
                                 if (classmatePositions != null) {
-                                    List<Position> positions = positionService.selectAll();
+                                    //List<Position> positions = positionService.selectAll();
                                     StringBuffer positionName = new StringBuffer();
-                                    for (Position p : positions) {
+                                    //for (Position p : positions) {
                                         for (ClassmatePosition cp : classmatePositions) {
-                                            if (p.getId().equals(cp.getPositionId())) {
+                                            Position position = positionService.select(cp.getPositionId());
+                                            /*if (p.getId().equals(cp.getPositionId())) {
                                                 positionName.append(p.getName());
+                                            }*/
+                                            if (position!=null){
+                                                positionName.append(position.getName());
                                             }
                                         }
-                                    }
+                                    //}
                                     classmateBean.setPosition(String.valueOf(positionName));
                                 }
                                 //开启判断
                                 //String className, String cyear, String specialty, String user_sex, String studentName, String studentNo, String political, String position,
-                                if (cyear!=null&&!cyear.equals("")){
-                                    if (!classmateBean.getGrade().equals(cyear)){
-                                        continue;
+                                //所有年级
+                                //所有专业
+                                //所有班级
+                                //所有岗位
+                                //所有政治面貌
+                                if (cyears!=null&&!cyears.equals("")){
+                                    for (int i=0;i<cyears.length;i++){
+                                        System.out.println("年级："+cyears[i]+" "+classmateBean.getGrade());
+                                        if (!classmateBean.getGrade().equals(cyears[i])){
+                                            continue;
+                                        }
                                     }
                                 }
-                                if (specialty!=null&&!specialty.equals("")){
-                                    if (!specialty.equals(classmateBean.getSpecialty())){
-                                        continue;
+                                if (specialtys!=null&&!specialtys.equals("")){
+                                    for (int i=0;i<specialtys.length;i++){
+                                        System.out.println("专业："+specialtys[i]+" "+classmateBean.getSpecialty());
+                                        if (!specialtys[i].equals(classmateBean.getSpecialty())){
+                                            continue;
+                                        }
                                     }
                                 }
                                 if (user_sex!=null&&!user_sex.equals("")){
@@ -729,21 +763,41 @@ public class EmployeeController {
                                         continue;
                                     }
                                 }
-                                if (political!=null&&!political.equals("")){
-                                    if (!political.equals(classmateBean.getPolitical())){
-                                        continue;
+                                if (politicals!=null&&!politicals.equals("")){
+                                    for (int i=0;i<politicals.length;i++){
+                                        System.out.println("政治面貌："+politicals[i]+" "+classmateBean.getPosition());
+                                        if (!politicals[i].equals(classmateBean.getPolitical())){
+                                            continue;
+                                        }
                                     }
                                 }
-                                if (position!=null&&!position.equals("")){
+                                flag=0;
+                                System.out.println(positions.length);
+                                if (positions!=null&&!positions.equals("")){
                                     if (classmateBean.getPosition()!=null){
-                                        int indexOf = classmateBean.getPosition().indexOf(position);
-                                        if (!(indexOf<=2&&indexOf>=0)){
-                                            continue;
+                                        for (int i=0;i<positions.length;i++){
+                                            System.out.println("岗位："+positions[i]+" "+classmateBean.getPosition());
+                                            int indexOf = classmateBean.getPosition().indexOf(positions[i]);
+                                            System.out.println("indexof："+indexOf);
+                                            /*if (!(indexOf<=2&&indexOf>=0)){
+                                                continue;
+                                            }else {
+                                                flag=1;
+                                                break;
+                                            }*/
+                                            if (indexOf<=2&&indexOf>=0){
+                                                flag=1;
+                                                break;
+                                            }
                                         }
                                     }else{
                                         continue;
                                     }
                                 }
+                                if (flag!=1&&positions!=null){
+                                    continue;
+                                }
+                                System.out.println("indexof不为2时：不应该运行到这里");
                                 classmateBeans.add(classmateBean);
                             }
                         }
@@ -751,6 +805,8 @@ public class EmployeeController {
                 }
             }
         }
+        //System.out.println(new Date());
+        //System.out.println(classmateBeans);
         json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans).convertIntoJSON();
         response.getWriter().write(json);
     }

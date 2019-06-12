@@ -10,6 +10,7 @@ import java.util.Date;
  * @Version 1.0
  **/
 public class ClassmateBean {
+    private Long userId;
     private Long studentId;
     private String studentNo;
     private String studentName;
@@ -24,7 +25,8 @@ public class ClassmateBean {
     public ClassmateBean() {
     }
 
-    public ClassmateBean(Long studentId, String studentNo, String studentName, Date beginLearnDate, String specialty, String grade, String sex, String phone, String political, String position) {
+    public ClassmateBean(Long userId, Long studentId, String studentNo, String studentName, Date beginLearnDate, String specialty, String grade, String sex, String phone, String political, String position) {
+        this.userId = userId;
         this.studentId = studentId;
         this.studentNo = studentNo;
         this.studentName = studentName;
@@ -37,9 +39,18 @@ public class ClassmateBean {
         this.position = position;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public Long getStudentId() {
         return studentId;
     }
+
 
     public void setStudentId(Long studentId) {
         this.studentId = studentId;
@@ -120,7 +131,8 @@ public class ClassmateBean {
     @Override
     public String toString() {
         return "ClassmateBean{" +
-                "studentId=" + studentId +
+                "userId=" + userId +
+                ", studentId=" + studentId +
                 ", studentNo='" + studentNo + '\'' +
                 ", studentName='" + studentName + '\'' +
                 ", BeginLearnDate=" + BeginLearnDate +
