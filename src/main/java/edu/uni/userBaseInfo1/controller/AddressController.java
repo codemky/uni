@@ -105,9 +105,9 @@ public class AddressController {
 
         if(userId != null){
             List<Address> addresses = addressService.selectByUserId((long) userId);
-            HashMap<String, Object> addressMap = new HashMap<>();
-            addressService.selectAllInfoToList(addressMap,addresses);
-            return Result.build(ResultType.Success).appendData("addresses",addressMap);
+            List<List> addressList = new ArrayList<>();
+            addressService.selectAllInfoToList(addressList,addresses);
+            return Result.build(ResultType.Success).appendData("addresses",addressList);
         }
         else
             return Result.build(ResultType.ParamError);

@@ -10,6 +10,16 @@ public interface UserinfoApplyApprovalService {
 
 
     /**
+     * Author: mokuanyuan 21:53 2019/6/11
+     * @param newId
+     * @param oldId
+     * @param infoType
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public void updateDataForApplyPass(Long newId,Long oldId,Integer infoType);
+
+
+    /**
      * Author: mokuanyuan 21:03 2019/6/10
      * @apiNote: 创建审批流程记录（由于发出申请时产生的第一条记录）
      */

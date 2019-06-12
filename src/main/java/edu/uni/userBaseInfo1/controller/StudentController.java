@@ -41,57 +41,53 @@ import java.util.*;
 @RestController
 public class StudentController {
 
-        @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
-        private StudentService studentService;
-        @Autowired
-        private UserService userService;
-        @Autowired
-        private EcommService ecommService;
-        @Autowired
-        private OtherClassService otherClassService;
-        @Autowired
-        private PoliticalAffiliationService politicalAffiliationService;
-        @Autowired
-        ApprovalMainService approvalMainService;
-        @Autowired
-        UserinfoApplyService userinfoApplyService;
-        @Autowired
-        UserinfoApplyApprovalService userinfoApplyApprovalService;
-        @Autowired
-        private OtherRoleService otherRoleService;
-        @Autowired
-        ApprovalStepInchargeService approvalStepInchargeService;
-        @Autowired
-        private OtherClassmateService otherClassmateService;
-        @Autowired
-        private OtherClassmatePositionService otherClassmatePositionService;
-        @Autowired
-        private OtherSpecialtyService otherSpecialtyService;
-        @Autowired
-        private SpecialtyService specialtyService;
-        @Autowired
-        private PositionService positionService;
-        @Autowired
-        private OtherFieldService otherFieldService;
-        @Autowired
-        private AuthService authService;
+    @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
+    private StudentService studentService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private EcommService ecommService;
+    @Autowired
+    private OtherClassService otherClassService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
+    ApprovalMainService approvalMainService;
+    @Autowired
+    UserinfoApplyService userinfoApplyService;
+    @Autowired
+    UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private OtherRoleService otherRoleService;
+    @Autowired
+    ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private OtherClassmateService otherClassmateService;
+    @Autowired
+    private OtherClassmatePositionService otherClassmatePositionService;
+    @Autowired
+    private OtherSpecialtyService otherSpecialtyService;
+    @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
+    private PositionService positionService;
+    @Autowired
+    private OtherFieldService otherFieldService;
+    @Autowired
+    private AuthService authService;
 
 
-        @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
-        private RedisCache cache;
+    @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
+    private RedisCache cache;
 
 
-
-
-
-
-        //内部类，专门用来管理每个get方法所对应缓存的名称。
-        static class CacheNameHelper{
-            // ub1_s_student_{学生主要信息记录id}
-            public static final String Receive_CacheNamePrefix = "ub1_s_student_";
-            // ub1_s_student_listAll
-            public static final String ListAll_CacheName = "ub1_s_student_listAll";
-        }
+    //内部类，专门用来管理每个get方法所对应缓存的名称。
+    static class CacheNameHelper{
+        // ub1_s_student_{学生主要信息记录id}
+        public static final String Receive_CacheNamePrefix = "ub1_s_student_";
+        // ub1_s_student_listAll
+        public static final String ListAll_CacheName = "ub1_s_student_listAll";
+    }
 
     /**
      * Author: laizhouhao 18:36 2019/5/6
@@ -114,63 +110,40 @@ public class StudentController {
         response.getWriter().write(json);
     }
 
-        /**
-         * Author: laizhouhao 10:29 2019/4/30
-         * return response
-         * @apiNote: 查询所有学生主要信息记录
-         */
-        @ApiOperation( value = "查询所有学生主要信息记录",notes = "2019-5-5 15:53:53已通过测试" )
-        @GetMapping("students/listAll")
-        @ResponseBody
-        public void selectAll(HttpServletResponse response) throws IOException {
-            response.setContentType("application/json;charset=utf-8");
-            String cacheName = edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName;
-            String json = cache.get(cacheName);
-            if(json == null){
-                json = Result.build(ResultType.Success)
-                        .appendData("students",studentService.selectAll()).convertIntoJSON();
-                cache.set(cacheName,json);
-            }
-            response.getWriter().write(json);
+    /**
+     * Author: laizhouhao 10:29 2019/4/30
+     * return response
+     * @apiNote: 查询所有学生主要信息记录
+     */
+    @ApiOperation( value = "查询所有学生主要信息记录",notes = "2019-5-5 15:53:53已通过测试" )
+    @GetMapping("students/listAll")
+    @ResponseBody
+    public void selectAll(HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+        String cacheName = edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName;
+        String json = cache.get(cacheName);
+        if(json == null){
+            json = Result.build(ResultType.Success)
+                    .appendData("students",studentService.selectAll()).convertIntoJSON();
+            cache.set(cacheName,json);
         }
+        response.getWriter().write(json);
+    }
 
-        /**
-         * Author: laizhouhao 10:30 2019/4/30
-         * @param student
-         * @return 新增学生主要信息结果
-         * @apiNote 新增学生主要信息
-         */
-        @ApiOperation(value="新增学生主要信息", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "student", value = "学生主要信息详情实体", required = true, dataType = "Student")
-        @PostMapping("/student")  //post请求方式
-        @ResponseBody
-        public Result create(@RequestBody(required = false) Student student){
-            //检验页面传来的对象是否存在
-            if(student != null){
-                boolean success = studentService.insert(student);
-                if(success){
-                    // 清空相关缓存
-                    cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }
-            return Result.build(ResultType.ParamError);
-        }
-
-        /**
-         * Author: laizhouhao 10:33 2019/4/30
-         * @param id
-         * @return 删除操作结果
-         * @apiNote 根据id删除学生主要信息
-         */
-        @ApiOperation(value="根据id删除学生主要信息", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "id", value = "学生id", required = true, dataType = "Long", paramType = "path")
-        @DeleteMapping("/student/{id}")   //delete请求
-        @ResponseBody
-        public Result destroy(@PathVariable Long id){
-            boolean success = studentService.delete(id);
+    /**
+     * Author: laizhouhao 10:30 2019/4/30
+     * @param student
+     * @return 新增学生主要信息结果
+     * @apiNote 新增学生主要信息
+     */
+    @ApiOperation(value="新增学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiImplicitParam(name = "student", value = "学生主要信息详情实体", required = true, dataType = "Student")
+    @PostMapping("/student")  //post请求方式
+    @ResponseBody
+    public Result create(@RequestBody(required = false) Student student){
+        //检验页面传来的对象是否存在
+        if(student != null){
+            boolean success = studentService.insert(student);
             if(success){
                 // 清空相关缓存
                 cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
@@ -179,31 +152,54 @@ public class StudentController {
                 return Result.build(ResultType.Failed);
             }
         }
+        return Result.build(ResultType.ParamError);
+    }
 
-        /**
-         * Author: laizhouhao 10:34 2019/4/30
-         * @param student
-         * @return 更新操作结果
-         * @apiNote 更新学生主要信息
-         */
-        @ApiOperation(value="更新学生主要信息", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "student", value = "学生主要信息实体", required = true, dataType = "Student")
-        @PutMapping("/student")   //Put请求
-        @ResponseBody
-        public Result update(@RequestBody(required = false) Student student){
-            if(student != null && student.getId() != null){
-                boolean success = studentService.update(student);
-                if(success){
-                    //清除相应的缓存
-                    cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.Receive_CacheNamePrefix + student.getId());
-                    cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }
-            return Result.build(ResultType.ParamError);
+    /**
+     * Author: laizhouhao 10:33 2019/4/30
+     * @param id
+     * @return 删除操作结果
+     * @apiNote 根据id删除学生主要信息
+     */
+    @ApiOperation(value="根据id删除学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiImplicitParam(name = "id", value = "学生id", required = true, dataType = "Long", paramType = "path")
+    @DeleteMapping("/student/{id}")   //delete请求
+    @ResponseBody
+    public Result destroy(@PathVariable Long id){
+        boolean success = studentService.delete(id);
+        if(success){
+            // 清空相关缓存
+            cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
+            return Result.build(ResultType.Success);
+        }else{
+            return Result.build(ResultType.Failed);
         }
+    }
+
+    /**
+     * Author: laizhouhao 10:34 2019/4/30
+     * @param student
+     * @return 更新操作结果
+     * @apiNote 更新学生主要信息
+     */
+    @ApiOperation(value="更新学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiImplicitParam(name = "student", value = "学生主要信息实体", required = true, dataType = "Student")
+    @PutMapping("/student")   //Put请求
+    @ResponseBody
+    public Result update(@RequestBody(required = false) Student student){
+        if(student != null && student.getId() != null){
+            boolean success = studentService.update(student);
+            if(success){
+                //清除相应的缓存
+                cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.Receive_CacheNamePrefix + student.getId());
+                cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
 
     /**
      * Author: laizhouhao 16:08 2019/5/7
@@ -239,8 +235,6 @@ public class StudentController {
             }
             userInfo.setPoliticalAffiliations(politicalAffiliationList);
             System.out.println(userInfo);
-            //设置返回的数据格式
-            response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
             String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix +"studentDetailInfo"+ user_id;
             //尝试在缓存中通过键名获取相应的键值
@@ -348,121 +342,128 @@ public class StudentController {
     @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Integer" , paramType = "path")
     @GetMapping("/getStudentInformation/{userId}")
     @ResponseBody
-    public void getStudentInformation(@PathVariable Long userId ,
+    public Result getStudentInformation(@PathVariable Long userId ,
                                         HttpServletResponse response) throws IOException{
-        User user = userService.selectUserById(userId);
+
         response.setContentType("application/json;charset=utf-8");
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        if(userId == -1 ){
+            edu.uni.auth.bean.User user = authService.getUser();
+            if(user == null){
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            }else
+                userId = user.getId();
+        }
+        User user = userService.selectUserById(userId);
+
+
         boolean isOperate = false;
         HashMap<String , Object> studentMap = new HashMap<>();
 
-        if(user != null)
-            if(user.getUserType() == 1) {
-                List<Student> students = studentService.selectByUserId(userId);
-                if (students.size() > 0) {
+        if(user.getUserType() == 1) {
+            List<Student> students = studentService.selectByUserId(userId);
+            if (students.size() > 0) {
 //                    HashMap<String , Object> studentMap = new HashMap<>();
-                    studentService.selectByUserIdToMap(studentMap, students.get(0));
+                studentService.selectByUserIdToMap(studentMap, students.get(0));
 //                    response.getWriter().write(JsonUtils.obj2String(studentMap));
-                    isOperate = true;
-                }
+                isOperate = true;
             }
+        }
 
         if(isOperate)
-            response.getWriter().write(Result.build(ResultType.Success).appendData("student",studentService.selectByUserId(userId).get(0))
-                    .appendData("studentInfo",studentMap).convertIntoJSON());
+            return Result.build(ResultType.Success).appendData("student",studentService.selectByUserId(userId).get(0))
+                    .appendData("studentInfo",studentMap);
         else
-            response.getWriter().write(Result.build(ResultType.ParamError).convertIntoJSON());
-    }
-
-    /**
-     * Author: 莫宽元 16点34分 2019/6/11
-     * @param map
-     * @return Result
-     * @apiNote: 申请修改学生主要信息, 点击确认申请时
-     */
-    @ApiOperation(value="申请修改学生主要信息", notes="2019年5月11日 14:33:14 已通过测试")
-    @ApiImplicitParam( name = "map"  )
-    @PostMapping("/applyModifyStudent")
-    @ResponseBody
-    public Result ApplyModifyStudent(@RequestBody Map<String,Object> map) throws InvocationTargetException, IllegalAccessException {
-
-        System.out.println(map.toString());
-        Student new_student = new Student();
-        //获取前台参数
-        String reason = (String) map.get("reason");
-        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),new_student);
-        //检验参数是否合法
-        if(Student.isValidForApply(new_student) == false || reason == null)
             return Result.build(ResultType.ParamError);
-
-        edu.uni.auth.bean.User user = authService.getUser();
-        if(user == null){
-            return Result.build(ResultType.Failed, "你沒有登錄");
-        }
-        Student old_student = studentService.selectById(new_student.getId());
-        Student.copyPropertiesForApply(new_student,old_student);
-        UserinfoApply userinfoApply = new UserinfoApply();
-        userinfoApply.setApplyReason(reason);
-        userinfoApply.setUniversityId(user.getUniversityId());
-        //设置用户信息申请写入者
-        userinfoApply.setByWho(user.getId());
-
-        boolean applyResult = studentService.clickApplyStudent(new_student, userinfoApply);
-        return applyResult ? Result.build(ResultType.Success) : Result.build(ResultType.ParamError);
-
     }
 
-    /**
-     * Author: laizhouhao 20:50 2019/5/9
-     * @param map
-     * @return Result
-     * @apiNote: 审批修改学生主要信息的申请, 点击通过时
-     */
-    @ApiOperation(value="审批修改学生主要信息的申请, 点击通过时", notes="已测试 2019/6/5 21点43分")
-    @ApiImplicitParam( name = "map"  )
-    @PutMapping("judgeApply")
-    @ResponseBody
-    public Result commitApplyModifyStudent(@RequestBody Map<String,Object> map){
-        Integer userId = (Integer) map.get("user_id");
-        userId = 100;
-        Integer approvalId = (Integer) map.get("approval_id");
-        Integer flag = (Integer) map.get("flag");
-        String judgeReason = (String) map.get("Reason");
-        boolean isFlag = false;
-        if(flag == 0 || flag == -1)
-            isFlag = true;
-        System.out.println(userId + "###" + approvalId + "$$" + flag + "@@" + judgeReason);
-//        List<UserinfoApplyApproval> userinfoApplyApprovals = userinfoApplyApprovalService.selectByApplyId((long)approvalId);
-        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById((long) approvalId);
-        if(userId != null && userinfoApplyApproval != null && isFlag && judgeReason != null ){
-            userinfoApplyApproval.setReason(judgeReason);
-            if(flag.equals(0)){
-                //比较当前步骤是否是最后一步
-                boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
-                //该步骤是最后一步
-                if(isLast){
-                    //更新
-                    boolean firstSuccess = userService.endForPass(userinfoApplyApproval, (long)userId);
-                    //判断两个更新是否都成功
-                    return firstSuccess ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-                }else{
-                    //该审批不是最后一步
-                    boolean secondSuccess = userService.createForPass(userinfoApplyApproval, (long)userId);
-                    //操作结果
-                    return secondSuccess ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-                }
-            }
-            else{
-                if(flag.equals(-1)){
-                    boolean success = userService.endForRefuse(userinfoApplyApproval, (long)userId);
-                    return success ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-                }
-                else
-                    return Result.build(ResultType.ParamError);
-            }
+//    /**
+//     * Author: mokuanyuan 15:19 2019/6/12
+//     * @param map
+//     * @return Result
+//     * @apiNote: 申请修改学生主要信息, 点击确认申请时
+//     */
+//    @ApiOperation(value="申请修改学生主要信息", notes="2019年5月11日 14:33:14 已通过测试")
+//    @ApiImplicitParam( name = "map"  )
+//    @PostMapping("/applyModifyStudent")
+//    @ResponseBody
+//    public Result ApplyModifyStudent(@RequestBody Map<String,Object> map) throws InvocationTargetException, IllegalAccessException {
+//
+//        System.out.println(map.toString());
+//        Student new_student = new Student();
+//        //获取前台参数
+//        String reason = (String) map.get("reason");
+//        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),new_student);
+//        //检验参数是否合法
+//        if(Student.isValidForApply(new_student) == false || reason == null)
+//            return Result.build(ResultType.ParamError);
+//
+//        edu.uni.auth.bean.User user = authService.getUser();
+//        if(user == null){
+//            return Result.build(ResultType.Failed, "你沒有登錄");
+//        }
+//        Student old_student = studentService.selectById(new_student.getId());
+//        Student.copyPropertiesForApply(new_student,old_student);
+//        UserinfoApply userinfoApply = new UserinfoApply();
+//        userinfoApply.setApplyReason(reason);
+//        userinfoApply.setUniversityId(user.getUniversityId());
+//        //设置用户信息申请写入者
+//        userinfoApply.setByWho(user.getId());
+//
+//        boolean applyResult = studentService.clickApplyStudent(new_student, userinfoApply);
+//        return applyResult ? Result.build(ResultType.Success) : Result.build(ResultType.ParamError);
+//
+//    }
 
-        }
-        return Result.build(ResultType.ParamError);
-    }
+
+//    /**
+//     * Author: laizhouhao 20:50 2019/5/9
+//     * @param map
+//     * @return Result
+//     * @apiNote: 审批修改学生主要信息的申请, 点击通过或者不通过时
+//     */
+//    @ApiOperation(value="审批修改学生主要信息的申请, 点击通过或者不通过时", notes="已测试 2019/6/5 21点43分")
+//    @ApiImplicitParam( name = "map"  )
+//    @PutMapping("judgeApply")
+//    @ResponseBody
+//    public Result commitApplyModifyStudent(@RequestBody Map<String,Object> map){
+//        edu.uni.auth.bean.User loginUser = authService.getUser();
+//        if(loginUser == null){
+//            return Result.build(ResultType.Failed, "你沒有登錄");
+//        }
+//        Long userId = loginUser.getId();
+//        Integer approvalId = (Integer) map.get("approval_id");
+//        Integer flag = (Integer) map.get("flag");
+//        String judgeReason = (String) map.get("Reason");
+//        boolean isFlag = false;
+//        if(flag == 0 || flag == -1)
+//            isFlag = true;
+//        System.out.println(userId + "###" + approvalId + "$$" + flag + "@@" + judgeReason);
+////        List<UserinfoApplyApproval> userinfoApplyApprovals = userinfoApplyApprovalService.selectByApplyId((long)approvalId);
+//        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById((long) approvalId);
+//        if(userId != null && userinfoApplyApproval != null && isFlag && judgeReason != null ){
+//
+//            userinfoApplyApproval.setReason(judgeReason);
+//            if(flag.equals(0)){  // flag为0 时表示通过
+//                //比较当前步骤是否是最后一步
+//                if(userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId())) //该步骤是最后一步
+//                    return userService.endForPass(userinfoApplyApproval, (long)userId) ?
+//                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//                else //该审批不是最后一步
+//                    return userService.createForPass(userinfoApplyApproval, (long)userId) ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//            }
+//            else{
+//                if(flag.equals(-1)) // flag为-1 时表示不通过
+//                    return userService.endForRefuse(userinfoApplyApproval, (long)userId) ?
+//                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//                else
+//                    return Result.build(ResultType.ParamError);
+//            }
+//
+//        }
+//        return Result.build(ResultType.ParamError);
+//    }
 
 
 //    /**
@@ -476,22 +477,17 @@ public class StudentController {
 //    @PostMapping(value = "refuseUserinfoApply")
 //    @ResponseBody
 //    public Result refuseApplyModifyStudent(@RequestBody Map<String,Object> map) throws IOException {
-////        System.out.println("小莫是头猪！！！---");
 //        Integer userId = (Integer) map.get("user_id");
 //        Integer approvalId = (Integer) map.get("approval_id");
 //        System.out.println(userId + "###" + approvalId);
 //        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById(approvalId);
 //
-//        if(userId != null && userinfoApplyApproval != null){
-//            boolean success = userService.endForRefuse(userinfoApplyApproval, (long)userId);
-//            if(success) {
-//                return Result.build(ResultType.Success);
-//            }else{
-//                return Result.build(ResultType.Failed);
-//            }
-//        }
+//        if(userId != null && userinfoApplyApproval != null)
+//            return userService.endForRefuse(userinfoApplyApproval, (long)userId) ?
+//                    Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//
 //        return Result.build(ResultType.ParamError);
-//    }
+    }
 
     /**
      * Author: laizhouhao 22:06 2019/6/2

@@ -49,6 +49,31 @@ public class EcommServiceImpl implements EcommService {
     private ExampleConfig config;
 
     /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId){
+        boolean result = false;
+        Ecomm newEcomm = selectById(newId);
+        if(oldId != null){
+            Ecomm oldEcomm = selectById(oldId);
+            oldEcomm.setId(newId);
+            newEcomm.setId(oldId);
+            if( update(oldEcomm) && update(newEcomm) )
+                result = true;
+        }else{
+            newEcomm.setDeleted(false);
+            if( update(newEcomm) )
+                result = true;
+        }
+        return result;
+    }
+
+
+    /**
      * Author: mokuanyuan 10:44 2019/4/26
      * @return List<Ecomm>
      * @apiNote: 查询所有通信记录，不分页

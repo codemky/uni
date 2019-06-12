@@ -110,11 +110,11 @@ public interface AddressService {
 
     /**
      * Author: mokuanyuan 16:12 2019/6/11
-     * @param map
+     * @param addressList
      * @param address
      * @apiNote: 传入一个List集合对象，其集合元素为HashMap<String, Object>，把地址中的id和name包装成map放到List集合中
      */
-    public void selectAllInfoToList(HashMap<String, Object> map , List<Address> address);
+    public void selectAllInfoToList(List<List> addressList , List<Address> address);
 
     /**
      * Author: laizhouhao 21:09 2019/6/9

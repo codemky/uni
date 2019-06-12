@@ -2,19 +2,31 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.administrativestructure.service.DepartmentService;
+import edu.uni.administrativestructure.service.PositionService;
+import edu.uni.administrativestructure.service.SubdepartmentService;
+import edu.uni.auth.bean.User;
+import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.auth.service.AuthService;
+import edu.uni.auth.service.RoleService;
 import edu.uni.example.config.ExampleConfig;
-import edu.uni.userBaseInfo1.bean.UserinfoApply;
-import edu.uni.userBaseInfo1.bean.UserinfoApplyExample;
+import edu.uni.place.service.FieldService;
+import edu.uni.professionalcourses.service.SpecialtyService;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.controller.UserinfoApplyApprovalController;
+import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyMapper;
-import edu.uni.userBaseInfo1.service.ApprovalMainService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyService;
+import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.StaticInformation;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
+import edu.uni.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author chenenru
@@ -27,6 +39,8 @@ import java.util.List;
 @SuppressWarnings("ALL")
 @Service
 public class UserinfoApplyServiceImpl implements UserinfoApplyService {
+    private LogUtils logUilts = new LogUtils(this.getClass());
+
     //持久层接口的对象
     @Autowired
     private UserinfoApplyMapper userinfoApplyMapper;
@@ -34,10 +48,209 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
     private ApprovalMainService approvalMainService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
+    @Autowired
+    private RoleMapper roleMapper;
+    @Autowired
+    UserinfoApplyService userinfoApplyService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    UserinfoApplyApprovalController userinfoApplyApprovalController;
+    @Autowired
+    UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private OtherClassService otherClassService;
+    @Autowired
+    EmployeeService employeeService;
+    @Autowired
+    OtherEmployService otherEmployService;
+    @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
+    private StudentService studentService;
+    @Autowired
+    private StudentRelationService studentRelationService;
+    @Autowired
+    private EcommService ecommService;
+    @Autowired
+    private AddressService addressService;
+    @Autowired
+    private PictureService pictureService;
+    @Autowired
+    private LearningDegreeSerevice learningDegreeSerevice;
+    @Autowired
+    private EmployeeHistoryService employeeHistoryService;
+    @Autowired
+    private UserUploadFileService userUploadFileService;
+    @Autowired
+    private AddrCountryService addrCountryService;
+    @Autowired
+    private AddrStateService addrStateService;
+    @Autowired
+    private AddrCityService addrCityService;
+    @Autowired
+    private AddrAreaService addrAreaService;
+    @Autowired
+    private AddrStreetService addrStreetService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
+    @Autowired
+    private MyAcademicService myAcademicService;
+    @Autowired
+    private MyAcademicDegreeService myAcademicDegreeService;
+    @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
+    private FieldService fieldService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private SubdepartmentService subdepartmentService;
+    @Autowired
+    private MySecondLevelDisciplineService mySecondLevelDisciplineService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
+    @Autowired
+    private PositionService positionService;
+    @Autowired
+    private RoleService roleService;
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
+
+
+    /**
+     * Author: mokuanyuan 18:33 2019/6/11
+     * @param map
+     * @param type
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 在任何申请页面点击确认申请时
+     */
+    @Override
+    public boolean clickApply(HashMap<String,Object> map, Integer type, User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) {
+
+        //获取申请理由
+        String reason = (String) map.get("reason");
+
+        Long newId = null;
+        Long oldId = null;
+        Long userId = null ;
+        Integer infoType = -1;
+        Integer flag = -1;  //0：修改      1：增加        2：批量增加
+
+        //各类信息对象
+        Ecomm ecomm = null;
+        Address address = null;
+        Picture  picture = null;
+        StudentRelation studentRelation = null;
+        LearningDegree learningDegree = null;
+        EmployeeHistory employeeHistory = null;
+        Student student = null;
+        Employee employee = null;
+        edu.uni.userBaseInfo1.bean.User user = null;
+        UserUploadFile userUploadFile = null;
+
+
+//      信息种类	  0:联系方式	  1:地址
+//        2：照片  	3：亲属  4	：学历  5	：简历
+//        6：学生信息	 7：教职工信息	 8：	用户个人信息
+//        9：学生excel	表  10：	职员excel	表
+        switch (type){
+            case 0:
+
+
+                break;
+            case 1:
+
+                break;
+            case 2:
+
+                break;
+            case 3:
+
+                break;
+            case 4:
+
+                break;
+            case 5:
+
+                break;
+            case 6:
+                infoType = 6;
+                userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),student);
+                //检验是否把该获取的信息都获取到了
+                if(!Student.isValidForApply(student))
+                    return false;
+                if(student.getId() != -1){  //不是-1代表原本有旧数据
+                    Student oldStudent = studentService.selectById(student.getId());
+                    Student.copyPropertiesForApply(student,oldStudent);
+                    oldId = student.getId();
+                    studentService.insert(student);
+                    newId = student.getId();
+                    flag = 0;
+                }
+                else{
+                    student.setUserId(modifiedUser.getId());
+                    student.setUniversityId(modifiedUser.getUniversityId());
+                    student.setDatetime(new Date());
+                    student.setByWho(loginUser.getId());
+                    student.setDeleted(true);
+                    studentService.insert(student);
+                    newId = student.getId();
+                    flag = 1;
+                }
+
+
+                break;
+            case 7:
+
+                break;
+            case 8:
+
+                break;
+            case 9:
+
+                break;
+            case 10:
+
+                break;
+
+
+        }
+
+        UserinfoApply userinfoApply = new UserinfoApply();
+        userinfoApply.setApplyReason(reason);
+        userinfoApply.setUniversityId(loginUser.getUniversityId());
+        //设置用户信息申请写入者
+        userinfoApply.setByWho(loginUser.getId());
+        //设置申请的信息类型种类
+        userinfoApply.setInfoType(infoType);
+        //设置新旧记录的记录id
+        userinfoApply.setOldInfoId(oldId);
+        userinfoApply.setNewInfoId(newId);
+
+        boolean createApply = userinfoApplyService.createForApply(userinfoApply, flag);
+
+        //向审批流程表插入一条数据
+        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+        boolean createApplyApproval = userinfoApplyApprovalService.createForApply(applyApproval, userinfoApply);
+
+        if(createApply == false)
+            logUilts.info("创建申请表记录失败");
+        if(createApplyApproval == false)
+            logUilts.info("创建申请流程表记录失败");
+
+        System.out.println(userinfoApply + "\n" + applyApproval);
+
+        return createApply && createApplyApproval ;
+    }
 
 
     /**
@@ -55,6 +268,9 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
         //根据flag（说明是修改还是增加还是批量增加）、登录用户的用户类型、申请的信息类型获取审批业务的名称
         String approvalName = StaticInformation.getApprovalString(user.getUserType(),
                 userInfo_apply.getInfoType(),flag);
+
+        System.out.println(approvalName);
+        logUilts.info(approvalName);
 
         //向userinfoApply增加审批业务id
         userInfo_apply.setApprovalMainId(approvalMainService.

@@ -230,6 +230,7 @@ public class UserServiceImpl implements UserService {
         System.out.println("时间"+userinfoApply.getEndTime()+"结果"+userinfoApply.getApplyResult());
         int secondSuccess = userinfoApplyMapper.updateByPrimaryKeySelective(userinfoApply);
         if(firstSuccess == 1 && secondSuccess == 1){
+            
             return true;
         }
         return false;
@@ -269,26 +270,9 @@ public class UserServiceImpl implements UserService {
         UserinfoApply userinfoApply = new UserinfoApply();
         //根据id查找出UserinfoApply的一条记录
         userinfoApply = userinfoApplyMapper.selectByPrimaryKey(userinfoApplyApproval.getUserinfoApplyId());
-        //设置查找审批人id的条件
-        ApprovalStepInchargeExample approvalStepInchargeExample = new ApprovalStepInchargeExample();
-        approvalStepInchargeExample.createCriteria().andApprovalMainIdEqualTo(userinfoApply.getApprovalMainId())
-                .andStepEqualTo(applyApproval.getStep()).andDeletedEqualTo(false);
-        System.out.println("步数"+applyApproval.getStep());
-//        //审批人条件
-//        List<ApprovalStepIncharge> approvalStepInchargeList = approvalStepInchargeMapper
-//                .selectByExample(approvalStepInchargeExample);
-//        //判断是否有这个审批人
-//        if(approvalStepInchargeList.size()>=1) {
-//            Long roleId = approvalStepInchargeList.get(0).getRoleId();
-//            //审批人姓名
-//            String roleName = roleMapper.selectByPrimaryKey(roleId).getName();
-//            applyApproval.setRoleName(roleName);
-//        }
         //设置审批人的角色名
-//        approvalStepInchargeService.selectRoleIdByMainIdAndStep()
-        //设置申请信息类型
         Long roleId = approvalStepInchargeService.selectRoleIdByMainIdAndStep(userinfoApply.getApprovalMainId(), applyApproval.getStep());
-        applyApproval.setRoleName(otherRoleService.selectById(roleId).getDescription());
+        applyApproval.setRoleName(otherRoleService.selectById(roleId).getName());
 
         applyApproval.setInfoType(userinfoApplyApproval.getInfoType());
         //设置申请人用户id

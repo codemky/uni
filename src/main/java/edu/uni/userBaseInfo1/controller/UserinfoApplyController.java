@@ -1,12 +1,19 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.service.DepartmentService;
+import edu.uni.administrativestructure.service.PositionService;
+import edu.uni.administrativestructure.service.SubdepartmentService;
+import edu.uni.auth.mapper.RoleMapper;
+import edu.uni.auth.service.AuthService;
+import edu.uni.auth.service.RoleService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
-import edu.uni.userBaseInfo1.bean.LearningDegree;
-import edu.uni.userBaseInfo1.bean.UserinfoApply;
-import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
-import edu.uni.userBaseInfo1.service.UserService;
-import edu.uni.userBaseInfo1.service.UserinfoApplyService;
+import edu.uni.place.service.FieldService;
+import edu.uni.professionalcourses.service.SpecialtyService;
+import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
+import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,7 +28,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author chenenru
@@ -40,12 +50,83 @@ import java.time.LocalDateTime;
 public class UserinfoApplyController {
 
     //把UserinfoApply的Service层接口所有的方法自动装配到该对象中
+    //持久层接口的对象
+    @Autowired
+    private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
+    @Autowired
+    private RoleMapper roleMapper;
     @Autowired
     UserinfoApplyService userinfoApplyService;
     @Autowired
     UserService userService;
     @Autowired
     UserinfoApplyApprovalController userinfoApplyApprovalController;
+    @Autowired
+    AuthService authService;
+    @Autowired
+    UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private OtherClassService otherClassService;
+    @Autowired
+    EmployeeService employeeService;
+    @Autowired
+    OtherEmployService otherEmployService;
+    @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
+    private StudentService studentService;
+    @Autowired
+    private StudentRelationService studentRelationService;
+    @Autowired
+    private EcommService ecommService;
+    @Autowired
+    private AddressService addressService;
+    @Autowired
+    private PictureService pictureService;
+    @Autowired
+    private LearningDegreeSerevice learningDegreeSerevice;
+    @Autowired
+    private EmployeeHistoryService employeeHistoryService;
+    @Autowired
+    private UserUploadFileService userUploadFileService;
+    @Autowired
+    private AddrCountryService addrCountryService;
+    @Autowired
+    private AddrStateService addrStateService;
+    @Autowired
+    private AddrCityService addrCityService;
+    @Autowired
+    private AddrAreaService addrAreaService;
+    @Autowired
+    private AddrStreetService addrStreetService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
+    @Autowired
+    private MyAcademicService myAcademicService;
+    @Autowired
+    private MyAcademicDegreeService myAcademicDegreeService;
+    @Autowired
+    private ApprovalMainService  approvalMainService;
+    @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
+    private FieldService fieldService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private SubdepartmentService subdepartmentService;
+    @Autowired
+    private MySecondLevelDisciplineService mySecondLevelDisciplineService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
+    @Autowired
+    private PositionService positionService;
+    @Autowired
+    private RoleService roleService;
+
+
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -57,44 +138,117 @@ public class UserinfoApplyController {
         public static final String ListAll_CacheName = "ub1_u_userinfoApply_listAll";
     }
 
-    /**
-     * Author: chenenru 23:41 2019/4/29
-     * @param id response
-     * @return response
-     * @apiNote: 获取用户信息申请详情
-     */
-    //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
-    //@ApiOperation：用于在swagger2页面显示方法的提示信息
-    //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
-    //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
-    //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条用户信息申请记录详情",notes = "2019-5-2 11:09:42已通过测试" )
-    @GetMapping("userinfoApply/{id}")
-    @ApiImplicitParam(name = "id", value = "userinfoApply表的一个id", required = false, dataType = "Long" , paramType = "path")
-    @ResponseBody
-    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        //设置返回的数据格式
-        response.setContentType("application/json;charset=utf-8");
 
-        userinfoApplyApprovalController.getOldInfoAndNewInfoByApply(id,response);
+
+    /**
+     * Author: mokuanyuan 15:19 2019/6/12
+     * @param map
+     * @return Result
+     * @apiNote: 在任何申请页面点击确认申请时
+     */
+    @ApiOperation(value="在任何申请页面点击确认申请时", notes="2019年5月11日 14:33:14 已通过测试")
+    @ApiImplicitParam( name = "map"  )
+    @PostMapping("/applyModify")
+    @ResponseBody
+    public Result ApplyModifyStudent(@RequestBody Map<String,Object> map) throws InvocationTargetException, IllegalAccessException {
+        User user = null;
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(loginUser == null){
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
+        System.out.println(map.toString());
+        //获取前台参数
+        Integer type = (Integer) map.get("type");
+        String reason = (String) map.get("reason");
+        Integer modifiedUserId = (Integer) map.get("modifiedUserId");
+        if(type == null || reason == null)
+            return Result.build(ResultType.ParamError);
+
+        if(modifiedUserId != null) {
+            user = userService.selectUserById(modifiedUserId);
+        }
+
+
+        return userinfoApplyService.clickApply((HashMap<String, Object>) map,type,loginUser,user) ?
+                Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+
     }
 
 
+    /**
+     * Author: mokuanyuan 14:56 2019/6/12
+     * @param map
+     * @return Result
+     * @apiNote: 审批所有申请, 点击通过或者不通过时
+     */
+    @ApiOperation(value="审批所有申请, 点击通过或者不通过时", notes="已测试 2019/6/5 21点43分")
+    @ApiImplicitParam( name = "map"  )
+    @PutMapping("judgeApply")
+    @ResponseBody
+    public Result commitApplyModifyStudent(@RequestBody Map<String,Object> map){
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(loginUser == null){
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
+        Long userId = loginUser.getId();
+        Integer approvalId = (Integer) map.get("approval_id");
+        Integer flag = (Integer) map.get("flag");
+        String judgeReason = (String) map.get("Reason");
+        boolean isFlag = flag == -1 || flag == 0;
+
+        System.out.println(userId + "###" + approvalId + "$$" + flag + "@@" + judgeReason);
+//        List<UserinfoApplyApproval> userinfoApplyApprovals = userinfoApplyApprovalService.selectByApplyId((long)approvalId);
+        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById((long) approvalId);
+        if(userId != null && userinfoApplyApproval != null && isFlag && judgeReason != null ){
+
+            userinfoApplyApproval.setReason(judgeReason);
+            if(flag.equals(0)){  // flag为0 时表示通过
+                //比较当前步骤是否是最后一步
+                if(userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId())) //该步骤是最后一步
+                    return userService.endForPass(userinfoApplyApproval, userId) ?
+                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+                else //该审批不是最后一步
+                    return userService.createForPass(userinfoApplyApproval, userId) ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+            }
+            else{
+                if(flag.equals(-1)) // flag为-1 时表示不通过
+                    return userService.endForRefuse(userinfoApplyApproval, userId) ?
+                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+                else
+                    return Result.build(ResultType.ParamError);
+            }
+
+        }
+        return Result.build(ResultType.ParamError);
+    }
+
+
+    /**
+     * Author: mokuanyuan 15:23 2019/6/12
+     * @param map
+     * @return List<UserinfoApply>
+     * @apiNote: 根据信息类型，申请结果和用户id查询该用户的所有申请信息
+     */
     @ApiOperation( value = "根据信息类型，申请结果和用户id查询该用户的所有申请信息",notes = "未测试" )
     @PostMapping("userinfoApplys/listAll")
-    @ApiImplicitParam(name = "userinfoApply", value = "用户信息申请详情实体", required = true, dataType = "UserinfoApply")
+    @ApiImplicitParam(name = "map")
     @ResponseBody
-    public void selectAllByUserId(@RequestBody UserinfoApply userinfoApply ,
-                                  HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
+    public Result selectAllByUserId(@RequestBody Map<String,Object> map) throws IOException {
+        //获取前端参数
+        UserinfoApply userinfoApply = new UserinfoApply();
+        userinfoApply.setInfoType( (Integer) map.get("type"));
+        userinfoApply.setApplyResult( (Boolean) map.get("result") );
+        //获取登录状态
+        edu.uni.auth.bean.User user = authService.getUser();
+        if(user == null){
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
+        //检验参数合法性
+        if( user.getId() == null || userinfoApply.getInfoType() == null || userinfoApply.getApplyResult() == null )
+            return Result.build(ResultType.ParamError);
 
-        long user_id = 100;
-
-        String json = Result.build(ResultType.Success)
-                    .appendData("userinfoApplys",userinfoApplyService.
-                            selectByTypeAndResultAndUserId(userinfoApply,user_id)).convertIntoJSON();
-
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("userinfoApplys",userinfoApplyService.
+                            selectByTypeAndResultAndUserId(userinfoApply,user.getId()));
 
     }
 
@@ -189,118 +343,104 @@ public class UserinfoApplyController {
         }
         return Result.build(ResultType.ParamError);
     }
-    /**
-     * Author: chenenru 21:11 2019/5/9
-     * @param
-     * @return
-     * @apiNote: 此方法处理提交申请后保存申请记录，保存前先生成修改的对象的新纪录，再保存申请表的记录
-     *
-     */
-    @ApiOperation(value = "处理申请修改学历的方法",notes = "未测试")
-    @ApiImplicitParams(
-            {@ApiImplicitParam(name = "userinfoApply", value = "用户信息申请详情实体", required = true, dataType = "UserinfoApply"),@ApiImplicitParam(name = "learningDegree", value = "职员的学历详情实体", required = true, dataType = "LearningDegree")}
-    )
-    @PostMapping("info/employee/userInfoApply")
-    @ResponseBody
-    public void createUserApplayAndLearningDegree(UserinfoApply userinfoApply, LearningDegree learningDegree,Long byWho){
-    }
 
-    /**
-     * Author: laizhouhao 20:50 2019/5/9
-     * @param userinfoApplyApproval, user_id
-     * @return Result
-     * @apiNote: 审批申请信息, 点击通过时
-     */
-    @ApiOperation(value="审批申请信息, 点击通过时", notes="2019年5月14日 15:11:29 已通过测试")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
-            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
-    })
-    @PostMapping("commituserinfoApply/{user_id}")
-    @ResponseBody
-    public Result commitUserinfoApply(@RequestBody UserinfoApplyApproval userinfoApplyApproval, @PathVariable Long user_id){
-        if(userinfoApplyApproval != null){
-            //比较当前步骤是否是最后一步
-            boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
-            //该步骤是最后一步
-            if(isLast){
-                //更新申请表和用户信息审批流程表
-                boolean firstSuccess = userService.endForPass(userinfoApplyApproval, user_id);
-                //更新用户申请修改的信息的新旧记录
-                boolean thirdSuccess = userService.updateNewAndOldMessage(userinfoApplyApproval);
-                //判断两个更新是否都成功
-                if(firstSuccess) {
-                    //清除相应的缓存
-                    cache.delete(UserinfoApplyController.CacheNameHelper.Receive_CacheNamePrefix + "commitUserinfoApply");
-                    cache.delete(UserinfoApplyController.CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }else{ //该审批不是最后一步
-                boolean secondSuccess = userService.createForPass(userinfoApplyApproval, user_id);
-                //操作成功
-                if(secondSuccess){
-                    //清除相应的缓存
-                    cache.delete(UserinfoApplyController.CacheNameHelper.Receive_CacheNamePrefix + "commitUserinfoApply");
-                    cache.delete(UserinfoApplyController.CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }
-        }
-        return Result.build(ResultType.ParamError);
-    }
+    //    /**
+//     * Author: chenenru 23:41 2019/4/29
+//     * @param id response
+//     * @return response
+//     * @apiNote: 获取用户信息申请详情
+//     */
+//    //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
+//    //@ApiOperation：用于在swagger2页面显示方法的提示信息
+//    //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
+//    //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
+//    //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
+//    @ApiOperation( value = "以一个id获取一条用户信息申请记录详情",notes = "2019-5-2 11:09:42已通过测试" )
+//    @GetMapping("userinfoApply/{id}")
+//    @ApiImplicitParam(name = "id", value = "userinfoApply表的一个id", required = false, dataType = "Long" , paramType = "path")
+//    @ResponseBody
+//    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
+//        //设置返回的数据格式
+//        response.setContentType("application/json;charset=utf-8");
+//
+//        userinfoApplyApprovalController.getOldInfoAndNewInfoByApply(id,response);
+//    }
 
-    /**
-     * Author: laizhouhao 20:50 2019/5/9
-     * @param userinfoApplyApproval,user_id
-     * @return Result
-     * @apiNote: 审批申请信息, 点击不通过时
-     */
-    @ApiOperation(value="审批申请信息, 点击不通过时", notes="2019年5月14日 15:11:21 已通过测试")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
-            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
-    })
-    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Result refuseUserinfoApply(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id) throws IOException {
-        System.out.println("小莫是头猪！！！---");
-        if(userinfoApplyApproval != null && user_id != null){
-            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
-            if(success) {
-                //清除相应的缓存
-                cache.delete(UserinfoApplyController.CacheNameHelper.Receive_CacheNamePrefix + "refuseUserinfoApply");
-                cache.delete(UserinfoApplyController.CacheNameHelper.ListAll_CacheName);
-                return Result.build(ResultType.Success);
-            }else{
-                return Result.build(ResultType.Failed);
-            }
-        }
-        return Result.build(ResultType.ParamError);
-    }
+//    /**
+//     * Author: laizhouhao 20:50 2019/5/9
+//     * @param userinfoApplyApproval, user_id
+//     * @return Result
+//     * @apiNote: 审批申请信息, 点击通过时
+//     */
+//    @ApiOperation(value="审批申请信息, 点击通过时", notes="2019年5月14日 15:11:29 已通过测试")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+//            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+//    })
+//    @PostMapping("commituserinfoApply/{user_id}")
+//    @ResponseBody
+//    public Result commitUserinfoApply(@RequestBody UserinfoApplyApproval userinfoApplyApproval, @PathVariable Long user_id){
+//        if(userinfoApplyApproval != null){
+//            //比较当前步骤是否是最后一步
+//            boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
+//            //该步骤是最后一步
+//            if(isLast){
+//                //更新申请表和用户信息审批流程表
+//                boolean firstSuccess = userService.endForPass(userinfoApplyApproval, user_id);
+//                //更新用户申请修改的信息的新旧记录
+//                boolean thirdSuccess = userService.updateNewAndOldMessage(userinfoApplyApproval);
+//                //判断两个更新是否都成功
+//                if(firstSuccess) {
+//                    //清除相应的缓存
+//                    cache.delete(UserinfoApplyController.CacheNameHelper.Receive_CacheNamePrefix + "commitUserinfoApply");
+//                    cache.delete(UserinfoApplyController.CacheNameHelper.ListAll_CacheName);
+//                    return Result.build(ResultType.Success);
+//                }else{
+//                    return Result.build(ResultType.Failed);
+//                }
+//            }else{ //该审批不是最后一步
+//                boolean secondSuccess = userService.createForPass(userinfoApplyApproval, user_id);
+//                //操作成功
+//                if(secondSuccess){
+//                    //清除相应的缓存
+//                    cache.delete(UserinfoApplyController.CacheNameHelper.Receive_CacheNamePrefix + "commitUserinfoApply");
+//                    cache.delete(UserinfoApplyController.CacheNameHelper.ListAll_CacheName);
+//                    return Result.build(ResultType.Success);
+//                }else{
+//                    return Result.build(ResultType.Failed);
+//                }
+//            }
+//        }
+//        return Result.build(ResultType.ParamError);
+//    }
+//
+//    /**
+//     * Author: laizhouhao 20:50 2019/5/9
+//     * @param userinfoApplyApproval,user_id
+//     * @return Result
+//     * @apiNote: 审批申请信息, 点击不通过时
+//     */
+//    @ApiOperation(value="审批申请信息, 点击不通过时", notes="2019年5月14日 15:11:21 已通过测试")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+//            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+//    })
+//    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseBody
+//    public Result refuseUserinfoApply(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id) throws IOException {
+//        System.out.println("小莫是头猪！！！---");
+//        if(userinfoApplyApproval != null && user_id != null){
+//            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
+//            if(success) {
+//                //清除相应的缓存
+//                cache.delete(UserinfoApplyController.CacheNameHelper.Receive_CacheNamePrefix + "refuseUserinfoApply");
+//                cache.delete(UserinfoApplyController.CacheNameHelper.ListAll_CacheName);
+//                return Result.build(ResultType.Success);
+//            }else{
+//                return Result.build(ResultType.Failed);
+//            }
+//        }
+//        return Result.build(ResultType.ParamError);
+//    }
 
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-//        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-//        String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
-    }
 }

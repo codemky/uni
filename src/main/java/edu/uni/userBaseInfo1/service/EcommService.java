@@ -17,6 +17,15 @@ import java.util.List;
 public interface EcommService {
 
     /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId);
+
+    /**
      * Author: mokuanyuan 10:13 2019/4/26
      * @return List<Ecomm>
      * @apiNote: 查询所有的电子通讯方式

@@ -7,6 +7,7 @@ description：学生主要信息
 package edu.uni.userBaseInfo1.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import edu.uni.auth.bean.User;
 
 import java.util.Date;
 /*
@@ -227,4 +228,5 @@ public class Student {
         new_student.setId(old_student.getId());
         new_student.setDeleted(true);
     }
+
 }

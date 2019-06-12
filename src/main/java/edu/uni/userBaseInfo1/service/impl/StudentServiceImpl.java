@@ -238,8 +238,6 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public boolean clickApplyStudent(Student student , UserinfoApply userInfo_apply) {
-        //获取被修改的用户id
-        Long user_id = student.getUserId();
         //旧记录id
         Long oldId = student.getId();
         //将要插入的记录设置为无效

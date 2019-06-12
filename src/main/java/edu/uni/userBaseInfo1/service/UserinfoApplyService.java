@@ -1,12 +1,27 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
+import edu.uni.auth.bean.User;
+import edu.uni.userBaseInfo1.bean.Student;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface UserinfoApplyService  {
 
+
+
+    /**
+     * Author: mokuanyuan 18:33 2019/6/11
+     * @param map
+     * @param type
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 在任何申请页面点击确认申请时
+     */
+    public boolean clickApply(HashMap<String,Object> map, Integer type, User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser);
 
     /**
      * Author: mokuanyuan 21:21 2019/6/10
