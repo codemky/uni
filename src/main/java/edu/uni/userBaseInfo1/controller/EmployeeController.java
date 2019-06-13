@@ -664,12 +664,19 @@ public class EmployeeController {
             if (departments != null) {
                 List<Class> classes = otherClassService.selectAllClassByDepartmentId(departments.get(0).getId());
                 if (classes != null) {
+                    flag = 0;
                     for (Class c : classes) {
                         if (classNames != null && !classNames.equals("")) {
                             for (int i=0;i<classNames.length;i++){
                                 if (!classNames[i].equals(c.getName())) {
                                     continue;
+                                }else{
+                                    flag = 1;
+                                    break;
                                 }
+                            }
+                            if (flag!=1){
+                                continue;
                             }
                         }
                         List<Classmate> classmates = otherClassmateService.selectByClassId(c.getId());
@@ -694,6 +701,8 @@ public class EmployeeController {
                                 classmateBean.setSpecialty(select.getName());
                                 //所在年级
                                 classmateBean.setGrade(student.getGrade());
+                                //所在的班级
+                                classmateBean.setClassName(c.getName());
                                 //性别  0:女 1:男 2：不详
                                 if (user.getUserSex().equals(0)) {
                                     classmateBean.setSex("女");
@@ -726,26 +735,58 @@ public class EmployeeController {
                                     classmateBean.setPosition(String.valueOf(positionName));
                                 }
                                 //开启判断
-                                //String className, String cyear, String specialty, String user_sex, String studentName, String studentNo, String political, String position,
+                                //String className, String cyear,
+                                // String specialty, String user_sex,
+                                // String studentName, String studentNo,
+                                // String political, String position,
+                                //班级判断在前面
                                 //所有年级
                                 //所有专业
                                 //所有班级
                                 //所有岗位
                                 //所有政治面貌
+                                /*if (classNames!=null){
+                                    for (int i=0;i<classNames.length;i++){
+                                        System.out.println("班级："+classNames[i]+" "+classmateBean.getClass().getName());
+                                        if (!classmateBean.getClass().getName().equals(classNames[i])){
+                                            continue;
+                                        }else{
+                                            flag = 1;
+                                            break;
+                                        }
+                                    }
+                                    if (flag!=1){
+                                        continue;
+                                    }
+                                }*/
+                                flag=0;
                                 if (cyears!=null&&!cyears.equals("")){
                                     for (int i=0;i<cyears.length;i++){
                                         System.out.println("年级："+cyears[i]+" "+classmateBean.getGrade());
                                         if (!classmateBean.getGrade().equals(cyears[i])){
                                             continue;
+                                        }else{
+                                            flag = 1;
+                                            break;
                                         }
                                     }
+                                    if (flag!=1){
+                                        continue;
+                                    }
                                 }
+                                flag=0;
                                 if (specialtys!=null&&!specialtys.equals("")){
                                     for (int i=0;i<specialtys.length;i++){
                                         System.out.println("专业："+specialtys[i]+" "+classmateBean.getSpecialty());
                                         if (!specialtys[i].equals(classmateBean.getSpecialty())){
                                             continue;
+                                        }else{
+                                            flag = 1;
+                                            break;
                                         }
+                                    }
+                                    if (flag!=1){
+                                        continue;
                                     }
                                 }
                                 if (user_sex!=null&&!user_sex.equals("")){
@@ -763,16 +804,23 @@ public class EmployeeController {
                                         continue;
                                     }
                                 }
+                                flag=0;
                                 if (politicals!=null&&!politicals.equals("")){
                                     for (int i=0;i<politicals.length;i++){
                                         System.out.println("政治面貌："+politicals[i]+" "+classmateBean.getPosition());
                                         if (!politicals[i].equals(classmateBean.getPolitical())){
                                             continue;
+                                        }else{
+                                            flag = 1;
+                                            break;
                                         }
+                                    }
+                                    if (flag!=1){
+                                        continue;
                                     }
                                 }
                                 flag=0;
-                                System.out.println(positions.length);
+                                //System.out.println(positions.length);
                                 if (positions!=null&&!positions.equals("")){
                                     if (classmateBean.getPosition()!=null){
                                         for (int i=0;i<positions.length;i++){
@@ -797,7 +845,7 @@ public class EmployeeController {
                                 if (flag!=1&&positions!=null){
                                     continue;
                                 }
-                                System.out.println("indexof不为2时：不应该运行到这里");
+                                //System.out.println("flag不为1时的indexof不为2时：不应该运行到这里");
                                 classmateBeans.add(classmateBean);
                             }
                         }

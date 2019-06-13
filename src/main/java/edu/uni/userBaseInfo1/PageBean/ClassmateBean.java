@@ -14,29 +14,31 @@ public class ClassmateBean {
     private Long studentId;
     private String studentNo;
     private String studentName;
-    private Date BeginLearnDate;
+    private Date beginLearnDate;
     private String specialty;
     private String grade;
     private String sex;
     private String phone;
     private String political;
     private String position;
+    private String className;
 
     public ClassmateBean() {
     }
 
-    public ClassmateBean(Long userId, Long studentId, String studentNo, String studentName, Date beginLearnDate, String specialty, String grade, String sex, String phone, String political, String position) {
+    public ClassmateBean(Long userId, Long studentId, String studentNo, String studentName, Date beginLearnDate, String specialty, String grade, String sex, String phone, String political, String position, String className) {
         this.userId = userId;
         this.studentId = studentId;
         this.studentNo = studentNo;
         this.studentName = studentName;
-        BeginLearnDate = beginLearnDate;
+        this.beginLearnDate = beginLearnDate;
         this.specialty = specialty;
         this.grade = grade;
         this.sex = sex;
         this.phone = phone;
         this.political = political;
         this.position = position;
+        this.className = className;
     }
 
     public Long getUserId() {
@@ -70,14 +72,6 @@ public class ClassmateBean {
 
     public void setStudentName(String studentName) {
         this.studentName = studentName;
-    }
-
-    public Date getBeginLearnDate() {
-        return BeginLearnDate;
-    }
-
-    public void setBeginLearnDate(Date beginLearnDate) {
-        BeginLearnDate = beginLearnDate;
     }
 
     public String getSpecialty() {
@@ -128,6 +122,22 @@ public class ClassmateBean {
         this.position = position;
     }
 
+    public Date getBeginLearnDate() {
+        return beginLearnDate;
+    }
+
+    public void setBeginLearnDate(Date beginLearnDate) {
+        this.beginLearnDate = beginLearnDate;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
     @Override
     public String toString() {
         return "ClassmateBean{" +
@@ -135,13 +145,14 @@ public class ClassmateBean {
                 ", studentId=" + studentId +
                 ", studentNo='" + studentNo + '\'' +
                 ", studentName='" + studentName + '\'' +
-                ", BeginLearnDate=" + BeginLearnDate +
+                ", beginLearnDate=" + beginLearnDate +
                 ", specialty='" + specialty + '\'' +
                 ", grade='" + grade + '\'' +
                 ", sex='" + sex + '\'' +
                 ", phone='" + phone + '\'' +
                 ", political='" + political + '\'' +
                 ", position='" + position + '\'' +
+                ", className='" + className + '\'' +
                 '}';
     }
 }

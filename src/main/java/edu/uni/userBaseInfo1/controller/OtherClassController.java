@@ -91,7 +91,7 @@ public class OtherClassController {
                 }
             }
         }
-        System.out.println(classBean);
+        //System.out.println(classBean);
         json = Result.build(ResultType.Success).appendData("classBean", classBean).convertIntoJSON();
         response.getWriter().write(json);
     }

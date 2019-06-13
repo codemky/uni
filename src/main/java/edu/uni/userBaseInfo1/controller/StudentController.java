@@ -487,7 +487,7 @@ public class StudentController {
 //                    Result.build(ResultType.Success) : Result.build(ResultType.Failed);
 //
 //        return Result.build(ResultType.ParamError);
-    }
+    //}
 
     /**
      * Author: laizhouhao 22:06 2019/6/2
@@ -517,7 +517,7 @@ public class StudentController {
         }
     }
 
-    @ApiOperation(value="根据班级的id查询所有的学生信息", notes="未测试")
+    @ApiOperation(value="根据班级的编码查询所有的学生信息", notes="未测试")
     @ApiImplicitParam(name = "classCode", value = "classCode", required = false, dataType = "Long" , paramType = "path")
     @GetMapping("student/allClassmates/{classCode}")
     @ResponseBody
@@ -535,6 +535,8 @@ public class StudentController {
             //ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateIdAndPositionId(cm.getId(), null);
             List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
             ClassmateBean classmateBean = new ClassmateBean();
+            //用户id
+            classmateBean.setUserId(user.getId());
             //学生id
             classmateBean.setStudentId(student.getId());
             //学号
@@ -548,6 +550,8 @@ public class StudentController {
             classmateBean.setSpecialty(select.getName());
             //所在年级
             classmateBean.setGrade(student.getGrade());
+            //所在班级
+            classmateBean.setClassName(aClass.getName());
             //性别
             if (user.getUserSex().equals(0)){
                 classmateBean.setSex("女");
