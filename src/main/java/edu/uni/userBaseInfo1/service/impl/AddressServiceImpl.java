@@ -8,6 +8,7 @@ import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.AddressMapper;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 /**
@@ -15,9 +16,8 @@ import org.springframework.stereotype.Service;
  * @Description Address实体类的service层接口的实现类
  * @Date 15:49 2019/4/29
  **/
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
 @Service
@@ -279,6 +279,71 @@ public class AddressServiceImpl implements AddressService {
         map.put("telephone",address.getTelephone());
         map.put("flag",address.getFlag());
 
+    }
+
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param address
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    @Override
+    public boolean readyForApply(HashMap<String, Object> map, Address address, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+        //通过工具类获取在map包装好的对象属性
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyAddress"),address);
+        //检验是否把该获取的信息都获取到了
+        if(!Address.isValidForApply(address))
+            return false;
+        boolean result = false;
+        if(address.getId() != -1){  //不是-1代表原本有旧数据
+            Address oldAddress = selectById(address.getId());
+            Address.copyPropertiesForApply(address,oldAddress);
+            address.setByWho(loginUser.getId());
+            oldId = oldAddress.getId();
+            result = insert(address) ;
+            newId = address.getId();
+
+        }
+        else{
+            address.setUserId(modifiedUser.getId());
+            address.setDatetime(new Date());
+            address.setByWho(loginUser.getId());
+            address.setDeleted(true);
+            result = insert(address) ;
+            newId = address.getId();
+        }
+        return result;
+
+    }
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId){
+        boolean result = false;
+        Address newAddress = selectById(newId);
+        if(oldId != null){
+            Address oldAddress = selectById(oldId);
+            oldAddress.setId(newId);
+            newAddress.setId(oldId);
+            if( update(oldAddress) && update(newAddress) )
+                result = true;
+        }else{
+            newAddress.setDeleted(false);
+            if( update(newAddress) )
+                result = true;
+        }
+        return result;
     }
 
     /**

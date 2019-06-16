@@ -339,81 +339,6 @@ public class EmployeeController {
     }
 
     /**
-     * Author: chenenru 20:50 2019/5/9
-     * @param userinfoApplyApproval, user_id
-     * @return Result
-     * @apiNote: 审批修改职员主要信息的申请, 点击通过时
-     */
-   /* @ApiOperation(value="审批修改职员主要信息的申请, 点击通过时", notes="未测试")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
-            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
-    })
-    @PostMapping("commituserinfoApply/{user_id}")
-    @ResponseBody
-    public Result commitApplyModifyEmployee(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id){
-        if(userinfoApplyApproval != null){
-            //比较当前步骤是否是最后一步
-            boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
-            //该步骤是最后一步
-            if(isLast){
-                //更新
-                boolean firstSuccess = userService.endForPass(userinfoApplyApproval, user_id);
-                //判断两个更新是否都成功
-                if(firstSuccess) {
-                    //清除相应的缓存
-                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
-                    cache.delete(CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }else{ //该审批不是最后一步
-                boolean secondSuccess = userService.createForPass(userinfoApplyApproval, user_id);
-                //操作成功
-                if(secondSuccess){
-                    //清除相应的缓存
-                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
-                    cache.delete(CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }
-        }
-        return Result.build(ResultType.ParamError);
-    }
-
-    *//**
-     * Author: chenenru 20:50 2019/5/9
-     * @param userinfoApplyApproval,user_id
-     * @return Result
-     * @apiNote: 审批修改职员主要信息的申请, 点击不通过时
-     *//*
-    @ApiOperation(value="审批修改职员主要信息的申请, 点击不通过时", notes="未测试")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
-            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
-    })
-    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Result refuseApplyModifyEmployee(@RequestBody UserinfoApplyApproval userinfoApplyApproval, @PathVariable Long user_id) throws IOException {
-        System.out.println("小莫是头猪！！！---");
-        if(userinfoApplyApproval != null && user_id != null){
-            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
-            if(success) {
-                //清除相应的缓存
-                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
-                cache.delete(CacheNameHelper.ListAll_CacheName);
-                return Result.build(ResultType.Success);
-            }else{
-                return Result.build(ResultType.Failed);
-            }
-        }
-        return Result.build(ResultType.ParamError);
-    }*/
-
-    /**
      * Author: chenenru 11:24 2019/5/16
      * @param userId
      * @return
@@ -860,24 +785,79 @@ public class EmployeeController {
     }
 
     /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
+     * Author: chenenru 20:50 2019/5/9
+     * @param userinfoApplyApproval, user_id
+     * @return Result
+     * @apiNote: 审批修改职员主要信息的申请, 点击通过时
      */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-//        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-//        String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
+   /* @ApiOperation(value="审批修改职员主要信息的申请, 点击通过时", notes="未测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+    })
+    @PostMapping("commituserinfoApply/{user_id}")
+    @ResponseBody
+    public Result commitApplyModifyEmployee(@RequestBody UserinfoApplyApproval userinfoApplyApproval,@PathVariable Long user_id){
+        if(userinfoApplyApproval != null){
+            //比较当前步骤是否是最后一步
+            boolean isLast = userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId());
+            //该步骤是最后一步
+            if(isLast){
+                //更新
+                boolean firstSuccess = userService.endForPass(userinfoApplyApproval, user_id);
+                //判断两个更新是否都成功
+                if(firstSuccess) {
+                    //清除相应的缓存
+                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
+                    cache.delete(CacheNameHelper.ListAll_CacheName);
+                    return Result.build(ResultType.Success);
+                }else{
+                    return Result.build(ResultType.Failed);
+                }
+            }else{ //该审批不是最后一步
+                boolean secondSuccess = userService.createForPass(userinfoApplyApproval, user_id);
+                //操作成功
+                if(secondSuccess){
+                    //清除相应的缓存
+                    cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
+                    cache.delete(CacheNameHelper.ListAll_CacheName);
+                    return Result.build(ResultType.Success);
+                }else{
+                    return Result.build(ResultType.Failed);
+                }
+            }
+        }
+        return Result.build(ResultType.ParamError);
     }
+
+    *//**
+     * Author: chenenru 20:50 2019/5/9
+     * @param userinfoApplyApproval,user_id
+     * @return Result
+     * @apiNote: 审批修改职员主要信息的申请, 点击不通过时
+     *//*
+    @ApiOperation(value="审批修改职员主要信息的申请, 点击不通过时", notes="未测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户申请审批流程表实体", required = true, dataType = "UserinfoApplyApproval"),
+            @ApiImplicitParam(name = "user_id", value = "审批人id", required = true, dataType = "Long", paramType = "path")
+    })
+    @PostMapping(value = "refuseuserinfoApply/{user_id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Result refuseApplyModifyEmployee(@RequestBody UserinfoApplyApproval userinfoApplyApproval, @PathVariable Long user_id) throws IOException {
+        System.out.println("小莫是头猪！！！---");
+        if(userinfoApplyApproval != null && user_id != null){
+            boolean success = userService.endForRefuse(userinfoApplyApproval, user_id);
+            if(success) {
+                //清除相应的缓存
+                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
+                cache.delete(CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }*/
+
+
 }

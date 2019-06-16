@@ -191,6 +191,18 @@ public class Address {
                 '}';
     }
 
+    public static boolean isValidForApply(Address address){
+        return address.getId() != null && address.getCountry() != null && address.getState() != null &&
+                address.getArea() != null && address.getStreet() != null && address.getDeleted() != null &&
+                address.getZipCode() != null && address.getTelephone() != null && address.getFlag() != null;
+    }
+
+    public static void copyPropertiesForApply(Address new_address, Address old_address){
+        new_address.setUserId(old_address.getUserId());
+        new_address.setDatetime(new Date());
+        new_address.setDeleted(true);
+    }
+
     public Address(Long id, Long userId, Long country, Long state, Long city, Long area, Long street, String detail, String zipCode, String telephone, Integer flag, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
         this.userId = userId;

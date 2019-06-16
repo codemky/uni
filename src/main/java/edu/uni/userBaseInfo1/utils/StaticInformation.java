@@ -27,9 +27,9 @@ public class StaticInformation {
             case 4: approvalName = "学生亲属";break;
         }
         switch (flag){
-            case 0: approvalName += "申请修改";break;
-            case 1: approvalName += "申请添加";break;
-            case 2: approvalName += "申请批量添加“";break;
+            case 0: approvalName += "申请更新";break;
+            case 1: approvalName += "申请批量更新";break;
+//            case 2: approvalName += "“";break;
         }
         switch (infoType){
             case 0: approvalName += "联系方式";break;

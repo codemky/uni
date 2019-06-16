@@ -7,6 +7,7 @@ package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.EmployeeHistory;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
+import edu.uni.userBaseInfo1.bean.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,13 +75,15 @@ public interface EmployeeHistoryService {
      * @apiNote: 根据用户id查询有效的雇佣历史信息
      */
     List<EmployeeHistory> seleValidEmpHisByUserId(Long user_id);
-    /**
-     * Author: chenenru 20:05 2019/5/13
-     * @param
-     * @return
-     * @apiNote: 用户点击申请修改简历
-     */
-    boolean clickApplyEmployeeHistory(RequestMessage requestMessage);
+
+
+//    /**
+//     * Author: chenenru 20:05 2019/5/13
+//     * @param
+//     * @return
+//     * @apiNote: 用户点击申请修改简历
+//     */
+//    boolean clickApplyEmployeeHistory(RequestMessage requestMessage);
 
     /**
      * Author: laizhouhao 18:33 2019/6/10
@@ -89,4 +92,28 @@ public interface EmployeeHistoryService {
      * @apiNote: 根据用户简历实体获取用户所有的有效简历的信息详情
      */
     void getEmployHistory(HashMap<String,Object>map,List<EmployeeHistory>employeeHistories);
+
+
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param employeeHistory
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    public boolean readyForApply(HashMap<String, Object> map, EmployeeHistory employeeHistory, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser);
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId);
 }

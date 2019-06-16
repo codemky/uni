@@ -195,6 +195,23 @@ public class Employee {
                 '}';
     }
 
+    public static boolean isValidForApply(Employee employee){
+        return employee.getId() != null && employee.getEmpNo() != null &&
+                employee.getDepartmentId() != null && employee.getSubdepartmentId() != null &&
+                employee.getEmployHistoryId() != null && employee.getDisciplineId() != null &&
+                employee.getPoliticalId() != null ;
+    }
+
+    public static void copyPropertiesForApply(Employee new_employee, Employee old_employee){
+        new_employee.setUniversityId(old_employee.getUniversityId());
+        new_employee.setUserId(old_employee.getUserId());
+        new_employee.setHomeAddressId(old_employee.getHomeAddressId());
+        new_employee.setPhoneEcommId(old_employee.getPhoneEcommId());
+        new_employee.setDatetime(new Date());
+        new_employee.setDeleted(true);
+    }
+
+
     public Employee() {
     }
 

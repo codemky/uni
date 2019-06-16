@@ -13,11 +13,11 @@ import edu.uni.userBaseInfo1.mapper.EmployeeMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author chenenru
@@ -56,7 +56,74 @@ public class EmployeeServiceImpl implements EmployeeService {
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
-    
+
+
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param employee
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    @Override
+    public boolean readyForApply(HashMap<String, Object> map, Employee employee, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+        //通过工具类获取在map包装好的对象属性
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyEmployee"),employee);
+        //检验是否把该获取的信息都获取到了
+        if(!Employee.isValidForApply(employee))
+            return false;
+        boolean result = false;
+        if(employee.getId() != -1){  //不是-1代表原本有旧数据
+            Employee oldEmployee = selectEmployeeById(employee.getId());
+            Employee.copyPropertiesForApply(employee,oldEmployee);
+            employee.setByWho(loginUser.getId());
+            oldId = oldEmployee.getId();
+            result = insertEmployee(employee) ;
+            newId = employee.getId();
+
+        }
+        else{
+            employee.setUserId(modifiedUser.getId());
+            employee.setDatetime(new Date());
+            employee.setByWho(loginUser.getId());
+            employee.setDeleted(true);
+            result = insertEmployee(employee) ;
+            newId = employee.getId();
+        }
+        return result;
+
+    }
+
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId){
+        boolean result = false;
+        Employee newEmployee = selectEmployeeById(newId);
+        if(oldId != null){
+            Employee oldEmployee = selectEmployeeById(oldId);
+            oldEmployee.setId(newId);
+            newEmployee.setId(oldId);
+            if( updateEmployee(oldEmployee) && updateEmployee(newEmployee) )
+                result = true;
+        }else{
+            newEmployee.setDeleted(false);
+            if( updateEmployee(newEmployee) )
+                result = true;
+        }
+        return result;
+    }
+
     /**
      * Author: chenenru 0:10 2019/4/30
      * @param 
@@ -177,76 +244,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * Author: chenenru 11:31 2019/5/14
-     * @param requestMessage
-     * @return boolean
-     * @apiNote:  用户点击申请修改职员主要信息
-     */
-    @Override
-    public boolean clickApplyEmployee(RequestMessage requestMessage) {
-        Employee employee = requestMessage.getEmployee();
-        Long byWho = requestMessage.getByWho();
-        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
-        //获取被修改的用户id
-        Long user_id = employee.getUserId();
-        //旧记录id
-        Long oldId = employee.getId();
-//            System.out.println("oldId = "+oldId);
-        //将要插入的记录设置为无效
-        employee.setDeleted(true);
-        //将新纪录插入Employee表
-        employeeMapper.insert(employee);
-        //新纪录的id
-        Long newId = employee.getId();
-        //向userinfoApply增加审批业务id
-        userInfo_apply.setApprovalMainId(approvalMainService.
-                selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修职员主要信息"));
-        //设置用户信息申请种类
-        userInfo_apply.setInfoType(0);
-        //设置用户信息申请旧信息记录id
-        userInfo_apply.setOldInfoId(oldId);
-        //设置用户信息申请新信息记录id
-        userInfo_apply.setNewInfoId(newId);
-        //设置用户信息申请开始时间
-        userInfo_apply.setStartTime(employee.getDatetime());
-        //设置用户信息创建时间
-        userInfo_apply.setDatetime(employee.getDatetime());
-        //设置用户信息申请写入者
-        userInfo_apply.setByWho(byWho);
-        //设置用户信息申请为有效
-        userInfo_apply.setDeleted(false);
-        //插入新的userinfoApply记录
-        boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
-        //向审批流程表插入一条数据
-        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
-        //设置学校id
-        applyApproval.setUniversityId(userInfo_apply.getUniversityId());
-        //设置申请表id
-        applyApproval.setUserinfoApplyId(userInfo_apply.getId());
-        //设置步骤，初始化为1
-        applyApproval.setStep(1);
-        //设置时间
-        applyApproval.setDatetime(userInfo_apply.getStartTime());
-        //设置写入者
-        applyApproval.setByWho(byWho);
-        //设置为有效
-        applyApproval.setDeleted(false);
-        //设置申请信息的种类
-        applyApproval.setInfoType(userInfo_apply.getInfoType());
-        //设置审批的角色名
-        int st = applyApproval.getStep();
-        Long mainId = userInfo_apply.getApprovalMainId();
-        Long roleId = approvalStepInchargeService
-                .selectRoleIdByStepAppovalId(st,mainId);
-        Role role = roleMapper.selectByPrimaryKey(roleId);
-        //设置申请人的用户id
-        applyApproval.setApplyUserId(byWho);
-        boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
-        System.out.println("aaa="+applyApproval);
-        return successInfoApply && successApplyApproval;
-    }
-
-    /**
      * Author: laizhouhao 20:43 2019/5/15
      * @param user_id
      * @return Employee
@@ -362,4 +359,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         userInfo.setEmployees(employeeList);
         return userInfo;
     }
+
+
+
 }

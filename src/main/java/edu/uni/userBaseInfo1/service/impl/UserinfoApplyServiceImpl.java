@@ -142,8 +142,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
         Long newId = null;
         Long oldId = null;
         Long userId = null ;
-        Integer infoType = -1;
-        Integer flag = -1;  //0：修改      1：增加        2：批量增加
+        Integer flag = 0;  //0：更新      1：批量更新  默认值为0，因为只有类型9或10时才为1
 
         //各类信息对象
         Ecomm ecomm = null;
@@ -163,62 +162,53 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
 //        6：学生信息	 7：教职工信息	 8：	用户个人信息
 //        9：学生excel	表  10：	职员excel	表
         switch (type){
-            case 0:
-
-
-                break;
-            case 1:
-
-                break;
-            case 2:
+            case 0:  //0为联系方式类信息
+                //为创建申请记录作相应的处理
+                ecommService.readyForApply(map,ecomm, oldId, newId, loginUser, modifiedUser); break;
+            case 1: //1为地址类型信息
 
                 break;
-            case 3:
+            case 2: //2为照片类型信息
 
                 break;
-            case 4:
+            case 3: //3为亲属类型信息
 
                 break;
-            case 5:
+            case 4: //4为学历类型信息
 
                 break;
-            case 6:
-                infoType = 6;
-                userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),student);
+            case 5: //5为简历类型信息
+
+                break;
+            case 6: //6为学生类型信息
+                studentService.readyForApply(map,student, oldId, newId, loginUser, modifiedUser); break;
+            case 7: //7为职员类型信息
+
+                break;
+            case 8: //8为用户类型信息
+                // 额。。关于用户的信息更新不打算做，因为user表都没有 Deleted字段。。
+                break;
+            case 9: //9代表批量更新学生信息，通过上传文件的方式
+                userinfoTransMapBean.transMap2Bean((Map) map.get("applyUserUploadFile"),userUploadFile);
                 //检验是否把该获取的信息都获取到了
-                if(!Student.isValidForApply(student))
-                    return false;
+//                UserUploadFile
+//                if(!Student.isValidForApply(student))
+//                    return false;
                 if(student.getId() != -1){  //不是-1代表原本有旧数据
-                    Student oldStudent = studentService.selectById(student.getId());
-                    Student.copyPropertiesForApply(student,oldStudent);
-                    oldId = student.getId();
-                    studentService.insert(student);
-                    newId = student.getId();
-                    flag = 0;
-                }
-                else{
-                    student.setUserId(modifiedUser.getId());
-                    student.setUniversityId(modifiedUser.getUniversityId());
-                    student.setDatetime(new Date());
-                    student.setByWho(loginUser.getId());
-                    student.setDeleted(true);
-                    studentService.insert(student);
-                    newId = student.getId();
-                    flag = 1;
+//                    Student oldStudent = studentService.selectById(student.getId());
+//                    Student.copyPropertiesForApply(student,oldStudent);
+//                    oldId = student.getId();
+//                    studentService.insert(student);
+//                    newId = student.getId();
+//                    flag = 0;
+                    //作上传文件的操作。。。
+
+                    flag = 1; //type为9或者10的时候为批量更新
                 }
 
 
                 break;
-            case 7:
-
-                break;
-            case 8:
-
-                break;
-            case 9:
-
-                break;
-            case 10:
+            case 10: //10代表批量更新职员信息，通过上传文件的方式
 
                 break;
 
@@ -231,7 +221,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
         //设置用户信息申请写入者
         userinfoApply.setByWho(loginUser.getId());
         //设置申请的信息类型种类
-        userinfoApply.setInfoType(infoType);
+        userinfoApply.setInfoType(type);
         //设置新旧记录的记录id
         userinfoApply.setOldInfoId(oldId);
         userinfoApply.setNewInfoId(newId);
@@ -269,8 +259,8 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
         String approvalName = StaticInformation.getApprovalString(user.getUserType(),
                 userInfo_apply.getInfoType(),flag);
 
-        System.out.println(approvalName);
-        logUilts.info(approvalName);
+        System.out.println("生成的审批业务名称为:" +approvalName);
+        logUilts.info("生成的审批业务名称为:" +approvalName);
 
         //向userinfoApply增加审批业务id
         userInfo_apply.setApprovalMainId(approvalMainService.

@@ -92,13 +92,37 @@ public interface StudentRelationService {
          */
         StudentRelation selectUserIdByRelaId(Long relaId);
 
+//        /**
+//         * Author: laizhouhao 15:18 2019/5/14
+//         * @param requestMessage
+//         * @return boolean
+//         * @apiNote: 用户点击申请修改亲属信息
+//         */
+//        boolean clickApplyStudentRelation(RequestMessage requestMessage);
+
         /**
-         * Author: laizhouhao 15:18 2019/5/14
-         * @param requestMessage
+         * Author: mokuanyuan 16:55 2019/6/13
+         * @param map
+         * @param studentRelation
+         * @param oldId
+         * @param newId
+         * @param loginUser
+         * @param modifiedUser
          * @return boolean
-         * @apiNote: 用户点击申请修改亲属信息
+         * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
          */
-        boolean clickApplyStudentRelation(RequestMessage requestMessage);
+        public boolean readyForApply(HashMap<String, Object> map, StudentRelation studentRelation, Long oldId,
+                                     Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser)
+
+
+        /**
+         * Author: mokuanyuan 14:52 2019/6/12
+         * @param oldId
+         * @param newId
+         * @return boolean 操作结果
+         * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+         */
+        public boolean updateForApply(Long oldId,Long newId);
 
         /**
          * Author: laizhouhao 15:58 2019/6/10

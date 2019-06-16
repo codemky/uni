@@ -8,12 +8,11 @@ import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.StudentRelationMapper;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author chenenru
@@ -178,73 +177,70 @@ public class StudentRelationServiceImpl implements StudentRelationService {
         return studentRelations.size() > 0 ? studentRelations.get(0) : null;
     }
 
+
     /**
-     * Author: laizhouhao 15:18 2019/5/14
-     * @param requestMessage
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param studentRelation
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
      * @return boolean
-     * @apiNote: 用户点击申请修改学生亲属信息
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
      */
     @Override
-    public boolean clickApplyStudentRelation(RequestMessage requestMessage) {
-        StudentRelation studentRelation = requestMessage.getStudentRelation();
-        Long byWho = requestMessage.getByWho();
-        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
-        //获取被修改的用户id
-        Long user_id = studentRelation.getUserId();
-        //旧记录id
-        Long oldId = studentRelation.getId();
-//            System.out.println("oldId = "+oldId);
-        //将要插入的记录设置为无效
-        studentRelation.setDeleted(true);
-        //将新纪录插入StudentRelation表
-        studentRelationMapper.insert(studentRelation);
-        //新纪录的id
-        Long newId = studentRelation.getId();
-        //向userinfoApply增加审批业务id
-        userInfo_apply.setApprovalMainId(approvalMainService.
-                selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改亲属信息"));
-        //设置用户信息申请种类
-        userInfo_apply.setInfoType(1);
-        //设置用户信息申请旧信息记录id
-        userInfo_apply.setOldInfoId(oldId);
-        //设置用户信息申请新信息记录id
-        userInfo_apply.setNewInfoId(newId);
-        //设置用户信息申请开始时间
-        userInfo_apply.setStartTime(studentRelation.getDatetime());
-        //设置用户信息创建时间
-        userInfo_apply.setDatetime(studentRelation.getDatetime());
-        //设置用户信息申请写入者
-        userInfo_apply.setByWho(byWho);
-        //设置用户信息申请为有效
-        userInfo_apply.setDeleted(false);
-        //插入新的userinfoApply记录
-        boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
-        //向审批流程表插入一条数据
-        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
-        //设置学校id
-        applyApproval.setUniversityId(userInfo_apply.getUniversityId());
-        //设置申请表id
-        applyApproval.setUserinfoApplyId(userInfo_apply.getId());
-        //设置步骤，初始化为1
-        applyApproval.setStep(1);
-        //设置时间
-        applyApproval.setDatetime(userInfo_apply.getStartTime());
-        //设置写入者
-        applyApproval.setByWho(byWho);
-        //设置为有效
-        applyApproval.setDeleted(false);
-        //设置申请信息的种类
-        applyApproval.setInfoType(userInfo_apply.getInfoType());
-        //设置审批的角色名
-        int st = applyApproval.getStep();
-        Long mainId = userInfo_apply.getApprovalMainId();
-        Long roleId = approvalStepInchargeService
-                .selectRoleIdByStepAppovalId(st,mainId);
-        Role role = roleMapper.selectByPrimaryKey(roleId);
-        //设置申请人的用户id
-        applyApproval.setApplyUserId(byWho);
-        boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
-        return successInfoApply && successApplyApproval;
+    public boolean readyForApply(HashMap<String, Object> map, StudentRelation studentRelation, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+        //通过工具类获取在map包装好的对象属性
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudentRelation"),studentRelation);
+        //检验是否把该获取的信息都获取到了
+        if(!StudentRelation.isValidForApply(studentRelation))
+            return false;
+        boolean result = false;
+        if(studentRelation.getId() != -1){  //不是-1代表原本有旧数据
+            StudentRelation oldStudentRelation = selectById(studentRelation.getId());
+            StudentRelation.copyPropertiesForApply(studentRelation,oldStudentRelation);
+            studentRelation.setByWho(loginUser.getId());
+            oldId = oldStudentRelation.getId();
+            result = insert(studentRelation) ;
+            newId = studentRelation.getId();
+
+        }
+        else{
+            studentRelation.setUserId(modifiedUser.getId());
+            studentRelation.setDatetime(new Date());
+            studentRelation.setByWho(loginUser.getId());
+            studentRelation.setDeleted(true);
+            result = insert(studentRelation) ;
+            newId = studentRelation.getId();
+        }
+        return result;
+
+    }
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId){
+        boolean result = false;
+        StudentRelation newStudentRelation = selectById(newId);
+        if(oldId != null){
+            StudentRelation oldStudentRelation = selectById(oldId);
+            oldStudentRelation.setId(newId);
+            newStudentRelation.setId(oldId);
+            if( update(oldStudentRelation) && update(newStudentRelation) )
+                result = true;
+        }else{
+            newStudentRelation.setDeleted(false);
+            if( update(newStudentRelation) )
+                result = true;
+        }
+        return result;
     }
 
     /**
@@ -327,5 +323,75 @@ public class StudentRelationServiceImpl implements StudentRelationService {
             map.put("relationList",itemList);
         }
     }
+
+
+    /**
+     //     * Author: laizhouhao 15:18 2019/5/14
+     //     * @param requestMessage
+     //     * @return boolean
+     //     * @apiNote: 用户点击申请修改学生亲属信息
+     //     */
+//    @Override
+//    public boolean clickApplyStudentRelation(RequestMessage requestMessage) {
+//        StudentRelation studentRelation = requestMessage.getStudentRelation();
+//        Long byWho = requestMessage.getByWho();
+//        UserinfoApply userInfo_apply = requestMessage.getUserinfoApply();
+//        //获取被修改的用户id
+//        Long user_id = studentRelation.getUserId();
+//        //旧记录id
+//        Long oldId = studentRelation.getId();
+////            System.out.println("oldId = "+oldId);
+//        //将要插入的记录设置为无效
+//        studentRelation.setDeleted(true);
+//        //将新纪录插入StudentRelation表
+//        studentRelationMapper.insert(studentRelation);
+//        //新纪录的id
+//        Long newId = studentRelation.getId();
+//        //向userinfoApply增加审批业务id
+//        userInfo_apply.setApprovalMainId(approvalMainService.
+//                selectIdByName(userInfo_apply.getUniversityId(), "审批学生申请修改亲属信息"));
+//        //设置用户信息申请种类
+//        userInfo_apply.setInfoType(1);
+//        //设置用户信息申请旧信息记录id
+//        userInfo_apply.setOldInfoId(oldId);
+//        //设置用户信息申请新信息记录id
+//        userInfo_apply.setNewInfoId(newId);
+//        //设置用户信息申请开始时间
+//        userInfo_apply.setStartTime(studentRelation.getDatetime());
+//        //设置用户信息创建时间
+//        userInfo_apply.setDatetime(studentRelation.getDatetime());
+//        //设置用户信息申请写入者
+//        userInfo_apply.setByWho(byWho);
+//        //设置用户信息申请为有效
+//        userInfo_apply.setDeleted(false);
+//        //插入新的userinfoApply记录
+//        boolean successInfoApply = userinfoApplyService.insertUserinfoApply(userInfo_apply);
+//        //向审批流程表插入一条数据
+//        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+//        //设置学校id
+//        applyApproval.setUniversityId(userInfo_apply.getUniversityId());
+//        //设置申请表id
+//        applyApproval.setUserinfoApplyId(userInfo_apply.getId());
+//        //设置步骤，初始化为1
+//        applyApproval.setStep(1);
+//        //设置时间
+//        applyApproval.setDatetime(userInfo_apply.getStartTime());
+//        //设置写入者
+//        applyApproval.setByWho(byWho);
+//        //设置为有效
+//        applyApproval.setDeleted(false);
+//        //设置申请信息的种类
+//        applyApproval.setInfoType(userInfo_apply.getInfoType());
+//        //设置审批的角色名
+//        int st = applyApproval.getStep();
+//        Long mainId = userInfo_apply.getApprovalMainId();
+//        Long roleId = approvalStepInchargeService
+//                .selectRoleIdByStepAppovalId(st,mainId);
+//        Role role = roleMapper.selectByPrimaryKey(roleId);
+//        //设置申请人的用户id
+//        applyApproval.setApplyUserId(byWho);
+//        boolean successApplyApproval = userinfoApplyApprovalService.insertUserinfoApplyApproval(applyApproval);
+//        return successInfoApply && successApplyApproval;
+//    }
 
 }

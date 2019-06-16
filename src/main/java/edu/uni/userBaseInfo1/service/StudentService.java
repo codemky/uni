@@ -24,6 +24,29 @@ public interface StudentService {
         public void selectByUserIdToMap(HashMap map , Student student);
 
         /**
+         * Author: mokuanyuan 14:52 2019/6/12
+         * @param oldId
+         * @param newId
+         * @return boolean 操作结果
+         * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+         */
+        public boolean updateForApply(Long oldId,Long newId);
+
+        /**
+         * Author: mokuanyuan 16:55 2019/6/13
+         * @param map
+         * @param student
+         * @param oldId
+         * @param newId
+         * @param loginUser
+         * @param modifiedUser
+         * @return boolean
+         * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+         */
+        public boolean readyForApply(HashMap<String, Object> map, Student student, Long oldId, Long newId ,
+                                     edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser);
+
+        /**
          * Author: laizhouhao 10:04 2019/4/30
          * @return List<Student>
          * @apiNote: 获取所有学生的学生信息

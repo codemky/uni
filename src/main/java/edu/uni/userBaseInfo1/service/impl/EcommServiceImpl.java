@@ -19,11 +19,14 @@ import edu.uni.userBaseInfo1.bean.EcommExample;
 import edu.uni.userBaseInfo1.mapper.EcommMapper;
 import edu.uni.userBaseInfo1.service.EcommService;
 import edu.uni.userBaseInfo1.utils.UserInfo;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -72,6 +75,45 @@ public class EcommServiceImpl implements EcommService {
         return result;
     }
 
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param ecomm
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    @Override
+    public boolean readyForApply(HashMap<String, Object> map, Ecomm ecomm, Long oldId, Long newId ,
+                                 edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) {
+        //通过工具类获取在map包装好的对象属性
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyEcomm"),ecomm);
+        //检验是否把该获取的信息都获取到了
+        if(Ecomm.isValidForApply(ecomm) == false)
+            return false;
+        boolean result = false;
+        if(ecomm.getId() != -1){  //不是-1代表原本有旧数据
+            Ecomm oldEcomm = selectById(ecomm.getId());
+            Ecomm.copyPropertiesForApply(ecomm,oldEcomm);
+            ecomm.setByWho(loginUser.getId());
+            oldId = oldEcomm.getId();
+            result = insert(ecomm) > 0 ? true : false;
+            newId = ecomm.getId();
+
+        }
+        else{
+            ecomm.setUserId(modifiedUser.getId());
+            ecomm.setDatetime(new Date());
+            ecomm.setByWho(loginUser.getId());
+            ecomm.setDeleted(true);
+            result = insert(ecomm) > 0 ? true : false;
+            newId = ecomm.getId();
+        }
+        return result;
+    }
 
     /**
      * Author: mokuanyuan 10:44 2019/4/26

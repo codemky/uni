@@ -110,4 +110,17 @@ public class Picture {
                 ", deleted=" + deleted +
                 '}';
     }
+
+
+    public static boolean isValidForApply(Picture picture){
+        return picture.getId() != null  && picture.getFlag() != null && picture.getPictureName() != null;
+    }
+
+    public static void copyPropertiesForApply(Picture new_picture, Picture old_picture){
+        new_picture.setUniversityId(old_picture.getUniversityId());
+        new_picture.setUserId(old_picture.getUserId());
+        new_picture.setDatetime(new Date());
+        new_picture.setDeleted(true);
+    }
+
 }

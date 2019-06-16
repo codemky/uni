@@ -155,6 +155,20 @@ public class LearningDegree {
                 '}';
     }
 
+
+    public static boolean isValidForApply(LearningDegree learningDegree){
+        return learningDegree.getId() != null && learningDegree.getCountryId() != null &&
+                learningDegree.getBeginTime() != null &&  learningDegree.getCityId() != null &&
+                learningDegree.getSchoolId() != null && learningDegree.getAcademicId() != null &&
+                learningDegree.getDegreeId() != null ;
+    }
+
+    public static void copyPropertiesForApply(LearningDegree new_degree, LearningDegree old_degree){
+        new_degree.setUserId(old_degree.getUserId());
+        new_degree.setDatetime(new Date());
+        new_degree.setDeleted(true);
+    }
+
     public LearningDegree(Long id, Long userId, Date beginTime, Date endTime, Long countryId, Long cityId, Long schoolId, Long academicId, Long degreeId, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
         this.userId = userId;

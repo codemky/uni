@@ -12,6 +12,7 @@ import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.mapper.StudentMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import edu.uni.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author laizhouhao
@@ -85,6 +87,72 @@ public class StudentServiceImpl implements StudentService {
         map.put("political", politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId()).getPolitical());
         map.put("dormitory", fieldService.select(student.getLiveRoom()).getName());
         map.put("class",otherClassService.select(student.getClassId()).getName());
+
+    }
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId){
+        boolean result = false;
+        Student newStudent = selectById(newId);
+        if(oldId != null){
+            Student oldStudent = selectById(oldId);
+            oldStudent.setId(newId);
+            newStudent.setId(oldId);
+            if( update(oldStudent) && update(newStudent) )
+                result = true;
+        }else{
+            newStudent.setDeleted(false);
+            if( update(newStudent) )
+                result = true;
+        }
+        return result;
+    }
+
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param student
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    @Override
+    public boolean readyForApply(HashMap<String, Object> map, Student student, Long oldId, Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),student);
+        //检验是否把该获取的信息都获取到了
+        if(Student.isValidForApply(student) == false )
+            return false;
+        boolean result = false;
+        if(student.getId() != -1){  //不是-1代表原本有旧数据
+            Student oldStudent = selectById(student.getId());
+            Student.copyPropertiesForApply(student,oldStudent);
+            student.setByWho(loginUser.getId()); //写入者为申请修改者
+            oldId = oldStudent.getId();
+            result = insert(student);
+            newId = student.getId();
+
+        }
+        else{ //一般来说不会单独添加学生信息的，就算是添加一个学生信息也只能通过批量增加学生的方法添加
+//                    student.setUserId(modifiedUser.getId());
+//                    student.setUniversityId(modifiedUser.getUniversityId());
+//                    student.setDatetime(new Date());
+//                    student.setByWho(loginUser.getId());
+//                    student.setDeleted(true);
+//                    studentService.insert(student);
+//                    newId = student.getId();
+//                    flag = 1;
+            return false;
+        }
+        return result;
 
     }
 

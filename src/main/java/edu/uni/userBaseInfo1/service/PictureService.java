@@ -7,11 +7,36 @@ package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Picture;
 import edu.uni.userBaseInfo1.bean.PictureExample;
+import edu.uni.userBaseInfo1.bean.User;
 
 import java.util.HashMap;
 import java.util.List;
 
 public interface PictureService {
+
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param picture
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    public boolean readyForApply(HashMap<String, Object> map, Picture picture, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser);
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId);
+
     /**
      * Author: laizhouhao 15:17 2019/4/29
      * @return List<Picture>

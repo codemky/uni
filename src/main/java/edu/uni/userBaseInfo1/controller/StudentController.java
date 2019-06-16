@@ -217,6 +217,7 @@ public class StudentController {
         if(user_id != null){
             UserInfo userInfo = new UserInfo();
             //获取学生在用户表的主要信息
+
             List<User> userList = new ArrayList<>();
             userList.add(userService.selectUserById(user_id));
             //获取学生的照片、地址信息
@@ -348,7 +349,7 @@ public class StudentController {
         response.setContentType("application/json;charset=utf-8");
         if(userId == null)
             return Result.build(ResultType.ParamError);
-        if(userId == -1 ){
+        if(userId == -1 ){ // -1 代表的是查询自己的信息
             edu.uni.auth.bean.User user = authService.getUser();
             if(user == null){
                 return Result.build(ResultType.Failed, "你沒有登錄");
@@ -378,116 +379,6 @@ public class StudentController {
             return Result.build(ResultType.ParamError);
     }
 
-//    /**
-//     * Author: mokuanyuan 15:19 2019/6/12
-//     * @param map
-//     * @return Result
-//     * @apiNote: 申请修改学生主要信息, 点击确认申请时
-//     */
-//    @ApiOperation(value="申请修改学生主要信息", notes="2019年5月11日 14:33:14 已通过测试")
-//    @ApiImplicitParam( name = "map"  )
-//    @PostMapping("/applyModifyStudent")
-//    @ResponseBody
-//    public Result ApplyModifyStudent(@RequestBody Map<String,Object> map) throws InvocationTargetException, IllegalAccessException {
-//
-//        System.out.println(map.toString());
-//        Student new_student = new Student();
-//        //获取前台参数
-//        String reason = (String) map.get("reason");
-//        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),new_student);
-//        //检验参数是否合法
-//        if(Student.isValidForApply(new_student) == false || reason == null)
-//            return Result.build(ResultType.ParamError);
-//
-//        edu.uni.auth.bean.User user = authService.getUser();
-//        if(user == null){
-//            return Result.build(ResultType.Failed, "你沒有登錄");
-//        }
-//        Student old_student = studentService.selectById(new_student.getId());
-//        Student.copyPropertiesForApply(new_student,old_student);
-//        UserinfoApply userinfoApply = new UserinfoApply();
-//        userinfoApply.setApplyReason(reason);
-//        userinfoApply.setUniversityId(user.getUniversityId());
-//        //设置用户信息申请写入者
-//        userinfoApply.setByWho(user.getId());
-//
-//        boolean applyResult = studentService.clickApplyStudent(new_student, userinfoApply);
-//        return applyResult ? Result.build(ResultType.Success) : Result.build(ResultType.ParamError);
-//
-//    }
-
-
-//    /**
-//     * Author: laizhouhao 20:50 2019/5/9
-//     * @param map
-//     * @return Result
-//     * @apiNote: 审批修改学生主要信息的申请, 点击通过或者不通过时
-//     */
-//    @ApiOperation(value="审批修改学生主要信息的申请, 点击通过或者不通过时", notes="已测试 2019/6/5 21点43分")
-//    @ApiImplicitParam( name = "map"  )
-//    @PutMapping("judgeApply")
-//    @ResponseBody
-//    public Result commitApplyModifyStudent(@RequestBody Map<String,Object> map){
-//        edu.uni.auth.bean.User loginUser = authService.getUser();
-//        if(loginUser == null){
-//            return Result.build(ResultType.Failed, "你沒有登錄");
-//        }
-//        Long userId = loginUser.getId();
-//        Integer approvalId = (Integer) map.get("approval_id");
-//        Integer flag = (Integer) map.get("flag");
-//        String judgeReason = (String) map.get("Reason");
-//        boolean isFlag = false;
-//        if(flag == 0 || flag == -1)
-//            isFlag = true;
-//        System.out.println(userId + "###" + approvalId + "$$" + flag + "@@" + judgeReason);
-////        List<UserinfoApplyApproval> userinfoApplyApprovals = userinfoApplyApprovalService.selectByApplyId((long)approvalId);
-//        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById((long) approvalId);
-//        if(userId != null && userinfoApplyApproval != null && isFlag && judgeReason != null ){
-//
-//            userinfoApplyApproval.setReason(judgeReason);
-//            if(flag.equals(0)){  // flag为0 时表示通过
-//                //比较当前步骤是否是最后一步
-//                if(userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId())) //该步骤是最后一步
-//                    return userService.endForPass(userinfoApplyApproval, (long)userId) ?
-//                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-//                else //该审批不是最后一步
-//                    return userService.createForPass(userinfoApplyApproval, (long)userId) ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-//            }
-//            else{
-//                if(flag.equals(-1)) // flag为-1 时表示不通过
-//                    return userService.endForRefuse(userinfoApplyApproval, (long)userId) ?
-//                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-//                else
-//                    return Result.build(ResultType.ParamError);
-//            }
-//
-//        }
-//        return Result.build(ResultType.ParamError);
-//    }
-
-
-//    /**
-//     * Author: laizhouhao 20:50 2019/5/9
-//     * @param map
-//     * @return Result
-//     * @apiNote: 审批修改学生主要信息的申请, 点击不通过时
-//     */
-//    @ApiOperation(value="审批修改学生主要信息的申请, 点击不通过时", notes="未测试")
-//    @ApiImplicitParam( name = "map"  )
-//    @PostMapping(value = "refuseUserinfoApply")
-//    @ResponseBody
-//    public Result refuseApplyModifyStudent(@RequestBody Map<String,Object> map) throws IOException {
-//        Integer userId = (Integer) map.get("user_id");
-//        Integer approvalId = (Integer) map.get("approval_id");
-//        System.out.println(userId + "###" + approvalId);
-//        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById(approvalId);
-//
-//        if(userId != null && userinfoApplyApproval != null)
-//            return userService.endForRefuse(userinfoApplyApproval, (long)userId) ?
-//                    Result.build(ResultType.Success) : Result.build(ResultType.Failed);
-//
-//        return Result.build(ResultType.ParamError);
-    //}
 
     /**
      * Author: laizhouhao 22:06 2019/6/2
@@ -624,5 +515,118 @@ public class StudentController {
             response.getWriter().write(json);
         }
     }
+
+
+
+//    /**
+//     * Author: mokuanyuan 15:19 2019/6/12
+//     * @param map
+//     * @return Result
+//     * @apiNote: 申请修改学生主要信息, 点击确认申请时
+//     */
+//    @ApiOperation(value="申请修改学生主要信息", notes="2019年5月11日 14:33:14 已通过测试")
+//    @ApiImplicitParam( name = "map"  )
+//    @PostMapping("/applyModifyStudent")
+//    @ResponseBody
+//    public Result ApplyModifyStudent(@RequestBody Map<String,Object> map) throws InvocationTargetException, IllegalAccessException {
+//
+//        System.out.println(map.toString());
+//        Student new_student = new Student();
+//        //获取前台参数
+//        String reason = (String) map.get("reason");
+//        userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),new_student);
+//        //检验参数是否合法
+//        if(Student.isValidForApply(new_student) == false || reason == null)
+//            return Result.build(ResultType.ParamError);
+//
+//        edu.uni.auth.bean.User user = authService.getUser();
+//        if(user == null){
+//            return Result.build(ResultType.Failed, "你沒有登錄");
+//        }
+//        Student old_student = studentService.selectById(new_student.getId());
+//        Student.copyPropertiesForApply(new_student,old_student);
+//        UserinfoApply userinfoApply = new UserinfoApply();
+//        userinfoApply.setApplyReason(reason);
+//        userinfoApply.setUniversityId(user.getUniversityId());
+//        //设置用户信息申请写入者
+//        userinfoApply.setByWho(user.getId());
+//
+//        boolean applyResult = studentService.clickApplyStudent(new_student, userinfoApply);
+//        return applyResult ? Result.build(ResultType.Success) : Result.build(ResultType.ParamError);
+//
+//    }
+
+
+//    /**
+//     * Author: laizhouhao 20:50 2019/5/9
+//     * @param map
+//     * @return Result
+//     * @apiNote: 审批修改学生主要信息的申请, 点击通过或者不通过时
+//     */
+//    @ApiOperation(value="审批修改学生主要信息的申请, 点击通过或者不通过时", notes="已测试 2019/6/5 21点43分")
+//    @ApiImplicitParam( name = "map"  )
+//    @PutMapping("judgeApply")
+//    @ResponseBody
+//    public Result commitApplyModifyStudent(@RequestBody Map<String,Object> map){
+//        edu.uni.auth.bean.User loginUser = authService.getUser();
+//        if(loginUser == null){
+//            return Result.build(ResultType.Failed, "你沒有登錄");
+//        }
+//        Long userId = loginUser.getId();
+//        Integer approvalId = (Integer) map.get("approval_id");
+//        Integer flag = (Integer) map.get("flag");
+//        String judgeReason = (String) map.get("Reason");
+//        boolean isFlag = false;
+//        if(flag == 0 || flag == -1)
+//            isFlag = true;
+//        System.out.println(userId + "###" + approvalId + "$$" + flag + "@@" + judgeReason);
+////        List<UserinfoApplyApproval> userinfoApplyApprovals = userinfoApplyApprovalService.selectByApplyId((long)approvalId);
+//        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById((long) approvalId);
+//        if(userId != null && userinfoApplyApproval != null && isFlag && judgeReason != null ){
+//
+//            userinfoApplyApproval.setReason(judgeReason);
+//            if(flag.equals(0)){  // flag为0 时表示通过
+//                //比较当前步骤是否是最后一步
+//                if(userService.isLastStep(userinfoApplyApproval.getStep(),userinfoApplyApproval.getUserinfoApplyId())) //该步骤是最后一步
+//                    return userService.endForPass(userinfoApplyApproval, (long)userId) ?
+//                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//                else //该审批不是最后一步
+//                    return userService.createForPass(userinfoApplyApproval, (long)userId) ? Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//            }
+//            else{
+//                if(flag.equals(-1)) // flag为-1 时表示不通过
+//                    return userService.endForRefuse(userinfoApplyApproval, (long)userId) ?
+//                            Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//                else
+//                    return Result.build(ResultType.ParamError);
+//            }
+//
+//        }
+//        return Result.build(ResultType.ParamError);
+//    }
+
+
+//    /**
+//     * Author: laizhouhao 20:50 2019/5/9
+//     * @param map
+//     * @return Result
+//     * @apiNote: 审批修改学生主要信息的申请, 点击不通过时
+//     */
+//    @ApiOperation(value="审批修改学生主要信息的申请, 点击不通过时", notes="未测试")
+//    @ApiImplicitParam( name = "map"  )
+//    @PostMapping(value = "refuseUserinfoApply")
+//    @ResponseBody
+//    public Result refuseApplyModifyStudent(@RequestBody Map<String,Object> map) throws IOException {
+//        Integer userId = (Integer) map.get("user_id");
+//        Integer approvalId = (Integer) map.get("approval_id");
+//        System.out.println(userId + "###" + approvalId);
+//        UserinfoApplyApproval userinfoApplyApproval = userinfoApplyApprovalService.selectUserinfoApplyApprovalById(approvalId);
+//
+//        if(userId != null && userinfoApplyApproval != null)
+//            return userService.endForRefuse(userinfoApplyApproval, (long)userId) ?
+//                    Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+//
+//        return Result.build(ResultType.ParamError);
+    //}
 
 }

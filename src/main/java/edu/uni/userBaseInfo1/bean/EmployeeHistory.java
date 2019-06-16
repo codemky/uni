@@ -114,6 +114,16 @@ public class EmployeeHistory {
                 '}';
     }
 
+    public static boolean isValidForApply(EmployeeHistory employeeHistory){
+        return employeeHistory.getId() != null && employeeHistory.getBeginTime() != null && employeeHistory.getDescript() != null  ;
+    }
+
+    public static void copyPropertiesForApply(EmployeeHistory new_history, EmployeeHistory old_history){
+        new_history.setUserId(old_history.getUserId());
+        new_history.setDatetime(new Date());
+        new_history.setDeleted(true);
+    }
+
     public EmployeeHistory(Long id, Long userId, Date beginTime, Date endTime, String descript, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
         this.userId = userId;

@@ -211,11 +211,9 @@ public class Student {
     }
 
     public static boolean isValidForApply(Student student){
-        if(student.getId() == null || student.getStuNo() == null || student.getBeginLearnDate() == null ||
-                student.getGrade() == null || student.getSpecialtyId() == null || student.getClassId()== null ||
-                student.getPoliticalId() == null || student.getLiveRoom() == null )
-            return false;
-        return true;
+        return student.getId() != null && student.getStuNo() != null && student.getBeginLearnDate() != null &&
+                student.getGrade() != null && student.getSpecialtyId() != null && student.getClassId() != null &&
+                student.getPoliticalId() != null && student.getLiveRoom() != null;
     }
 
     public static void copyPropertiesForApply(Student new_student, Student old_student){
@@ -223,9 +221,7 @@ public class Student {
         new_student.setUserId(old_student.getUserId());
         new_student.setHomeAddressId(old_student.getHomeAddressId());
         new_student.setPhoneEcommId(old_student.getPhoneEcommId());
-        new_student.setDatetime(old_student.getDatetime());
-        new_student.setByWho(old_student.getByWho());
-        new_student.setId(old_student.getId());
+        new_student.setDatetime(new Date());
         new_student.setDeleted(true);
     }
 

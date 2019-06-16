@@ -11,6 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface UserService {
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId);
+
     /**
      * Author: chenenru 23:15 2019/4/29
      * @param
@@ -103,14 +113,6 @@ public interface UserService {
     boolean endForRefuse(UserinfoApplyApproval userinfoApplyApproval, Long user_id);
 
     /**
-     * Author: laizhouhao 16:03 2019/5/14
-     * @param userinfoApplyApproval
-     * @return boolean
-     * @apiNote: 申请修改的信息通过后将新信息置为有效，旧信息置为无效
-     */
-    boolean updateNewAndOldMessage(UserinfoApplyApproval userinfoApplyApproval);
-
-    /**
      * Author: laizhouhao 18:06 2019/5/14
      * @param identification
      * @return  所搜索的游客信息
@@ -157,4 +159,14 @@ public interface UserService {
      * @apiNote:
      */
     String getUserType(Long user_id);
+
+    //
+//    /**
+//     * Author: laizhouhao 16:03 2019/5/14
+//     * @param userinfoApplyApproval
+//     * @return boolean
+//     * @apiNote: 申请修改的信息通过后将新信息置为有效，旧信息置为无效
+//     */
+//    boolean updateNewAndOldMessage(UserinfoApplyApproval userinfoApplyApproval);
+
 }

@@ -65,4 +65,29 @@ public class UserUploadFile {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public String toString() {
+        return "UserUploadFile{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", fileInfo='" + fileInfo + '\'' +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
+    }
+
+    public static boolean isValidForApply(UserUploadFile userUploadFile){
+        return userUploadFile.getId() != null && userUploadFile.getFileName() != null &&
+                userUploadFile.getFileInfo() != null ;
+    }
+
+    public static void copyPropertiesForApply(UserUploadFile new_file, UserUploadFile old_file){
+        new_file.setDatetime(new Date());
+        new_file.setDeleted(true);
+    }
+
+
+
 }

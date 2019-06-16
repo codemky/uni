@@ -119,9 +119,9 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
      * @param infoType
      * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
      */
-    public void updateDataForApplyPass(Long newId,Long oldId,Integer infoType){
-        Object newInfo = new Object();
-        Object oldInfo = new Object();
+    public boolean updateDataForApplyPass(Long newId,Long oldId,Integer infoType){
+//        Object newInfo = new Object();
+//        Object oldInfo = new Object();
 
 //        指定要审核的信息种类	  0:联系方式	  1:地址
 //        2：照片  	3：亲属  4	：学历  5	：简历
@@ -132,66 +132,27 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
             case 0: // 0为联系方式
                 result = ecommService.updateForApply(oldId,newId); break;
             case 1: // 1为地址
-                newInfo = addressService.selectById(newId);
-                if(oldId != null)
-                    oldInfo = addressService.selectById(oldId);
-                break;
+                result = addressService.updateForApply(oldId,newId); break;
             case 2: // 2为照片
-                newInfo = pictureService.selectById(newId);
-                if(oldId != null)
-                    oldInfo = pictureService.selectById(oldId);
-                break;
+                result = pictureService.updateForApply(oldId,newId); break;
             case 3: // 3为亲属
-                newInfo = studentRelationService.selectById(newId);
-                if(oldId != null)
-                    oldInfo = studentRelationService.selectById(oldId);
-                break;
+                result = studentRelationService.updateForApply(oldId,newId); break;
             case 4: // 4为学历
-                newInfo = learningDegreeSerevice.selectLearningDegreeById(newId);
-                if(oldId != null)
-                    oldInfo = learningDegreeSerevice.selectLearningDegreeById(oldId);
-
-                break;
+                result = learningDegreeSerevice.updateForApply(oldId,newId); break;
             case 5: // 5为简历
-                oldInfo = employeeHistoryService.selectById(oldId);
-                if(oldId != null)
-                    newInfo = employeeHistoryService.selectById(newId);
-
-                break;
+                result = employeeHistoryService.updateForApply(oldId,newId); break;
             case 6: // 6为学生信息
-                newInfo = studentService.selectById(newId);
-                if(oldId != null)
-                    oldInfo = studentService.selectById(oldId);
-
-
-                break;
+                result = studentService.updateForApply(oldId,newId); break;
             case 7: // 7为职员信息
-                newInfo = employeeService.selectEmployeeById(newId);
-                if(oldId != null)
-                    oldInfo = employeeService.selectEmployeeById(oldId);
-
-
-                break;
+                result = employeeService.updateForApply(oldId,newId); break;
             case 8: // 8为用户信息
-                newInfo = userService.selectUserById(newId);
-                if(oldId != null)
-                    oldInfo = userService.selectUserById(oldId);
-
-
-                break;
+                result = userService.updateForApply(oldId,newId); break;
             case 9: // 9为学生表
-                newInfo = userUploadFileService.selectUserUploadFileById(newId);
-                if(oldId != null)
-                    oldInfo = userUploadFileService.selectUserUploadFileById(oldId);
-                break;
+                result = userUploadFileService.updateForApply(oldId,newId); break;
             case 10: // 10为职员表
-                newInfo = userUploadFileService.selectUserUploadFileById(newId);
-                if(oldId != null)
-                    oldInfo = userUploadFileService.selectUserUploadFileById(oldId);
-
-                break;
-
+                result = userUploadFileService.updateForApply(oldId,newId); break;
         }
+        return result;
 
     }
 

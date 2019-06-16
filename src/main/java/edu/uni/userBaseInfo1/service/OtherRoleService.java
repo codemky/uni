@@ -1,6 +1,7 @@
 package edu.uni.userBaseInfo1.service;
 
 import edu.uni.auth.bean.Role;
+import edu.uni.userBaseInfo1.bean.User;
 
 import java.util.List;
 
@@ -24,6 +25,15 @@ public interface OtherRoleService {
      * @apiNote: 获取所有角色详情
      */
     List<Role> selectAll();
+
+    /**
+     * Author: mokuanyuan 15:30 2019/6/13
+     * @param userId
+     * @param roleName
+     * @return boolean
+     * @apiNote: 根据用户id和角色名判断这个用户是否有扮演这个角色
+     */
+    boolean isPlayOneRole(Long userId, String roleName);
 
 
 }

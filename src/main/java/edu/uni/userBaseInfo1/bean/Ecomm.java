@@ -103,6 +103,17 @@ public class Ecomm {
                 '}';
     }
 
+    public static boolean isValidForApply(Ecomm ecomm){
+        return ecomm.getId() != null && ecomm.getContent() != null && ecomm.getFlag() != null;
+    }
+
+    public static void copyPropertiesForApply (Ecomm newEcomm , Ecomm oldEcomm){
+        newEcomm.setDatetime(new Date());
+        newEcomm.setUserId(oldEcomm.getUserId());
+        newEcomm.setDeleted(true);
+
+    }
+
     public Ecomm(Long id, Long userId, String content, Integer flag, Date datetime, Long byWho, Boolean deleted) {
         this.id = id;
         this.userId = userId;

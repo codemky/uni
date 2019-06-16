@@ -125,6 +125,8 @@ public class UserinfoApplyController {
     private PositionService positionService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private OtherRoleService otherRoleService;
 
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -163,9 +165,42 @@ public class UserinfoApplyController {
         Integer modifiedUserId = (Integer) map.get("modifiedUserId");
         if(type == null || reason == null)
             return Result.build(ResultType.ParamError);
+        if( !(type >= 0 && type <= 10) )
+            return Result.build(ResultType.ParamError);
 
         if(modifiedUserId != null) {
             user = userService.selectUserById(modifiedUserId);
+            //只能同一个学校单位的用户才能做出操作
+            if(!user.getUniversityId().equals(loginUser.getUniversityId()))
+                return Result.build(ResultType.Disallow);
+        }
+
+        if(type == 6 || type == 9 ){ // 6和代表的是学生信息，无论是修改还是增加，而且9代表的是批量增加学生
+            //操作学生信息的发起者只能是辅导员,而且学生（被修改者）和辅导员（做出修改者）要在同一个学院
+            //如果不符合以上的条件，那么操作则被服务器拒绝或提示没有权限
+            if( modifiedUserId == null ) //必须提供被修改的学生用户的user_id
+                return Result.build(ResultType.ParamError);
+            //判断被修改这和修改者是否在同一个学院
+            if( ! userinfoApplyApprovalController.isDepartmentSame(user.getId(),loginUser.getId()))
+                return Result.build(ResultType.Disallow);
+            //再判断修改者是否有扮演辅导员这个角色
+            if( ! otherRoleService.isPlayOneRole(loginUser.getId(),"辅导员") )
+                return Result.build(ResultType.Disallow);
+        }
+
+        if( type == 4 || type == 5 || type == 7 || type == 10 ){
+            // 4 和 5 分别代表职员的学历和简历
+            // 7和代表的是职员信息，无论是修改还是增加，而且10代表的是批量增加职员
+            // 操作职员信息的发起者只能是人事处工作人员,而且职员（被修改者）和辅导员（做出修改者）要在同一个学校
+            // 如果不符合以上的条件，那么操作则被服务器拒绝或提示没有权限
+            if( ! otherRoleService.isPlayOneRole(loginUser.getId(),"人事处工作人员"))
+                return Result.build(ResultType.Disallow);
+            if( modifiedUserId == null ) //必须提供被修改的学生用户的user_id
+                return Result.build(ResultType.ParamError);
+            //判断修改者和被修改者是否是同一个学校单位
+            if(  ! loginUser.getUniversityId().equals(user.getUniversityId()) )
+                return Result.build(ResultType.Disallow);
+
         }
 
 

@@ -3,11 +3,38 @@ package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.Employee;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
+import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface EmployeeService {
+
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param employee
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    public boolean readyForApply(HashMap<String, Object> map, Employee employee, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser);
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId);
+
+
     /**
      * Author: chenenru 23:59 2019/4/29
      * @param
@@ -77,14 +104,6 @@ public interface EmployeeService {
     List<Employee> selectValidEmployeeByUserId(Long user_id);
 
     /**
-     * Author: chenenru 18:35 2019/5/13
-     * @param requestMessage
-     * @return boolean
-     * @apiNote: 用户点击申请修改职员
-     */
-    boolean clickApplyEmployee(RequestMessage requestMessage);
-
-    /**
      * Author: laizhouhao 20:43 2019/5/15
      * @param user_id
      * @return Employee
@@ -115,4 +134,14 @@ public interface EmployeeService {
      * @apiNote: 根据部门名、科室名、员工名、员工编号获取所有员工信息
      */
     UserInfo selectEmployeeByFourPosition(String depart_name,String subdepart_name,String emp_name,String emp_no);
+
+//    /**
+//     * Author: chenenru 18:35 2019/5/13
+//     * @param requestMessage
+//     * @return boolean
+//     * @apiNote: 用户点击申请修改职员
+//     */
+//    boolean clickApplyEmployee(RequestMessage requestMessage);
+
+
 }

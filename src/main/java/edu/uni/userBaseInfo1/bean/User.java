@@ -213,4 +213,24 @@ public class User {
                 ", regist=" + regist +
                 '}';
     }
+
+//    public static boolean isValidForApply(User user){
+//        return user.getId() != null && user.getUserName() != null &&
+//                user.getIdentification() != null && user.getUserSex() != null &&
+//                user.getName() != null && user.getPwd() != null &&
+//                employee.getPoliticalId() != null ;
+//    }
+//
+//    public static void copyPropertiesForApply(Employee new_employee, Employee old_employee){
+//        new_employee.setUniversityId(old_employee.getUniversityId());
+//        new_employee.setUserId(old_employee.getUserId());
+//        new_employee.setHomeAddressId(old_employee.getHomeAddressId());
+//        new_employee.setPhoneEcommId(old_employee.getPhoneEcommId());
+//        new_employee.setDatetime(new Date());
+//        new_employee.setDeleted(true);
+//    }
+
+
+
+
 }

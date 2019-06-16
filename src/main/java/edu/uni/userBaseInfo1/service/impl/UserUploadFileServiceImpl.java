@@ -3,13 +3,20 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.userBaseInfo1.bean.Address;
+import edu.uni.userBaseInfo1.bean.Employee;
+import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.bean.UserUploadFile;
 import edu.uni.userBaseInfo1.mapper.UserUploadFileMapper;
 import edu.uni.userBaseInfo1.service.UserUploadFileService;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author chenenru
@@ -28,6 +35,71 @@ public class UserUploadFileServiceImpl implements UserUploadFileService {
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
+
+    /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param userUploadFile
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    @Override
+    public boolean readyForApply(HashMap<String, Object> map, UserUploadFile userUploadFile, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+        //通过工具类获取在map包装好的对象属性
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyUserUploadFile"),userUploadFile);
+        //检验是否把该获取的信息都获取到了
+        if(!UserUploadFile.isValidForApply(userUploadFile))
+            return false;
+        boolean result = false;
+        if(userUploadFile.getId() != -1){  //不是-1代表原本有旧数据
+            UserUploadFile oldUserUploadFile = selectUserUploadFileById(userUploadFile.getId());
+            UserUploadFile.copyPropertiesForApply(userUploadFile,oldUserUploadFile);
+            userUploadFile.setByWho(loginUser.getId());
+            oldId = oldUserUploadFile.getId();
+            result = insertUserUploadFile(userUploadFile) ;
+            newId = userUploadFile.getId();
+
+        }
+        else{
+            userUploadFile.setDatetime(new Date());
+            userUploadFile.setByWho(loginUser.getId());
+            userUploadFile.setDeleted(true);
+            result = insertUserUploadFile(userUploadFile) ;
+            newId = userUploadFile.getId();
+        }
+        return result;
+
+    }
+
+
+    /**
+     * Author: mokuanyuan 14:52 2019/6/12
+     * @param oldId
+     * @param newId
+     * @return boolean 操作结果
+     * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
+     */
+    public boolean updateForApply(Long oldId,Long newId){
+        boolean result = false;
+        UserUploadFile newUserUploadFile = selectUserUploadFileById(newId);
+        if(oldId != null){
+            UserUploadFile oldUserUploadFile = selectUserUploadFileById(oldId);
+            oldUserUploadFile.setId(newId);
+            newUserUploadFile.setId(oldId);
+            if( updateUserUploadFile(oldUserUploadFile) && updateUserUploadFile(newUserUploadFile) )
+                result = true;
+        }else{
+            newUserUploadFile.setDeleted(false);
+            if( updateUserUploadFile(newUserUploadFile) )
+                result = true;
+        }
+        return result;
+    }
 
     /**
      * Author: chenenru 0:10 2019/4/30

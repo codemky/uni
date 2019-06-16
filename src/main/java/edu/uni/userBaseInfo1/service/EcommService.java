@@ -26,6 +26,20 @@ public interface EcommService {
     public boolean updateForApply(Long oldId,Long newId);
 
     /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param ecomm
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    public boolean readyForApply(HashMap<String,Object> map, Ecomm ecomm , Long oldId,Long newId ,
+                                 edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser);
+
+    /**
      * Author: mokuanyuan 10:13 2019/4/26
      * @return List<Ecomm>
      * @apiNote: 查询所有的电子通讯方式

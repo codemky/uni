@@ -118,4 +118,17 @@ public class StudentRelation {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public static boolean isValidForApply(StudentRelation studentRelation){
+        return studentRelation.getId() != null  && studentRelation.getRelaId() != null &&
+                studentRelation.getRelaName() != null && studentRelation.getRelationship() != null;
+    }
+
+    public static void copyPropertiesForApply(StudentRelation new_relation, StudentRelation old_relation){
+        new_relation.setUserId(old_relation.getUserId());
+        new_relation.setDatetime(new Date());
+        new_relation.setDeleted(true);
+    }
+
+
 }

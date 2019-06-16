@@ -2,8 +2,14 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import edu.uni.auth.bean.Role;
 import edu.uni.auth.bean.RoleExample;
+import edu.uni.auth.bean.UserRoleExample;
 import edu.uni.auth.mapper.RoleMapper;
+import edu.uni.auth.mapper.UserRoleMapper;
+import edu.uni.auth.service.RoleService;
+import edu.uni.auth.service.UserRoleService;
+import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.service.OtherRoleService;
+import edu.uni.userBaseInfo1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,12 @@ import java.util.List;
 public class OtherRoleServiceImpl implements OtherRoleService {
     @Autowired
     RoleMapper roleMapper;
+    @Autowired
+    UserRoleMapper userRoleMapper;
+    @Autowired
+    RoleService roleService;
+    @Autowired
+    UserService userService;
     /**
      * Author: laizhouhao 13:53 2019/5/11
      * @param id
@@ -40,5 +52,23 @@ public class OtherRoleServiceImpl implements OtherRoleService {
         RoleExample.Criteria criteria = roleExample.createCriteria();
         criteria.andStatusEqualTo(0);
         return roleMapper.selectByExample(roleExample);
+    }
+
+    /**
+     * Author: mokuanyuan 15:30 2019/6/13
+     * @param userId
+     * @param roleName
+     * @return boolean
+     * @apiNote: 根据用户id和角色名判断这个用户是否有扮演这个角色
+     */
+    @Override
+    public boolean isPlayOneRole(Long userId, String roleName) {
+        User user = userService.selectUserById(userId);
+        List<Role> roles = roleService.selectByUidAndUniversityId(user.getId(), user.getUniversityId());
+        for( Role role : roles )
+            if( role.getName().equals(roleName) )
+                return true;
+
+        return false;
     }
 }
