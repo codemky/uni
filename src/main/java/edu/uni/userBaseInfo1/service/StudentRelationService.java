@@ -112,7 +112,7 @@ public interface StudentRelationService {
          * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
          */
         public boolean readyForApply(HashMap<String, Object> map, StudentRelation studentRelation, Long oldId,
-                                     Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser)
+                                     Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser);
 
 
         /**

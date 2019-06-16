@@ -312,31 +312,31 @@ public class EmployeeController {
         response.getWriter().write(json);
     }
 
-    /**
-     * Author: chenenru 20:50 2019/5/9
-     * @param requestMessage
-     * @return Result
-     * @apiNote: 申请修改职员主要信息, 点击申请时
-     */
-    @ApiOperation(value="申请修改职员主要信息", notes="2019年5月11日 14:33:14 已通过测试")
-    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
-    @PostMapping("applyModifyEmployee/")
-    @ResponseBody
-    public Result ApplyModifyEmployee(@RequestBody RequestMessage requestMessage){
-        //判断前端传过来的值是否为空
-        if(requestMessage.getEmployee()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
-            boolean success = employeeService.clickApplyEmployee(requestMessage);
-            if(success){
-                //清除相应的缓存
-                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
-                cache.delete(CacheNameHelper.ListAll_CacheName);
-                return Result.build(ResultType.Success);
-            }else{
-                return Result.build(ResultType.Failed);
-            }
-        }
-        return Result.build(ResultType.ParamError);
-    }
+//    /**
+//     * Author: chenenru 20:50 2019/5/9
+//     * @param requestMessage
+//     * @return Result
+//     * @apiNote: 申请修改职员主要信息, 点击申请时
+//     */
+//    @ApiOperation(value="申请修改职员主要信息", notes="2019年5月11日 14:33:14 已通过测试")
+//    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
+//    @PostMapping("applyModifyEmployee/")
+//    @ResponseBody
+//    public Result ApplyModifyEmployee(@RequestBody RequestMessage requestMessage){
+//        //判断前端传过来的值是否为空
+//        if(requestMessage.getEmployee()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
+//            boolean success = employeeService.clickApplyEmployee(requestMessage);
+//            if(success){
+//                //清除相应的缓存
+//                cache.delete(CacheNameHelper.Receive_CacheNamePrefix + "applyModifydEmployee");
+//                cache.delete(CacheNameHelper.ListAll_CacheName);
+//                return Result.build(ResultType.Success);
+//            }else{
+//                return Result.build(ResultType.Failed);
+//            }
+//        }
+//        return Result.build(ResultType.ParamError);
+//    }
 
     /**
      * Author: chenenru 11:24 2019/5/16
