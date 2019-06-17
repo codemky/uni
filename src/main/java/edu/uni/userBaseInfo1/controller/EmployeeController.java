@@ -92,6 +92,8 @@ public class EmployeeController {
     private PositionService positionService;
     @Autowired
     private SubdepartmentService subdepartmentService;
+    @Autowired
+    private PictureService pictureService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -804,8 +806,7 @@ public class EmployeeController {
      *
      * @param
      * @return
-     * @apiNote: 列名从左到右
-     * 员工编号，照片（鼠标悬停在人工编号上显示的），姓名，学校，当前所属学院，当前所在科室，行政岗位，按钮（详细信息）
+     * @apiNote: 列名从左到右 : 员工编号，照片，姓名，学校，当前所属学院，当前所在科室，行政岗位，按钮（详细信息）
      * 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
      */
     @ApiOperation(value = "领导查询校内所有职员的信息，进行高级搜索", notes = "未测试")
@@ -819,9 +820,14 @@ public class EmployeeController {
         List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));
         for (Employee e : employees) {
             HashMap<String, String> employeeMap = new HashMap<>();
+            employeeMap.put("employeeNo", e.getEmpNo());
+            List<Picture> pictures = pictureService.selectByUserId(e.getUserId());
+            if (pictures.size()>0){
+                employeeMap.put("picture", pictures.get(0).getPictureName());
+            }
             employeeMap.put("username", userService.selectUserById(e.getUserId()).getUserName());
             employeeMap.put("universityName", "肇庆学院");
-            employeeMap.put("deparmentName", otherDepartmentService.selectValidById(e.getDepartmentId()).get(0).getName());
+            employeeMap.put("departmentName", otherDepartmentService.selectValidById(e.getDepartmentId()).get(0).getName());
             employeeMap.put("subDepartmentName", subdepartmentService.select(e.getSubdepartmentId()).getName());
             employeeMap.put("positionName", positionService.select(e.getPositionId()).getName());
             flag = 0;
