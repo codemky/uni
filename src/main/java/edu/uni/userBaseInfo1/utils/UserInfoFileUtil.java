@@ -1,4 +1,4 @@
-package edu.uni.utils;
+package edu.uni.userBaseInfo1.utils;
 
 import edu.uni.config.GlobalConfig;
 import lombok.Data;
@@ -19,6 +19,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -31,17 +32,17 @@ import java.util.UUID;
  */
 @Data
 @Slf4j
-public class FileUtil {
+public class UserInfoFileUtil {
 
     private String uploadRootDir;
 
     private String filePrefix;
 
-    public FileUtil() {
+    public UserInfoFileUtil() {
     }
 
     //设置存储路径，后缀默认
-    public FileUtil(String uploadRootDir) {
+    public UserInfoFileUtil(String uploadRootDir) {
         char c = uploadRootDir.charAt(uploadRootDir.length() - 1);
         if (c != '/') {
             uploadRootDir = uploadRootDir + "/";
@@ -51,7 +52,7 @@ public class FileUtil {
     }
 
     /*设置存储路径和后缀*/
-    public FileUtil(String uploadRootDir, String filePrefix) {
+    public UserInfoFileUtil(String uploadRootDir, String filePrefix) {
         char c = uploadRootDir.charAt(uploadRootDir.length() - 1);
         if (c != '/') {
             uploadRootDir = uploadRootDir + "/";
@@ -79,18 +80,26 @@ public class FileUtil {
 
     // 下载文件
     public void downloadFile(
-            String filePath, HttpServletResponse response) throws UnsupportedEncodingException {
+            String fileName, HttpServletResponse response) throws UnsupportedEncodingException {
+
+
+        String filePath = uploadRootDir + fileName;
+
+        System.out.println("########## Path:" + filePath);
 
         File file = new File(filePath);
         if (file.exists()) {
             // 文件名字
-            String simpleName = file.getName();
-            String fileName = simpleName.substring(0, simpleName.lastIndexOf("_"));
-            String suffix = simpleName.substring(simpleName.lastIndexOf("."));
-            fileName = fileName + suffix;
+//            String simpleName = file.getName();
+//            String filePath = simpleName.substring(0, simpleName.lastIndexOf("_"));
+            String suffix = filePath.substring(filePath.lastIndexOf("."));
+//            filePath = filePath + suffix;
+
             // 防止中文乱码
             response.setContentType("multipart/form-data");
-            response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"), "iso-8859-1"));
+//            response.setHeader("Content-Disposition", "attachment;filename=" + new String(filePath.getBytes("UTF-8"), "iso-8859-1"));
+            response.setHeader("Content-Disposition", "attachment;filename=" +
+                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + suffix);
             // 输出流
             byte[] buffer = new byte[1024];
             FileInputStream fis = null;
@@ -160,7 +169,7 @@ public class FileUtil {
                 originalFilename.substring(originalFilename.lastIndexOf("."));
        /* log.info("【文件工具】后缀, suffixName = {}", suffixName);*/
         // 防止文件重复
-        String path = uploadRootDir + fileName + "_" + filePrefix + suffixName;
+        String path = uploadRootDir + filePrefix + suffixName;
         System.out.println("【文件工具】后缀, suffixName = {}"+suffixName+" path:-->"+path);
         return path;
     }

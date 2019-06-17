@@ -64,11 +64,27 @@ public class OtherRoleServiceImpl implements OtherRoleService {
     @Override
     public boolean isPlayOneRole(Long userId, String roleName) {
         User user = userService.selectUserById(userId);
+        if( user == null )
+            return false;
         List<Role> roles = roleService.selectByUidAndUniversityId(user.getId(), user.getUniversityId());
         for( Role role : roles )
             if( role.getName().equals(roleName) )
                 return true;
 
         return false;
+    }
+
+
+    @Override
+    public boolean isPlayDepartmentLeader(Long userId) {
+        return isPlayOneRole(userId, "班主任“") || isPlayOneRole(userId, "辅导员") ||
+                isPlayOneRole(userId, "副书记") || isPlayOneRole(userId, "书记") ||
+                isPlayOneRole(userId, "副院长") || isPlayOneRole(userId, "院长");
+    }
+
+    @Override
+    public boolean isPlaySchoolLeader(Long userId) {
+        return isPlayOneRole(userId, "“人事处工作人员") || isPlayOneRole(userId, "人事处副处长") ||
+                isPlayOneRole(userId, "人事处处长") ;
     }
 }

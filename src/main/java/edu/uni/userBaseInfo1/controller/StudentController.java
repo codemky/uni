@@ -75,6 +75,10 @@ public class StudentController {
     private OtherFieldService otherFieldService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private UserinfoApplyApprovalController userinfoApplyApprovalController;
+
+
 
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -87,6 +91,59 @@ public class StudentController {
         public static final String Receive_CacheNamePrefix = "ub1_s_student_";
         // ub1_s_student_listAll
         public static final String ListAll_CacheName = "ub1_s_student_listAll";
+    }
+
+
+    @ApiOperation(value="获取学生这部分的信息", notes="未测试")
+    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Integer" , paramType = "path")
+    @GetMapping("/getStudentInformation/{userId}")
+    @ResponseBody
+    public Result getStudentInformation(@PathVariable Long userId ,
+                                        HttpServletResponse response) throws IOException{
+
+        response.setContentType("application/json;charset=utf-8");
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        if(userId == -1 ){ // -1 代表的是查询自己的信息
+            if(loginUser == null){
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            }else{
+                userId = loginUser.getId();
+            }
+        }else{  //否则表示某个登录后的用户查看某个学生信息，此时需要检验这个登录用户的角色是否有权限查看这个学生信息
+            User user = userService.selectUserById(userId);
+            if( user == null )
+                return Result.build(ResultType.ParamError,"该学生信息不存在或已过时");
+            if( user.getUserType() != 1 ) //用户Id需要时学生类型，不然查了也是白查
+                return Result.build(ResultType.ParamError,"所查看的用户不是学生");
+            //判断该学生与该登录用户的二级学院关系
+            if( !userinfoApplyApprovalController.isDepartmentSame(user.getId(), loginUser.getId()))
+                return Result.build(ResultType.Disallow,"登录用户和所查学生不在同一个二级学院“”");
+            //判断该登录用户是否包含某几个角色
+            if( !otherRoleService.isPlayDepartmentLeader(loginUser.getId()) )
+                return Result.build(ResultType.Disallow,"登录用户的操作权限不允许");
+
+        }
+        User user = userService.selectUserById(userId);
+
+
+        boolean isOperate = false;
+        HashMap<String , Object> studentMap = new HashMap<>();
+
+        if(user.getUserType() == 1) {
+            List<Student> students = studentService.selectByUserId(userId);
+            if (students.size() > 0) {
+                studentService.selectByUserIdToMap(studentMap, students.get(0));
+                isOperate = true;
+            }
+        }
+
+        if(isOperate)
+            return Result.build(ResultType.Success).appendData("student",studentService.selectByUserId(userId).get(0))
+                    .appendData("studentInfo",studentMap);
+        else
+            return Result.build(ResultType.ParamError);
     }
 
     /**
@@ -338,47 +395,6 @@ public class StudentController {
         response.getWriter().write(result.convertIntoJSON());
 
     }
-
-    @ApiOperation(value="获取学生这部分的信息", notes="未测试")
-    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Integer" , paramType = "path")
-    @GetMapping("/getStudentInformation/{userId}")
-    @ResponseBody
-    public Result getStudentInformation(@PathVariable Long userId ,
-                                        HttpServletResponse response) throws IOException{
-
-        response.setContentType("application/json;charset=utf-8");
-        if(userId == null)
-            return Result.build(ResultType.ParamError);
-        if(userId == -1 ){ // -1 代表的是查询自己的信息
-            edu.uni.auth.bean.User user = authService.getUser();
-            if(user == null){
-                return Result.build(ResultType.Failed, "你沒有登錄");
-            }else
-                userId = user.getId();
-        }
-        User user = userService.selectUserById(userId);
-
-
-        boolean isOperate = false;
-        HashMap<String , Object> studentMap = new HashMap<>();
-
-        if(user.getUserType() == 1) {
-            List<Student> students = studentService.selectByUserId(userId);
-            if (students.size() > 0) {
-//                    HashMap<String , Object> studentMap = new HashMap<>();
-                studentService.selectByUserIdToMap(studentMap, students.get(0));
-//                    response.getWriter().write(JsonUtils.obj2String(studentMap));
-                isOperate = true;
-            }
-        }
-
-        if(isOperate)
-            return Result.build(ResultType.Success).appendData("student",studentService.selectByUserId(userId).get(0))
-                    .appendData("studentInfo",studentMap);
-        else
-            return Result.build(ResultType.ParamError);
-    }
-
 
     /**
      * Author: laizhouhao 22:06 2019/6/2

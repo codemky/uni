@@ -563,19 +563,19 @@ public class UserinfoApplyApprovalController {
 
     /**
      * Author: mokuanyuan 19:08 2019/5/13
-     * @param studentId
+     * @param studentUserId
      * @param userId
      * @return boolean
-     * @apiNote: 根据申请人的用户id(第一个参数)和登录到审批中心人的用户id(第二个参数)判断是否处于同一个学院
+     * @apiNote: 根据学生用户的用户id和另一个教职工用户的用户id ， 判断这两个用户是否是同一个二级学院
      */
-    public boolean isDepartmentSame(long studentId,long userId){
+    public boolean isDepartmentSame(long studentUserId,long userId){
         //审批人
         System.out.println("-->"+employeeService.selectByUserId(userId));
         Employee employee = employeeService.selectByUserId(userId).get(0);
         Employ employ = otherEmployService.selectEmployByEmployeeId(employee.getId(),employee.getUniversityId());
         System.out.println(employ.getDepartmentId());
         //申请人为学生才行
-        Student student = studentService.selectByUserId(studentId).get(0);
+        Student student = studentService.selectByUserId(studentUserId).get(0);
         Class aClass = otherClassService.selectClassByClassId( student.getClassId() );
         System.out.println(aClass.getDepartmentId()+"--->");
         if( employ.getDepartmentId().equals(aClass.getDepartmentId()) ) {

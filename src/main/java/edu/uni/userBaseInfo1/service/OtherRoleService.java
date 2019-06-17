@@ -35,6 +35,22 @@ public interface OtherRoleService {
      */
     boolean isPlayOneRole(Long userId, String roleName);
 
+    /**
+     * Author: mokuanyuan 18:03 2019/6/16
+     * @param userId
+     * @return boolean
+     * @apiNote: 根据用户id判断该用户是否有扮演二级学院领导的角色（主要包括班主任，辅导员，副书记，书记，副院长，院长）
+     */
+    boolean isPlayDepartmentLeader( Long userId );
+
+    /**
+     * Author: mokuanyuan 18:08 2019/6/16
+     * @param userId
+     * @return boolean
+     * @apiNote: 根据用户id判断该用户是否有扮演校级领导的角色（主要包括人事处工作人员，人事处副处长，人事处处长）
+     */
+    boolean isPlaySchoolLeader(Long userId );
+
 
 }
 

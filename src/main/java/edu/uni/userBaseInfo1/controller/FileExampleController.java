@@ -1,24 +1,18 @@
 package edu.uni.userBaseInfo1.controller;
 
-import com.github.pagehelper.PageInfo;
-import com.sun.org.apache.regexp.internal.RE;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.config.GlobalConfig;
 import edu.uni.example.config.ExampleConfig;
-import edu.uni.utils.FileUtil;
+import edu.uni.userBaseInfo1.utils.UserInfoFileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javafx.application.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -53,12 +47,12 @@ public class FileExampleController {
             return Result.build(ResultType.ParamError);
         }
         // 全局上传路径
-//        FileUtil fileUtil = new FileUtil(globalConfig.getUploadRootDir());
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        FileUtil fileUtil = new FileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
         String filePath;
         try {
-            filePath = fileUtil.uploadFile(file, request);
+            filePath = userInfoFileUtil.uploadFile(file, request);
             //校验职员
             stringBuffer = excelController.checkoutEmployeeExcel(file.getInputStream(), request);
             if (stringBuffer.equals("校验通过")){
@@ -81,12 +75,12 @@ public class FileExampleController {
             return Result.build(ResultType.ParamError);
         }
         // 全局上传路径
-//        FileUtil fileUtil = new FileUtil(globalConfig.getUploadRootDir());
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        FileUtil fileUtil = new FileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
         String filePath;
         try {
-            filePath = fileUtil.uploadFile(file, request);
+            filePath = userInfoFileUtil.uploadFile(file, request);
             //校验学生
             stringBuffer = excelController.checkoutStudentExcel(file.getInputStream(),request);
             if (stringBuffer.equals("校验通过")) {
@@ -105,13 +99,13 @@ public class FileExampleController {
     @ApiOperation(value = "文件下载", notes = "")
     @GetMapping("/download")
     public void download(
-            @ApiParam(name = "filePath")
-            @RequestParam String filePath,
+            @ApiParam(name = "fileName")
+            @RequestParam String fileName,
             HttpServletResponse response) {
-        FileUtil fileUtil = new FileUtil();
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
         try {
             // filePath 可以从数据库获取，这里为了方便直接输入路径
-            fileUtil.downloadFile(filePath, response);
+            userInfoFileUtil.downloadFile(fileName, response);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -122,9 +116,9 @@ public class FileExampleController {
     public Result deleteFile(
             @ApiParam(name = "filePath")
             @RequestParam String filePath) {
-        FileUtil fileUtil = new FileUtil();
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil();
         // filePath 可以从数据库获取，这里为了方便直接输入路径
-        boolean success = fileUtil.deleteFile(filePath);
+        boolean success = userInfoFileUtil.deleteFile(filePath);
         if (success) {
             return Result.build(ResultType.Success);
         }
