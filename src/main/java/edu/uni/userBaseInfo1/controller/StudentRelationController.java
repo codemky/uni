@@ -284,32 +284,32 @@ public class StudentRelationController {
             response.getWriter().write(json);
         }
     }
-//
-//    /**
-//     * Author: laizhouhao 20:11 2019/5/13
-//     * @param requestMessage
-//     * @return Result
-//     * @apiNote: 申请学生亲属信息, 点击申请时
-//     */
-//    @ApiOperation(value="申请学生亲属信息, 点击申请时", notes="2019年5月14日 19:08:05 已通过测试")
-//    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
-//    @PostMapping("applyModifyStudentRelation/")
-//    @ResponseBody
-//    public Result applyModifyStudentRelation(@RequestBody RequestMessage requestMessage){
-//        if(requestMessage.getByWho()!=null && requestMessage.getStudentRelation()!=null && requestMessage.getUserinfoApply()!=null) {
-//            boolean success = studentRelationService.clickApplyStudentRelation(requestMessage);
-//            if (success) {
-//                //清除相应的缓存
-//                cache.delete(StudentRelationController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifydStudentRelation");
-//                cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
-//                return Result.build(ResultType.Success);
-//            } else {
-//                return Result.build(ResultType.Failed);
-//            }
-//        }else{
-//            return Result.build(ResultType.ParamError);
-//        }
-//    }
+
+    /**
+     * Author: laizhouhao 20:11 2019/5/13
+     * @param requestMessage
+     * @return Result
+     * @apiNote: 申请学生亲属信息, 点击申请时
+     */
+    /*@ApiOperation(value="申请学生亲属信息, 点击申请时", notes="2019年5月14日 19:08:05 已通过测试")
+    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
+    @PostMapping("applyModifyStudentRelation/")
+    @ResponseBody
+    public Result applyModifyStudentRelation(@RequestBody RequestMessage requestMessage){
+        if(requestMessage.getByWho()!=null && requestMessage.getStudentRelation()!=null && requestMessage.getUserinfoApply()!=null) {
+            boolean success = studentRelationService.clickApplyStudentRelation(requestMessage);
+            if (success) {
+                //清除相应的缓存
+                cache.delete(StudentRelationController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifydStudentRelation");
+                cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            } else {
+                return Result.build(ResultType.Failed);
+            }
+        }else{
+            return Result.build(ResultType.ParamError);
+        }
+    }*/
 
     /**
      * Author: laizhouhao 16:08 2019/6/10
