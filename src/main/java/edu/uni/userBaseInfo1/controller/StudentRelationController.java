@@ -291,7 +291,7 @@ public class StudentRelationController {
      * @return Result
      * @apiNote: 申请学生亲属信息, 点击申请时
      */
-    @ApiOperation(value="申请学生亲属信息, 点击申请时", notes="2019年5月14日 19:08:05 已通过测试")
+    /*@ApiOperation(value="申请学生亲属信息, 点击申请时", notes="2019年5月14日 19:08:05 已通过测试")
     @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
     @PostMapping("applyModifyStudentRelation/")
     @ResponseBody
@@ -309,7 +309,7 @@ public class StudentRelationController {
         }else{
             return Result.build(ResultType.ParamError);
         }
-    }
+    }*/
 
     /**
      * Author: laizhouhao 16:08 2019/6/10

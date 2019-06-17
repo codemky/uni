@@ -274,7 +274,7 @@ public class EmployeeHistoryController {
      * @return Result
      * @apiNote: 申请修改简历, 点击申请时
      */
-    @ApiOperation(value="申请修改简历", notes="2019年5月11日 14:33:14 已通过测试")
+    /*@ApiOperation(value="申请修改简历", notes="2019年5月11日 14:33:14 已通过测试")
     @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
     @PostMapping("applyModifyEmployeeHistory/")
     @ResponseBody
@@ -292,7 +292,7 @@ public class EmployeeHistoryController {
             }
         }
         return Result.build(ResultType.ParamError);
-    }
+    }*/
 
     /**
      * Author: chenenru 20:50 2019/5/9
