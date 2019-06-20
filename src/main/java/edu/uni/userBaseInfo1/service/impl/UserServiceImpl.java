@@ -414,6 +414,26 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public User selectUserByUniIdAndIde(Long uniId, String Iden) {
+        //构造查询条件
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andUniversityIdEqualTo(uniId);
+        criteria.andIdentificationEqualTo(Iden);
+        List<User> users = userMapper.selectByExample(userExample);
+        return users.size()>0?users.get(0):null;
+    }
+
+    @Override
+    public User selectByIden(String Iden) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andIdentificationEqualTo(Iden);
+        List<User> users = userMapper.selectByExample(userExample);
+        return users.size()>0?users.get(0):null;
+    }
+
     /**
      * Author: laizhouhao 21:22 2019/6/2
      * @param student

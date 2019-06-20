@@ -48,4 +48,12 @@ public interface PoliticalAffiliationService {
      * @apiNote:  用于删除PoliticalAffiliation表的某个记录
      */
     boolean deletePoliticalAffiliation(long id);
+
+    /**
+     * Author: chenenru 23:36 2019/6/19
+     * @param
+     * @return
+     * @apiNote: 根据政治面貌名称查询
+     */
+    PoliticalAffiliation selectByPoliticalAffiliationName(String poName);
 }

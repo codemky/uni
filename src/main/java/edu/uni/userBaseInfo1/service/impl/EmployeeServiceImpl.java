@@ -287,6 +287,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeMapper.selectByExample(employeeExample);
     }
 
+    @Override
+    public Employee selectValidEmployeeByEmpNoAndUniId(String EmpNo, Long university_id) {
+        EmployeeExample employeeExample = new EmployeeExample();
+        employeeExample.createCriteria().andEmpNoEqualTo(EmpNo).andUniversityIdEqualTo(university_id).andDeletedEqualTo(false);
+        List<Employee> employees = employeeMapper.selectByExample(employeeExample);
+        return employees.size()>0?employees.get(0):null;
+    }
+
     /**
      * Author: laizhouhao 20:21 2019/5/17
      * @param depart_name, subdepart_name, emp_name, emp_no

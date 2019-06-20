@@ -400,4 +400,21 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
+    @Override
+    public Student selectValidStuByStuNoAndUniId(String stu_no, Long uniId) {
+        //构造查询条件
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria().andStuNoEqualTo(stu_no).andDeletedEqualTo(false);
+        studentExample.createCriteria().andUniversityIdEqualTo(uniId);
+        List<Student> studentList = studentMapper.selectByExample(studentExample);
+        return studentList.size()>=1?studentList.get(0):null;
+    }
+
+    @Override
+    public List<Student> selectByGrade(String grade) {
+        StudentExample studentExample = new StudentExample();
+        studentExample.createCriteria().andGradeEqualTo(grade).andDeletedEqualTo(false);
+        return studentMapper.selectByExample(studentExample);
+    }
+
 }

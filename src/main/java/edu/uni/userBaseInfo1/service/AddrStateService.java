@@ -54,4 +54,12 @@ public interface AddrStateService {
      * @apiNote: 根据国家的编码查询该国家的所有省份
      */
     List<AddrState> selectAllAddrStatesByCountryCode(Long countryCode);
+
+    /**
+     * Author: chenenru 22:09 2019/6/19
+     * @param
+     * @return
+     * @apiNote: 根据省份的名称查询
+     */
+    AddrState selectByAddrStateName(String stateName);
 }

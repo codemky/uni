@@ -43,6 +43,8 @@ public class EmployeeModel extends BaseRowModel {
     //职员的秘钥
     private String usersecretKey;
 
+    //employee表
+
     @ExcelProperty(index = 7,format = "yyyy-mm-DD HH:mm:ss")
     //入职时间
     private Date beginLearnDate;

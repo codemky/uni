@@ -6,6 +6,7 @@ import edu.uni.administrativestructure.service.EmployPositionService;
 import edu.uni.administrativestructure.service.PositionService;
 import edu.uni.administrativestructure.service.SubdepartmentService;
 import edu.uni.administrativestructure.service.UniversityService;
+import edu.uni.auth.service.AuthService;
 import edu.uni.educateAffair.bean.Curriculum;
 import edu.uni.educateAffair.service.CurriculumService;
 import edu.uni.professionalcourses.bean.Specialty;
@@ -94,6 +95,8 @@ public class EmployeeController {
     private SubdepartmentService subdepartmentService;
     @Autowired
     private PictureService pictureService;
+    @Autowired
+    private AuthService authService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -587,7 +590,7 @@ public class EmployeeController {
      * @apiNote: //所有班级名称class，所有年级student,所有主修专业Specialty，性别user，姓名user，学号student，所有政治面貌politicalAffiliation，所有岗位Position
      */
     @ApiOperation(value = "领导查询某班的所有学生，进行高级搜索", notes = "未测试")
-    @GetMapping("filter/allClassmates/{userId}")
+    @PostMapping("filter/allClassmates/{userId}")
     @ResponseBody
     public void selectAllClassmatesByFilter(@PathVariable Long userId, String[] classNames,
                                             String[] cyears, String[] specialtys, String user_sex, String studentName, String studentNo,
@@ -652,7 +655,9 @@ public class EmployeeController {
                                 //}
                                 //联系方式
                                 Ecomm ecomm = ecommService.selectById(student.getPhoneEcommId());
-                                classmateBean.setPhone(ecomm.getContent());
+                               if (ecomm!=null){
+                                   classmateBean.setPhone(ecomm.getContent());
+                               }
                                 //政治面貌
                                 PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
                                 classmateBean.setPolitical(politicalAffiliation.getPolitical());
@@ -776,7 +781,7 @@ public class EmployeeController {
         Set<String> positionName = new HashSet<>();
         List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));
         for (Employee e : employees) {
-            System.out.println("职员：" + e.toString());
+            //System.out.println("职员：" + e.toString());
             //学院 department
             List<Department> departments = otherDepartmentService.selectValidById(e.getDepartmentId());
             //System.out.println(departments.size());
@@ -810,14 +815,15 @@ public class EmployeeController {
      * 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
      */
     @ApiOperation(value = "领导查询校内所有职员的信息，进行高级搜索", notes = "未测试")
-    @GetMapping("filter/allemployees/")
+    @PostMapping("filter/allemployees")
     @ResponseBody
     public void selectAllClassmatesByFilter(String[] employeeNames, String[] departmentNames, String[] subDepartments, String[] positionNames, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         String json = null;
         int flag = 0;
         HashMap<Object, HashMap<String, String>> employeeBean = new HashMap<>();
-        List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));
+        edu.uni.auth.bean.User AuthUser = authService.getUser();
+        List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));//AuthUser.getUniversityId()
         for (Employee e : employees) {
             HashMap<String, String> employeeMap = new HashMap<>();
             employeeMap.put("employeeNo", e.getEmpNo());
@@ -825,8 +831,11 @@ public class EmployeeController {
             if (pictures.size()>0){
                 employeeMap.put("picture", pictures.get(0).getPictureName());
             }
-            employeeMap.put("username", userService.selectUserById(e.getUserId()).getUserName());
-            employeeMap.put("universityName", "肇庆学院");
+            User user = userService.selectUserById(e.getUserId());
+            if (user!=null){
+                employeeMap.put("username", user.getUserName());
+            }
+            employeeMap.put("universityName", "肇庆学院");//AuthUser.getUniversity().getName());
             employeeMap.put("departmentName", otherDepartmentService.selectValidById(e.getDepartmentId()).get(0).getName());
             employeeMap.put("subDepartmentName", subdepartmentService.select(e.getSubdepartmentId()).getName());
             employeeMap.put("positionName", positionService.select(e.getPositionId()).getName());

@@ -55,4 +55,12 @@ public interface AddrStreetService {
      * @apiNote: 根据县/区的编码查询所有的街道
      */
     List<AddrStreet> selectStreetsByAreaCode(Long AreaCode);
+
+    /**
+     * Author: chenenru 22:09 2019/6/19
+     * @param
+     * @return
+     * @apiNote: 根据街道名称查询
+     */
+    AddrStreet selectByAddrStreetName(String StreetName);
 }

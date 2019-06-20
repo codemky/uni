@@ -42,7 +42,7 @@ public class Employee {
     private Long homeAddressId;
 
     //联系方式
-    private Long phoneEcommId;;
+    private Long phoneEcommId;
 
     //本记录的创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

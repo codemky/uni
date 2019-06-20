@@ -4,6 +4,7 @@ import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.config.GlobalConfig;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.StudentUpload;
 import edu.uni.userBaseInfo1.utils.UserInfoFileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +40,7 @@ public class FileExampleController {
     @Autowired
     private ExcelController excelController;
 
-    @ApiOperation(value="上传职员文件并校验，校验通过就写入数据库", notes = "")
+    @ApiOperation(value="上传职员账号的添加文件并校验", notes = "")
     @PostMapping("/upload/employee")
     public Result uploadEmployeeFile(MultipartFile file, HttpServletRequest request) {
         StringBuffer stringBuffer = new StringBuffer();
@@ -55,9 +56,9 @@ public class FileExampleController {
             filePath = userInfoFileUtil.uploadFile(file, request);
             //校验职员
             stringBuffer = excelController.checkoutEmployeeExcel(file.getInputStream(), request);
-            if (stringBuffer.equals("校验通过")){
+            /*if (stringBuffer.equals("校验通过")){
                 stringBuffer = excelController.insertEmployeeExcel(file.getInputStream(), request);
-            }
+            }*/
         } catch (IOException e) {
             return Result.build(ResultType.Failed);
         }
@@ -67,7 +68,37 @@ public class FileExampleController {
 
         return Result.build(ResultType.Success).appendData("message", stringBuffer);
     }
-    @ApiOperation(value="上传学生文件并校验，校验通过就写入数据库", notes = "")
+
+    @ApiOperation(value="把申请通过的职员批量写入数据库", notes = "")
+    @PostMapping("/insert/employee")
+    public Result insertEmployeeFile(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError);
+        }
+        // 全局上传路径
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
+        // excel上传路径
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        String filePath;
+        try {
+            filePath = userInfoFileUtil.uploadFile(file, request);
+            //校验职员
+            //stringBuffer = excelController.checkoutEmployeeExcel(file.getInputStream(), request);
+            //if (stringBuffer.equals("校验通过")){
+                stringBuffer = excelController.insertEmployeeExcel(file.getInputStream(), request);
+            //}
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed);
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
+    }
+
+    @ApiOperation(value="上传学生账号的添加文件并校验", notes = "")
     @PostMapping("/upload/student")
     public Result uploadStudentFile(MultipartFile file, HttpServletRequest request) {
         StringBuffer stringBuffer = new StringBuffer();
@@ -83,9 +114,9 @@ public class FileExampleController {
             filePath = userInfoFileUtil.uploadFile(file, request);
             //校验学生
             stringBuffer = excelController.checkoutStudentExcel(file.getInputStream(),request);
-            if (stringBuffer.equals("校验通过")) {
+            /*if (stringBuffer.equals("校验通过")) {
                 stringBuffer = excelController.insertStudentExcel(file.getInputStream(),request);
-            }
+            }*/
         } catch (IOException e) {
             return Result.build(ResultType.Failed);
         }
@@ -95,6 +126,133 @@ public class FileExampleController {
         return Result.build(ResultType.Success).appendData("message", stringBuffer);
     }
 
+    @ApiOperation(value="把申请通过的学生批量写入数据库", notes = "")
+    @PostMapping("/insert/student")
+    public Result insertStudentFile(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError);
+        }
+        // 全局上传路径
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
+        // excel上传路径
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        String filePath;
+        try {
+            filePath = userInfoFileUtil.uploadFile(file, request);
+            //校验学生
+            //stringBuffer = excelController.checkoutStudentExcel(file.getInputStream(),request);
+            //if (stringBuffer.equals("校验通过")) {
+                stringBuffer = excelController.insertStudentExcel(file.getInputStream(),request);
+            //}
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed);
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
+    }
+
+    @ApiOperation(value="上传学生账号的更新文件并校验", notes = "")
+    @PostMapping("/ckeckout/student")
+    public Result uploadStudentFiletoCkeckout(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
+        StudentUpload studentUpload = new StudentUpload();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError);
+        }
+        // 全局上传路径
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
+        // excel上传路径
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        String filePath;
+        try {
+            filePath = userInfoFileUtil.uploadFile(file, request);
+            stringBuffer = studentUpload.checkUpdateStudent(file);
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed);
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
+    }
+    @ApiOperation(value="上传学生账号的文件并更新", notes = "")
+    @PostMapping("/update/student")
+    public Result updateStudentFile(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
+        StudentUpload studentUpload = new StudentUpload();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError);
+        }
+        // 全局上传路径
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
+        // excel上传路径
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        String filePath;
+        try {
+            filePath = userInfoFileUtil.uploadFile(file, request);
+            //试试
+            stringBuffer = studentUpload.UpdateStudent(file);
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed);
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
+    }
+
+    @ApiOperation(value="上传学生账号的更新文件并校验", notes = "")
+    @PostMapping("/ckeckout/employee")
+    public Result uploadEmployeeFiletoCkeckout(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
+        StudentUpload studentUpload = new StudentUpload();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError);
+        }
+        // 全局上传路径
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
+        // excel上传路径
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        String filePath;
+        try {
+            filePath = userInfoFileUtil.uploadFile(file, request);
+            stringBuffer = studentUpload.checkoutEmployee(file);
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed);
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
+    }
+    @ApiOperation(value="上传学生账号的文件并更新", notes = "")
+    @PostMapping("/update/employee")
+    public Result updateEmployeeFile(MultipartFile file, HttpServletRequest request) {
+        StringBuffer stringBuffer = new StringBuffer();
+        StudentUpload studentUpload = new StudentUpload();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError);
+        }
+        // 全局上传路径
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
+        // excel上传路径
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        String filePath;
+        try {
+            filePath = userInfoFileUtil.uploadFile(file, request);
+            //试试
+            stringBuffer = studentUpload.UpdateEmployee(file);
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed);
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+        return Result.build(ResultType.Success).appendData("message", stringBuffer);
+    }
 
     @ApiOperation(value = "文件下载", notes = "")
     @GetMapping("/download")

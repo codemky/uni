@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.AddrState;
+import edu.uni.userBaseInfo1.bean.AddrStateExample;
 import edu.uni.userBaseInfo1.mapper.AddrStateMapper;
 import edu.uni.userBaseInfo1.service.AddrStateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,5 +110,14 @@ public class AddrStateServiceImpl implements AddrStateService {
     @Override
     public List<AddrState> selectAllAddrStatesByCountryCode(Long countryCode) {
         return addrStateMapper.selectByCountryCode(countryCode);
+    }
+
+    @Override
+    public AddrState selectByAddrStateName(String stateName) {
+        AddrStateExample addrStateExample = new AddrStateExample();
+        AddrStateExample.Criteria criteria = addrStateExample.createCriteria();
+        criteria.andStateZhEqualTo(stateName);
+        List<AddrState> addrStates = addrStateMapper.selectByExample(addrStateExample);
+        return addrStates.size()>0?addrStates.get(0):null;
     }
 }

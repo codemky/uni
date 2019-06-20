@@ -26,7 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author chenenru
@@ -64,6 +67,8 @@ public class ExcelController {
         StringBuffer stringBuffer = new StringBuffer();
         StudentUpload studentUpload = new StudentUpload();
         List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, StudentModel.class));
+        StudentUpload.setDouStuNo(new HashSet<>());
+        StudentUpload.setDouIden(new HashSet<>());
         for (Object o : data) {
             stringBuffer.append(studentUpload.checkoutStudent(o));
         }
@@ -102,6 +107,8 @@ public class ExcelController {
         StringBuffer stringBuffer = new StringBuffer();
         StudentUpload studentUpload = new StudentUpload();
         List<Object> data = EasyExcelFactory.read(inputStream, new Sheet(1, 1, EmployeeModel.class));
+        StudentUpload.setDouStuNo(new HashSet<>());
+        StudentUpload.setDouIden(new HashSet<>());
         for (Object o : data) {
             stringBuffer.append(studentUpload.checkoutEmployee(o));
         }

@@ -49,4 +49,12 @@ public interface AddrAreaService {
     boolean deleteAddrArea(long id);
 
     List<AddrArea> selectAllAddrAreasByCityCode(Long cityCode);
+
+    /**
+     * Author: chenenru 22:04 2019/6/19
+     * @param
+     * @return
+     * @apiNote: 根据县/区的名称查询相应的对象
+     */
+    AddrArea selectByAreaName(String AreaName);
 }

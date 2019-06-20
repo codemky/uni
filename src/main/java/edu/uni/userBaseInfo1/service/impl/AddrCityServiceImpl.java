@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.AddrCity;
+import edu.uni.userBaseInfo1.bean.AddrCityExample;
 import edu.uni.userBaseInfo1.mapper.AddrCityMapper;
 import edu.uni.userBaseInfo1.service.AddrCityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,5 +109,14 @@ public class AddrCityServiceImpl implements AddrCityService {
     @Override
     public List<AddrCity> selectAllAddrCitysByStateCode(Long stateCode) {
         return addrCityMapper.selectByStateCode(stateCode);
+    }
+
+    @Override
+    public AddrCity selectByCityName(String CityName) {
+        AddrCityExample addrCityExample = new AddrCityExample();
+        AddrCityExample.Criteria criteria = addrCityExample.createCriteria();
+        criteria.andCityZhEqualTo(CityName);
+        List<AddrCity> addrCities = addrCityMapper.selectByExample(addrCityExample);
+        return addrCities.size()>0?addrCities.get(0):null;
     }
 }

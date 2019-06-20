@@ -55,4 +55,12 @@ public interface AddrCityService {
      * @apiNote: 根据省份的编码查询对应的所有的城市
      */
     List<AddrCity> selectAllAddrCitysByStateCode(Long stateCode);
+
+    /**
+     * Author: chenenru 22:07 2019/6/19
+     * @param
+     * @return
+     * @apiNote: 工具城市名称查询
+     */
+    AddrCity selectByCityName(String CityName);
 }

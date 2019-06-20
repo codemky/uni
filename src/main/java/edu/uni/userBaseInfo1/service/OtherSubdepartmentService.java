@@ -28,4 +28,12 @@ public interface OtherSubdepartmentService {
      */
     Long selectIdBySubdepartName(String subdepart_name);
 
+    /**
+     * Author: chenenru 23:16 2019/6/19
+     * @param
+     * @return
+     * @apiNote: 根据科室名查询
+     */
+    Subdepartment selectBySubdepartmentName(String subdepartmentName);
+
 }

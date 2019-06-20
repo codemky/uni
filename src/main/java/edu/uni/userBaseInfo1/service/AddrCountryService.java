@@ -53,5 +53,5 @@ public interface AddrCountryService {
      * @return AddrCountry
      * @apiNote: 根据国家名称查询国家
      */
-    List<AddrCountry> selectCountryByName(String countryName);
+    AddrCountry selectCountryByName(String countryName);
 }

@@ -128,6 +128,14 @@ public interface EmployeeService {
     List<Employee> selectValidEmployeeByUniId(Long university_id);
 
     /**
+     * Author: chenenru 16:51 2019/6/20
+     * @param
+     * @return
+     * @apiNote: 根据教工号和学校的id查询
+     */
+    Employee selectValidEmployeeByEmpNoAndUniId(String EmpNo,Long university_id);
+
+    /**
      * Author: laizhouhao 20:21 2019/5/17
      * @param depart_name, subdepart_name, emp_name, emp_no
      * @return List<UserInfo>

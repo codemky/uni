@@ -53,4 +53,15 @@ public class OtherSubdepartmentServiceImpl implements OtherSubdepartmentService 
         //判断是否查找到该部门，有的话返回id
         return subdepartmentList.size()>=1?subdepartmentList.get(0).getId():null;
     }
+
+    @Override
+    public Subdepartment selectBySubdepartmentName(String subdepartmentName) {
+        //构造查询条件
+        SubdepartmentExample subdepartmentExample = new SubdepartmentExample();
+        subdepartmentExample.createCriteria().andNameEqualTo(subdepartmentName).andDeletedEqualTo(false);
+        //查找部门id
+        List<Subdepartment> subdepartmentList = subdepartmentMapper.selectByExample(subdepartmentExample);
+        //判断是否查找到该部门，有的话返回id
+        return subdepartmentList.size()>=1?subdepartmentList.get(0):null;
+    }
 }

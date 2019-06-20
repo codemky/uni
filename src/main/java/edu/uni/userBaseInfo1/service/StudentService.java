@@ -164,4 +164,18 @@ public interface StudentService {
          * @apiNote: 根据用户的学生实体获取用户的所有有效的学生信息详情
          */
         void getStudent(HashMap<String,Object>map,List<Student>studentList);
+        /**
+         * Author: chenenru 17:05 2019/6/19
+         * @param
+         * @return
+         * @apiNote: 根据学号和学校的id获取学生实体
+         */
+        Student selectValidStuByStuNoAndUniId(String stu_no,Long uniId);
+        /**
+         * Author: chenenru 15:49 2019/6/20
+         * @param
+         * @return
+         * @apiNote: 根据年级查找学生，用来校验年级是否存在
+         */
+        List<Student> selectByGrade(String grade);
 }

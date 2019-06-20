@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.alibaba.easyexcel.test;
 
+import com.alibaba.excel.metadata.BaseRowModel;
 import edu.uni.administrativestructure.bean.Class;
 import edu.uni.administrativestructure.bean.Department;
 import edu.uni.administrativestructure.bean.Position;
@@ -7,15 +8,24 @@ import edu.uni.administrativestructure.bean.Subdepartment;
 import edu.uni.administrativestructure.service.PositionService;
 import edu.uni.administrativestructure.service.SubdepartmentService;
 import edu.uni.professionalcourses.bean.Specialty;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.model.EmployeeModel;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.model.StudentModel;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.util.ExcelUtil;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.AddressUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.multipart.MultipartFile;
+import sun.java2d.loops.MaskFill;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -54,11 +64,11 @@ public class StudentUpload {
     @Autowired
     private StudentService Sstudent;
     @Autowired
-    private SubdepartmentService Ssubdepartment;
+    private OtherSubdepartmentService Ssubdepartment;
     @Autowired
     private EmployeeHistoryService EemployeeHistory;
     @Autowired
-    private PositionService Pposition;
+    private OtherPositionService Pposition;
     @Autowired
     private EmployeeService Eemployee;
 
@@ -71,13 +81,13 @@ public class StudentUpload {
     private static OtherDepartmentService departmentService;
     private static OtherClassService classService;
     private static PoliticalAffiliationService politicalAffiliationService;
-    private static OtherSpecialtyService specialtyService;
+    private static OtherSpecialtyService otherSpecialtyService;
     private static UserService userService;
     private static EcommService ecommService;
     private static StudentService studentService;
-    private static SubdepartmentService subdepartmentService;
+    private static OtherSubdepartmentService otherSubdepartmentService;
     private static EmployeeHistoryService employeeHistoryService;
-    private static PositionService positionService;
+    private static OtherPositionService otherPositionService;
     private static EmployeeService employeeService;
 
     @PostConstruct
@@ -91,40 +101,30 @@ public class StudentUpload {
         addrAreaService = this.AaddrArea;
         addrStreetService = this.AaddrStreet;
         addressService = this.Aaddress;
-        specialtyService = this.Sspecialty;
+        otherSpecialtyService = this.Sspecialty;
         userService = this.Uuser;
         ecommService = this.Eecomm;
         studentService = this.Sstudent;
-        subdepartmentService = this.Ssubdepartment;
+        otherSubdepartmentService = this.Ssubdepartment;
         employeeHistoryService = this.EemployeeHistory;
-        positionService = this.Pposition;
+        otherPositionService = this.Pposition;
         employeeService = this.Eemployee;
         //initData();
     }
 
-    private List<Object> data = new ArrayList<Object>();
     int i = 0;//记录excel里面的是第几行
-    int flag=0;//记录地址切割字符串到第几个字符
+    int flag = 0;//记录地址切割字符串到第几个字符
     StringBuffer s = new StringBuffer();
-    List<String> allName = new ArrayList<>();
     List<Department> departments = new ArrayList<>();
     Department department = new Department();
     List<Specialty> specialties = new ArrayList<>();
     Specialty specialty = new Specialty();
-    List<Class> classes = new ArrayList<>();
     Class aClass = new Class();
-    List<PoliticalAffiliation> politicalAffiliations = new ArrayList<>();
     PoliticalAffiliation politicalAffiliation = new PoliticalAffiliation();
-    AddressUtil addressUtil = new AddressUtil();
-    List<AddrCountry> addrCountries = new ArrayList<>();
     AddrCountry addrCountry = new AddrCountry();
-    List<AddrState> addrStates = new ArrayList<>();
-    AddrState addrState =new AddrState();
-    List<AddrCity> addrCities = new ArrayList<>();
+    AddrState addrState = new AddrState();
     AddrCity addrCity = new AddrCity();
-    List<AddrArea> addrAreas = new ArrayList<>();
     AddrArea addrArea = new AddrArea();
-    List<AddrStreet> addrStreets = new ArrayList<>();
     AddrStreet addrStreet = new AddrStreet();
     Ecomm ecomm = new Ecomm();
     String addressDetail = new String();
@@ -132,13 +132,10 @@ public class StudentUpload {
     User user = new User();
     Student student = new Student();
     Employee employee = new Employee();
-    List<Subdepartment> subdepartments = new ArrayList<>();
-    Subdepartment subdepartment= new Subdepartment();
-    List<EmployeeHistory> employeeHistories = new ArrayList<>();
+    Subdepartment subdepartment = new Subdepartment();
     EmployeeHistory employeeHistory = new EmployeeHistory();
-    List<Position> positions = new ArrayList<>();
     Position position = new Position();
-    String userNumber =new String();
+    String userNumber = new String();
     Date beginLearnDate = new Date();
     String userName = new String();
     String identification = new String();
@@ -152,13 +149,33 @@ public class StudentUpload {
     String homeAddress = new String();
     String mailEcomm = new String();
     String zipCode = new String();
+    static Set<String> douStuNo = new HashSet<>();
+    static Set<String> douIden = new HashSet<>();
+
+    public static Set<String> getDouStuNo() {
+        return douStuNo;
+    }
+
+    public static void setDouStuNo(Set<String> douStuNo) {
+        StudentUpload.douStuNo = douStuNo;
+    }
+
+    public static Set<String> getDouIden() {
+        return douIden;
+    }
+
+    public static void setDouIden(Set<String> douIden) {
+        StudentUpload.douIden = douIden;
+    }
+
     /**
      * Author: chenenru 15:24 2019/5/21
+     *
      * @param
      * @return
      * @apiNote: 向数据库插入批量审批通过的学生账号
      */
-    public  StringBuffer insertStudent(Object o){
+    public StringBuffer insertStudent(Object o) {
         s.delete(0, s.length());
         //先向user表插入新的记录，根据userId向student表插入时记录时关联到外键
         insertUser(o);
@@ -175,7 +192,7 @@ public class StudentUpload {
 
         aClass = classService.selectClassByName(className);
 
-         //插入其他相同的部分
+        //插入其他相同的部分
         insertSame(o);
 
         student.setUserId(user.getId());
@@ -199,23 +216,19 @@ public class StudentUpload {
 
     /**
      * Author: chenenru 12:36 2019/5/23
+     *
      * @param
      * @return
      * @apiNote: 向数据库插入批量审批通过的职员账号
      */
-    public StringBuffer insertEmployee(Object o){
+    public StringBuffer insertEmployee(Object o) {
         s.delete(0, s.length());
         //先向user表插入新的记录，根据userId向student表插入时记录时关联到外键
         insertUser(o);
         //再向employee表插入记录
         //所属科室、系
         String subdepartmentName = (String) getFieldValueByName("subdepartmentName", o);
-        subdepartments = subdepartmentService.selectAll();
-        for (Subdepartment s:subdepartments) {
-            if (s.getName().equals(subdepartmentName)){
-                subdepartment = s;
-            }
-        }
+        subdepartment = otherSubdepartmentService.selectBySubdepartmentName(subdepartmentName);
         //职员简历，不用校验
         String eemployeehistory = (String) getFieldValueByName("employeehistory", o);
         employeeHistory.setUserId((long) 1);
@@ -227,12 +240,7 @@ public class StudentUpload {
         employeeHistoryService.insert(employeeHistory);
         //行政岗位
         String pposition = (String) getFieldValueByName("position", o);
-        positions = positionService.selectAll();
-        for (Position p:positions) {
-            if (p.getName().equals(pposition)){
-                position = p;
-            }
-        }
+        position = otherPositionService.selectPositionByPositionName(pposition);
 
         insertSame(o);
 
@@ -256,11 +264,12 @@ public class StudentUpload {
 
     /**
      * Author: chenenru 0:00 2019/5/23
+     *
      * @param o
      * @return
      * @apiNote: 向用户表插入记录
      */
-    public StringBuffer insertUser(Object o){
+    public StringBuffer insertUser(Object o) {
         //先向user表插入新的记录，根据userId向student表插入时记录时关联到外键
         //学生的真实姓名
         userName = (String) getFieldValueByName("userName", o);
@@ -282,9 +291,9 @@ public class StudentUpload {
         //System.out.println("注册时间："+beginLearnDate);
         user.setName(userNumber);
         user.setIdentification(identification);
-        if (userSex.equals("男")){
+        if (userSex.equals("男")) {
             user.setUserSex(1);
-        }else{
+        } else {
             user.setUserSex(0);
         }
         user.setUserBirthday(userBirthday);
@@ -298,10 +307,10 @@ public class StudentUpload {
         boolean b = userService.insertUser(user);
         //Long id = user.getId();
         //System.out.println("自增的id为：" +id);
-        if(b==true){
+        if (b == true) {
             s.append("插入成功");
             //System.out.println("插入成功");
-        }else{
+        } else {
             s.append("插入失败");
             //System.out.println("插入失败");
         }
@@ -310,111 +319,60 @@ public class StudentUpload {
 
     /**
      * Author: chenenru 0:01 2019/5/23
+     *
      * @param
      * @return
      * @apiNote: 插入相同的部分
      */
-    public StringBuffer insertSame(Object o){
+    public StringBuffer insertSame(Object o) {
         //学院名
         departmentName = (String) getFieldValueByName("departmentName", o);
         departments = departmentService.selectDepartmentByName(departmentName);
-        if (departments.size()>=1){
-            department =  departments.get(0);
+        if (departments.size() >= 1) {
+            department = departments.get(0);
         }
         //主修专业
         majorName = (String) getFieldValueByName("majorName", o);
-        specialties = specialtyService.seclectByDIdAndSName(Long.valueOf(1), department.getId(), majorName);
-        if (specialties.size()>=1){
+        specialties = otherSpecialtyService.seclectByDIdAndSName(Long.valueOf(1), department.getId(), majorName);
+        if (specialties.size() >= 1) {
             specialty = specialties.get(0);
         }
         //政治面貌
         political = (String) getFieldValueByName("political", o);
-        politicalAffiliations =  politicalAffiliationService.selectAllPoliticalAffiliations();
-        for (PoliticalAffiliation po:politicalAffiliations) {
-            if (po.getPolitical().equals(political)){
-                politicalAffiliation = po;
-                //System.out.println("-->"+political+"-->"+po+"------>"+politicalAffiliation);
-            }
-        }
+        politicalAffiliation = politicalAffiliationService.selectByPoliticalAffiliationName(political);
         //家庭住址
         homeAddress = (String) getFieldValueByName("homeAddress", o);
         String[] split = homeAddress.split("/");
-        int init=0;//记录字符串循环的次数
+        int init = 0;//记录字符串循环的次数
         flag = 0;
-        for (String string:split) {
-            if (init==0){
-                addrCountries = addrCountryService.selectAllAddrCountrys();
-                for (AddrCountry a:addrCountries) {
-                    //System.out.println("国家："+a);
-                    if (string.equals(a.getCountryZh())){
-                        flag=1;
-                        addrCountry=a;
-                        break;
-                    }
-                }
-                if (flag!=1){
+        for (String string : split) {
+            if (init == 0) {
+                addrCountry = addrCountryService.selectCountryByName(string);
+                if (addrCountry == null) {
                     s.append("插入地址时找不到国家");
                 }
-            }else if (init==1&&flag==1){
-                //System.out.println("国家："+addrCountry.toString());
-                addrStates = addrStateService.selectAllAddrStatesByCountryCode(addrCountry.getCode());
-                for (AddrState a:addrStates) {
-                    if (string.equals(a.getStateZh())){
-                        addrState = a;
-                        flag=2;
-                        break;
-                    }
-                }
-                if (flag!=2){
+            } else if (init == 1) {
+                addrState = addrStateService.selectByAddrStateName(string);
+                if (addrState == null) {
                     s.append("插入地址时找不到省份");
                 }
-            }else if (init==2&&flag==2){
-                //System.out.println("省份："+addrState.toString());
-                addrCities = addressUtil.SelectCities(addrState.getCode());
-                for (AddrCity a:addrCities) {
-                    //System.out.println("国家："+a);
-                    if (string.equals(a.getCityZh())){
-                        addrCity = a;
-                        flag=3;
-                        break;
-                    }
-                }
-                if (flag!=3){
+            } else if (init == 2) {
+                addrCity = addrCityService.selectByCityName(string);
+                if (addrCity == null) {
                     s.append("插入地址时找不到城市");
                 }
-            }else if (init==3&&flag==3){
-                //System.out.println("城市："+addrCity);
-                addrAreas = addressUtil.SelectAreas(addrCity.getCode());
-                for (AddrArea a:addrAreas) {
-                    //System.out.println("国家："+a);
-                    if (string.equals(a.getAreaZh())){
-                        addrArea = a;
-                        flag=4;
-                        break;
-                    }
-                }
-                if (flag!=4){
+            } else if (init == 3) {
+                addrArea = addrAreaService.selectByAreaName(string);
+                if (addrArea == null) {
                     s.append("插入地址时找不到县/区");
                 }
-            }
-            else if (init==4&&flag==4){
-                //System.out.println("县/区："+addrArea.toString());
-                addrStreets = addressUtil.SelectStreets(addrArea.getCode());
-                for (AddrStreet a:addrStreets) {
-                    //System.out.println("街道："+a);
-                    if (string.equals(a.getStreetZh())){
-                        addrStreet = a;
-                        flag=5;
-                        break;
-                    }
-                }
-                if (flag!=5){
+            } else if (init == 4) {
+                addrStreet = addrStreetService.selectByAddrStreetName(string);
+                if (addrStreet == null) {
                     s.append("插入地址时找不到街道");
                 }
-            }else if (init==5&&flag==5){
+            } else if (init == 5) {
                 addressDetail = string;
-                flag=6;
-                break;
             }
             init++;
         }
@@ -447,20 +405,40 @@ public class StudentUpload {
         ecommService.insert(ecomm);
         return s;
     }
+
     /**
      * Author: chenenru 14:48 2019/5/21
+     *
      * @param
      * @return
      * @apiNote: 用于校验用户上传批量导入的学生模板
      */
-    public StringBuffer checkoutStudent(Object o){
-        //s.delete(0, s.length());
+    public StringBuffer checkoutStudent(Object o) {
         i++;
-        flag=0;
+        flag = 0;
         s.delete(0, s.length());
         checkoutUser(o);
 
         checkoutSame(o);
+
+        //校验学号
+        String userNumber = (String) getFieldValueByName("userNumber", o);
+        System.out.print(getFieldValueByName("userNumber", o) + " ");
+        if (douStuNo != null) {
+            for (String string : douStuNo) {
+                if (string.equals(userNumber)) {
+                    s.append("第").append(i).append("行第5列字段出现重复，请检查\n");
+                }
+            }
+        }
+        douStuNo.add(userNumber);
+        if (studentService.selectValidStuByStuNo(userNumber) != null) {
+            s.append("第").append(i).append("行第5列字段的账号已存在，请检查\n");
+        }
+        if (userNumber.length() != 12 && userNumber.length() != 10) {
+            s.append("第").append(i).append("行第5列字段长度不符合，请检查\n");
+            //System.exit(0);
+        }
 
         //校验年级 这个可以不用校验，因为年级可以添加新的
         System.out.print(getFieldValueByName("gradeName", o) + " ");
@@ -469,88 +447,74 @@ public class StudentUpload {
         //校验班级 前提是二级学院名称要写对
         System.out.print(getFieldValueByName("className", o) + " ");
         String className = (String) getFieldValueByName("className", o);
-        if(departments!=null||!departments.equals("")){
-            allName.clear();
-            for (Department d:departments) {
-                classes = classService.selectAllClassByDepartmentId(d.getId());
-                if(classes==null||classes.equals("")){
-                    continue;
-                }else{
-                    //allName.clear();
-                    for (Class c : classes) {
-                        allName.add(c.getName());
-                    }
-                }
-            }
-            if (allName.contains(className)) {
-//                System.out.print(getFieldValueByName("className", o) + " ");
-            } else {
+        if (department != null) {
+            aClass = classService.selectClassByName(className);
+            if (!aClass.getDepartmentId().equals(department.getId())) {
                 s.append("第" + i + "行第12列字段不符合，请检查\n");
             }
-        }else {
-            s.append("该学院没有此班级");
         }
 
         //校验宿舍地址
         System.out.print(getFieldValueByName("liveRoom", o) + " ");
         String liveRoom = (String) getFieldValueByName("liveRoom", o);
 
-        /*//校验邮政编码
-        String zipCode = (String) getFieldValueByName("zipCode", o);
-        System.out.print(getFieldValueByName("zipCode", o) + " ");
-        if (zipCode.length() != 6) {
-            s.append("第" + i + "行第16列字段不符合，请检查\n");
-        }*/
-
         System.out.println();
         return s;
     }
+
     /**
      * Author: chenenru 12:34 2019/5/23
+     *
      * @param
      * @return
      * @apiNote: 用于校验用户上传批量导入的教师模板
      */
-    public StringBuffer checkoutEmployee(Object o){
+    public StringBuffer checkoutEmployee(Object o) {
         i++;
-        flag=0;
+        flag = 0;
         s.delete(0, s.length());
         checkoutUser(o);
 
         checkoutSame(o);
 
-        //校验所属科室、系
-        String subdepartmentName = (String) getFieldValueByName("subdepartmentName", o);
-        System.out.print(subdepartmentName+" ");
-        subdepartments = subdepartmentService.selectAll();
-        flag=0;
-        for (Subdepartment s:subdepartments) {
-            if (s.getName().equals(subdepartmentName)){
-                subdepartment = s;
-                flag=1;
+        //校验教工号
+        String userNumber = (String) getFieldValueByName("userNumber", o);
+        System.out.print(getFieldValueByName("userNumber", o) + " ");
+        if (douStuNo != null) {
+            for (String string : douStuNo) {
+                if (string.equals(userNumber)) {
+                    s.append("第").append(i).append("行第5列字段出现重复，请检查\n");
+                }
             }
         }
-        if (flag==0){
+        douStuNo.add(userNumber);
+        employeeService.selectEmployeeByEmpNo(userNumber);
+        if (employeeService.selectEmployeeByEmpNo(userNumber) != null) {
+            s.append("第").append(i).append("行第5列字段的账号已存在，请检查\n");
+        }
+        if (userNumber.length() != 12 && userNumber.length() != 10) {
+            s.append("第").append(i).append("行第5列字段长度不符合，请检查\n");
+            //System.exit(0);
+        }
+
+        //校验所属科室、系
+        String subdepartmentName = (String) getFieldValueByName("subdepartmentName", o);
+        System.out.print(subdepartmentName + " ");
+        subdepartment = otherSubdepartmentService.selectBySubdepartmentName(subdepartmentName);
+        flag = 0;
+        if (subdepartment == null) {
             s.append("第" + i + "行第10列字段不符合，请检查\n");
         }
         //校验职员简历，不用校验
         String employeehistory = (String) getFieldValueByName("employeehistory", o);
-        System.out.print(employeehistory+" ");
+        System.out.print(employeehistory + " ");
         //校验行政岗位
         String pposition = (String) getFieldValueByName("position", o);
-        System.out.print(pposition+" ");
-        positions = positionService.selectAll();
-        flag=0;
-        for (Position p:positions) {
-            if (p.getName().equals(pposition)){
-                position = p;
-                flag=1;
-            }
-        }
-        if (flag==0){
+        System.out.print(pposition + " ");
+        position = otherPositionService.selectPositionByPositionName(pposition);
+        if (position == null) {
             s.append("第" + i + "行第14列字段不符合，请检查\n");
         }
-
         System.out.println();
 
         return s;
@@ -558,11 +522,12 @@ public class StudentUpload {
 
     /**
      * Author: chenenru 23:30 2019/5/22
+     *
      * @param o
      * @return StringBuffer
      * @apiNote: 校验user表
      */
-    public StringBuffer checkoutUser(Object o){
+    public StringBuffer checkoutUser(Object o) {
         System.out.print(getFieldValueByName("userName", o) + " ");
         //校验姓名
         String userName = (String) getFieldValueByName("userName", o);
@@ -570,11 +535,22 @@ public class StudentUpload {
             s.append("第").append(i).append("行第1列字段长度不能为空，请检查\n");
             //System.out.println("第"+i+"行第1列字段长度不能为空，请检查");
         }
-
-
         System.out.print(getFieldValueByName("identification", o) + " ");
         //校验身份证号
         String identification = (String) getFieldValueByName("identification", o);
+
+        if (douIden != null) {
+            for (String string : douIden) {
+                if (string.equals(identification)) {
+                    s.append("第").append(i).append("行第2列字段出现重复，请检查\n");
+                }
+            }
+        }
+        douIden.add(identification);
+
+        if (userService.selectByIden(identification) != null) {
+            s.append("第").append(i).append("行第2列字段的账号已存在，请检查\n");
+        }
         if (identification.length() < 18 || identification.length() > 22) {
             s.append("第").append(i).append("行第2列字段长度不符合，请检查\n");
             //System.out.println("第"+i+"行第2列字段长度不符合，请检查");
@@ -589,16 +565,6 @@ public class StudentUpload {
         System.out.print(getFieldValueByName("userBirthday", o) + " ");
         //校验出生日期
         String userBirthday = (String) getFieldValueByName("userBirthday", o);
-
-
-        System.out.print(getFieldValueByName("userNumber", o) + " ");
-        //校验学号
-        String userNumber = (String) getFieldValueByName("userNumber", o);
-        //System.out.println("长度：---》"+userNumber.length());
-        if (userNumber.length() != 12 && userNumber.length()!=10) {
-            s.append("第").append(i).append("行第5列字段长度不符合，请检查\n");
-            //System.exit(0);
-        }
 
 
         System.out.print(getFieldValueByName("userPassword", o) + " ");
@@ -616,25 +582,23 @@ public class StudentUpload {
         Date beginLearnDate = (Date) getFieldValueByName("beginLearnDate", o);
         return s;
     }
+
     /**
      * Author: chenenru 23:31 2019/5/22
+     *
      * @param o
      * @return StringBuffer
      * @apiNote: 校验共同部分
      */
-    public StringBuffer checkoutSame(Object o){
+    public StringBuffer checkoutSame(Object o) {
 
         //校验学院:1.根据session里面的universityId确认上传者的学校的id,再根据学校的id查询所有的二级学院
         System.out.print(getFieldValueByName("departmentName", o) + " ");
+
         departmentName = (String) getFieldValueByName("departmentName", o);
-        departments = departmentService.selectAllValidDepartment(Long.valueOf(1));
-        allName.clear();
-        for (Department department : departments) {
-            allName.add(department.getName());
-        }
-        //System.out.println(allName.contains(departmentName));
-        if (allName.contains(departmentName)) {
-//            System.out.print(getFieldValueByName("departmentName", o) + " ");
+        departments = departmentService.selectDepartmentByName(departmentName);
+        if (departments.size() >= 1) {
+            department = departments.get(0);
         } else {
             s.append("第" + i + "行第9列字段不符合，请检查\n");
         }
@@ -642,123 +606,56 @@ public class StudentUpload {
         //校验专业  前提是二级学院名称要写对
         System.out.print(getFieldValueByName("majorName", o) + " ");
         majorName = (String) getFieldValueByName("majorName", o);
-        //specialties = new ArrayList<>();
-        flag=0;
-        if(departments!=null||!departments.equals("")){
-           // System.out.println("\n这是学院："+departments.toString()+"  --->"+majorName);
-            for (Department d:departments) {
-                specialties = specialtyService.seclectByDIdAndSName(Long.valueOf(1), d.getId(), majorName);
-                for (Specialty sp:specialties) {
-                    //System.out.println("\n这是专业："+specialties.toString());
-                    if(sp!=null||!sp.equals("")){
-                        //System.out.println(" --->"+flag);
-                        flag=1;
-                        //System.out.println(" --->>"+flag);
-                        break;
-                    }
-                }
-                if (flag==1){
-                    break;
-                }
+        if (department != null) {
+            specialties = otherSpecialtyService.seclectByDIdAndSName(Long.valueOf(1), department.getId(), majorName);
+            if (specialties.size() >= 1) {
+                specialty = specialties.get(0);
+            } else {
+                s.append("第" + i + "行第11列字段不符合，请检查\n");
             }
-        }
-        if (flag==0){
-            s.append("第" + i + "行第11列字段不符合，请检查\n");
         }
 
         //校验政治面貌
         System.out.print(getFieldValueByName("political", o) + " ");
         political = (String) getFieldValueByName("political", o);
-        allName.clear();
-        politicalAffiliations = politicalAffiliationService.selectAllPoliticalAffiliations();
-        for (PoliticalAffiliation po : politicalAffiliations) {
-            allName.add(po.getPolitical());
-        }
-        if (allName.contains(political)) {
-//            System.out.print(getFieldValueByName("political", o) + " ");
-        } else {
+        politicalAffiliation = politicalAffiliationService.selectByPoliticalAffiliationName(political);
+        if (politicalAffiliation == null) {
             s.append("第" + i + "行第13列字段不符合，请检查\n");
         }
 
-        //校验家庭地址
-        System.out.print(getFieldValueByName("homeAddress", o) + " ");
+        //家庭住址
         homeAddress = (String) getFieldValueByName("homeAddress", o);
+        System.out.println(homeAddress + " ");
         String[] split = homeAddress.split("/");
-        int init=0;
+        int init = 0;//记录字符串循环的次数
         flag = 0;
-        for (String string:split) {
-            if (init==0){
-                addrCountries = addrCountryService.selectAllAddrCountrys();
-                for (AddrCountry a:addrCountries) {
-                    //System.out.println("国家："+a.getCountryZh()+"  -->"+string);
-                    if (string.equals(a.getCountryZh())){
-                        flag=1;
-                        addrCountry=a;
-                        break;
-                    }
-                }
-                if (flag!=1){
+        for (String string : split) {
+            if (init == 0) {
+                addrCountry = addrCountryService.selectCountryByName(string);
+                if (addrCountry == null) {
                     s.append("第" + i + "行第15列地址的国家不正确");
                 }
-            }else if (init==1&&flag==1){
-                //System.out.println("国家："+addrCountry.toString());
-                addrStates = addrStateService.selectAllAddrStatesByCountryCode(addrCountry.getCode());
-                for (AddrState a:addrStates) {
-                    if (string.equals(a.getStateZh())){
-                        addrState = a;
-                        flag=2;
-                        break;
-                    }
-                }
-                if (flag!=2){
+            } else if (init == 1) {
+                addrState = addrStateService.selectByAddrStateName(string);
+                if (addrState == null) {
                     s.append("第" + i + "行第15列地址的省份不正确");
                 }
-            }else if (init==2&&flag==2){
-                //System.out.println("省份："+addrState.toString());
-                addrCities = addressUtil.SelectCities(addrState.getCode());
-                for (AddrCity a:addrCities) {
-                    //System.out.println("国家："+a);
-                    if (string.equals(a.getCityZh())){
-                        addrCity = a;
-                        flag=3;
-                        break;
-                    }
-                }
-                if (flag!=3){
+            } else if (init == 2) {
+                addrCity = addrCityService.selectByCityName(string);
+                if (addrCity == null) {
                     s.append("第" + i + "行第15列地址的城市不正确");
                 }
-            }else if (init==3&&flag==3){
-                //System.out.println("城市："+addrCity);
-                addrAreas = addressUtil.SelectAreas(addrCity.getCode());
-                for (AddrArea a:addrAreas) {
-                    //System.out.println("国家："+a);
-                    if (string.equals(a.getAreaZh())){
-                        addrArea = a;
-                        flag=4;
-                        break;
-                    }
-                }
-                if (flag!=4){
+            } else if (init == 3) {
+                addrArea = addrAreaService.selectByAreaName(string);
+                if (addrArea == null) {
                     s.append("第" + i + "行第15列地址的县/区不正确");
                 }
-            }
-            else if (init==4&&flag==4){
-                //System.out.println("县/区："+addrArea.toString());
-                addrStreets = addressUtil.SelectStreets(addrArea.getCode());
-                for (AddrStreet a:addrStreets) {
-                    //System.out.println("街道："+a);
-                    if (string.equals(a.getStreetZh())){
-                        addrStreet = a;
-                        flag=5;
-                        break;
-                    }
-                }
-                if (flag!=5){
+            } else if (init == 4) {
+                addrStreet = addrStreetService.selectByAddrStreetName(string);
+                if (addrStreet == null) {
                     s.append("第" + i + "行第15列地址的街道不正确");
                 }
-            }/*else if (init==5&&flag==5){
-
-            }*/
+            }
             init++;
         }
 
@@ -770,7 +667,7 @@ public class StudentUpload {
         }
 
         //校验通信方式
-        System.out.print(getFieldValueByName("mailEcomm", o)+" ");
+        System.out.print(getFieldValueByName("mailEcomm", o) + " ");
         mailEcomm = (String) getFieldValueByName("mailEcomm", o);
         if (mailEcomm.length() != 11) {
             s.append("第" + i + "行第17列字段不符合，请检查\n");
@@ -778,6 +675,746 @@ public class StudentUpload {
 
         return s;
     }
+
+    /**
+     * Author: chenenru 10:16 2019/6/18
+     *
+     * @param
+     * @return
+     * @apiNote: 校验批量更新的职员账号
+     */
+    public StringBuffer checkUpdateEmployee(MultipartFile file) throws IOException {
+        List<EmployeeModel> employeeModels = ExcelUtil.readExcel(file.getInputStream(), EmployeeModel.class);
+        int i = 0;
+        int flag = 0;
+        s.delete(0, s.length());
+        douStuNo.clear();
+        douIden.clear();
+        for (EmployeeModel e : employeeModels) {
+            i++;
+            if (douStuNo != null) {
+                for (String string : douStuNo) {
+                    if (string.equals(e.getUserNumber())) {
+                        s.append("第").append(i).append("行第5列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douStuNo.add(e.getUserNumber());
+
+            if (douIden != null) {
+                for (String string : douIden) {
+                    if (string.equals(e.getIdentification())) {
+                        s.append("第").append(i).append("行第2列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douIden.add(e.getIdentification());
+            if (e.getUserNumber() == null) {
+                s.append("第").append(i).append("行第5列字段长度不能为空，请检查\n");
+                flag = 1;
+            }
+            if (e.getIdentification() == null) {
+                s.append("第").append(i).append("行第2列字段长度不能为空，请检查\n");
+                flag = 1;
+            }
+            if (e.getIdentification().length() < 18 || e.getIdentification().length() > 22) {
+                s.append("第").append(i).append("行第2列字段长度不符合，请检查\n");
+            }
+/*            if (flag == 1) {
+                continue;
+            }*/
+            //根据学号+身份证号获取唯一的学生，就是该学生的学号+身份证号不能为空
+            if (e.getUserNumber() != null && e.getIdentification() != null) {
+                Employee employee = employeeService.selectValidEmployeeByEmpNoAndUniId(e.getUserNumber(), Long.valueOf(1));
+                User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), e.getIdentification());
+                if (employee.getUserId().equals(user.getId())) {
+                    if (e.getDepartmentName() != null) {
+                        //为专业服务的
+                        departments = departmentService.selectDepartmentByName(e.getDepartmentName());
+                        System.out.println(departments.size());
+                        if (departments.size() >= 1) {
+                            department = departments.get(0);
+                        }
+                    }
+                    if (e.getSubdepartmentName() != null) {
+                        if (otherSubdepartmentService.selectBySubdepartmentName(e.getSubdepartmentName())==null) {
+                            s.append("第" + i + "行第10列不正确，请检查\n");
+                        }
+                    }
+                    //一个教师的专业你怎么校验？
+                    if (e.getMajorName() != null) {
+                        if (department.getId()==null) {
+                            s.append("第" + i + "行第9列不正确，请检查\n");
+                            flag = 1;
+                        } else {
+                            specialties = otherSpecialtyService.seclectByDIdAndSName(Long.valueOf(1), department.getId(), e.getMajorName());
+                            if (specialties.size() < 1) {
+                                s.append("第" + i + "行第11列字段不正确，请检查\n");
+                            }
+                        }
+                    }
+                    //简历不用校验
+                    if (e.getPolitical() != null) {
+                        politicalAffiliation = politicalAffiliationService.selectByPoliticalAffiliationName(e.getPolitical());
+                        if (politicalAffiliation == null) {
+                            s.append("第" + i + "行第13列字段不正确，请检查\n");
+                        }
+                    }
+                    if (e.getPosition()!=null){
+                        if (otherPositionService.selectPositionByPositionName(e.getPosition())==null){
+                            s.append("第" + i + "行第14列字段不正确，请检查\n");
+                        }
+                    }
+                    if (e.getHomeAddress() != null) {
+                        String[] split = e.getHomeAddress().split("/");
+                        List<Address> addresses = addressService.selectByUserId(user.getId());
+                        if (addresses.size() > 0) {
+                            if (e.getZipCode() == null) {
+                                //student.set 地址需要zip
+                                s.append("第" + i + "行第16列字段是15列的前提，不能为空\n");
+                            }
+                            int init = 0;//记录字符串循环的次数
+                            for (String string : split) {
+                                if (init == 0) {
+                                    addrCountry = addrCountryService.selectCountryByName(string);
+                                    if (addrCountry == null) {
+                                        s.append("第" + i + "行第15列地址的国家不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 1) {
+                                    addrState = addrStateService.selectByAddrStateName(string);
+                                    if (addrState == null) {
+                                        s.append("第" + i + "行第15列地址的省份不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 2) {
+                                    addrCity = addrCityService.selectByCityName(string);
+                                    if (addrCity == null) {
+                                        s.append("第" + i + "行第15列地址的城市不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 3) {
+                                    addrArea = addrAreaService.selectByAreaName(string);
+                                    if (addrArea == null) {
+                                        s.append("第" + i + "行第15列地址的县/区不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 4) {
+                                    addrStreet = addrStreetService.selectByAddrStreetName(string);
+                                    if (addrStreet == null) {
+                                        s.append("第" + i + "行第15列地址的街道不正确");
+                                        flag = 1;
+                                    }
+                                }
+                                init++;
+                            }
+                        }
+                    }
+                    if (e.getZipCode() != null) {
+                        if (e.getZipCode().length() < 6) {
+                            s.append("第" + i + "行第16列字段长度不正确，请检查\n");
+                        }
+                    }
+                    if (e.getMailEcomm() != null) {
+                        if (e.getMailEcomm().length() != 11) {
+                            s.append("第" + i + "行第17列字段不正确，请检查\n");
+                        }
+                    }
+                } else {
+                    s.append("第" + i + "行第2、5列参数不正确，请改正");
+                }
+            } else {
+                s.append("第" + i + "行第2、5列参数不能为空，请改正");
+            }
+        }
+        return s;
+    }
+
+    /**
+     * Author: chenenru 17:07 2019/6/20
+     * @param
+     * @return
+     * @apiNote: 更新批量的职员信息
+     */
+    @Transactional(rollbackFor = {Exception.class})
+    public StringBuffer UpdateEmployee(MultipartFile file) throws IOException {
+        List<EmployeeModel> employeeModels = ExcelUtil.readExcel(file.getInputStream(), EmployeeModel.class);
+        int i = 0;
+        int flag = 0;
+        s.delete(0, s.length());
+        douStuNo.clear();
+        douIden.clear();
+        for (EmployeeModel e : employeeModels) {
+            flag = 0;
+            i++;
+            if (douStuNo != null) {
+                for (String string : douStuNo) {
+                    if (string.equals(e.getUserNumber())) {
+                        s.append("第").append(i).append("行第5列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douStuNo.add(e.getUserNumber());
+
+            if (douIden != null) {
+                for (String string : douIden) {
+                    if (string.equals(e.getIdentification())) {
+                        s.append("第").append(i).append("行第2列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douIden.add(e.getIdentification());
+            if (flag == 1) {
+                continue;
+            }
+            //根据学号+身份证号获取唯一的学生，就是该学生的学号+身份证号不能为空
+            if (e.getUserNumber() != null && e.getIdentification() != null) {
+                Employee employee = employeeService.selectValidEmployeeByEmpNoAndUniId(e.getUserNumber(), Long.valueOf(1));
+                User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), e.getIdentification());
+                if (student.getUserId().equals(user.getId())) {
+                    if (e.getUserName() != null) {
+                        user.setUserName(e.getUserName());
+                    }
+                    if (e.getIdentification() != null) {
+                        user.setIdentification(e.getIdentification());
+                    }
+                    if (e.getUserSex() != null) {
+                        if (e.getUserSex().equals("男")) {
+                            user.setUserSex(0);
+                        } else {
+                            user.setUserSex(1);
+                        }
+                    }
+                    if (e.getUserBirthday() != null) {
+                        user.setUserBirthday(e.getUserBirthday());
+                    }
+                    if (e.getUserNumber() != null) {
+                        user.setName(e.getUserNumber());
+                    }
+                    if (e.getUserPassword() != null) {
+                        user.setPwd(e.getUserPassword());
+                    }
+                    if (e.getUsersecretKey() != null) {
+                        user.setSalt(e.getUsersecretKey());
+                    }
+                    if (e.getBeginLearnDate() != null) {
+                        user.setRegist(e.getBeginLearnDate());
+                    }
+                    //employee表：
+                    //departmentName gradeName majorName className political
+                    //liveRoom homeAddress zipCode mailEcomm
+                    if (e.getDepartmentName() != null) {
+                        //为专业服务的
+                        departments = departmentService.selectDepartmentByName(e.getDepartmentName());
+                        if (departments.size() >= 1) {
+                            department = departments.get(0);
+                            employee.setDepartmentId(department.getId());
+                        }
+                    }
+                    if (e.getSubdepartmentName()!=null){
+                        Subdepartment subdepartment = otherSubdepartmentService.selectBySubdepartmentName(e.getSubdepartmentName());
+                        employee.setSubdepartmentId(subdepartment.getId());
+                    }
+                    if (e.getEmployeehistory()!=null){
+                        List<EmployeeHistory> employeeHistories = employeeHistoryService.selectByUserId(user.getId());
+                        if (employeeHistories.size()>0){
+                            employeeHistories.get(0).setDescript(e.getEmployeehistory());
+                            employeeHistory = employeeHistories.get(0);
+                        }
+                        employee.setEmployHistoryId(employeeHistory.getId());
+                    }
+                    if (e.getMajorName() != null) {
+                        //student.setSpecialtyId();
+                        if (e.getDepartmentName() == null) {
+                            s.append("第" + i + "9行第列前提是不能为空");
+                            flag = 1;
+                        } else {
+                            specialties = otherSpecialtyService.seclectByDIdAndSName(Long.valueOf(1), department.getId(), e.getMajorName());
+                            if (specialties.size() >= 1) {
+                                specialty = specialties.get(0);
+                            }
+                            student.setSpecialtyId(specialty.getId());
+                        }
+                    }
+                    if (e.getPolitical() != null) {
+                        //student.setPoliticalId();
+                        politicalAffiliation = politicalAffiliationService.selectByPoliticalAffiliationName(e.getPolitical());
+                        if (politicalAffiliation != null) {
+                            student.setPoliticalId(politicalAffiliation.getId());
+                        }
+                    }
+                    if (e.getPosition()!=null){
+                        Position position = otherPositionService.selectPositionByPositionName(e.getPosition());
+                    }
+                    if (e.getHomeAddress() != null) {
+                        String[] split = e.getHomeAddress().split("/");
+                        List<Address> addresses = addressService.selectByUserId(user.getId());
+                        if (addresses.size() > 0) {
+                            if (e.getZipCode() != null) {
+                                //student.set 地址需要zip
+                                addresses.get(0).setZipCode(e.getZipCode());
+                            }
+                            int init = 0;//记录字符串循环的次数
+                            for (String string : split) {
+                                if (init == 0) {
+                                    addrCountry = addrCountryService.selectCountryByName(string);
+                                    if (addrCountry == null) {
+                                        s.append("第" + i + "行第15列地址的国家不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setCountry(addrCountry.getId());
+                                    }
+                                } else if (init == 1) {
+                                    addrState = addrStateService.selectByAddrStateName(string);
+                                    if (addrState == null) {
+                                        s.append("第" + i + "行第15列地址的省份不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setState(addrState.getId());
+                                    }
+                                } else if (init == 2) {
+                                    addrCity = addrCityService.selectByCityName(string);
+                                    if (addrCity == null) {
+                                        s.append("第" + i + "行第15列地址的城市不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setCity(addrCity.getId());
+                                    }
+                                } else if (init == 3) {
+                                    addrArea = addrAreaService.selectByAreaName(string);
+                                    if (addrArea == null) {
+                                        s.append("第" + i + "行第15列地址的县/区不正确");
+                                        flag = 1;
+                                        addresses.get(0).setArea(addrArea.getId());
+                                    }
+                                } else if (init == 4) {
+                                    addrStreet = addrStreetService.selectByAddrStreetName(string);
+                                    if (addrStreet == null) {
+                                        s.append("第" + i + "行第15列地址的街道不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setStreet(addrStreet.getId());
+                                    }
+                                } else if (init == 5) {
+                                    addressDetail = string;
+                                    addresses.get(0).setDetail(addressDetail);
+                                }
+                                init++;
+                            }
+                        }
+                    }
+                    if (e.getMailEcomm() != null) {
+//                        student.setPhoneEcommId();
+                        //先查询出该用户的通讯方式
+                        //再修改对应的通讯方式后再更新
+                        List<Ecomm> ecomms = ecommService.selectByUserId(user.getId());
+                        if (ecomms.size() > 0) {
+                            ecomms.get(0).setContent(e.getMailEcomm());
+                            ecomm = ecomms.get(0);
+                            //ecommService.update(ecomms.get(0));
+                        }
+                    }
+                    if (flag != 1) {
+                        //System.out.println(ecomm.toString());
+                        try {
+                            ecommService.update(ecomm);
+                            addressService.update(address);
+                            userService.updateUser(user);
+                            employeeHistoryService.update(employeeHistory);
+                            employeeService.updateEmployee(employee);
+                            s.append("更新成功");
+                        } catch (Exception ee) {
+                            ee.printStackTrace();
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        }
+                    }
+                } else {
+                    s.append("第" + i + "行第2、5列参数不正确，请改正");
+                }
+            } else {
+                s.append("第" + i + "行第2、5列参数不能为空，请改正");
+            }
+        }
+        return s;
+    }
+
+    /**
+     * user:
+     * userName identification userSex userBirthday userNumber userPassword usersecretKey
+     * <p>
+     * student:
+     * beginLearnDate departmentName subdepartmentName majorName employeehistory political
+     * position homeAddress zipCode mailEcomm
+     */
+    /**
+     * Author: chenenru 17:06 2019/6/20
+     * @param
+     * @return
+     * @apiNote: 校验批量更新的学生信息
+     */
+    public StringBuffer checkUpdateStudent(MultipartFile file) throws IOException {
+        List<StudentModel> studentModels = ExcelUtil.readExcel(file.getInputStream(), StudentModel.class);
+        int i = 0;
+        int flag = 0;
+        s.delete(0, s.length());
+        douStuNo.clear();
+        douIden.clear();
+        for (StudentModel st : studentModels) {
+            flag = 0;
+            i++;
+            if (douStuNo != null) {
+                for (String string : douStuNo) {
+                    if (string.equals(st.getUserNumber())) {
+                        s.append("第").append(i).append("行第5列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douStuNo.add(st.getUserNumber());
+
+            if (douIden != null) {
+                for (String string : douIden) {
+                    if (string.equals(st.getIdentification())) {
+                        s.append("第").append(i).append("行第2列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douIden.add(st.getIdentification());
+            if (st.getUserNumber() == null) {
+                s.append("第").append(i).append("行第5列字段长度不能为空，请检查\n");
+                flag = 1;
+            }
+            if (st.getIdentification() == null) {
+                s.append("第").append(i).append("行第2列字段长度不能为空，请检查\n");
+                flag = 1;
+            }
+            if (st.getIdentification().length() < 18 || st.getIdentification().length() > 22) {
+                s.append("第").append(i).append("行第2列字段长度不符合，请检查\n");
+            }
+/*            if (flag == 1) {
+                continue;
+            }*/
+            //根据学号+身份证号获取唯一的学生，就是该学生的学号+身份证号不能为空
+            if (st.getUserNumber() != null && st.getIdentification() != null) {
+                Student student = studentService.selectValidStuByStuNoAndUniId(st.getUserNumber(), Long.valueOf(1));
+                User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), st.getIdentification());
+                if (student.getUserId().equals(user.getId())) {
+                    if (st.getDepartmentName() != null) {
+                        //为专业服务的
+                        departments = departmentService.selectDepartmentByName(st.getDepartmentName());
+                        System.out.println(departments.size());
+                        if (departments.size() >= 1) {
+                            department = departments.get(0);
+                        }
+                    }
+                    System.out.println(department+"****");
+                    if (st.getGradeName() != null) {
+                        if (studentService.selectByGrade(st.getGradeName()).size() < 1) {
+                            s.append("第" + i + "行第10列不正确，请检查\n");
+                        }
+                    }
+                    System.out.println((department.getId()==null)+"<<======");
+                    if (st.getMajorName() != null) {
+                        if (department.getId()==null) {
+                            s.append("第" + i + "行第9列不正确，请检查\n");
+                            flag = 1;
+                        } else {
+                            specialties = otherSpecialtyService.seclectByDIdAndSName(Long.valueOf(1), department.getId(), st.getMajorName());
+                            if (specialties.size() < 1) {
+                                s.append("第" + i + "行第11列字段不正确，请检查\n");
+                            }
+                        }
+                    }
+                    if (st.getClassName() != null) {
+                        aClass = classService.selectClassByName(st.getClassName());
+                        if (aClass == null) {
+                            s.append("第" + i + "行第12列字段不正确，请检查\n");
+                        }
+                    }
+                    if (st.getPolitical() != null) {
+                        politicalAffiliation = politicalAffiliationService.selectByPoliticalAffiliationName(st.getPolitical());
+                        if (politicalAffiliation == null) {
+                            s.append("第" + i + "行第13列字段不正确，请检查\n");
+                        }
+                    }
+                    if (st.getHomeAddress() != null) {
+                        String[] split = st.getHomeAddress().split("/");
+                        List<Address> addresses = addressService.selectByUserId(user.getId());
+                        if (addresses.size() > 0) {
+                            if (st.getZipCode() == null) {
+                                //student.set 地址需要zip
+                                s.append("第" + i + "行第16列字段是15列的前提，不能为空\n");
+                            }
+                            int init = 0;//记录字符串循环的次数
+                            for (String string : split) {
+                                if (init == 0) {
+                                    addrCountry = addrCountryService.selectCountryByName(string);
+                                    if (addrCountry == null) {
+                                        s.append("第" + i + "行第15列地址的国家不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 1) {
+                                    addrState = addrStateService.selectByAddrStateName(string);
+                                    if (addrState == null) {
+                                        s.append("第" + i + "行第15列地址的省份不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 2) {
+                                    addrCity = addrCityService.selectByCityName(string);
+                                    if (addrCity == null) {
+                                        s.append("第" + i + "行第15列地址的城市不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 3) {
+                                    addrArea = addrAreaService.selectByAreaName(string);
+                                    if (addrArea == null) {
+                                        s.append("第" + i + "行第15列地址的县/区不正确");
+                                        flag = 1;
+                                    }
+                                } else if (init == 4) {
+                                    addrStreet = addrStreetService.selectByAddrStreetName(string);
+                                    if (addrStreet == null) {
+                                        s.append("第" + i + "行第15列地址的街道不正确");
+                                        flag = 1;
+                                    }
+                                }
+                                init++;
+                            }
+                        }
+                    }
+                    if (st.getZipCode() != null) {
+                        if (st.getZipCode().length() < 6) {
+                            s.append("第" + i + "行第16列字段长度不正确，请检查\n");
+                        }
+                    }
+                    if (st.getMailEcomm() != null) {
+                        if (st.getMailEcomm().length() != 11) {
+                            s.append("第" + i + "行第17列字段不正确，请检查\n");
+                        }
+                    }
+                } else {
+                    s.append("第" + i + "行第2、5列参数不正确，请改正");
+                }
+            } else {
+                s.append("第" + i + "行第2、5列参数不能为空，请改正");
+            }
+        }
+        if (s == null) {
+            s.append("校验通过");
+        }
+        return s;
+    }
+
+
+    /**
+     * Author: chenenru 17:07 2019/6/20
+     * @param
+     * @return
+     * @apiNote: 更新批量的学生信息
+     */
+    @Transactional(rollbackFor = {Exception.class})
+    public StringBuffer UpdateStudent(MultipartFile file) throws IOException {
+        List<StudentModel> studentModels = ExcelUtil.readExcel(file.getInputStream(), StudentModel.class);
+        int i = 0;
+        int flag = 0;
+        s.delete(0, s.length());
+        douStuNo.clear();
+        douIden.clear();
+        for (StudentModel st : studentModels) {
+            flag = 0;
+            i++;
+            if (douStuNo != null) {
+                for (String string : douStuNo) {
+                    if (string.equals(st.getUserNumber())) {
+                        s.append("第").append(i).append("行第5列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douStuNo.add(st.getUserNumber());
+
+            if (douIden != null) {
+                for (String string : douIden) {
+                    if (string.equals(st.getIdentification())) {
+                        s.append("第").append(i).append("行第2列字段出现重复，请检查\n");
+                        flag = 1;
+                    }
+                }
+            }
+            douIden.add(st.getIdentification());
+            if (flag == 1) {
+                continue;
+            }
+            //根据学号+身份证号获取唯一的学生，就是该学生的学号+身份证号不能为空
+            if (st.getUserNumber() != null && st.getIdentification() != null) {
+                Student student = studentService.selectValidStuByStuNoAndUniId(st.getUserNumber(), Long.valueOf(1));
+                User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), st.getIdentification());
+                if (student.getUserId().equals(user.getId())) {
+                    if (st.getUserName() != null) {
+                        user.setUserName(st.getUserName());
+                    }
+                    if (st.getIdentification() != null) {
+                        user.setIdentification(st.getIdentification());
+                    }
+                    if (st.getUserSex() != null) {
+                        if (st.getUserSex().equals("男")) {
+                            user.setUserSex(0);
+                        } else {
+                            user.setUserSex(1);
+                        }
+                    }
+                    if (st.getUserBirthday() != null) {
+                        user.setUserBirthday(st.getUserBirthday());
+                    }
+                    if (st.getUserNumber() != null) {
+                        user.setName(st.getUserNumber());
+                    }
+                    if (st.getUserPassword() != null) {
+                        user.setPwd(st.getUserPassword());
+                    }
+                    if (st.getUsersecretKey() != null) {
+                        user.setSalt(st.getUsersecretKey());
+                    }
+                    //student表：
+                    //beginLearnDate departmentName gradeName majorName className political
+                    //liveRoom homeAddress zipCode mailEcomm
+                    if (st.getBeginLearnDate() != null) {
+                        student.setBeginLearnDate(st.getBeginLearnDate());
+                    }
+                    if (st.getDepartmentName() != null) {
+                        //为专业服务的
+                        departments = departmentService.selectDepartmentByName(st.getDepartmentName());
+                        if (departments.size() >= 1) {
+                            department = departments.get(0);
+                        }
+                    }
+                    if (st.getGradeName() != null) {
+                        student.setGrade(st.getGradeName());
+                    }
+                    if (st.getMajorName() != null) {
+                        //student.setSpecialtyId();
+                        if (st.getDepartmentName() == null) {
+                            s.append("第" + i + "9行第列前提是不能为空");
+                            flag = 1;
+                        } else {
+                            specialties = otherSpecialtyService.seclectByDIdAndSName(Long.valueOf(1), department.getId(), st.getMajorName());
+                            if (specialties.size() >= 1) {
+                                specialty = specialties.get(0);
+                            }
+                            student.setSpecialtyId(specialty.getId());
+                        }
+                    }
+                    if (st.getClassName() != null) {
+                        aClass = classService.selectClassByName(st.getClassName());
+                        student.setClassId(aClass.getId());
+                        //student.setClassId();
+                    }
+                    if (st.getPolitical() != null) {
+                        //student.setPoliticalId();
+                        politicalAffiliation = politicalAffiliationService.selectByPoliticalAffiliationName(st.getPolitical());
+                        if (politicalAffiliation != null) {
+                            student.setPoliticalId(politicalAffiliation.getId());
+                        }
+                    }
+                    if (st.getLiveRoom() != null) {
+                        student.setLiveRoom(Long.valueOf(1));//先写死
+                    }
+                    if (st.getHomeAddress() != null) {
+                        String[] split = st.getHomeAddress().split("/");
+                        List<Address> addresses = addressService.selectByUserId(user.getId());
+                        if (addresses.size() > 0) {
+                            if (st.getZipCode() != null) {
+                                //student.set 地址需要zip
+                                addresses.get(0).setZipCode(st.getZipCode());
+                            }
+                            int init = 0;//记录字符串循环的次数
+                            for (String string : split) {
+                                if (init == 0) {
+                                    addrCountry = addrCountryService.selectCountryByName(string);
+                                    if (addrCountry == null) {
+                                        s.append("第" + i + "行第15列地址的国家不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setCountry(addrCountry.getId());
+                                    }
+                                } else if (init == 1) {
+                                    addrState = addrStateService.selectByAddrStateName(string);
+                                    if (addrState == null) {
+                                        s.append("第" + i + "行第15列地址的省份不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setState(addrState.getId());
+                                    }
+                                } else if (init == 2) {
+                                    addrCity = addrCityService.selectByCityName(string);
+                                    if (addrCity == null) {
+                                        s.append("第" + i + "行第15列地址的城市不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setCity(addrCity.getId());
+                                    }
+                                } else if (init == 3) {
+                                    addrArea = addrAreaService.selectByAreaName(string);
+                                    if (addrArea == null) {
+                                        s.append("第" + i + "行第15列地址的县/区不正确");
+                                        flag = 1;
+                                        addresses.get(0).setArea(addrArea.getId());
+                                    }
+                                } else if (init == 4) {
+                                    addrStreet = addrStreetService.selectByAddrStreetName(string);
+                                    if (addrStreet == null) {
+                                        s.append("第" + i + "行第15列地址的街道不正确");
+                                        flag = 1;
+                                    } else {
+                                        addresses.get(0).setStreet(addrStreet.getId());
+                                    }
+                                } else if (init == 5) {
+                                    addressDetail = string;
+                                    addresses.get(0).setDetail(addressDetail);
+                                }
+                                init++;
+                            }
+                        }
+                    }
+                    if (st.getMailEcomm() != null) {
+//                        student.setPhoneEcommId();
+                        //先查询出该用户的通讯方式
+                        //再修改对应的通讯方式后再更新
+                        List<Ecomm> ecomms = ecommService.selectByUserId(user.getId());
+                        if (ecomms.size() > 0) {
+                            ecomms.get(0).setContent(st.getMailEcomm());
+                            ecomm = ecomms.get(0);
+                            //ecommService.update(ecomms.get(0));
+                        }
+                    }
+                    if (flag != 1) {
+                        //System.out.println(ecomm.toString());
+                        try {
+                            ecommService.update(ecomm);
+                            addressService.update(address);
+                            userService.updateUser(user);
+                            studentService.update(student);
+                            s.append("更新成功");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        }
+                    }
+                } else {
+                    s.append("第" + i + "行第2、5列参数不正确，请改正");
+                }
+            } else {
+                s.append("第" + i + "行第2、5列参数不能为空，请改正");
+            }
+        }
+        return s;
+    }
+
     /**
      * 根据属性名获取属性值
      */

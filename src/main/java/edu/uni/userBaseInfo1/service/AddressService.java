@@ -147,4 +147,5 @@ public interface AddressService {
      * @apiNote: 根据用户的地址主要信息获取所有地址的详细信息
      */
     public void getAddress(HashMap<String,Object>map, List<Address> addressList);
+
 }

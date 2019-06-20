@@ -4,11 +4,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.AddrArea;
+import edu.uni.userBaseInfo1.bean.AddrAreaExample;
 import edu.uni.userBaseInfo1.mapper.AddrAreaMapper;
 import edu.uni.userBaseInfo1.service.AddrAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.geom.Area;
 import java.util.List;
 
 /**
@@ -108,6 +110,15 @@ public class AddrAreaServiceImpl implements AddrAreaService {
     @Override
     public List<AddrArea> selectAllAddrAreasByCityCode(Long cityCode) {
         return addrAreaMapper.selectByCityCode(cityCode);
+    }
+
+    @Override
+    public AddrArea selectByAreaName(String AreaName) {
+        AddrAreaExample addrAreaExample = new AddrAreaExample();
+        AddrAreaExample.Criteria criteria = addrAreaExample.createCriteria();
+        criteria.andAreaZhEqualTo(AreaName);
+        List<AddrArea> addrAreas = addrAreaMapper.selectByExample(addrAreaExample);
+        return addrAreas.size()>0?addrAreas.get(0):null;
     }
 
 }

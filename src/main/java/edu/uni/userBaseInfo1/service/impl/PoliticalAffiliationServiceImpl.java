@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.PoliticalAffiliation;
+import edu.uni.userBaseInfo1.bean.PoliticalAffiliationExample;
 import edu.uni.userBaseInfo1.mapper.PoliticalAffiliationMapper;
 import edu.uni.userBaseInfo1.service.PoliticalAffiliationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,5 +97,14 @@ public class PoliticalAffiliationServiceImpl implements PoliticalAffiliationServ
     @Override
     public boolean deletePoliticalAffiliation(long id) {
         return politicalAffiliationMapper.deleteByPrimaryKey(id) > 0 ? true :false;
+    }
+
+    @Override
+    public PoliticalAffiliation selectByPoliticalAffiliationName(String poName) {
+        PoliticalAffiliationExample politicalAffiliationExample = new PoliticalAffiliationExample();
+        PoliticalAffiliationExample.Criteria criteria = politicalAffiliationExample.createCriteria();
+        criteria.andPoliticalEqualTo(poName);
+        List<PoliticalAffiliation> politicalAffiliations = politicalAffiliationMapper.selectByExample(politicalAffiliationExample);
+        return politicalAffiliations.size()>0?politicalAffiliations.get(0):null;
     }
 }

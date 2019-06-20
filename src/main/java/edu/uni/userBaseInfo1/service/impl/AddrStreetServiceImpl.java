@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.AddrStreet;
+import edu.uni.userBaseInfo1.bean.AddrStreetExample;
 import edu.uni.userBaseInfo1.mapper.AddrStreetMapper;
 import edu.uni.userBaseInfo1.service.AddrStreetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,5 +104,14 @@ public class AddrStreetServiceImpl implements AddrStreetService {
     @Override
     public List<AddrStreet> selectStreetsByAreaCode(Long areaCode) {
         return addrStreetMapper.selectByAreaCode(areaCode);
+    }
+
+    @Override
+    public AddrStreet selectByAddrStreetName(String StreetName) {
+        AddrStreetExample addrStreetExample = new AddrStreetExample();
+        AddrStreetExample.Criteria criteria = addrStreetExample.createCriteria();
+        criteria.andStreetZhEqualTo(StreetName);
+        List<AddrStreet> addrStreets = addrStreetMapper.selectByExample(addrStreetExample);
+        return addrStreets.size()>0?addrStreets.get(0):null;
     }
 }

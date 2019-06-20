@@ -169,4 +169,20 @@ public interface UserService {
 //     */
 //    boolean updateNewAndOldMessage(UserinfoApplyApproval userinfoApplyApproval);
 
+    /**
+     * Author: chenenru 10:49 2019/6/19
+     * @param
+     * @return
+     * @apiNote: 根据学校的id和身份证号查询对应的学生（唯一了吧）
+     */
+    User selectUserByUniIdAndIde(Long uniId,String Iden);
+    /**
+     * Author: chenenru 10:28 2019/6/20
+     * @param
+     * @return
+     * @apiNote: 根据身份证查询某用户，如果查询有多个，证明身份证号重复
+     */
+    User selectByIden(String Iden);
+
+
 }
