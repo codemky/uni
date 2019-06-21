@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.mapper;
 
+import edu.uni.userBaseInfo1.PageBean.ClassBean;
 import edu.uni.userBaseInfo1.bean.Employee;
 import edu.uni.userBaseInfo1.bean.EmployeeExample;
 import org.apache.ibatis.annotations.Param;
@@ -28,4 +29,5 @@ public interface EmployeeMapper {
     int updateByPrimaryKeySelective(Employee record);
 
     int updateByPrimaryKey(Employee record);
+    //ClassBean selectClassBean(@Param("userId") Long userId);
 }

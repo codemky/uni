@@ -18,6 +18,14 @@
     <result column="by_who" property="byWho" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
   </resultMap>
+  <!--<resultMap id="classBeanMap" type="edu.uni.userBaseInfo1.PageBean.ClassBean">
+    <id column="id" property="classId" jdbcType="LONG"></id>
+    <result column="code" property="code" jdbcType="VARCHAR"></result>
+    <result column="user_name" property="headteacher" jdbcType="CHAR"></result>
+    <result column="user_name" property="moniter" jdbcType="CHAR"></result>
+    <result column="name" property="name" jdbcType="VARCHAR"></result>
+    <result column="number" property="number" jdbcType="INTEGER"></result>
+  </resultMap>-->
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >
@@ -366,4 +374,12 @@
       deleted = #{deleted,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <!--<select id="selectClassBean" parameterType="java.lang.Long">
+    select class.id,class.code,user.user_name in (
+    select user_name from class,user,employee where class.headteacher=employee.id and employee.user_id=user.id and user.id=#{userId,jdbcType=BIGINT}),
+    user.user_name in (
+    select user_name from user,class,classmate,classmate_position,position where student.user_id=user.id and classmate.student_id = student.id and  class.id = classmate.classId and
+classmate.id=classmate_position.classmate_id and classmate_position.position_id=position.id and position.name='班长'
+    ),name,number from class,classmate,employee,user,student,classmate_position,position
+  </select>-->
 </mapper>

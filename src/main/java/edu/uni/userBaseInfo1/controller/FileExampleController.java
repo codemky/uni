@@ -156,7 +156,7 @@ public class FileExampleController {
         return Result.build(ResultType.Success).appendData("message", stringBuffer);
     }
 
-    @ApiOperation(value="上传学生账号的更新文件并校验", notes = "")
+    @ApiOperation(value="上传学生更新账号的文件并校验", notes = "")
     @PostMapping("/ckeckout/student")
     public Result uploadStudentFiletoCkeckout(MultipartFile file, HttpServletRequest request) {
         StringBuffer stringBuffer = new StringBuffer();
@@ -180,7 +180,7 @@ public class FileExampleController {
         // service层方法把文件路径存储在数据库中
         return Result.build(ResultType.Success).appendData("message", stringBuffer);
     }
-    @ApiOperation(value="上传学生账号的文件并更新", notes = "")
+    @ApiOperation(value="上传学生更新账号的文件并更新", notes = "")
     @PostMapping("/update/student")
     public Result updateStudentFile(MultipartFile file, HttpServletRequest request) {
         StringBuffer stringBuffer = new StringBuffer();
@@ -206,7 +206,7 @@ public class FileExampleController {
         return Result.build(ResultType.Success).appendData("message", stringBuffer);
     }
 
-    @ApiOperation(value="上传学生账号的更新文件并校验", notes = "")
+    @ApiOperation(value="上传职员更新账号的文件并校验", notes = "")
     @PostMapping("/ckeckout/employee")
     public Result uploadEmployeeFiletoCkeckout(MultipartFile file, HttpServletRequest request) {
         StringBuffer stringBuffer = new StringBuffer();
@@ -230,7 +230,7 @@ public class FileExampleController {
         // service层方法把文件路径存储在数据库中
         return Result.build(ResultType.Success).appendData("message", stringBuffer);
     }
-    @ApiOperation(value="上传学生账号的文件并更新", notes = "")
+    @ApiOperation(value="上传职员更新账号的文件并更新", notes = "")
     @PostMapping("/update/employee")
     public Result updateEmployeeFile(MultipartFile file, HttpServletRequest request) {
         StringBuffer stringBuffer = new StringBuffer();
