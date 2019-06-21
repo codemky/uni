@@ -79,6 +79,14 @@ public class StudentRelationServiceImpl implements StudentRelationService {
         return studentRelationMapper.selectByExample(studentRelationExample);
     }
 
+    @Override
+    public List<StudentRelation> selectByRelationId(Long relationId) {
+        StudentRelationExample studentRelationExample = new StudentRelationExample();
+        studentRelationExample.createCriteria().andRelaIdEqualTo(relationId).andDeletedEqualTo(false);
+        return studentRelationMapper.selectByExample(studentRelationExample);
+
+    }
+
     /**
      * Author: chenenru 15:41 2019/4/29
      * @param pageNum

@@ -29,7 +29,7 @@ public class StaticInformation {
         switch (flag){
             case 0: approvalName += "申请更新";break;
             case 1: approvalName += "申请批量更新";break;
-//            case 2: approvalName += "“";break;
+            case 2: approvalName += "申请批量添加“";break;
         }
         switch (infoType){
             case 0: approvalName += "联系方式";break;
@@ -43,6 +43,8 @@ public class StaticInformation {
             case 8: approvalName += "用户信息";break;
             case 9: approvalName += "学生信息";break;
             case 10: approvalName += "教职工信息";break;
+            case 11: approvalName += "学生信息";break;
+            case 12: approvalName += "教职工信息";break;
         }
         return approvalName;
 

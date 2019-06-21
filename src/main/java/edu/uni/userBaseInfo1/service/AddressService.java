@@ -6,7 +6,6 @@
 package edu.uni.userBaseInfo1.service;
 import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.*;
-import sun.java2d.cmm.kcms.CMM;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +31,17 @@ public interface AddressService {
      * Author: chenenru 1:23 2019/5/5
      * @param userId
      * @return  Address
-     * @apiNote: 根据用户的id查询地址
+     * @apiNote: 根据用户的id查询出地址信息且信息是有效的
      */
     List<Address> selectByUserId(Long userId);
+
+    /**
+     * Author: mokuanyuan 10:47 2019/6/20
+     * @param addresses
+     * @return List<Address>
+     * @apiNote: 传入一个地址数组，筛选出一个新的数组（同一种地址类型的记录最多只有一个）
+     */
+    public List<Address> filterAddress(List<Address> addresses);
 
     /**
      * Author: laizhouhao 15:41 2019/4/29

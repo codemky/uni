@@ -25,6 +25,7 @@ public class userBaseInfo1Config {
     private Integer pageSize;
     // 存储上传的excel文件夹的名称
     private String excelDir;
+    private String imageDir;
 
 
     public Integer getPageSize() {
@@ -45,5 +46,25 @@ public class userBaseInfo1Config {
 
     public void setExcelDir(String excelDir) {
         this.excelDir = excelDir;
+    }
+
+    public GlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
+
+    public void setGlobalConfig(GlobalConfig globalConfig) {
+        this.globalConfig = globalConfig;
+    }
+
+    public String getImageDir() {
+        return imageDir;
+    }
+
+    public void setImageDir(String imageDir) {
+        this.imageDir = imageDir;
+    }
+
+    public String getAbsoluteImageDir(){
+        return globalConfig.getUploadRootDir() + imageDir;
     }
 }

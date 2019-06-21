@@ -37,6 +37,14 @@ public interface StudentRelationService {
         List<StudentRelation> selectByUserId(Long userId);
 
         /**
+         * Author: mokuanyuan 20:47 2019/6/20
+         * @param relationId
+         * @return  List<StudentRelation>
+         * @apiNote 根据学生亲属用户id查询多条学生亲属记录
+         */
+        List<StudentRelation> selectByRelationId(Long relationId);
+
+        /**
          * Author: chenenru 10:06 2019/4/30
          * @param pageNum
          * @return List<StudentRelation>

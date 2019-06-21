@@ -4,6 +4,8 @@ import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.config.GlobalConfig;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.userBaseInfo1.config.userBaseInfo1Config;
+import edu.uni.userBaseInfo1.utils.UserBaseInfo;
 import edu.uni.userBaseInfo1.alibaba.easyexcel.test.StudentUpload;
 import edu.uni.userBaseInfo1.utils.UserInfoFileUtil;
 import io.swagger.annotations.Api;
@@ -35,7 +37,7 @@ public class FileExampleController {
     private GlobalConfig globalConfig;
 
     @Autowired
-    private ExampleConfig exampleConfig;
+    private userBaseInfo1Config userBaseInfo1Config;
 
     @Autowired
     private ExcelController excelController;
@@ -50,7 +52,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -79,7 +81,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -100,7 +102,7 @@ public class FileExampleController {
 
     @ApiOperation(value="上传学生账号的添加文件并校验", notes = "")
     @PostMapping("/upload/student")
-    public Result uploadStudentFile(MultipartFile file, HttpServletRequest request) {
+    public Result uploadStudentFile(MultipartFile file,  HttpServletRequest request) {
         StringBuffer stringBuffer = new StringBuffer();
         if (file == null || file.isEmpty()) {
             return Result.build(ResultType.ParamError);
@@ -108,7 +110,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -136,7 +138,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -165,7 +167,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -189,7 +191,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -215,7 +217,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -239,7 +241,7 @@ public class FileExampleController {
         // 全局上传路径
 //        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
         // excel上传路径
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         String filePath;
         try {
             filePath = userInfoFileUtil.uploadFile(file, request);
@@ -260,7 +262,7 @@ public class FileExampleController {
             @ApiParam(name = "fileName")
             @RequestParam String fileName,
             HttpServletResponse response) {
-        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(exampleConfig.getAbsoluteExcelDir());
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
         try {
             // filePath 可以从数据库获取，这里为了方便直接输入路径
             userInfoFileUtil.downloadFile(fileName, response);
@@ -281,6 +283,33 @@ public class FileExampleController {
             return Result.build(ResultType.Success);
         }
         return Result.build(ResultType.Failed);
+    }
+
+
+    @ApiOperation(value="上传图片文件", notes = "")
+    @PostMapping("/upload/image")
+    public Result uploadImageFile(MultipartFile file,  HttpServletRequest request) {
+//        StringBuffer stringBuffer = new StringBuffer();
+        if (file == null || file.isEmpty()) {
+            return Result.build(ResultType.ParamError,"文件为空");
+        }
+        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        if( !suffix.equals(".jpg") && !suffix.equals(".jpeg") && !suffix.equals(".png") )
+            return Result.build(ResultType.ParamError,"文件不是图片类型");
+        // 全局上传路径
+//        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(globalConfig.getUploadRootDir());
+        // image上传路径
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteImageDir());
+        String filePath;
+        try {
+            filePath = userInfoFileUtil.uploadFile(file, request);
+        } catch (IOException e) {
+            return Result.build(ResultType.Failed,"上传失败");
+        }
+        //log.info("成功");
+        System.out.println("成功"+filePath);
+        // service层方法把文件路径存储在数据库中
+        return Result.build(ResultType.Success).appendData("imageDir", filePath);
     }
 
 }

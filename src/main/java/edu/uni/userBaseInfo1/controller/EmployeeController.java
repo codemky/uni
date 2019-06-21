@@ -9,6 +9,7 @@ import edu.uni.administrativestructure.service.UniversityService;
 import edu.uni.auth.service.AuthService;
 import edu.uni.educateAffair.bean.Curriculum;
 import edu.uni.educateAffair.service.CurriculumService;
+import edu.uni.place.bean.Field;
 import edu.uni.professionalcourses.bean.Specialty;
 import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.PageBean.ClassmateBean;
@@ -96,7 +97,12 @@ public class EmployeeController {
     @Autowired
     private PictureService pictureService;
     @Autowired
+    private OtherSubdepartmentService otherSubdepartmentService;
+    @Autowired
+    private MySecondLevelDisciplineService mySecondLevelDisciplineService;
+    @Autowired
     private AuthService authService;
+
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -108,6 +114,127 @@ public class EmployeeController {
         // ub1_e_Employees_listAll
         public static final String ListAll_CacheName = "ub1_e_employee_listAll";
     }
+
+    @ApiOperation(value="获取职员这部分的信息", notes="未测试")
+    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Long" , paramType = "path")
+    @GetMapping("/getEmployeeInformation/{userId}")
+    @ResponseBody
+    public Result getEmployeeInformation(@PathVariable Long userId) throws IOException{
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        if(userId == -1 ) { // -1 代表的是查询自己的信息
+            if (loginUser == null) {
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            } else {
+                userId = loginUser.getId();
+            }
+        }
+//        }else{  //否则表示某个登录后的用户查看某个用户信息，此时需要检验这个登录用户的角色是否有权限查看这个用户信息
+//            User user = userService.selectUserById(userId);
+//            if( user == null )
+//                return Result.build(ResultType.ParamError,"该学生信息不存在或已过时");
+//            if( user.getUserType() != 1 ) //用户Id需要时学生类型，不然查了也是白查
+//                return Result.build(ResultType.ParamError,"所查看的用户不是学生");
+//            //判断该学生与该登录用户的二级学院关系
+//            if( !userinfoApplyApprovalController.isDepartmentSame(user.getId(), loginUser.getId()))
+//                return Result.build(ResultType.Disallow,"登录用户和所查学生不在同一个二级学院“”");
+//            //判断该登录用户是否包含某几个角色
+//            if( !otherRoleService.isPlayDepartmentLeader(loginUser.getId()) )
+//                return Result.build(ResultType.Disallow,"登录用户的操作权限不允许");
+//
+//        }
+
+        List<Employee> employees = employeeService.selectByUserId(userId);
+        if( employees.size() == 0)
+            return Result.build(ResultType.ParamError);
+
+        HashMap<String , Object> map = new HashMap<>();
+        employeeService.selectByUserIdToMap(map,employees.get(0));
+
+
+//        boolean isOperate = false;
+//        HashMap<String , Object> studentMap = new HashMap<>();
+//
+//        if(user.getUserType() == 1) {
+//            List<Student> students = studentService.selectByUserId(userId);
+//            if (students.size() > 0) {
+//                studentService.selectByUserIdToMap(studentMap, students.get(0));
+//                isOperate = true;
+//            }
+//        }
+//
+//        if(isOperate)
+        return Result.build(ResultType.Success).appendData("employee",map);
+//        else
+//            return Result.build(ResultType.ParamError);
+    }
+
+
+    /**
+     * Author: mokuanyuan 20:49 2019/6/18
+     * @param schoolId
+     * @apiNote: 根据学校id获取该学校的所有部门
+     */
+    @ApiOperation(value = "以一个学校id获取该学校所有的有效部门", notes = "2019-5-2 11:05:35已通过测试")
+    @GetMapping("employee/getDepartments/{schoolId}")
+    @ApiImplicitParam(name = "id", value = "Department表的一个id", required = false, dataType = "Long", paramType = "path")
+    @ResponseBody
+    public Result getDepartment(Long schoolId){
+        if(schoolId == null)
+            return Result.build(ResultType.ParamError,"学校id为空");
+
+//        List<Department> departments = otherDepartmentService.selectAllValidDepartment(schoolId);
+
+        return Result.build(ResultType.Success).appendData("Departments",otherDepartmentService.selectAllValidDepartment(schoolId));
+
+    }
+
+    /**
+     * Author: mokuanyuan 20:49 2019/6/18
+     * @param map
+     * @apiNote: 以一个学校id和部门id获取所有的科室
+     */
+    @ApiOperation(value = "以一个学校id和部门id获取所有的科室", notes = "2019-5-2 11:05:35已通过测试")
+    @GetMapping("employee/getSubDepartments")
+    @ApiImplicitParam(name = "map")
+    @ResponseBody
+    public Result getDepartment(HashMap<String,Object> map){
+        Long schoolId = (Long) map.get("schoolId");
+        Long departmentId = (Long) map.get("departmentId");
+
+        if( schoolId == null || departmentId == null )
+            return Result.build(ResultType.ParamError,"学校id或者部门id为空");
+
+
+        return Result.build(ResultType.Success).appendData("Subdepartments",
+                otherSubdepartmentService.selectBySchoolIdAndDepartmentId(schoolId,departmentId));
+
+    }
+
+    /**
+     * Author: mokuanyuan 17:24 2019/6/7
+     * @apiNote: 根据schoolId查询该学校的所有，该方法用于点击申请时先把部分信息发给前端
+     */
+    @ApiOperation(value="当职员点击申请时交付给前端的部分信息", notes="未测试")
+    @GetMapping("/getSometimeInfoForApply")
+    @ResponseBody
+    public Result getSometimeInfoForApply() throws IOException{
+
+        Result result = Result.build(ResultType.Success);
+
+        //所有的政治面貌
+        result.appendData("political",politicalAffiliationService.selectAllPoliticalAffiliations());
+
+        //所有的二级学科的信息
+        result.appendData("disciplines",mySecondLevelDisciplineService.selectAllSecondLevelDisciplines());
+
+        return result;
+
+    }
+
+
+
 
     /**
      * Author: chenenru 23:41 2019/4/29
@@ -150,7 +277,6 @@ public class EmployeeController {
 
     /**
      * Author: chenenru 23:44 2019/4/29
-     *
      * @param response
      * @return
      * @apiNote: 获取所有职员记录的内容
@@ -172,7 +298,6 @@ public class EmployeeController {
 
     /**
      * Author: chenenru 23:47 2019/4/29
-     *
      * @param employee
      * @return Result
      * @apiNote: 新增职员信息

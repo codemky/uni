@@ -1,11 +1,24 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.mapper.PositionMapper;
+import edu.uni.administrativestructure.service.DepartmentService;
+import edu.uni.administrativestructure.service.PositionService;
+import edu.uni.administrativestructure.service.SubdepartmentService;
+import edu.uni.administrativestructure.service.UniversityService;
+import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.auth.service.AuthService;
+import edu.uni.auth.service.RoleService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.place.service.FieldService;
+import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.mapper.EmployeeMapper;
+import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
+import edu.uni.userBaseInfo1.mapper.UserinfoApplyMapper;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
+import edu.uni.utils.LogUtils;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Author chenenru
@@ -36,7 +51,20 @@ import java.time.LocalDateTime;
 //标志这个类是一个controller类，用于被Spring扫描然后配置添加和配置相应的bean
 @Controller
 public class UserController {
-    //把User的Service层接口所有的方法自动装配到该对象中
+    private LogUtils logUilts = new LogUtils(this.getClass());
+
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private PositionMapper positionMapper;
+    @Autowired
+    private UserinfoApplyMapper userinfoApplyMapper;
+    @Autowired
+    private ApprovalMainService approvalMainService;
+    @Autowired
+    private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
+    @Autowired
+    private RoleMapper roleMapper;
     @Autowired
     private UserService userService;
     @Autowired
@@ -60,7 +88,54 @@ public class UserController {
     @Autowired
     private LearningDegreeSerevice learningDegreeSerevice;
     @Autowired
-    private AuthService authService;
+    UserinfoApplyService userinfoApplyService;
+    @Autowired
+    UserinfoApplyApprovalController userinfoApplyApprovalController;
+    @Autowired
+    UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private OtherClassService otherClassService;
+    @Autowired
+    EmployeeService employeeService;
+    @Autowired
+    OtherEmployService otherEmployService;
+    @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
+    private UserUploadFileService userUploadFileService;
+    @Autowired
+    private AddrCountryService addrCountryService;
+    @Autowired
+    private AddrStateService addrStateService;
+    @Autowired
+    private AddrCityService addrCityService;
+    @Autowired
+    private AddrAreaService addrAreaService;
+    @Autowired
+    private AddrStreetService addrStreetService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
+    @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
+    private FieldService fieldService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private SubdepartmentService subdepartmentService;
+    @Autowired
+    private MySecondLevelDisciplineService mySecondLevelDisciplineService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
+    @Autowired
+    private PositionService positionService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private OtherDepartmentService otherDepartmentService;
+    @Autowired
+    private OtherSubdepartmentService otherSubdepartmentService;
+
 
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -84,6 +159,91 @@ public class UserController {
         }
         return Result.build(ResultType.Success).appendData("user", user);
     }
+
+
+
+    @ApiOperation( value = "获取职员用户的所有权限",notes = "未测试" )
+    @GetMapping("getEmployeePositions")
+    @ResponseBody
+    public Result getEmployeePositions(){
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(loginUser == null)
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        if(loginUser.getUserType() != 2)
+            return Result.build(ResultType.Disallow,"登陆用户不是教职工类型用户“");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUser.getId());
+        if( employees.size() == 0 )
+            return Result.build(ResultType.Failed,"该教职工用户的教职工信息“为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+
+        return roles.size() > 0 ? Result.build(ResultType.Success).appendData("employeeRoles",roles) :
+                Result.build(ResultType.Failed,"该职员没有任何权限");
+
+    }
+
+
+    @ApiOperation(value="获取用户这部分的信息", notes="未测试")
+    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Long" , paramType = "path")
+    @GetMapping("/getUserInformation/{userId}")
+    @ResponseBody
+    public Result getUserInformation(@PathVariable Long userId) throws IOException{
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        if(userId == -1 ) { // -1 代表的是查询自己的信息
+            if (loginUser == null) {
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            } else {
+                userId = loginUser.getId();
+            }
+        }
+//        }else{  //否则表示某个登录后的用户查看某个用户信息，此时需要检验这个登录用户的角色是否有权限查看这个用户信息
+//            User user = userService.selectUserById(userId);
+//            if( user == null )
+//                return Result.build(ResultType.ParamError,"该学生信息不存在或已过时");
+//            if( user.getUserType() != 1 ) //用户Id需要时学生类型，不然查了也是白查
+//                return Result.build(ResultType.ParamError,"所查看的用户不是学生");
+//            //判断该学生与该登录用户的二级学院关系
+//            if( !userinfoApplyApprovalController.isDepartmentSame(user.getId(), loginUser.getId()))
+//                return Result.build(ResultType.Disallow,"登录用户和所查学生不在同一个二级学院“”");
+//            //判断该登录用户是否包含某几个角色
+//            if( !otherRoleService.isPlayDepartmentLeader(loginUser.getId()) )
+//                return Result.build(ResultType.Disallow,"登录用户的操作权限不允许");
+//
+//        }
+        User user = userService.selectUserById(userId);
+
+
+//        boolean isOperate = false;
+//        HashMap<String , Object> studentMap = new HashMap<>();
+//
+//        if(user.getUserType() == 1) {
+//            List<Student> students = studentService.selectByUserId(userId);
+//            if (students.size() > 0) {
+//                studentService.selectByUserIdToMap(studentMap, students.get(0));
+//                isOperate = true;
+//            }
+//        }
+//
+
+        HashMap<String , Object> map = new HashMap<>();
+        map.put("userName",user.getUserName());
+        map.put("identification",user.getIdentification());
+        map.put("userSex",user.getUserSex());
+        map.put("university", otherUniversityService.selectValidById(user.getUniversityId()).getName());
+        map.put("userType",user.getUserType());
+        map.put("regist",user.getRegist());
+
+//        if(isOperate)
+            return Result.build(ResultType.Success).appendData("user",map);
+//        else
+//            return Result.build(ResultType.ParamError);
+    }
+
+
+
 
     /**
      * Author: chenenru 23:41 2019/4/29

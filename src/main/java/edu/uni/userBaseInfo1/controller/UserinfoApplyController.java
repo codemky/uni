@@ -158,34 +158,35 @@ public class UserinfoApplyController {
         if(loginUser == null){
             return Result.build(ResultType.Failed, "你沒有登錄");
         }
+
         System.out.println(map.toString());
         //获取前台参数
         Integer type = (Integer) map.get("type");
         String reason = (String) map.get("reason");
         Integer modifiedUserId = (Integer) map.get("modifiedUserId");
         if(type == null || reason == null)
-            return Result.build(ResultType.ParamError);
-        if( !(type >= 0 && type <= 10) )
-            return Result.build(ResultType.ParamError);
+            return Result.build(ResultType.ParamError,"申请信息的信息类型或者申请的理由为空！");
+        if( !(type >= 0 && type <= 12) )
+            return Result.build(ResultType.ParamError,"申请信息的信息类型不合法！");
 
         if(modifiedUserId != null) {
             user = userService.selectUserById(modifiedUserId);
             //只能同一个学校单位的用户才能做出操作
             if(!user.getUniversityId().equals(loginUser.getUniversityId()))
-                return Result.build(ResultType.Disallow);
+                return Result.build(ResultType.Disallow,"被修改者和修改者的所属学校不一致！");
         }
 
         if(type == 6 || type == 9 ){ // 6和代表的是学生信息，无论是修改还是增加，而且9代表的是批量增加学生
             //操作学生信息的发起者只能是辅导员,而且学生（被修改者）和辅导员（做出修改者）要在同一个学院
             //如果不符合以上的条件，那么操作则被服务器拒绝或提示没有权限
             if( modifiedUserId == null ) //必须提供被修改的学生用户的user_id
-                return Result.build(ResultType.ParamError);
+                return Result.build(ResultType.ParamError,"被修改的学生用户的user_id为空！");
             //判断被修改这和修改者是否在同一个学院
             if( ! userinfoApplyApprovalController.isDepartmentSame(user.getId(),loginUser.getId()))
-                return Result.build(ResultType.Disallow);
+                return Result.build(ResultType.Disallow,"修改者和被修改者不是一个学院！");
             //再判断修改者是否有扮演辅导员这个角色
             if( ! otherRoleService.isPlayOneRole(loginUser.getId(),"辅导员") )
-                return Result.build(ResultType.Disallow);
+                return Result.build(ResultType.Disallow,"修改者没有辅导员权限！");
         }
 
         if( type == 4 || type == 5 || type == 7 || type == 10 ){
@@ -196,16 +197,13 @@ public class UserinfoApplyController {
             if( ! otherRoleService.isPlayOneRole(loginUser.getId(),"人事处工作人员"))
                 return Result.build(ResultType.Disallow);
             if( modifiedUserId == null ) //必须提供被修改的学生用户的user_id
-                return Result.build(ResultType.ParamError);
-            //判断修改者和被修改者是否是同一个学校单位
-            if(  ! loginUser.getUniversityId().equals(user.getUniversityId()) )
-                return Result.build(ResultType.Disallow);
+                return Result.build(ResultType.ParamError,"被修改的职员用户的user_id为空！");
 
         }
 
 
         return userinfoApplyService.clickApply((HashMap<String, Object>) map,type,loginUser,user) ?
-                Result.build(ResultType.Success) : Result.build(ResultType.Failed);
+                Result.build(ResultType.Success,"申请操作成功！") : Result.build(ResultType.Failed,"申请操作失败！");
 
     }
 
@@ -269,6 +267,7 @@ public class UserinfoApplyController {
     @ApiImplicitParam(name = "map")
     @ResponseBody
     public Result selectAllByUserId(@RequestBody Map<String,Object> map) throws IOException {
+
         //获取前端参数
         UserinfoApply userinfoApply = new UserinfoApply();
         userinfoApply.setInfoType( (Integer) map.get("type"));

@@ -27,6 +27,15 @@ public class OtherClassServiceImpl implements OtherClassService {
         return classMapper.selectByPrimaryKey(id);
     }
 
+
+    @Override //查询班主任所带的所有班级
+    public List<Class> selectByHeadTeacherId(Long employeeId) {
+        ClassExample example = new ClassExample();
+        example.createCriteria().andDeletedEqualTo(false).andHeadteacherEqualTo(employeeId);
+
+        return classMapper.selectByExample(example);
+    }
+
     @Override
     public Class selectClassByClassId(Long classId) {
         ClassExample classExample = new ClassExample();

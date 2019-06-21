@@ -142,7 +142,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
         Long newId = null;
         Long oldId = null;
         Long userId = null ;
-        Integer flag = 0;  //0：更新      1：批量更新  默认值为0，因为只有类型9或10时才为1
+        Integer flag = 0;  //0：更新      1：批量更新   2：批量添加
 
         //各类信息对象
         Ecomm ecomm = null;
@@ -161,57 +161,35 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
 //        2：照片  	3：亲属  4	：学历  5	：简历
 //        6：学生信息	 7：教职工信息	 8：	用户个人信息
 //        9：学生excel	表  10：	职员excel	表
+//        10：批量添加学生账号 12：批量添加职员账号
         switch (type){
             case 0:  //0为联系方式类信息
                 //为创建申请记录作相应的处理
                 ecommService.readyForApply(map,ecomm, oldId, newId, loginUser, modifiedUser); break;
             case 1: //1为地址类型信息
-
-                break;
+                addressService.readyForApply(map,address, oldId, newId, loginUser, modifiedUser); break;
             case 2: //2为照片类型信息
-
-                break;
+                pictureService.readyForApply(map,picture, oldId, newId, loginUser, modifiedUser); break;
             case 3: //3为亲属类型信息
-
-                break;
+                studentRelationService.readyForApply(map,studentRelation, oldId, newId, loginUser, modifiedUser); break;
             case 4: //4为学历类型信息
-
-                break;
+                learningDegreeSerevice.readyForApply(map,learningDegree, oldId, newId, loginUser, modifiedUser); break;
             case 5: //5为简历类型信息
-
-                break;
+                employeeHistoryService.readyForApply(map,employeeHistory, oldId, newId, loginUser, modifiedUser); break;
             case 6: //6为学生类型信息
                 studentService.readyForApply(map,student, oldId, newId, loginUser, modifiedUser); break;
             case 7: //7为职员类型信息
-
+                employeeService.readyForApply(map,employee, oldId, newId, loginUser, modifiedUser); break;
+            case 8: //8为用户类型信息      //额。。关于用户的信息更新不打算做，因为user表都没有 Deleted字段。。
                 break;
-            case 8: //8为用户类型信息
-                // 额。。关于用户的信息更新不打算做，因为user表都没有 Deleted字段。。
-                break;
-            case 9: //9代表批量更新学生信息，通过上传文件的方式
-                userinfoTransMapBean.transMap2Bean((Map) map.get("applyUserUploadFile"),userUploadFile);
-                //检验是否把该获取的信息都获取到了
-//                UserUploadFile
-//                if(!Student.isValidForApply(student))
-//                    return false;
-                if(student.getId() != -1){  //不是-1代表原本有旧数据
-//                    Student oldStudent = studentService.selectById(student.getId());
-//                    Student.copyPropertiesForApply(student,oldStudent);
-//                    oldId = student.getId();
-//                    studentService.insert(student);
-//                    newId = student.getId();
-//                    flag = 0;
-                    //作上传文件的操作。。。
-
-                    flag = 1; //type为9或者10的时候为批量更新
-                }
-
-
-                break;
-            case 10: //10代表批量更新职员信息，通过上传文件的方式
-
-                break;
-
+            case 9: //9代表批量更新学生信息
+//                break; 9和10都是同一个操作，都是操作文件，不过flag不一样（区分是更新操作还是添加操作）
+            case 10: //10代表批量更新职员信息
+                userUploadFileService.readyForApply(map,userUploadFile,oldId,newId,loginUser,modifiedUser);  flag = 1;  break;
+            case 11: // 11为批量添加学生信息
+//                break; 11和12都是同一个操作，此时是添加操作
+            case 12: // 12为批量添加教职工信息
+                userUploadFileService.readyForApply(map,userUploadFile,oldId,newId,loginUser,modifiedUser);  flag = 2;
 
         }
 

@@ -23,10 +23,7 @@ import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //Service类的注解，标志这是一个服务层接口类，这样才能被Spring”“”“”“”"扫描"到
 @SuppressWarnings("ALL")
@@ -135,17 +132,6 @@ public class EcommServiceImpl implements EcommService {
     }
 
     /**
-     * Author: chenenru 0:44 2019/5/5
-     * @param  userId
-     * @return List<Ecomm>
-     * @apiNote: 通过用户id查询一个通信记录
-     */
-    @Override
-    public List<Ecomm> selectByUserId(long userId) {
-        return ecommMapper.selectByUserId(userId);
-    }
-
-    /**
      * Author: mokuanyuan 10:39 2019/4/26
      * @param pageNum
      * @return pageInfo<Ecomm>
@@ -208,10 +194,10 @@ public class EcommServiceImpl implements EcommService {
     @Override
     public List<Ecomm> selectValidEcomByUserId(Long user_id) {
         EcommExample ecommExample = new EcommExample();
+        ecommExample.setOrderByClause("flag ASC");
         ecommExample.createCriteria().andUserIdEqualTo(user_id)
                 .andDeletedEqualTo(false);
-        List<Ecomm> ecommList = ecommMapper.selectByExample(ecommExample);
-        return ecommList;
+        return ecommMapper.selectByExample(ecommExample);
     }
 
     /**
@@ -298,9 +284,20 @@ public class EcommServiceImpl implements EcommService {
         List<Ecomm> ecomms = ecommMapper.selectByExample(ecommExample);
 
         userInfo.setEcomms(ecomms);
+    }
 
+    @Override
+    public List<Ecomm> filterEcomm(List<Ecomm> ecomms) {
+        List<Ecomm> ecommList = new ArrayList<>();
+        int[] type = new int[8];
+        for (int i : type) i = 0;
+        for(Ecomm ecomm : ecomms)
+            if(type[ecomm.getFlag()] == 0){
+                type[ecomm.getFlag()] = 1;
+                ecommList.add(ecomm);
+            }
 
-
+        return ecommList;
     }
 
     /**

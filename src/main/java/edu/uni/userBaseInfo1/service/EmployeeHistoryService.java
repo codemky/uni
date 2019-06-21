@@ -87,11 +87,10 @@ public interface EmployeeHistoryService {
 
     /**
      * Author: laizhouhao 18:33 2019/6/10
-     * @param employeeHistories
-     * @return 用户的所有的有效简历信息
-     * @apiNote: 根据用户简历实体获取用户所有的有效简历的信息详情
+     * @param employeeHistory
+     * @apiNote: 根据职员用户id获取职员用户的职员简历信息
      */
-    void getEmployHistory(HashMap<String,Object>map,List<EmployeeHistory>employeeHistories);
+    void getEmployHistory(HashMap<String,Object>map,EmployeeHistory employeeHistory);
 
 
     /**

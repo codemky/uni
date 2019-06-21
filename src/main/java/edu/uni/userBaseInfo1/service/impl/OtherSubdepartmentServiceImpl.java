@@ -55,6 +55,20 @@ public class OtherSubdepartmentServiceImpl implements OtherSubdepartmentService 
     }
 
     @Override
+    public Subdepartment selectById(Long id) {
+        return subdepartmentMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<Subdepartment> selectBySchoolIdAndDepartmentId(Long schoolId, Long departmentId) {
+        SubdepartmentExample subdepartmentExample = new SubdepartmentExample();
+        subdepartmentExample.createCriteria().andUniversityIdEqualTo(schoolId).
+                andDepartmentIdEqualTo(departmentId).andDeletedEqualTo(false);
+        return subdepartmentMapper.selectByExample(subdepartmentExample);
+
+    }
+
+    @Override
     public Subdepartment selectBySubdepartmentName(String subdepartmentName) {
         //构造查询条件
         SubdepartmentExample subdepartmentExample = new SubdepartmentExample();

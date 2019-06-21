@@ -126,7 +126,8 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
 //        指定要审核的信息种类	  0:联系方式	  1:地址
 //        2：照片  	3：亲属  4	：学历  5	：简历
 //        6：学生信息	 7：教职工信息	 8：	用户个人信息
-//        9：学生excel	表  10：	职员excel	表
+//        9：学生excel表  10：职员excel表
+//        10：批量添加学生账号 12：批量添加职员账号
         boolean result = false;
         switch (infoType){
             case 0: // 0为联系方式
@@ -147,10 +148,15 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
                 result = employeeService.updateForApply(oldId,newId); break;
             case 8: // 8为用户信息
                 result = userService.updateForApply(oldId,newId); break;
-            case 9: // 9为学生表
+            case 9: // 9为批量更新学生信息
                 result = userUploadFileService.updateForApply(oldId,newId); break;
-            case 10: // 10为职员表
+            case 10: // 10为批量更新教职工信息
                 result = userUploadFileService.updateForApply(oldId,newId); break;
+            case 11: // 11为批量添加学生信息
+                //作批量插入处理
+                break;
+            case 12: // 12为批量添加教职工信息
+                //做批量更新处理
         }
         return result;
 

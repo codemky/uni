@@ -29,6 +29,23 @@ public interface OtherSubdepartmentService {
     Long selectIdBySubdepartName(String subdepart_name);
 
     /**
+     * Author: mokuanyuan 17:52 2019/6/18
+     * @param id
+     * @return Subdepartment
+     * @apiNote: 根据id获取科室信息
+     */
+    Subdepartment selectById(Long id);
+
+    /**
+     * Author: mokuanyuan 21:05 2019/6/18
+     * @param schoolId
+     * @param departmentId
+     * @return List<Subdepartment>
+     * @apiNote: 以一个学校id和部门id获取所有的科室
+     */
+    List<Subdepartment> selectBySchoolIdAndDepartmentId(Long schoolId,Long departmentId);
+
+    /**
      * Author: chenenru 23:16 2019/6/19
      * @param
      * @return

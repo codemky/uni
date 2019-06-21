@@ -84,7 +84,7 @@ public class OtherRoleServiceImpl implements OtherRoleService {
 
     @Override
     public boolean isPlaySchoolLeader(Long userId) {
-        return isPlayOneRole(userId, "“人事处工作人员") || isPlayOneRole(userId, "人事处副处长") ||
+        return isPlayOneRole(userId, "人事处工作人员") || isPlayOneRole(userId, "人事处副处长") ||
                 isPlayOneRole(userId, "人事处处长") ;
     }
 }

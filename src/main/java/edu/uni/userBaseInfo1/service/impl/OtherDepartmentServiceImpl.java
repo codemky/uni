@@ -86,4 +86,9 @@ public class OtherDepartmentServiceImpl implements OtherDepartmentService {
         departmentExample.createCriteria().andIdEqualTo(id).andDeletedEqualTo(false);
         return departmentMapper.selectByExample(departmentExample);
     }
+
+    @Override
+    public Department selectById(Long id) {
+        return departmentMapper.selectByPrimaryKey(id);
+    }
 }

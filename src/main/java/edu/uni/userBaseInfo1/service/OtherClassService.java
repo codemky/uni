@@ -16,6 +16,14 @@ public interface OtherClassService  {
     Class select(Long id);
 
     /**
+     * Author: mokuanyuan 20:20 2019/6/20
+     * @param employeeId
+     * @return List<Class>
+     * @apiNote 根据职员id获取该职员所有的班级（查询班主任所带的所有班级）
+     */
+    List<Class> selectByHeadTeacherId(Long employeeId);
+
+    /**
      * Author: chenenru 13:14 2019/5/11
      * @param classId
      * @return Class

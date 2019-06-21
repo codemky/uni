@@ -164,43 +164,20 @@ public class StudentRelationController {
         response.getWriter().write(json);
     }
 
-        /**
-         * Author: chenenru 10:30 2019/4/30
-         * 新增学生亲属表信息
-         * @param studentRelation
-         * @return 新增学生亲属表信息结果
-         */
-        @ApiOperation(value="新增电子学生亲属方式", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "studentRelation", value = "学生亲属表信息详情实体", required = true, dataType = "StudentRelation")
-        @PostMapping("/studentRelation")  //post请求方式
-        @ResponseBody
-        public Result create(@RequestBody(required = false) StudentRelation studentRelation){
-            //检验页面传来的对象是否存在
-            if(studentRelation != null){
-                boolean success = studentRelationService.insert(studentRelation);
-                if(success){
-                    // 清空相关缓存
-                    cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }
-            return Result.build(ResultType.ParamError);
-        }
-
-        /**
-         * Author: chenenru 10:33 2019/4/30
-         * 删除学生亲属表信息
-         * @param id
-         * @return 删除操作结果
-         */
-        @ApiOperation(value="删除学生亲属", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "id", value = "学生亲属id", required = true, dataType = "Long", paramType = "path")
-        @DeleteMapping("/studentRelation/{id}")   //delete请求
-        @ResponseBody
-        public Result destroy(@PathVariable Long id){
-            boolean success = studentRelationService.delete(id);
+    /**
+     * Author: chenenru 10:30 2019/4/30
+     * 新增学生亲属表信息
+     * @param studentRelation
+     * @return 新增学生亲属表信息结果
+     */
+    @ApiOperation(value="新增电子学生亲属方式", notes="2019-5-5 15:53:53已通过测试")
+    @ApiImplicitParam(name = "studentRelation", value = "学生亲属表信息详情实体", required = true, dataType = "StudentRelation")
+    @PostMapping("/studentRelation")  //post请求方式
+    @ResponseBody
+    public Result create(@RequestBody(required = false) StudentRelation studentRelation){
+        //检验页面传来的对象是否存在
+        if(studentRelation != null){
+            boolean success = studentRelationService.insert(studentRelation);
             if(success){
                 // 清空相关缓存
                 cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
@@ -209,31 +186,54 @@ public class StudentRelationController {
                 return Result.build(ResultType.Failed);
             }
         }
+        return Result.build(ResultType.ParamError);
+    }
 
-        /**
-         * Author: chenenru 10:34 2019/4/30
-         * 更新学生亲属表信息
-         * @param studentRelation
-         * @return 更新操作结果
-         */
-        @ApiOperation(value="更新学生亲属表信息详情", notes="2019-5-5 15:53:53已通过测试")
-        @ApiImplicitParam(name = "studentRelation", value = "学生亲属表信息详情实体", required = true, dataType = "StudentRelation")
-        @PutMapping("/studentRelation")   //Put请求
-        @ResponseBody
-        public Result update(@RequestBody(required = false) StudentRelation studentRelation){
-            if(studentRelation != null && studentRelation.getId() != null){
-                boolean success = studentRelationService.update(studentRelation);
-                if(success){
-                    //清除相应的缓存
-                    cache.delete(StudentRelationController.CacheNameHelper.Receive_CacheNamePrefix + studentRelation.getId());
-                    cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
-                    return Result.build(ResultType.Success);
-                }else{
-                    return Result.build(ResultType.Failed);
-                }
-            }
-            return Result.build(ResultType.ParamError);
+    /**
+     * Author: chenenru 10:33 2019/4/30
+     * 删除学生亲属表信息
+     * @param id
+     * @return 删除操作结果
+     */
+    @ApiOperation(value="删除学生亲属", notes="2019-5-5 15:53:53已通过测试")
+    @ApiImplicitParam(name = "id", value = "学生亲属id", required = true, dataType = "Long", paramType = "path")
+    @DeleteMapping("/studentRelation/{id}")   //delete请求
+    @ResponseBody
+    public Result destroy(@PathVariable Long id){
+        boolean success = studentRelationService.delete(id);
+        if(success){
+            // 清空相关缓存
+            cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
+            return Result.build(ResultType.Success);
+        }else{
+            return Result.build(ResultType.Failed);
         }
+    }
+
+    /**
+     * Author: chenenru 10:34 2019/4/30
+     * 更新学生亲属表信息
+     * @param studentRelation
+     * @return 更新操作结果
+     */
+    @ApiOperation(value="更新学生亲属表信息详情", notes="2019-5-5 15:53:53已通过测试")
+    @ApiImplicitParam(name = "studentRelation", value = "学生亲属表信息详情实体", required = true, dataType = "StudentRelation")
+    @PutMapping("/studentRelation")   //Put请求
+    @ResponseBody
+    public Result update(@RequestBody(required = false) StudentRelation studentRelation){
+        if(studentRelation != null && studentRelation.getId() != null){
+            boolean success = studentRelationService.update(studentRelation);
+            if(success){
+                //清除相应的缓存
+                cache.delete(StudentRelationController.CacheNameHelper.Receive_CacheNamePrefix + studentRelation.getId());
+                cache.delete(StudentRelationController.CacheNameHelper.ListAll_CacheName);
+                return Result.build(ResultType.Success);
+            }else{
+                return Result.build(ResultType.Failed);
+            }
+        }
+        return Result.build(ResultType.ParamError);
+    }
 
     /**
      * Author: laizhouhao 21:40 2019/5/7
@@ -336,27 +336,6 @@ public class StudentRelationController {
     }
 
 
-    /**
-         * <p>
-         *     上传文件方法
-         * </p>
-         * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-         * @param file
-         * @return 文件名
-         * @throws Exception
-         */
-        private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-            //获取文件后缀名
-            //String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-            //上传文件名
-            //String filename = CommonUtils.generateUUID() + suffix;
-            String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-            //服务端保存的文件对象
-            File serverFile = new File(uploadDir + filename);
-            //将上传的文件写入服务器端文件内
-            file.transferTo(serverFile);
-            return filename;
-        }
 
 
-    }
+}

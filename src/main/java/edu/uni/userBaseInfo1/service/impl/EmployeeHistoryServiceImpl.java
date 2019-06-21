@@ -144,21 +144,17 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
 
     /**
      * Author: laizhouhao 18:33 2019/6/10
-     * @param employeeHistories
-     * @return 用户的所有的有效简历信息
-     * @apiNote: 根据用户简历实体获取用户所有的有效简历的信息详情
+     * @param employeeHistory
+     * @apiNote: 根据职员用户id获取职员用户的职员简历信息
      */
     @Override
-    public void getEmployHistory(HashMap<String, Object> map, List<EmployeeHistory> employeeHistories) {
-        //获取用户的所有简历信息，并将放入map中
-        for (int i=0; i<employeeHistories.size(); i++){
-            //判断该简历信息是否有效，有效则加入
-            if(employeeHistories.get(i).getDeleted() == false){
-                map.put("BeginTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(employeeHistories.get(i).getBeginTime()));
-                map.put("EndTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(employeeHistories.get(i).getEndTime()));
-                map.put("Discript", employeeHistories.get(i).getDescript());
-            }
-        }
+    public void getEmployHistory(HashMap<String, Object> map, EmployeeHistory employeeHistory) {
+
+        map.put("BeginTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(employeeHistory.getBeginTime()));
+        map.put("EndTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(employeeHistory.getEndTime()));
+        map.put("Discript", employeeHistory.getDescript());
+
+
     }
 
 

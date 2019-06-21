@@ -92,10 +92,25 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<Address> selectByUserId(Long userId) {
         AddressExample addressExample = new AddressExample();
+        addressExample.setOrderByClause("flag ASC");
         AddressExample.Criteria criteria = addressExample.createCriteria();
         criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
         return addressMapper.selectByExample(addressExample);
+    }
+
+    @Override
+    public List<Address> filterAddress(List<Address> addresses) {
+        List<Address> addressList = new ArrayList<>();
+        int[] type = new int[8];
+        for (int i : type) i = 0;
+        for(Address address : addresses)
+            if(type[address.getFlag()] == 0){
+                type[address.getFlag()] = 1;
+                addressList.add(address);
+            }
+
+        return addressList;
     }
 
     /**
@@ -363,30 +378,35 @@ public class AddressServiceImpl implements AddressService {
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("id",addrCountryService.selectAddrCountryById(address.get(i).getCountry()).getId());
                 map.put("name", addrCountryService.selectAddrCountryById(address.get(i).getCountry()).getCountryZh() );
+                map.put("code",addrCountryService.selectAddrCountryById(address.get(i).getCountry()).getCode());
                 tempList.add(map);
 
                 //省份
                 map = new HashMap<>();
                 map.put("id",addrStateService.selectAddrStateById( address.get(i).getState()).getId());
                 map.put("name", addrStateService.selectAddrStateById( address.get(i).getState()).getStateZh() );
+                map.put("code",addrStateService.selectAddrStateById( address.get(i).getState()).getCode());
                 tempList.add(map);
 
                 //城市
                 map = new HashMap<>();
                 map.put("id", addrCityService.selectAddrCityById(address.get(i).getCity()).getId() );
                 map.put("name", addrCityService.selectAddrCityById(address.get(i).getCity()).getCityZh() );
+                map.put("code",addrCityService.selectAddrCityById( address.get(i).getState()).getCode());
                 tempList.add(map);
 
                 //县或区
                 map = new HashMap<>();
                 map.put("id", addrAreaService.selectAddrAreaById(address.get(i).getArea()).getId());
                 map.put("name", addrAreaService.selectAddrAreaById(address.get(i).getArea()).getAreaZh() );
+                map.put("code",addrAreaService.selectAddrAreaById(address.get(i).getArea()).getCode());
                 tempList.add(map);
 
                 //街道或村
                 map = new HashMap<>();
                 map.put("id", addrStreetService.selectAddrStreetById(address.get(i).getStreet()).getId() );
                 map.put("name", addrStreetService.selectAddrStreetById(address.get(i).getStreet()).getStreetZh() );
+                map.put("code",addrStreetService.selectAddrStreetById(address.get(i).getArea()).getCode());
                 tempList.add(map);
 
                 map = new HashMap<>();

@@ -94,6 +94,47 @@ public class StudentController {
     }
 
 
+    @ApiOperation(value="根据学校id和专业名称（模糊）查询相应的专业", notes="未测试")
+    @ApiImplicitParam(name = "map"  )
+    @PostMapping("/ajaxGetSpecialtiesBySchoolIdAndName")
+    @ResponseBody
+    public void GetSpecialtiesBySchoolIdAndName(@RequestBody Map<String,Object> map ,
+                                                HttpServletResponse response) throws  IOException{
+
+        String specialtyName = (String) map.get("specialtyName");
+        Long schoolId = (long) (1);
+
+        response.setContentType("application/json;charset=utf-8");
+        List<Specialty> specialties = otherSpecialtyService.selectBySchoolIdAndSpecialtyName(schoolId, specialtyName);
+
+        response.getWriter().write(Result.build(ResultType.Success).appendData("specialties",specialties).convertIntoJSON());
+
+    }
+
+    /**
+     * Author: mokuanyuan 17:24 2019/6/7
+     * @apiNote: 根据user_id查询学生主要信息，该方法用于点击申请时先把部分信息发给前端
+     */
+    @ApiOperation(value="当学生点击申请时交付给前端的部分信息", notes="未测试")
+    @ApiImplicitParam(name = "schoolId", value = "学校ID", required = false, dataType = "Integer" )
+    @GetMapping("/getSometimeInfoForApply")
+    @ResponseBody
+    public void getSometimeInfoForApply(HttpServletResponse response) throws IOException{
+
+        Integer schoolId = 1;
+        response.setContentType("application/json;charset=utf-8");
+        Result result = Result.build(ResultType.Success);
+
+        List<PoliticalAffiliation> politicalAffiliations = politicalAffiliationService.selectAllPoliticalAffiliations();
+        result.appendData("political",politicalAffiliations);
+
+        List<Field> fields = otherFieldService.selectAllDormitoriesBySchoolId((long) schoolId);
+        result.appendData("Dormitories",fields);
+
+        response.getWriter().write(result.convertIntoJSON());
+
+    }
+
     @ApiOperation(value="获取学生这部分的信息", notes="未测试")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Integer" , paramType = "path")
     @GetMapping("/getStudentInformation/{userId}")
@@ -145,6 +186,8 @@ public class StudentController {
         else
             return Result.build(ResultType.ParamError);
     }
+
+
 
     /**
      * Author: laizhouhao 18:36 2019/5/6
@@ -308,6 +351,8 @@ public class StudentController {
             response.getWriter().write(json);
         }
     }
+
+
     @ApiOperation( value = "根据学生的用户id查找学生对应的学院",notes = "未测试" )
     @GetMapping("info/studentDetailInfo/department/{user_id}")
     @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
@@ -354,47 +399,6 @@ public class StudentController {
 
     }
 
-
-    @ApiOperation(value="根据学校id和专业名称（模糊）查询相应的专业", notes="未测试")
-    @ApiImplicitParam(name = "map"  )
-    @PostMapping("/ajaxGetSpecialtiesBySchoolIdAndName")
-    @ResponseBody
-    public void GetSpecialtiesBySchoolIdAndName(@RequestBody Map<String,Object> map ,
-                 HttpServletResponse response) throws  IOException{
-
-        String specialtyName = (String) map.get("specialtyName");
-        Long schoolId = (long) (1);
-
-        response.setContentType("application/json;charset=utf-8");
-        List<Specialty> specialties = otherSpecialtyService.selectBySchoolIdAndSpecialtyName(schoolId, specialtyName);
-
-        response.getWriter().write(Result.build(ResultType.Success).appendData("specialties",specialties).convertIntoJSON());
-
-    }
-
-    /**
-     * Author: mokuanyuan 17:24 2019/6/7
-     * @apiNote: 根据user_id查询学生主要信息，该方法用于点击申请时先把部分信息发给前端
-     */
-    @ApiOperation(value="当学生点击申请时交付给前端的部分信息", notes="未测试")
-    @ApiImplicitParam(name = "schoolId", value = "学校ID", required = false, dataType = "Integer" )
-    @GetMapping("/getSometimeInfoForApply")
-    @ResponseBody
-    public void getSometimeInfoForApply(HttpServletResponse response) throws IOException{
-
-        Integer schoolId = 1;
-        response.setContentType("application/json;charset=utf-8");
-        Result result = Result.build(ResultType.Success);
-
-        List<PoliticalAffiliation> politicalAffiliations = politicalAffiliationService.selectAllPoliticalAffiliations();
-        result.appendData("political",politicalAffiliations);
-
-        List<Field> fields = otherFieldService.selectAllDormitoriesBySchoolId((long) schoolId);
-        result.appendData("Dormitories",fields);
-
-        response.getWriter().write(result.convertIntoJSON());
-
-    }
 
     /**
      * Author: laizhouhao 22:06 2019/6/2

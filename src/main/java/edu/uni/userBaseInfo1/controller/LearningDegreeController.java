@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
@@ -56,6 +57,8 @@ public class LearningDegreeController {
     private UserService userService;
     @Autowired
     ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private AuthService authService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -65,6 +68,46 @@ public class LearningDegreeController {
         public static final String Receive_CacheNamePrefix = "ub1_l_learningDegree_";
         // ub1_e_LearningDegrees_listAll
         public static final String ListAll_CacheName = "ub1_l_learningDegree_listAll";
+    }
+
+
+
+
+    /**
+     * Author: laizhouhao 16:39 2019/6/10  @modified：莫宽元
+     * @param userId
+     * @apiNote: 根据职员用户用户id获取职员用户的学历
+     */
+    @ApiOperation( value = "根据职员用户用户id获取职员用户的学历",notes = "未测试" )
+    @GetMapping("/getLearningDegreeInformation/{userId}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = true, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public Result getLearningDegreeInformation(@PathVariable Long userId) throws IOException {
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        if(userId == -1 ) { // -1 代表的是查询自己的信息
+            if (loginUser == null) {
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            } else {
+                userId = loginUser.getId();
+            }
+        }
+        if( loginUser.getUserType() != 2 )
+            return Result.build(ResultType.Disallow,"登录用户不是职员类型用户");
+
+        List<LearningDegree> learningDegrees = learningDegreeService.selectByUserId(userId);
+        if(learningDegrees.size() == 0)
+            return Result.build(ResultType.Failed,"该教职工用户的学历信息“为空");
+
+
+        HashMap<String,Object> map = new HashMap<>();
+        learningDegreeService.getLearningDegree(map, learningDegrees.get(0));
+
+        return  Result.build(ResultType.Success).appendData("learningDegree",map).
+                appendData("learningDegreeBase",learningDegrees.get(0));
+
+
     }
 
     /**
@@ -356,65 +399,5 @@ public class LearningDegreeController {
         }
         return Result.build(ResultType.ParamError);
     }*/
-
-    /**
-     * Author: laizhouhao 16:39 2019/6/10
-     * @param user_id
-     * @return 用户的学历信息详情
-     * @apiNote: 根据用户id获取用户的所有学历信息详情
-     */
-    @ApiOperation( value = "根据用户id获取用户的所有学历信息详情",notes = "2019年6月10日 18:32:10 已通过测试" )
-    @GetMapping("/getUserDegree/{user_id}")
-    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
-    @ResponseBody
-    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
-        //检验页面传来的id是否存在
-        if(user_id != null){
-            //获取该用户的所有学历信息
-            List<LearningDegree> learningDegreeList = new ArrayList<>();
-            learningDegreeList = learningDegreeService.selectByUserId(user_id);
-            //获取该用户所有学历的详情信息
-            HashMap<String,Object> map = new HashMap<>();
-            learningDegreeService.getLearningDegree(map, learningDegreeList);
-            //设置返回的数据格式
-            response.setContentType("application/json;charset=utf-8");
-            //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"learningDegrees"+ user_id;
-            //尝试在缓存中通过键名获取相应的键值
-            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-            String json = cache.get(cacheName);
-            //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
-                json = Result.build(ResultType.Success)
-                        .appendData("userLearningDegree",map).convertIntoJSON();
-                cache.set(cacheName,json);
-            }
-            //到最后通过response对象返回json格式字符串的数据
-            response.getWriter().write(json);
-        }
-    }
-
-
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-//        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-//        String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
-    }
 
 }

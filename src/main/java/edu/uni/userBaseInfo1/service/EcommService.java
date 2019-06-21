@@ -55,14 +55,6 @@ public interface EcommService {
     Ecomm selectById(long id);
 
     /**
-     * Author: chenenru 0:42 2019/5/5
-     * @param  userId
-     * @return  List<Ecomm>
-     * @apiNote: 根据用户的id查询电子通信记录
-     */
-    List<Ecomm> selectByUserId(long userId);
-
-    /**
      * Author: mokuanyuan 10:18 2019/4/26
      * @param pageNum
      * @return List<Ecomm>
@@ -117,6 +109,14 @@ public interface EcommService {
      * @apiNote: 根据用户id查询电子通信方式，并把结果赋值到工具类UserInfo的相应属性中
      */
     public void getEcommByUserIdToUserInfo(UserInfo userInfo , Long user_id);
+
+    /**
+     * Author: mokuanyuan 10:47 2019/6/20
+     * @param ecomms
+     * @return List<Ecomm>
+     * @apiNote: 传入一个电子通信方式数组，筛选出一个新的数组（同一种通信方式类型的记录最多只有一个）
+     */
+    public List<Ecomm> filterEcomm(List<Ecomm> ecomms);
 
     /**
      * Author: laizhouhao 20:21 2019/6/9

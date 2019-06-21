@@ -3,6 +3,8 @@ package edu.uni.userBaseInfo1.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mysql.cj.log.Log;
+import edu.uni.administrativestructure.bean.Class;
+import edu.uni.administrativestructure.service.EmployService;
 import edu.uni.administrativestructure.service.UniversityService;
 import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.example.config.ExampleConfig;
@@ -67,6 +69,17 @@ public class StudentServiceImpl implements StudentService {
     private EcommService ecommService;
     @Autowired
     private OtherClassService otherClassService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private StudentRelationService studentRelationService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
+
 
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
@@ -76,7 +89,7 @@ public class StudentServiceImpl implements StudentService {
     /**
      * Author: mokuanyuan 20:02 2019/6/9
      * @param map
-     * @param userId
+     * @param student
      * @apiNote: 把student对象里的id信息内容查询出来，并把相应的信息放进map里
      */
     public void selectByUserIdToMap(HashMap map , Student student){
@@ -154,6 +167,137 @@ public class StudentServiceImpl implements StudentService {
         }
         return result;
 
+    }
+
+
+
+
+    @Override //判断是否是班主任
+    public boolean isHeadTeacher(Long studentUserId, Long employeeId) {
+        List<Student> students = studentService.selectByUserId(studentUserId);
+        if(students.size() == 0)
+            return false;
+        List<Class> classes = otherClassService.selectByHeadTeacherId(employeeId);
+        for( Class cclass : classes){
+            if(cclass.getId() == students.get(0).getClassId())
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isChildTeacher(Long relationUserId, Long employeeUserId) {
+        List<StudentRelation> studentRelations = studentRelationService.selectByRelationId(relationUserId);
+        if(studentRelations.size() == 0)
+            return false;
+
+        for( StudentRelation studentRelation : studentRelations )
+            if( isSameDepartment(studentRelation.getUserId(),employeeUserId) )
+                return true;
+
+        return false;
+    }
+
+    @Override
+    public boolean isSameDepartment(Long studentUserId, Long employeeUserId) {
+        List<Student> students = studentService.selectByUserId(studentUserId);
+        List<Employee> employees = employeeService.selectByUserId(employeeUserId);
+        if( students.size() == 0 || employees.size() == 0 )
+            return false;
+
+        Class studentClass = otherClassService.select(students.get(0).getClassId());
+        if(studentClass == null)
+            return false;
+
+        if(studentClass.getDepartmentId() == employees.get(0).getDepartmentId())
+            return true;
+
+        return false;
+    }
+
+    @Override
+    public boolean whetherSeeStudent(Long studentUserId, Long loginUserId) {
+        List<Student> students = studentService.selectByUserId(studentUserId);
+        if(students.size() == 0)
+            return false;
+        Class studnetClass = otherClassService.select(students.get(0).getClassId());
+        if(studnetClass == null)
+            return false;
+
+        //判断是否是该学生的学院领导
+        List<Employee> employees = employeeService.selectByUserId(loginUserId);
+        if(employees.size() > 0){
+            List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+            if( employees.get(0).getDepartmentId() == studnetClass.getDepartmentId() )
+                if( roles.contains(1) || roles.contains(2) )
+                    return true;
+        }
+
+        //因为看学生信息的情况还有一种是学生自己亲属看的情况
+        List<StudentRelation> studentRelations = studentRelationService.selectByRelationId(loginUserId);
+        if(studentRelations.size() > 0){
+            for( StudentRelation studentRelation : studentRelations ){
+                if( studentRelation.getUserId() == students.get(0).getId() )
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean whetherSeeEmployee(Long employeeUserId, Long loginUserId) {
+        User user = userService.selectUserById(employeeUserId);
+        if( user == null )
+            return false;
+
+        //查看职员信息除了自己也就只有学校的人事处的工作人员了
+        List<Employee> employees = employeeService.selectByUserId(loginUserId);
+        if(employees.size() > 0){
+            List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+            if( user.getUniversityId() == employees.get(0).getUniversityId() )
+                if( roles.contains(3) )
+                    return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean whetherSeeRelation(Long relationUserId, Long loginUserId) {
+        User user = userService.selectUserById(relationUserId);
+        if( user == null )
+            return false;
+
+        //查看亲属信息的情况可以是自己的孩子看或者自己的孩子的班主任或学院领导看
+        List<StudentRelation> studentRelations = studentRelationService.selectByRelationId(relationUserId);
+        for( StudentRelation studentRelation : studentRelations ){
+            List<Student> students = studentService.selectByUserId(studentRelation.getUserId());
+            if( students.size() > 0 ){
+                //判断是否是自己孩子
+                if(students.get(0).getId() == loginUserId)
+                    return true;
+                Class studnetClass = otherClassService.select(students.get(0).getClassId());
+                if(studnetClass != null){
+                    List<Employee> employees = employeeService.selectByUserId(loginUserId);
+                    if( employees.size() > 0 ){
+                        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+                        //判断班主任
+                        if(roles.contains(1) && studnetClass.getHeadteacher() == employees.get(0).getId())
+                            return true;
+                        //判断学院领导
+                        if(roles.contains(2) && studnetClass.getDepartmentId() == employees.get(0).getDepartmentId())
+                            return true;
+
+                    }
+
+                }
+
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -47,6 +47,7 @@ public interface UserinfoApplyService  {
      * @apiNote: 查询所有的用户信息申请
      */
     List<UserinfoApply> selectAllUserinfoApplys();
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param id
@@ -54,6 +55,7 @@ public interface UserinfoApplyService  {
      * @apiNote: 根据id查询用户信息申请
      */
     UserinfoApply selectUserinfoApplyById(long id);
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param pageNum
@@ -61,6 +63,7 @@ public interface UserinfoApplyService  {
      * @apiNote: 分页查询用户信息申请
      */
     PageInfo<UserinfoApply> selectUserinfoApplyByPage(int pageNum);
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param UserinfoApply
@@ -68,6 +71,7 @@ public interface UserinfoApplyService  {
      * @apiNote: 用户信息申请添加UserinfoApply表的一条记录
      */
     boolean insertUserinfoApply(UserinfoApply UserinfoApply);
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param UserinfoApply
@@ -75,6 +79,7 @@ public interface UserinfoApplyService  {
      * @apiNote:  用户更新一个UserinfoApply表的某个记录（传一个新的对象）
      */
     boolean updateUserinfoApply(UserinfoApply UserinfoApply);
+
     /**
      * Author: chenenru 0:00 2019/4/30
      * @param id

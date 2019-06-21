@@ -2,18 +2,30 @@ package edu.uni.userBaseInfo1.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import edu.uni.administrativestructure.bean.Employ;
 import edu.uni.administrativestructure.bean.Position;
 import edu.uni.administrativestructure.bean.PositionExample;
 import edu.uni.administrativestructure.mapper.PositionMapper;
+import edu.uni.administrativestructure.service.DepartmentService;
+import edu.uni.administrativestructure.service.PositionService;
+import edu.uni.administrativestructure.service.SubdepartmentService;
 import edu.uni.auth.bean.Role;
 import edu.uni.auth.mapper.RoleMapper;
+import edu.uni.auth.service.AuthService;
+import edu.uni.auth.service.RoleService;
 import edu.uni.example.config.ExampleConfig;
+import edu.uni.place.service.FieldService;
+import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.controller.UserinfoApplyApprovalController;
 import edu.uni.userBaseInfo1.mapper.EmployeeMapper;
 import edu.uni.userBaseInfo1.mapper.UserMapper;
+import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
+import edu.uni.userBaseInfo1.mapper.UserinfoApplyMapper;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
+import edu.uni.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,29 +42,96 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+    private LogUtils logUilts = new LogUtils(this.getClass());
+
     //持久层接口的对象
-    @Autowired
-    private EmployeeMapper employeeMapper;
-    @Autowired
-    private RoleMapper roleMapper;
     @Autowired
     private PositionMapper positionMapper;
     @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private ApprovalStepInchargeService approvalStepInchargeService;
-    @Autowired
-    private UserinfoApplyApprovalService userinfoApplyApprovalService;
+    private UserinfoApplyMapper userinfoApplyMapper;
     @Autowired
     private ApprovalMainService approvalMainService;
     @Autowired
-    private OtherDepartmentService otherDepartmentService;
+    private AuthService authService;
     @Autowired
-    private UserinfoApplyService userinfoApplyService;
+    private UserinfoApplyApprovalMapper userinfoApplyApprovalMapper;
+    @Autowired
+    private RoleMapper roleMapper;
+    @Autowired
+    UserinfoApplyService userinfoApplyService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    UserinfoApplyApprovalController userinfoApplyApprovalController;
+    @Autowired
+    UserinfoApplyApprovalService userinfoApplyApprovalService;
+    @Autowired
+    private ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private OtherClassService otherClassService;
+    @Autowired
+    EmployeeService employeeService;
+    @Autowired
+    OtherEmployService otherEmployService;
+    @Autowired  //把Student的Service层接口所有的方法自动装配到该对象中
+    private StudentService studentService;
+    @Autowired
+    private StudentRelationService studentRelationService;
+    @Autowired
+    private EcommService ecommService;
+    @Autowired
+    private AddressService addressService;
+    @Autowired
+    private PictureService pictureService;
+    @Autowired
+    private LearningDegreeSerevice learningDegreeSerevice;
+    @Autowired
+    private EmployeeHistoryService employeeHistoryService;
+    @Autowired
+    private UserUploadFileService userUploadFileService;
+    @Autowired
+    private AddrCountryService addrCountryService;
+    @Autowired
+    private AddrStateService addrStateService;
+    @Autowired
+    private AddrCityService addrCityService;
+    @Autowired
+    private AddrAreaService addrAreaService;
+    @Autowired
+    private AddrStreetService addrStreetService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
+    @Autowired
+    private MyAcademicService myAcademicService;
+    @Autowired
+    private MyAcademicDegreeService myAcademicDegreeService;
+    @Autowired
+    private SpecialtyService specialtyService;
+    @Autowired
+    private FieldService fieldService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private SubdepartmentService subdepartmentService;
+    @Autowired
+    private MySecondLevelDisciplineService mySecondLevelDisciplineService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
+    @Autowired
+    private PositionService positionService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private OtherDepartmentService otherDepartmentService;
     @Autowired
     private OtherSubdepartmentService otherSubdepartmentService;
     @Autowired
-    private UserService userService;
+    private EmployeeMapper employeeMapper;
+
+
+
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
     @Autowired
     private ExampleConfig config;
@@ -122,6 +201,23 @@ public class EmployeeServiceImpl implements EmployeeService {
                 result = true;
         }
         return result;
+    }
+
+    /**
+     * Author: mokuanyuan 20:02 2019/6/9
+     * @param map
+     * @param employee
+     * @apiNote: 把employee对象里的id信息内容查询出来，并把相应的信息放进map里
+     */
+    public void selectByUserIdToMap(HashMap map , Employee employee){
+        map.put("employee_no",employee.getEmpNo());
+        map.put("department",otherDepartmentService.selectById(employee.getDepartmentId()));
+        map.put("subdepartment",otherSubdepartmentService.selectById(employee.getSubdepartmentId()));
+        map.put("employee_history",employeeHistoryService.selectById(employee.getEmployHistoryId()));
+        map.put("discipline",mySecondLevelDisciplineService.selectSecondLevelDisciplineById(employee.getDisciplineId()));
+        map.put("political",politicalAffiliationService.selectPoliticalAffiliationById(employee.getPoliticalId()));
+        map.put("position",otherEmployPositionService.selectPositionsByEmployeeId(employee));
+
     }
 
     /**

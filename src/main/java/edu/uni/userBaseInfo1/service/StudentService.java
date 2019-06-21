@@ -47,6 +47,54 @@ public interface StudentService {
                                      edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser);
 
         /**
+         * Author: mokuanyuan 15:42 2019/6/20
+         * @param studentUserId
+         * @param employeeId
+         * @return boolean
+         * @apiNote 传入一个学生用户id和职员用户id，判断他们之间是学生与班主任的关系（判断学生所在班级的班主任是不是该职员）
+         */
+        public boolean isHeadTeacher(Long studentUserId,Long employeeId);
+
+        /**
+         * Author: mokuanyuan 15:57 2019/6/20
+         * @param RelationUserId
+         * @param employeeUserId
+         * @return boolean
+         * @apiNote 传入一个学生亲属用户id和职员用户id，判断这个亲属的学生和该职员的关系
+         */
+        public boolean isChildTeacher(Long RelationUserId,Long employeeUserId);
+
+        /**
+         * Author: mokuanyuan 20:30 2019/6/20
+         * @param studentUserId
+         * @param employeeUserId
+         * @return boolean
+         * @apiNote 传入一个学生用户id和职员用户id，判断这两者是否在同一学院
+         */
+        public boolean isSameDepartment(Long studentUserId, Long employeeUserId);
+
+        /**
+         * Author: mokuanyuan 21:06 2019/6/20
+         * @param studentUserId
+         * @param loginUserId
+         * @return boolean
+         * @apiNote 判断登录者是否有权查看该学生用户的信息
+         */
+        public boolean whetherSeeStudent(Long studentUserId, Long loginUserId);
+
+        /**
+         * Author: mokuanyuan 21:09 2019/6/20
+         * @param employeeUserId
+         * @param loginUserId
+         * @return boolean
+         * @apiNote
+         */
+        public boolean whetherSeeEmployee(Long employeeUserId,Long loginUserId);
+
+
+        public boolean whetherSeeRelation(Long relationUserId,Long loginUserId);
+
+        /**
          * Author: laizhouhao 10:04 2019/4/30
          * @return List<Student>
          * @apiNote: 获取所有学生的学生信息

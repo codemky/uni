@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
@@ -51,6 +52,8 @@ public class EmployeeHistoryController {
     @Autowired
     ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired
+    private AuthService authService;
+    @Autowired
     private RedisCache cache;
 
     //内部类，专门用来管理每个get方法所对应缓存的名称。
@@ -60,6 +63,45 @@ public class EmployeeHistoryController {
         // ub1_e_employeeHistory_listAll
         public static final String ListAll_CacheName = "ub1_e_employeeHistory_listAll";
     }
+
+
+
+    /**
+     * Author: laizhouhao 18:41 2019/6/10  @modified：莫宽元
+     * @param userId
+     * @apiNote: 根据职员用户id获取职员用户的职员简历信息
+     */
+    @ApiOperation( value = "根据职员用户id获取职员用户的职员简历信息",notes = "未测试" )
+    @GetMapping("/getEmployeeHistoryInformation/{userId}")
+    @ApiImplicitParam(name = "userId", value = "用户user_id", required = true, dataType = "Long" , paramType = "path")
+    @ResponseBody
+    public Result getEmployeeHistorynformation(@PathVariable Long userId) throws IOException {
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        if(userId == -1 ) { // -1 代表的是查询自己的信息
+            if (loginUser == null) {
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            } else {
+                userId = loginUser.getId();
+            }
+        }
+        if( loginUser.getUserType() != 2 )
+            return Result.build(ResultType.Disallow,"登录用户不是职员类型用户");
+
+        List<EmployeeHistory> employeeHistories = employeeHistoryService.selectByUserId(userId);
+        if(employeeHistories.size() == 0 || employeeHistories.get(0).getDeleted() )
+            return Result.build(ResultType.Failed,"该教职工用户的雇员简历信息“为空");
+
+
+        HashMap<String,Object> map = new HashMap<>();
+        employeeHistoryService.getEmployHistory(map,employeeHistories.get(0));
+
+        return  Result.build(ResultType.Success).appendData("employeeHistory",map).
+                appendData("employeeHistoryBase",employeeHistories.get(0));
+
+    }
+
 
     /**
      * Author: laizhouhao 9:55 2019/4/30
@@ -369,64 +411,4 @@ public class EmployeeHistoryController {
         return Result.build(ResultType.ParamError);
     }*/
 
-    /**
-     * Author: laizhouhao 18:41 2019/6/10
-     * @param user_id
-     * @return 用户的所有有效的简历信息
-     * @apiNote: 根据用户id获取用户所有的简历信息
-     */
-    @ApiOperation( value = "根据用户id获取用户所有的简历信息",notes = "2019年6月10日 18:47:54 已通过测试" )
-    @GetMapping("/getEmployHistory/{user_id}")
-    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
-    @ResponseBody
-    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
-        //检验页面传来的id是否存在
-        if(user_id != null){
-            //查找该用户的所有简历实体
-            List<EmployeeHistory> employeeHistoryList = new ArrayList<>();
-            employeeHistoryList = employeeHistoryService.seleValidEmpHisByUserId(user_id);
-            //获取该用户的所有简历信息详情
-            HashMap<String,Object>map = new HashMap<>();
-            employeeHistoryService.getEmployHistory(map, employeeHistoryList);
-
-            //设置返回的数据格式
-            response.setContentType("application/json;charset=utf-8");
-            //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"pictureUserId"+ user_id;
-            //尝试在缓存中通过键名获取相应的键值
-            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-            String json = cache.get(cacheName);
-            //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
-                json = Result.build(ResultType.Success)
-                        .appendData("employHistory",map).convertIntoJSON();
-                cache.set(cacheName,json);
-            }
-            //到最后通过response对象返回json格式字符串的数据
-            response.getWriter().write(json);
-        }
-    }
-
-
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-        //String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-        //String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
-    }
 }

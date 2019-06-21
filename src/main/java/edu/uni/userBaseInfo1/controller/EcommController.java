@@ -5,6 +5,7 @@
 
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.config.GlobalConfig;
@@ -47,7 +48,15 @@ public class EcommController {
     @Autowired
     private UserService userService;
     @Autowired
-    ApprovalStepInchargeService approvalStepInchargeService;
+    private ApprovalStepInchargeService approvalStepInchargeService;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private StudentService studentService;
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
@@ -66,81 +75,58 @@ public class EcommController {
     }
 
 
+
     /**
-     * Author: mokuanyuan 10:58 2019/4/26
-     * @param id
-     * @return response
-     * @apiNote: 获取电子通信记录详情
+     * Author: mokuanyuan 21:26 2019/6/18
+     * @param userId
+     * @apiNote: 根据用户id获取其相应的电子通信方式，如果userId为-1时表示查询登录者的信息
      */
-    //以下说明为本类中所有方法的注解的解释，仅在本处注释（因为都几乎是一个模版）
-    //@ApiOperation：用于在swagger2页面显示方法的提示信息
-    //@GetMapping：规定方法的请求路径和方法的请求方式（Get方法）
-    //@ApiImplicitParam：用于在swagger2页面测试时用于测试的变量，详细解释可以看Swagger2注解说明
-    //@ResponseBody：指明该方法效果等同于通过response对象输出指定格式的数据（JSON）
-    @ApiOperation( value = "以一个id获取一条电子通信记录详情",notes = "2019-5-5 15:53:53已通过测试" )
-    @GetMapping("ecomm/{id}")
-    @ApiImplicitParam(name = "id", value = "Ecomm表的一个id", required = false, dataType = "Long" , paramType = "path")
+    @ApiOperation(value="根据用户id获取其相应的电子通信方式，如果userId为-1时表示查询登录者的信息", notes="未测试")
+    @ApiImplicitParam(name = "userId", value = "用户id", required = true, dataType = "Path")
+    @GetMapping("getEcommInformation/{userId}")
     @ResponseBody
-    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        //设置返回的数据格式
-        response.setContentType("application/json;charset=utf-8");
-        //拼接缓存键名（字符串）
-        String cacheName = CacheNameHelper.Receive_CacheNamePrefix + id;
-        //尝试在缓存中通过键名获取相应的键值
-        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-        String json = cache.get(cacheName);
-        //如果在缓存中找不到，那就从数据库里找
-        if(json == null){
-            Ecomm ecomm = ecommService.selectById(id);
-            //把查询到的结果用Result工具类转换成json格式的字符串
-            json = Result.build(ResultType.Success).appendData("ecomm",ecomm).convertIntoJSON();
-            //如果有查询到数据，就把在数据库查到的数据放到缓存中
-            if(ecomm != null){
-                cache.set(cacheName,json);
+    public Result getEcommInformation(@PathVariable Long userId){
+        if(userId == null)
+            return Result.build(ResultType.ParamError,"获取的用户id为空");
+
+        Long tempUserId = userId;
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if (loginUser == null)
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        if (userId == -1)   // -1 代表的是查询自己的信息
+            userId = loginUser.getId();
+
+        // 1.判断被查询者的用户类型 是学生还是职员还是学生亲属  2.判断被查询者的角色是不是领导角色  3.判断被查询者和查询者是不是从属于同一个单位
+        // ①如果被查询者类型为学生时，判断是否是自己的班主任或者是学院领导即可
+        // ②如果被查询者类型为教职工时，判断查询者是否是和被查询者时同一个学校并且是该学校的人事处工作人员
+        // ③如果被查询者类型为学生亲属时，判断是不是自己的孩子，或者判断是否是自己孩子的学校的班主任或者学院领导
+        User user = userService.selectUserById(userId);
+//        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId();
+        if( tempUserId != -1 )
+            switch (user.getUserType()){
+                case 1:
+                    if( !studentService.whetherSeeStudent(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生用户的信息");
+                    break;
+                case 2:
+                    if( !studentService.whetherSeeEmployee(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该职员用户的信息");
+                    break;
+                case 3:
+                    if( !studentService.whetherSeeRelation(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生亲属用户的信息");
+                    break;
             }
-        }
-        //到最后通过response对象返回json格式字符串的数据
-        response.getWriter().write(json);
-
-    }
 
 
-    /**
-     * Author: mokuanyuan 11:02 2019/4/26
-     * @apiNote: 查询所有电子通信记录
-     */
-    @ApiOperation( value = "获取所有通信记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
-    @GetMapping("ecomms/listAll")
-    @ResponseBody
-    public void selectAll(HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        String cacheName = CacheNameHelper.ListAll_CacheName;
-        String json = cache.get(cacheName);
-        if(json == null){
-            json = Result.build(ResultType.Success)
-                    .appendData("ecomms",ecommService.selectAll()).convertIntoJSON();
-            cache.set(cacheName,json);
-        }
-        response.getWriter().write(json);
-    }
+        List<Ecomm> ecomms = ecommService.selectValidEcomByUserId(userId);
+        if(ecomms.size() == 0)
+            return Result.build(ResultType.Failed,"该用户的电信通信方式信息“为空");
+        List<Ecomm> ecommList = ecommService.filterEcomm(ecomms);
 
-    /**
-     * Author: chenenru 0:49 2019/5/5
-     * @apiNote: 根据用户id获取用户的通信方式
-     */
-    @ApiOperation( value = "根据用户id获取用户的通信方式",notes = "2019-5-5 15:53:53已通过测试" )
-    @GetMapping("ecommByUId/{userId}")
-    @ResponseBody
-    public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
-        response.setContentType("application/json;charset=utf-8");
-        String cacheName = CacheNameHelper.ListAll_CacheName+userId;
-        String json = cache.get(cacheName);
-        if(json == null){
-            json = Result.build(ResultType.Success)
-                    .appendData("ecomms",ecommService.selectByUserId(userId)).convertIntoJSON();
-            cache.set(cacheName,json);
-        }
-        response.getWriter().write(json);
+//        addressService.selectAllInfoToList(addressList,addresses);
+        return Result.build(ResultType.Success).appendData("ecomm",ecommList);
+
     }
 
     /**
@@ -294,7 +280,7 @@ public class EcommController {
         //检验页面传来的id是否存在
         if(user_id != null){
             //根据用户id查找该用户有多少个通信方式
-            List<Ecomm> ecommList = ecommService.selectByUserId(user_id);
+            List<Ecomm> ecommList = ecommService.selectValidEcomByUserId(user_id);
             //用户的通信方式详情
             HashMap<String, Object> map = new LinkedHashMap<>();
             ecommService.getUserEcomm(map, ecommList);
@@ -314,28 +300,6 @@ public class EcommController {
             //到最后通过response对象返回json格式字符串的数据
             response.getWriter().write(json);
         }
-    }
-
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-//        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-//        String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
     }
 
 

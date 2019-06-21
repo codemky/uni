@@ -1011,7 +1011,7 @@ public class StudentUpload {
 //                        student.setPhoneEcommId();
                         //先查询出该用户的通讯方式
                         //再修改对应的通讯方式后再更新
-                        List<Ecomm> ecomms = ecommService.selectByUserId(user.getId());
+                        List<Ecomm> ecomms = ecommService.selectValidEcomByUserId(user.getId());
                         if (ecomms.size() > 0) {
                             ecomms.get(0).setContent(e.getMailEcomm());
                             ecomm = ecomms.get(0);
@@ -1385,7 +1385,7 @@ public class StudentUpload {
 //                        student.setPhoneEcommId();
                         //先查询出该用户的通讯方式
                         //再修改对应的通讯方式后再更新
-                        List<Ecomm> ecomms = ecommService.selectByUserId(user.getId());
+                        List<Ecomm> ecomms = ecommService.selectValidEcomByUserId(user.getId());
                         if (ecomms.size() > 0) {
                             ecomms.get(0).setContent(st.getMailEcomm());
                             ecomm = ecomms.get(0);

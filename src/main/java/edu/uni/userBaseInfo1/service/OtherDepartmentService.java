@@ -43,4 +43,12 @@ public interface OtherDepartmentService  {
      * @apiNote: 根据id获取有效的学院信息
      */
     List<Department> selectValidById(Long id);
+
+    /**
+     * Author: mokuanyuan 17:50 2019/6/18
+     * @param id
+     * @return Department
+     * @apiNote: 根据id获取学院信息
+     */
+    Department selectById(Long id);
 }

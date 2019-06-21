@@ -51,6 +51,8 @@ public class AddressController {
     private UserService userService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private StudentService studentService;
 
     //把缓存工具类RedisCache相应的方法自动装配到该对象
     @Autowired
@@ -87,31 +89,47 @@ public class AddressController {
      * @return Result
      * @apiNote: 根据用户id获取地址信息 ，但user_id为-1时为根据登录状态的用户信息获取相应的地址信息（只查询自己的内容）
      */
-    @GetMapping("getOwnAddress/{userId}")
+    @GetMapping("getAddressInformation/{userId}")
     @ResponseBody
-    public Result getAddressByUserId(@PathVariable Integer userId , HttpServletResponse response){
-        //设置返回的数据格式
-        response.setContentType("application/json;charset=utf-8");
+    public Result getAddressInformation(@PathVariable Long userId , HttpServletResponse response){
+        edu.uni.auth.bean.User loginUser = authService.getUser();
         if(userId == null)
             return Result.build(ResultType.ParamError);
+        Long tempUserId = userId;
         if(userId == -1 ){
-            edu.uni.auth.bean.User user = authService.getUser();
-            if(user == null){
+            if(loginUser == null){
                 return Result.build(ResultType.Failed, "你沒有登錄");
             }else
-                userId = Integer.parseInt(user.getId().toString());
-
+                userId = loginUser.getId();
         }
 
-        if(userId != null){
-            List<Address> addresses = addressService.selectByUserId((long) userId);
-            List<List> addressList = new ArrayList<>();
-            addressService.selectAllInfoToList(addressList,addresses);
-            return Result.build(ResultType.Success).appendData("addresses",addressList);
-        }
-        else
-            return Result.build(ResultType.ParamError);
+        User user = userService.selectUserById(userId);
+//        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId();
+        if( tempUserId != -1 )
+            switch (user.getUserType()){
+                case 1:
+                    if( !studentService.whetherSeeStudent(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生用户的信息");
+                    break;
+                case 2:
+                    if( !studentService.whetherSeeEmployee(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该职员用户的信息");
+                    break;
+                case 3:
+                    if( !studentService.whetherSeeRelation(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生亲属用户的信息");
+                    break;
+            }
 
+
+        List<Address> addresses = addressService.selectByUserId(userId);
+        if(addresses.size() == 0)
+            return Result.build(ResultType.Failed,"该用户的地址信息“为空");
+        List<Address> addressOfFilter = addressService.filterAddress(addresses);
+        List<List> addressList = new ArrayList<>();
+        addressService.selectAllInfoToList(addressList,addressOfFilter);
+        return Result.build(ResultType.Success).appendData("address",addressList)
+                .appendData("addressBase",addresses);
 
 
     }
@@ -250,76 +268,76 @@ public class AddressController {
         response.getWriter().write(json);
     }
 
-    /**
-     * Author: laizhouhao 9:55 2019/4/30
-     * @param id
-     * @return response
-     * @apiNote: 获取地址信息详细
-     */
-    @ApiOperation( value = "以一个id获取一条地址记录详情",notes = "2019-5-5 15:53:53已通过测试" )
-    @GetMapping("address/{id}")
-    @ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
-    @ResponseBody
-    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        //设置返回的数据格式
-        response.setContentType("application/json;charset=utf-8");
-        //拼接缓存键名（字符串）
-        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + id;
-        //尝试在缓存中通过键名获取相应的键值
-        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-        String json = cache.get(cacheName);
-        //如果在缓存中找不到，那就从数据库里找
-        if(json == null){
-            Address address = addressService.selectById(id);
-            //把查询到的结果用Result工具类转换成json格式的字符串
-            json = Result.build(ResultType.Success).appendData("address",address).convertIntoJSON();
-            //如果有查询到数据，就把在数据库查到的数据放到缓存中
-            if(address != null){
-                cache.set(cacheName,json);
-            }
-        }
-        //到最后通过response对象返回json格式字符串的数据
-        response.getWriter().write(json);
+//    /**
+//     * Author: laizhouhao 9:55 2019/4/30
+//     * @param id
+//     * @return response
+//     * @apiNote: 获取地址信息详细
+//     */
+//    @ApiOperation( value = "以一个id获取一条地址记录详情",notes = "2019-5-5 15:53:53已通过测试" )
+//    @GetMapping("address/{id}")
+//    @ApiImplicitParam(name = "id", value = "Address表的一个id", required = false, dataType = "Long" , paramType = "path")
+//    @ResponseBody
+//    public void receive(@PathVariable Long id, HttpServletResponse response) throws IOException {
+//        //设置返回的数据格式
+//        response.setContentType("application/json;charset=utf-8");
+//        //拼接缓存键名（字符串）
+//        String cacheName = AddressController.CacheNameHelper.Receive_CacheNamePrefix + id;
+//        //尝试在缓存中通过键名获取相应的键值
+//        //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
+//        String json = cache.get(cacheName);
+//        //如果在缓存中找不到，那就从数据库里找
+//        if(json == null){
+//            Address address = addressService.selectById(id);
+//            //把查询到的结果用Result工具类转换成json格式的字符串
+//            json = Result.build(ResultType.Success).appendData("address",address).convertIntoJSON();
+//            //如果有查询到数据，就把在数据库查到的数据放到缓存中
+//            if(address != null){
+//                cache.set(cacheName,json);
+//            }
+//        }
+//        //到最后通过response对象返回json格式字符串的数据
+//        response.getWriter().write(json);
+//
+//    }
 
-    }
+//    /**
+//     * Author: laizhouhao 16:26 2019/4/29
+//     * @return response
+//     * @apiNote: 查询地址的所有记录
+//     */
+//    @ApiOperation( value = "获取所有地址记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
+//    @GetMapping("addresses/listAll")
+//    @ResponseBody
+//    public void selectAll(HttpServletResponse response)throws Exception{
+//        response.setContentType("application/json;charset=utf-8");
+//        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName;
+//        String json = cache.get(cacheName);
+//        if(json==null){
+//            json = Result.build(ResultType.Success).appendData("addresses", addressService.selectAll()).convertIntoJSON();
+//            cache.set(json, cacheName);
+//        }
+//        response.getWriter().write(json);
+//    }
 
-    /**
-     * Author: laizhouhao 16:26 2019/4/29
-     * @return response
-     * @apiNote: 查询地址的所有记录
-     */
-    @ApiOperation( value = "获取所有地址记录的内容",notes = "2019-5-5 15:53:53已通过测试" )
-    @GetMapping("addresses/listAll")
-    @ResponseBody
-    public void selectAll(HttpServletResponse response)throws Exception{
-        response.setContentType("application/json;charset=utf-8");
-        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName;
-        String json = cache.get(cacheName);
-        if(json==null){
-            json = Result.build(ResultType.Success).appendData("addresses", addressService.selectAll()).convertIntoJSON();
-            cache.set(json, cacheName);
-        }
-        response.getWriter().write(json);
-    }
-
-    /**
-     * Author: chenenru 0:49 2019/5/5
-     * @apiNote: 根据用户的id查询对应的地址记录
-     */
-    @ApiOperation( value = "根据用户的id查询对应的地址的内容",notes = "2019-5-5 15:53:53已通过测试" )
-    @GetMapping("addressByUId/{userId}")
-    @ResponseBody
-    public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
-        response.setContentType("application/json;charset=utf-8");
-        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName+userId;
-        String json = cache.get(cacheName);
-        if(json == null){
-            json = Result.build(ResultType.Success)
-                    .appendData("addresses",addressService.selectByUserId(userId)).convertIntoJSON();
-            cache.set(cacheName,json);
-        }
-        response.getWriter().write(json);
-    }
+//    /**
+//     * Author: chenenru 0:49 2019/5/5
+//     * @apiNote: 根据用户的id查询对应的地址记录
+//     */
+//    @ApiOperation( value = "根据用户的id查询对应的地址的内容",notes = "2019-5-5 15:53:53已通过测试" )
+//    @GetMapping("addressByUId/{userId}")
+//    @ResponseBody
+//    public void selectByUserId(@PathVariable Long userId,HttpServletResponse response) throws IOException{
+//        response.setContentType("application/json;charset=utf-8");
+//        String cacheName = AddressController.CacheNameHelper.ListAll_CacheName+userId;
+//        String json = cache.get(cacheName);
+//        if(json == null){
+//            json = Result.build(ResultType.Success)
+//                    .appendData("addresses",addressService.selectByUserId(userId)).convertIntoJSON();
+//            cache.set(cacheName,json);
+//        }
+//        response.getWriter().write(json);
+//    }
 
     /**
      * Author: laizhouhao 16:40 2019/4/29
@@ -389,88 +407,30 @@ public class AddressController {
         return Result.build(ResultType.ParamError);
     }
 
-    /**
-     * Author: laizhouhao 20:11 2019/5/13
-     * @param requestMessage
-     * @return Result
-     * @apiNote: 申请修改地址信息, 点击申请时
-     */
-    @ApiOperation(value="申请修改地址信息, 点击申请时", notes="未测试")
-    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
-    @PostMapping("applyModifyAddress/")
-    @ResponseBody
-    public Result ApplyModifyAddress(@RequestBody RequestMessage requestMessage){
-        //判断前端传过来的值是否为空
-        if(requestMessage.getAddress()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
-            boolean success = addressService.clickApplyAddress(requestMessage);
-            if(success){
-                //清除相应的缓存
-                cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifyAddress111");
-                cache.delete(AddressController.CacheNameHelper.ListAll_CacheName);
-                return Result.build(ResultType.Success);
-            }else{
-                return Result.build(ResultType.Failed);
-            }
-        }
-        return Result.build(ResultType.ParamError);
-    }
-
-    /**
-     * Author: laizhouhao 21:29 2019/6/9
-     * @param user_id
-     * @return 用户的所有地址信息详情
-     * @apiNote: 根据用户id获取用户所有的地址信息详情
-     */
-    @ApiOperation( value = "根据用户id获取用户所有的地址信息详情",notes = "2019年6月9日 21:55:53 已通过测试" )
-    @GetMapping("/getAddress/{user_id}")
-    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
-    @ResponseBody
-    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
-        //检验页面传来的id是否存在
-        if(user_id != null){
-            //查找用户的所有地址实体
-            List<Address> addressList = addressService.selectByUserId(user_id);
-            //获取用户的所有地址信息详情
-            HashMap<String,Object>addrMap = new HashMap<>();
-            addressService.getAddress(addrMap, addressList);
-
-            //设置返回的数据格式
-            response.setContentType("application/json;charset=utf-8");
-            //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"Addres"+ user_id;
-            //尝试在缓存中通过键名获取相应的键值
-            //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
-            String json = cache.get(cacheName);
-            //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
-                json = Result.build(ResultType.Success)
-                        .appendData("userAddr",addrMap).convertIntoJSON();
-                cache.set(cacheName,json);
-            }
-            //到最后通过response对象返回json格式字符串的数据
-            response.getWriter().write(json);
-        }
-    }
-
-    /**
-     * <p>
-     *     上传文件方法
-     * </p>
-     * @param uploadDir 上传文件目录，如 F:\\file\\ , /home/file/
-     * @param file
-     * @return 文件名
-     * @throws Exception
-     */
-    private String executeUpload(String uploadDir, MultipartFile file) throws Exception{
-        //获取文件后缀名
-        //String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        //上传文件名
-        //String filename = CommonUtils.generateUUID() + suffix;
-        String filename = LocalDateTime.now() + "-" + file.getOriginalFilename();
-        //服务端保存的文件对象
-        File serverFile = new File(uploadDir + filename);
-        //将上传的文件写入服务器端文件内
-        file.transferTo(serverFile);
-        return filename;
-    }
+//    /**
+//     * Author: laizhouhao 20:11 2019/5/13
+//     * @param requestMessage
+//     * @return Result
+//     * @apiNote: 申请修改地址信息, 点击申请时
+//     */
+//    @ApiOperation(value="申请修改地址信息, 点击申请时", notes="未测试")
+//    @ApiImplicitParam(name = "requestMessage", value = "请求参数实体", required = true, dataType = "RequestMessage")
+//    @PostMapping("applyModifyAddress/")
+//    @ResponseBody
+//    public Result ApplyModifyAddress(@RequestBody RequestMessage requestMessage){
+//        //判断前端传过来的值是否为空
+//        if(requestMessage.getAddress()!=null && requestMessage.getByWho()!=null && requestMessage.getUserinfoApply()!=null){
+//            boolean success = addressService.clickApplyAddress(requestMessage);
+//            if(success){
+//                //清除相应的缓存
+//                cache.delete(AddressController.CacheNameHelper.Receive_CacheNamePrefix + "applyModifyAddress111");
+//                cache.delete(AddressController.CacheNameHelper.ListAll_CacheName);
+//                return Result.build(ResultType.Success);
+//            }else{
+//                return Result.build(ResultType.Failed);
+//            }
+//        }
+//        return Result.build(ResultType.ParamError);
+//    }
+//
 }

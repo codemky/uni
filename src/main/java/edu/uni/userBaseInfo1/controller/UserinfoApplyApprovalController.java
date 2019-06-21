@@ -363,7 +363,7 @@ public class UserinfoApplyApprovalController {
                     map.put("political",politicalAffiliationService.
                             selectPoliticalAffiliationById(employee.getPositionId()).getPolitical());
                     List<EmployPosition> employPositions =
-                            otherEmployPositionService.selectByEmployeeId(employee.getId());
+                            otherEmployPositionService.selectByEmployeeId(employee);
                     List<String> positions = new ArrayList<>();
                     for(EmployPosition employPosition : employPositions)
                         positions.add(positionService.select(employPosition.getPositionId()).getName());
@@ -382,7 +382,7 @@ public class UserinfoApplyApprovalController {
                 new_employee.put("political",politicalAffiliationService.
                         selectPoliticalAffiliationById(employee.getPositionId()).getPolitical());
                 List<EmployPosition> employPositions =
-                        otherEmployPositionService.selectByEmployeeId(employee.getId());
+                        otherEmployPositionService.selectByEmployeeId(employee);
                 List<String> positions = new ArrayList<>();
                 for(EmployPosition employPosition : employPositions)
                     positions.add(positionService.select(employPosition.getPositionId()).getName());
@@ -395,13 +395,23 @@ public class UserinfoApplyApprovalController {
                 result.appendData("new_info",userService.selectUserById(new_id));
                 break;
             case 9: //9为学生信息excel表
-                if( old_id != null)
-                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
+//                if( old_id != null)
+//                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
                 result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
                 break;
             case 10:  //10为教职工信息excel表
-                if( old_id != null)
-                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
+//                if( old_id != null)
+//                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id));
+                result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
+                break;
+            case 11: //11为学生信息excel表
+//                if( old_id != null)
+//                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id).getFileName());
+                result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
+                break;
+            case 12:  //12为教职工信息excel表
+//                if( old_id != null)
+//                    result.appendData("old_info",userUploadFileService.selectUserUploadFileById(old_id).getFileName());
                 result.appendData("new_info",userUploadFileService.selectUserUploadFileById(new_id));
                 break;
 

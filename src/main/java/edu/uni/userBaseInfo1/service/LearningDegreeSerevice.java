@@ -1,8 +1,10 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
+import edu.uni.userBaseInfo1.bean.EmployeeHistory;
 import edu.uni.userBaseInfo1.bean.LearningDegree;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
+import edu.uni.userBaseInfo1.bean.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +93,20 @@ public interface LearningDegreeSerevice {
     public void selectAllInfoToMap(HashMap map,LearningDegree learningDegree);
 
     /**
+     * Author: mokuanyuan 16:55 2019/6/13
+     * @param map
+     * @param learningDegree
+     * @param oldId
+     * @param newId
+     * @param loginUser
+     * @param modifiedUser
+     * @return boolean
+     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
+     */
+    public boolean readyForApply(HashMap<String, Object> map, LearningDegree learningDegree, Long oldId,
+                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser);
+
+    /**
      * Author: mokuanyuan 14:52 2019/6/12
      * @param oldId
      * @param newId
@@ -101,9 +117,10 @@ public interface LearningDegreeSerevice {
 
     /**
      * Author: laizhouhao 16:28 2019/6/10
-     * @param learningDgreeList
+     * @param learningDgree
+     * @param map
      * @return 用户的学历信息
-     * @apiNote: 根据用户的所有学历信息实体获取用户的所有学历信息详情
+     * @apiNote: 根据职员用户用户id获取职员用户的学历
      */
-    void getLearningDegree(HashMap<String,Object>map,List<LearningDegree>learningDgreeList);
+    public void getLearningDegree(HashMap<String, Object> map, LearningDegree learningDgree);
 }

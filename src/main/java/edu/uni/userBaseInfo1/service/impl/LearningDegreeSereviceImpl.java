@@ -10,13 +10,12 @@ import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.bean.LearningDegree;
 import edu.uni.userBaseInfo1.mapper.*;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author chenenru
@@ -254,6 +253,34 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
 
     }
 
+    @Override
+    public boolean readyForApply(HashMap<String, Object> map, LearningDegree learningDegree, Long oldId, Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+        //通过工具类获取在map包装好的对象属性
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyLearningDegree"),learningDegree);
+        //检验是否把该获取的信息都获取到了
+        if(!LearningDegree.isValidForApply(learningDegree))
+            return false;
+        boolean result = false;
+        if(learningDegree.getId() != -1){  //不是-1代表原本有旧数据
+            LearningDegree oldLearningDegree = selectLearningDegreeById(learningDegree.getId());
+            LearningDegree.copyPropertiesForApply(learningDegree,oldLearningDegree);
+            learningDegree.setByWho(loginUser.getId());
+            oldId = oldLearningDegree.getId();
+            result = insertLearningDegree(learningDegree) ;
+            newId = learningDegree.getId();
+
+        }
+        else{
+            learningDegree.setUserId(modifiedUser.getId());
+            learningDegree.setDatetime(new Date());
+            learningDegree.setByWho(loginUser.getId());
+            learningDegree.setDeleted(true);
+            result = insertLearningDegree(learningDegree) ;
+            newId = learningDegree.getId();
+        }
+        return result;
+    }
+
     /**
      * Author: mokuanyuan 14:52 2019/6/12
      * @param oldId
@@ -281,25 +308,22 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
 
     /**
      * Author: laizhouhao 16:28 2019/6/10
-     * @param learningDgreeList
+     * @param learningDgree
+     * @param map
      * @return 用户的学历信息
-     * @apiNote: 根据用户的所有学历信息实体获取用户的所有学历信息详情
+     * @apiNote: 根据职员用户用户id获取职员用户的学历
      */
     @Override
-    public void getLearningDegree(HashMap<String, Object> map, List<LearningDegree> learningDgreeList) {
+    public void getLearningDegree(HashMap<String, Object> map, LearningDegree learningDgree) {
         //获取用户的所有学历信息，并将放入map中
-        for (int i=0; i<learningDgreeList.size(); i++){
-            //判断该学历信息是否有效，有效则加入
-            if(learningDgreeList.get(i).getDeleted() == false){
-                map.put("id", learningDgreeList.get(i).getId());
-                map.put("BeginTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(learningDgreeList.get(i).getBeginTime()));
-                map.put("EndTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(learningDgreeList.get(i).getEndTime()));
-                map.put("Country",addrCountryService.selectAddrCountryById(learningDgreeList.get(i).getCountryId()).getCountryZh());
-                map.put("City", addrCityService.selectAddrCityById(learningDgreeList.get(i).getCityId()).getCityZh());
-                map.put("School","肇庆学院");
-                map.put("Acdemic", myAcademicService.selectById(learningDgreeList.get(i).getAcademicId()).getName());
-                map.put("AcademicDegree", myAcademicDegreeService.selectById(learningDgreeList.get(i).getDegreeId()).getName());
-            }
-        }
+        map.put("id", learningDgree.getId());
+        map.put("BeginTime",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(learningDgree.getBeginTime()));
+        map.put("EndTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(learningDgree.getEndTime()));
+        map.put("Country",addrCountryService.selectAddrCountryById(learningDgree.getCountryId()).getCountryZh());
+        map.put("City", addrCityService.selectAddrCityById(learningDgree.getCityId()).getCityZh());
+        map.put("School",otherUniversityService.selectValidById(learningDgree.getSchoolId()).getName());
+        map.put("Acdemic", myAcademicService.selectById(learningDgree.getAcademicId()).getName());
+        map.put("AcademicDegree", myAcademicDegreeService.selectById(learningDgree.getDegreeId()).getName());
+
     }
 }

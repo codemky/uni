@@ -36,6 +36,15 @@ public interface EmployeeService {
 
 
     /**
+     * Author: mokuanyuan 20:02 2019/6/9
+     * @param map
+     * @param employee
+     * @apiNote: 把employee对象里的id信息内容查询出来，并把相应的信息放进map里
+     */
+    public void selectByUserIdToMap(HashMap map , Employee employee);
+
+
+    /**
      * Author: chenenru 23:59 2019/4/29
      * @param
      * @return List<Employee>
