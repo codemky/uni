@@ -13,6 +13,7 @@ import edu.uni.place.bean.Field;
 import edu.uni.professionalcourses.bean.Specialty;
 import edu.uni.professionalcourses.service.SpecialtyService;
 import edu.uni.userBaseInfo1.PageBean.ClassmateBean;
+import edu.uni.userBaseInfo1.PageBean.EmployeeBean;
 import edu.uni.userBaseInfo1.service.OtherClassService;
 import edu.uni.userBaseInfo1.service.OtherClassmateService;
 import edu.uni.userBaseInfo1.service.OtherEmployService;
@@ -829,22 +830,32 @@ public class EmployeeController {
      * @apiNote: 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
      */
     @ApiOperation(value = "进行高级搜索校内所有职员的信息的前戏", notes = "未测试")
-    @GetMapping("filter/allemployees/{userId}")
+    @GetMapping("filter/employees/all")
     @ResponseBody
-    public void selectAllEmployeesToFilter(@PathVariable Long userId, HttpServletResponse response) throws IOException {
+    public void selectAllEmployeesToFilter(Long userId, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         String json = null;
         HashMap<String, Object> filtermessage = new HashMap<>();
         Set<String> departmentName = new HashSet<>();
         Set<String> subDepartmentName = new HashSet<>();
         Set<String> positionName = new HashSet<>();
-        Employee employee = new Employee();
-        List<Employee> employees1 = employeeService.selectValidEmployeeByUserId(userId);
-        if (employees1.size()>0){
-            employeeService.selectEmployeeBeanByUniId(employees1.get(0).getUniversityId());
+        List<EmployeeBean> employeeBeans = new ArrayList<>();
+        List<Employee> employees = employeeService.selectValidEmployeeByUserId(userId);
+        if (employees.size()>0){
+            employeeBeans = employeeService.selectEmployeeBeanByUniId(employees.get(0).getUniversityId());
+            for (EmployeeBean e:employeeBeans) {
+                if (e.getDepartmentName()!=null){
+                    departmentName.add(e.getDepartmentName());
+                }
+                if (e.getSubDepartmentName()!=null){
+                    subDepartmentName.add(e.getSubDepartmentName());
+                }
+                if (e.getPositionName()!=null){
+                    positionName.add(e.getPositionName());
+                }
+            }
         }
-
-        List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));
+        /*List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));
         for (Employee e : employees) {
             System.out.println("职员：" + e.toString());
             //学院 department
@@ -863,7 +874,7 @@ public class EmployeeController {
             if (position != null) {
                 positionName.add(position.getName());
             }
-        }
+        }*/
         filtermessage.put("departmentName", departmentName);
         filtermessage.put("subDepartmentName", subDepartmentName);
         filtermessage.put("positionName", positionName);
@@ -880,88 +891,73 @@ public class EmployeeController {
      * 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
      */
     @ApiOperation(value = "领导查询校内所有职员的信息，进行高级搜索", notes = "未测试")
-    @PostMapping("filter/allemployees")
+    @PostMapping("filter/allemployees/{userId}")
     @ResponseBody
-    public void selectAllClassmatesByFilter(String[] employeeNames, String[] departmentNames, String[] subDepartments, String[] positionNames, HttpServletResponse response) throws IOException {
+    public void selectAllClassmatesByFilter(@PathVariable Long userId ,String[] employeeNames, String[] departmentNames, String[] subDepartmentNames, String[] positionNames, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         String json = null;
         int flag = 0;
-        HashMap<Object, HashMap<String, String>> employeeBean = new HashMap<>();
         edu.uni.auth.bean.User AuthUser = authService.getUser();
-        List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));//AuthUser.getUniversityId()
-        for (Employee e : employees) {
-            HashMap<String, String> employeeMap = new HashMap<>();
-            employeeMap.put("employeeNo", e.getEmpNo());
-            List<Picture> pictures = pictureService.selectByUserId(e.getUserId());
-            if (pictures.size()>0){
-                employeeMap.put("picture", pictures.get(0).getPictureName());
-            }
-            User user = userService.selectUserById(e.getUserId());
-            if (user!=null){
-                employeeMap.put("username", user.getUserName());
-            }
-            employeeMap.put("universityName", "肇庆学院");//AuthUser.getUniversity().getName());
-            employeeMap.put("departmentName", otherDepartmentService.selectValidById(e.getDepartmentId()).get(0).getName());
-            employeeMap.put("subDepartmentName", subdepartmentService.select(e.getSubdepartmentId()).getName());
-            employeeMap.put("positionName", positionService.select(e.getPositionId()).getName());
-            flag = 0;
-            if (employeeNames != null) {
-                for (int i = 0; i < employeeNames.length; i++) {
-                    boolean username = employeeMap.get("username").contains(employeeNames[i]);
-                    if (!username){
+        List<Employee> employees = employeeService.selectValidEmployeeByUserId(userId);
+        List<EmployeeBean> employeeBeans =new ArrayList<>();
+        List<EmployeeBean> employeeBean = new ArrayList<>();
+        if (employees.size()>0) {
+            employeeBeans = employeeService.selectEmployeeBeanByUniId(employees.get(0).getUniversityId());
+            for (EmployeeBean e : employeeBeans) {
+                flag = 0;
+                if (employeeNames!=null){
+                    if (e.getUsername()!=null){
+                        for(int i=0;i<employeeNames.length;i++){
+                            if (employeeNames[i].equals(e.getUsername())){
+                                flag = 1;
+                            }
+                        }
+                    }
+                    if (flag!=1){
                         continue;
-                    }else {
-                        flag=1;
-                        break;
                     }
                 }
-                if (flag!=1){
-                    continue;
-                }
-            }
-            flag = 0;
-            if (departmentNames != null) {
-                for (int i = 0; i < departmentNames.length; i++) {
-                    if (!employeeMap.get("deparmentName").equals(departmentNames[i])) {
+                flag = 0;
+                if (departmentNames!=null){
+                    if (e.getDepartmentName()!=null){
+                        for (int i=0;i<departmentNames.length;i++){
+                            if (e.getDepartmentName().equals(departmentNames[i])){
+                                flag = 1;
+                            }
+                        }
+                    }
+                    if (flag!=1){
                         continue;
-                    }else {
-                        flag=1;
-                        break;
                     }
                 }
-                if (flag!=1){
-                    continue;
-                }
-            }
-            flag = 0;
-            if (subDepartments != null) {
-                for (int i = 0; i < subDepartments.length; i++) {
-                    if (!employeeMap.get("subDepartmentName").equals(subDepartments[i])) {
+                flag = 0;
+                if (subDepartmentNames!=null){
+                    if (e.getSubDepartmentName()!=null){
+                        for (int i=0;i<subDepartmentNames.length;i++){
+                            if (e.getSubDepartmentName().equals(subDepartmentNames[i])){
+                                flag = 1;
+                            }
+                        }
+                    }
+                    if (flag !=1){
                         continue;
-                    } else {
-                        flag = 1;
-                        break;
                     }
                 }
-                if (flag != 1) {
-                    continue;
-                }
-            }
-            flag = 0;
-            if (positionNames != null) {
-                for (int i = 0; i < positionNames.length; i++) {
-                    if (!employeeMap.get("positionName").equals(positionNames[i])) {
+                flag =0;
+                if (positionNames!=null){
+                    if (e.getPositionName()!=null){
+                        for (int i=0;i<positionNames.length;i++){
+                            if (e.getPositionName().equals(positionNames[i])){
+                                flag = 1;
+                            }
+                        }
+                    }
+                    if (flag!=1){
                         continue;
-                    }else {
-                        flag=1;
-                        break;
                     }
                 }
-                if (flag!=1){
-                    continue;
-                }
+                employeeBean.add(e);
             }
-            employeeBean.put(e.getId(), employeeMap);
         }
         json = Result.build(ResultType.Success).appendData("employeeBean", employeeBean).convertIntoJSON();
         response.getWriter().write(json);
