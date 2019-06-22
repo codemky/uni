@@ -535,6 +535,31 @@ public class StudentController {
         }
     }
 
+    @ApiOperation(value="学生根据自己的userId查询班级学生信息", notes="未测试")
+    @PostMapping("student/allClassmates/{userId}")
+    @ResponseBody
+    public  void selectClassesByClassId(@PathVariable Long userId, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=utf-8");
+        String json = null;
+        List<Student> students = studentService.selectByUserId(userId);
+        List<Classmate> classmates = new ArrayList<>();
+        HashMap<Long,Object> classmateMessages = new HashMap<>();
+        if (students.size()>0){
+            classmates = otherClassmateService.selectByClassId(students.get(0).getClassId());
+            for (int i=0;i<classmates.size();i++){
+                Student student = studentService.selectById(classmates.get(i).getStudentId());
+                User user = userService.selectUserById(student.getUserId());
+                HashMap<String,String> classmateMessage = new HashMap<>();
+                classmateMessage.put("stuno",student.getStuNo());
+                classmateMessage.put("userName",user.getUserName());
+                classmateMessages.put(classmates.get(i).getId(),classmateMessage);
+            }
+        }
+        json = Result.build(ResultType.Success).appendData("classmateMessages", classmateMessages).convertIntoJSON();
+        response.getWriter().write(json);
+    }
+
+
 
 
 //    /**
