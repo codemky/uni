@@ -1,6 +1,8 @@
 package edu.uni.userBaseInfo1.service;
 
 import com.github.pagehelper.PageInfo;
+import edu.uni.userBaseInfo1.PageBean.ClassmateBean;
+import edu.uni.userBaseInfo1.PageBean.EmployeeBean;
 import edu.uni.userBaseInfo1.bean.Employee;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
 import edu.uni.userBaseInfo1.bean.User;
@@ -159,6 +161,19 @@ public interface EmployeeService {
 //     * @apiNote: 用户点击申请修改职员
 //     */
 //    boolean clickApplyEmployee(RequestMessage requestMessage);
-
+    /**
+     * Author: chenenru 16:45 2019/6/22
+     * @param
+     * @return
+     * @apiNote: 领导查询班级学生
+     */
+    List<ClassmateBean> selecClassMateBeantByUserId(Long userId);
+    /**
+     * Author: chenenru 20:51 2019/6/22
+     * @param
+     * @return
+     * @apiNote: 领导查询职员
+     */
+    List<EmployeeBean> selectEmployeeBeanByUniId(Long uniId);
 
 }

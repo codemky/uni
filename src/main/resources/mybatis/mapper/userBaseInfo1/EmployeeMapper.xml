@@ -1,362 +1,379 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="edu.uni.userBaseInfo1.mapper.EmployeeMapper" >
-  <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.Employee" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="user_id" property="userId" jdbcType="BIGINT" />
-    <result column="university_id" property="universityId" jdbcType="BIGINT" />
-    <result column="emp_no" property="empNo" jdbcType="VARCHAR" />
-    <result column="department_id" property="departmentId" jdbcType="BIGINT" />
-    <result column="subdepartment_id" property="subdepartmentId" jdbcType="BIGINT" />
-    <result column="employ_history_id" property="employHistoryId" jdbcType="BIGINT" />
-    <result column="discipline_id" property="disciplineId" jdbcType="BIGINT" />
-    <result column="political_id" property="politicalId" jdbcType="BIGINT" />
-    <result column="position_id" property="positionId" jdbcType="BIGINT" />
-    <result column="home_address_id" property="homeAddressId" jdbcType="BIGINT" />
-    <result column="phone_ecomm_id" property="phoneEcommId" jdbcType="BIGINT" />
-    <result column="datetime" property="datetime" jdbcType="TIMESTAMP" />
-    <result column="by_who" property="byWho" jdbcType="BIGINT" />
-    <result column="deleted" property="deleted" jdbcType="BIT" />
-  </resultMap>
-  <!--<resultMap id="classBeanMap" type="edu.uni.userBaseInfo1.PageBean.ClassBean">
-    <id column="id" property="classId" jdbcType="LONG"></id>
-    <result column="code" property="code" jdbcType="VARCHAR"></result>
-    <result column="user_name" property="headteacher" jdbcType="CHAR"></result>
-    <result column="user_name" property="moniter" jdbcType="CHAR"></result>
-    <result column="name" property="name" jdbcType="VARCHAR"></result>
-    <result column="number" property="number" jdbcType="INTEGER"></result>
-  </resultMap>-->
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+<mapper namespace="edu.uni.userBaseInfo1.mapper.EmployeeMapper">
+    <resultMap id="BaseResultMap" type="edu.uni.userBaseInfo1.bean.Employee">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="university_id" property="universityId" jdbcType="BIGINT"/>
+        <result column="emp_no" property="empNo" jdbcType="VARCHAR"/>
+        <result column="department_id" property="departmentId" jdbcType="BIGINT"/>
+        <result column="subdepartment_id" property="subdepartmentId" jdbcType="BIGINT"/>
+        <result column="employ_history_id" property="employHistoryId" jdbcType="BIGINT"/>
+        <result column="discipline_id" property="disciplineId" jdbcType="BIGINT"/>
+        <result column="political_id" property="politicalId" jdbcType="BIGINT"/>
+        <result column="position_id" property="positionId" jdbcType="BIGINT"/>
+        <result column="home_address_id" property="homeAddressId" jdbcType="BIGINT"/>
+        <result column="phone_ecomm_id" property="phoneEcommId" jdbcType="BIGINT"/>
+        <result column="datetime" property="datetime" jdbcType="TIMESTAMP"/>
+        <result column="by_who" property="byWho" jdbcType="BIGINT"/>
+        <result column="deleted" property="deleted" jdbcType="BIT"/>
+    </resultMap>
+    <resultMap id="classmateBeanMap" type="edu.uni.userBaseInfo1.PageBean.ClassmateBean">
+        <id column="id" property="userId" jdbcType="BIGINT"></id>
+        <result column="studentId" property="studentId" jdbcType="BIGINT"></result>
+        <result column="stu_no" property="studentNo" jdbcType="VARCHAR"></result>
+        <result column="studentName" property="studentName" jdbcType="CHAR"></result>
+        <result column="regist" property="beginLearnDate" jdbcType="TIMESTAMP"></result>
+        <result column="specialty" property="specialty" jdbcType="VARCHAR"></result>
+        <result column="grade" property="grade" jdbcType="CHAR"></result>
+        <result column="user_sex" property="sex" jdbcType="INTEGER"></result>
+        <result column="content" property="phone" jdbcType="CHAR"></result>
+        <result column="political" property="political" jdbcType="CHAR"></result>
+        <result column="position" property="position" jdbcType="VARCHAR"></result>
+        <result column="className" property="className" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <resultMap id="employeeBeanMap" type="edu.uni.userBaseInfo1.PageBean.EmployeeBean">
+        <result column="employeeNo" property="employeeNo" jdbcType="VARCHAR"></result>
+        <result column="username" property="username" jdbcType="VARCHAR"></result>
+        <result column="universityName" property="universityName" jdbcType="VARCHAR"></result>
+        <result column="departmentName" property="departmentName" jdbcType="VARCHAR"></result>
+        <result column="subDepartmentName" property="subDepartmentName" jdbcType="VARCHAR"></result>
+        <result column="positionName" property="positionName" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List" >
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
     id, user_id, university_id, emp_no, department_id, subdepartment_id, employ_history_id, 
     discipline_id, political_id, position_id, home_address_id, phone_ecomm_id, datetime, 
     by_who, deleted
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from employee
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from employee
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from employee
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from employee
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from employee
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample" >
-    delete from employee
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
-    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into employee (user_id, university_id, emp_no, 
-      department_id, subdepartment_id, employ_history_id, 
-      discipline_id, political_id, position_id, 
-      home_address_id, phone_ecomm_id, datetime, 
-      by_who, deleted)
-    values (#{userId,jdbcType=BIGINT}, #{universityId,jdbcType=BIGINT}, #{empNo,jdbcType=VARCHAR}, 
-      #{departmentId,jdbcType=BIGINT}, #{subdepartmentId,jdbcType=BIGINT}, #{employHistoryId,jdbcType=BIGINT}, 
-      #{disciplineId,jdbcType=BIGINT}, #{politicalId,jdbcType=BIGINT}, #{positionId,jdbcType=BIGINT}, 
-      #{homeAddressId,jdbcType=BIGINT}, #{phoneEcommId,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP}, 
-      #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
-  </insert>
-  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
-    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into employee
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="userId != null" >
-        user_id,
-      </if>
-      <if test="universityId != null" >
-        university_id,
-      </if>
-      <if test="empNo != null" >
-        emp_no,
-      </if>
-      <if test="departmentId != null" >
-        department_id,
-      </if>
-      <if test="subdepartmentId != null" >
-        subdepartment_id,
-      </if>
-      <if test="employHistoryId != null" >
-        employ_history_id,
-      </if>
-      <if test="disciplineId != null" >
-        discipline_id,
-      </if>
-      <if test="politicalId != null" >
-        political_id,
-      </if>
-      <if test="positionId != null" >
-        position_id,
-      </if>
-      <if test="homeAddressId != null" >
-        home_address_id,
-      </if>
-      <if test="phoneEcommId != null" >
-        phone_ecomm_id,
-      </if>
-      <if test="datetime != null" >
-        datetime,
-      </if>
-      <if test="byWho != null" >
-        by_who,
-      </if>
-      <if test="deleted != null" >
-        deleted,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="universityId != null" >
-        #{universityId,jdbcType=BIGINT},
-      </if>
-      <if test="empNo != null" >
-        #{empNo,jdbcType=VARCHAR},
-      </if>
-      <if test="departmentId != null" >
-        #{departmentId,jdbcType=BIGINT},
-      </if>
-      <if test="subdepartmentId != null" >
-        #{subdepartmentId,jdbcType=BIGINT},
-      </if>
-      <if test="employHistoryId != null" >
-        #{employHistoryId,jdbcType=BIGINT},
-      </if>
-      <if test="disciplineId != null" >
-        #{disciplineId,jdbcType=BIGINT},
-      </if>
-      <if test="politicalId != null" >
-        #{politicalId,jdbcType=BIGINT},
-      </if>
-      <if test="positionId != null" >
-        #{positionId,jdbcType=BIGINT},
-      </if>
-      <if test="homeAddressId != null" >
-        #{homeAddressId,jdbcType=BIGINT},
-      </if>
-      <if test="phoneEcommId != null" >
-        #{phoneEcommId,jdbcType=BIGINT},
-      </if>
-      <if test="datetime != null" >
-        #{datetime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="byWho != null" >
-        #{byWho,jdbcType=BIGINT},
-      </if>
-      <if test="deleted != null" >
-        #{deleted,jdbcType=BIT},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample" resultType="java.lang.Integer" >
-    select count(*) from employee
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update employee
-    <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.userId != null" >
+    <delete id="deleteByExample" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample">
+        delete from employee
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.Employee">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into employee (user_id, university_id, emp_no,
+        department_id, subdepartment_id, employ_history_id,
+        discipline_id, political_id, position_id,
+        home_address_id, phone_ecomm_id, datetime,
+        by_who, deleted)
+        values (#{userId,jdbcType=BIGINT}, #{universityId,jdbcType=BIGINT}, #{empNo,jdbcType=VARCHAR},
+        #{departmentId,jdbcType=BIGINT}, #{subdepartmentId,jdbcType=BIGINT}, #{employHistoryId,jdbcType=BIGINT},
+        #{disciplineId,jdbcType=BIGINT}, #{politicalId,jdbcType=BIGINT}, #{positionId,jdbcType=BIGINT},
+        #{homeAddressId,jdbcType=BIGINT}, #{phoneEcommId,jdbcType=BIGINT}, #{datetime,jdbcType=TIMESTAMP},
+        #{byWho,jdbcType=BIGINT}, #{deleted,jdbcType=BIT})
+    </insert>
+    <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.Employee">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="universityId != null">
+                university_id,
+            </if>
+            <if test="empNo != null">
+                emp_no,
+            </if>
+            <if test="departmentId != null">
+                department_id,
+            </if>
+            <if test="subdepartmentId != null">
+                subdepartment_id,
+            </if>
+            <if test="employHistoryId != null">
+                employ_history_id,
+            </if>
+            <if test="disciplineId != null">
+                discipline_id,
+            </if>
+            <if test="politicalId != null">
+                political_id,
+            </if>
+            <if test="positionId != null">
+                position_id,
+            </if>
+            <if test="homeAddressId != null">
+                home_address_id,
+            </if>
+            <if test="phoneEcommId != null">
+                phone_ecomm_id,
+            </if>
+            <if test="datetime != null">
+                datetime,
+            </if>
+            <if test="byWho != null">
+                by_who,
+            </if>
+            <if test="deleted != null">
+                deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="universityId != null">
+                #{universityId,jdbcType=BIGINT},
+            </if>
+            <if test="empNo != null">
+                #{empNo,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null">
+                #{departmentId,jdbcType=BIGINT},
+            </if>
+            <if test="subdepartmentId != null">
+                #{subdepartmentId,jdbcType=BIGINT},
+            </if>
+            <if test="employHistoryId != null">
+                #{employHistoryId,jdbcType=BIGINT},
+            </if>
+            <if test="disciplineId != null">
+                #{disciplineId,jdbcType=BIGINT},
+            </if>
+            <if test="politicalId != null">
+                #{politicalId,jdbcType=BIGINT},
+            </if>
+            <if test="positionId != null">
+                #{positionId,jdbcType=BIGINT},
+            </if>
+            <if test="homeAddressId != null">
+                #{homeAddressId,jdbcType=BIGINT},
+            </if>
+            <if test="phoneEcommId != null">
+                #{phoneEcommId,jdbcType=BIGINT},
+            </if>
+            <if test="datetime != null">
+                #{datetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="byWho != null">
+                #{byWho,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="edu.uni.userBaseInfo1.bean.EmployeeExample"
+            resultType="java.lang.Integer">
+        select count(*) from employee
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update employee
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=BIGINT},
+            </if>
+            <if test="record.universityId != null">
+                university_id = #{record.universityId,jdbcType=BIGINT},
+            </if>
+            <if test="record.empNo != null">
+                emp_no = #{record.empNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record.departmentId != null">
+                department_id = #{record.departmentId,jdbcType=BIGINT},
+            </if>
+            <if test="record.subdepartmentId != null">
+                subdepartment_id = #{record.subdepartmentId,jdbcType=BIGINT},
+            </if>
+            <if test="record.employHistoryId != null">
+                employ_history_id = #{record.employHistoryId,jdbcType=BIGINT},
+            </if>
+            <if test="record.disciplineId != null">
+                discipline_id = #{record.disciplineId,jdbcType=BIGINT},
+            </if>
+            <if test="record.politicalId != null">
+                political_id = #{record.politicalId,jdbcType=BIGINT},
+            </if>
+            <if test="record.positionId != null">
+                position_id = #{record.positionId,jdbcType=BIGINT},
+            </if>
+            <if test="record.homeAddressId != null">
+                home_address_id = #{record.homeAddressId,jdbcType=BIGINT},
+            </if>
+            <if test="record.phoneEcommId != null">
+                phone_ecomm_id = #{record.phoneEcommId,jdbcType=BIGINT},
+            </if>
+            <if test="record.datetime != null">
+                datetime = #{record.datetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.byWho != null">
+                by_who = #{record.byWho,jdbcType=BIGINT},
+            </if>
+            <if test="record.deleted != null">
+                deleted = #{record.deleted,jdbcType=BIT},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update employee
+        set id = #{record.id,jdbcType=BIGINT},
         user_id = #{record.userId,jdbcType=BIGINT},
-      </if>
-      <if test="record.universityId != null" >
         university_id = #{record.universityId,jdbcType=BIGINT},
-      </if>
-      <if test="record.empNo != null" >
         emp_no = #{record.empNo,jdbcType=VARCHAR},
-      </if>
-      <if test="record.departmentId != null" >
         department_id = #{record.departmentId,jdbcType=BIGINT},
-      </if>
-      <if test="record.subdepartmentId != null" >
         subdepartment_id = #{record.subdepartmentId,jdbcType=BIGINT},
-      </if>
-      <if test="record.employHistoryId != null" >
         employ_history_id = #{record.employHistoryId,jdbcType=BIGINT},
-      </if>
-      <if test="record.disciplineId != null" >
         discipline_id = #{record.disciplineId,jdbcType=BIGINT},
-      </if>
-      <if test="record.politicalId != null" >
         political_id = #{record.politicalId,jdbcType=BIGINT},
-      </if>
-      <if test="record.positionId != null" >
         position_id = #{record.positionId,jdbcType=BIGINT},
-      </if>
-      <if test="record.homeAddressId != null" >
         home_address_id = #{record.homeAddressId,jdbcType=BIGINT},
-      </if>
-      <if test="record.phoneEcommId != null" >
         phone_ecomm_id = #{record.phoneEcommId,jdbcType=BIGINT},
-      </if>
-      <if test="record.datetime != null" >
         datetime = #{record.datetime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.byWho != null" >
         by_who = #{record.byWho,jdbcType=BIGINT},
-      </if>
-      <if test="record.deleted != null" >
-        deleted = #{record.deleted,jdbcType=BIT},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map" >
-    update employee
-    set id = #{record.id,jdbcType=BIGINT},
-      user_id = #{record.userId,jdbcType=BIGINT},
-      university_id = #{record.universityId,jdbcType=BIGINT},
-      emp_no = #{record.empNo,jdbcType=VARCHAR},
-      department_id = #{record.departmentId,jdbcType=BIGINT},
-      subdepartment_id = #{record.subdepartmentId,jdbcType=BIGINT},
-      employ_history_id = #{record.employHistoryId,jdbcType=BIGINT},
-      discipline_id = #{record.disciplineId,jdbcType=BIGINT},
-      political_id = #{record.politicalId,jdbcType=BIGINT},
-      position_id = #{record.positionId,jdbcType=BIGINT},
-      home_address_id = #{record.homeAddressId,jdbcType=BIGINT},
-      phone_ecomm_id = #{record.phoneEcommId,jdbcType=BIGINT},
-      datetime = #{record.datetime,jdbcType=TIMESTAMP},
-      by_who = #{record.byWho,jdbcType=BIGINT},
-      deleted = #{record.deleted,jdbcType=BIT}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
-    update employee
-    <set >
-      <if test="userId != null" >
-        user_id = #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="universityId != null" >
-        university_id = #{universityId,jdbcType=BIGINT},
-      </if>
-      <if test="empNo != null" >
-        emp_no = #{empNo,jdbcType=VARCHAR},
-      </if>
-      <if test="departmentId != null" >
-        department_id = #{departmentId,jdbcType=BIGINT},
-      </if>
-      <if test="subdepartmentId != null" >
-        subdepartment_id = #{subdepartmentId,jdbcType=BIGINT},
-      </if>
-      <if test="employHistoryId != null" >
-        employ_history_id = #{employHistoryId,jdbcType=BIGINT},
-      </if>
-      <if test="disciplineId != null" >
-        discipline_id = #{disciplineId,jdbcType=BIGINT},
-      </if>
-      <if test="politicalId != null" >
-        political_id = #{politicalId,jdbcType=BIGINT},
-      </if>
-      <if test="positionId != null" >
-        position_id = #{positionId,jdbcType=BIGINT},
-      </if>
-      <if test="homeAddressId != null" >
-        home_address_id = #{homeAddressId,jdbcType=BIGINT},
-      </if>
-      <if test="phoneEcommId != null" >
-        phone_ecomm_id = #{phoneEcommId,jdbcType=BIGINT},
-      </if>
-      <if test="datetime != null" >
-        datetime = #{datetime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="byWho != null" >
-        by_who = #{byWho,jdbcType=BIGINT},
-      </if>
-      <if test="deleted != null" >
-        deleted = #{deleted,jdbcType=BIT},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.Employee" >
+        deleted = #{record.deleted,jdbcType=BIT}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="edu.uni.userBaseInfo1.bean.Employee">
+        update employee
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="universityId != null">
+                university_id = #{universityId,jdbcType=BIGINT},
+            </if>
+            <if test="empNo != null">
+                emp_no = #{empNo,jdbcType=VARCHAR},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId,jdbcType=BIGINT},
+            </if>
+            <if test="subdepartmentId != null">
+                subdepartment_id = #{subdepartmentId,jdbcType=BIGINT},
+            </if>
+            <if test="employHistoryId != null">
+                employ_history_id = #{employHistoryId,jdbcType=BIGINT},
+            </if>
+            <if test="disciplineId != null">
+                discipline_id = #{disciplineId,jdbcType=BIGINT},
+            </if>
+            <if test="politicalId != null">
+                political_id = #{politicalId,jdbcType=BIGINT},
+            </if>
+            <if test="positionId != null">
+                position_id = #{positionId,jdbcType=BIGINT},
+            </if>
+            <if test="homeAddressId != null">
+                home_address_id = #{homeAddressId,jdbcType=BIGINT},
+            </if>
+            <if test="phoneEcommId != null">
+                phone_ecomm_id = #{phoneEcommId,jdbcType=BIGINT},
+            </if>
+            <if test="datetime != null">
+                datetime = #{datetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="byWho != null">
+                by_who = #{byWho,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null">
+                deleted = #{deleted,jdbcType=BIT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="edu.uni.userBaseInfo1.bean.Employee">
     update employee
     set user_id = #{userId,jdbcType=BIGINT},
       university_id = #{universityId,jdbcType=BIGINT},
@@ -374,12 +391,32 @@
       deleted = #{deleted,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <!--<select id="selectClassBean" parameterType="java.lang.Long">
-    select class.id,class.code,user.user_name in (
-    select user_name from class,user,employee where class.headteacher=employee.id and employee.user_id=user.id and user.id=#{userId,jdbcType=BIGINT}),
-    user.user_name in (
-    select user_name from user,class,classmate,classmate_position,position where student.user_id=user.id and classmate.student_id = student.id and  class.id = classmate.classId and
-classmate.id=classmate_position.classmate_id and classmate_position.position_id=position.id and position.name='班长'
-    ),name,number from class,classmate,employee,user,student,classmate_position,position
-  </select>-->
+    <select id="selectClassmateBean" parameterType="java.lang.Long" resultMap="classmateBeanMap">
+    select user.id,student.id as studentId,student.stu_no,user.name as studentName,user.regist,
+    specialty.name as specialty,student.grade,user.user_sex,ecomm.content,
+    political_affiliation.political as political,position.name as position,class.name as className
+    from employee
+    LEFT JOIN department on employee.department_id =department.id
+    LEFT JOIN class on class.department_id = department.id
+    LEFT JOIN classmate on classmate.class_id = class.id
+    LEFT JOIN classmate_position on classmate.id = classmate_position.classmate_id
+    LEFT JOIN position on classmate_position.position_id = position.id
+    LEFT JOIN student on student.id  =classmate.student_id
+    LEFT JOIN specialty on student.specialty_id = specialty.id
+    LEFT JOIN ecomm on ecomm.id =student.phone_ecomm_id
+    LEFT JOIN user on user.id = student.user_id
+    LEFT JOIN political_affiliation on student.political_id = political_affiliation.id
+    where employee.user_id=#{userId,jdbcType=BIGINT}
+  </select>
+    <select id="selectEmployeeBean" parameterType="java.lang.Long" resultMap="employeeBeanMap">
+    select employee.emp_no as employeeNo,user.name as username,university.name asuniversityName,
+    department.name as departmentName,subdepartment.name as subDepartmentName,position.name as positionName
+    from employee
+    LEFT JOIN uni.user on user.id = employee.user_id
+    LEFT JOIN university on employee.university_id = university.id
+    LEFT JOIN department on employee.department_id = department.id
+    LEFT JOIN subdepartment on employee.subdepartment_id = subdepartment.id
+    LEFT JOIN position on employee.position_id = position.id
+    where employee.university_id = #{uniId,jdbcType=BIGINT}
+    </select>
 </mapper>

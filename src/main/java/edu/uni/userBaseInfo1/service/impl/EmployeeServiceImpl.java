@@ -16,6 +16,8 @@ import edu.uni.auth.service.RoleService;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.place.service.FieldService;
 import edu.uni.professionalcourses.service.SpecialtyService;
+import edu.uni.userBaseInfo1.PageBean.ClassmateBean;
+import edu.uni.userBaseInfo1.PageBean.EmployeeBean;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.controller.UserinfoApplyApprovalController;
 import edu.uni.userBaseInfo1.mapper.EmployeeMapper;
@@ -464,6 +466,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         return userInfo;
     }
 
+    @Override
+    public List<ClassmateBean> selecClassMateBeantByUserId(Long userId) {
+        List<ClassmateBean> classmateBeans = employeeMapper.selectClassmateBean(userId);
+        return classmateBeans;
+    }
+
+    @Override
+    public List<EmployeeBean> selectEmployeeBeanByUniId(Long uniId) {
+        List<EmployeeBean> employeeBeans = employeeMapper.selectEmployeeBean(uniId);
+        return employeeBeans;
+    }
 
 
 }

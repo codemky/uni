@@ -67,6 +67,7 @@ public class OtherClassController {
         longs.add(employee.getId());
         List<Curriculum> curricula = curriculumService.selectCurriculumByCondition(null, longs, null, null);
         ClassBean classBean = new ClassBean();
+        Set<ClassBean> classBeans = new HashSet<>();
         int i=0;
         String json = null;
         for (Curriculum c:curricula) {
@@ -90,9 +91,10 @@ public class OtherClassController {
                     continue;
                 }
             }
+            classBeans.add(classBean);
         }
         //System.out.println(classBean);
-        json = Result.build(ResultType.Success).appendData("classBean", classBean).convertIntoJSON();
+        json = Result.build(ResultType.Success).appendData("classBeans", classBeans).convertIntoJSON();
         response.getWriter().write(json);
     }
 }

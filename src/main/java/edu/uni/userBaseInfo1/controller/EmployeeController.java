@@ -654,54 +654,41 @@ public class EmployeeController {
     @ResponseBody
     public void selectAllClassmatesToFilter(Long userId, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
+        System.out.println(new Date());
         String json = null;
         HashMap<String, Object> filtermessage = new HashMap<>();
+        Set<String> className = new HashSet<>();
+        Set<String> specialtyName = new HashSet<>();
+        Set<String> cyaer = new HashSet<>();
+        Set<String> political = new HashSet<>();
+        Set<String> position = new HashSet<>();
         List<Employee> employees = employeeService.selectByUserId(userId);
         if (employees != null) {
-            Employ employ = otherEmployService.selectEmployByEmployeeId(employees.get(0).getId(), employees.get(0).getUniversityId());
-            List<Department> departments = otherDepartmentService.selectValidById(employ.getDepartmentId());
-            if (departments != null) {
-                List<String> className = new ArrayList<>();
-                Set<String> specialtyName = new HashSet<>();
-                Set<String> cyaer = new HashSet<>();
-                Set<String> political = new HashSet<>();
-                Set<String> position = new HashSet<>();
-                //查询所有的班级class、专业Specialty、年级student、岗位Position 和 政治面貌politicalAffiliation
-                List<Class> classes = otherClassService.selectAllClassByDepartmentId(departments.get(0).getId());
-                for (Class c : classes) {
-                    //所有班级
-                    className.add(c.getName());
-                    //所有专业
-                    Specialty select = specialtyService.select(c.getSpecialtyId());
-                    specialtyName.add(select.getName());
-                    //所有年级
-                    cyaer.add(String.valueOf(c.getCyear()));
-                    //所有岗位
-                    List<Classmate> classmates = otherClassmateService.selectByClassId(c.getId());
-                    for (Classmate cm : classmates) {
-                        Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
-                        List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
-                        if (classmatePositions != null) {
-                            for (ClassmatePosition cp : classmatePositions) {
-                                Position position1 = positionService.select(cp.getPositionId());
-                                if (position1 != null) {
-                                    position.add(position1.getName());
-                                }
-                            }
-                        }
-                        //所有政治面貌
-                        PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
-                        political.add(politicalAffiliation.getPolitical());
-                    }
+            List<ClassmateBean> classmateBeans = employeeService.selecClassMateBeantByUserId(employees.get(0).getUserId());
+            for (ClassmateBean c:classmateBeans) {
+                if (c.getClassName()!=null){
+                    className.add(c.getClassName());
                 }
-                filtermessage.put("className", className);
-                filtermessage.put("specialtyName", specialtyName);
-                filtermessage.put("gradeName", cyaer);
-                filtermessage.put("politicalName", political);
-                filtermessage.put("positionName", position);
-
+                if (c.getSpecialty()!=null){
+                    specialtyName.add(c.getSpecialty());
+                }
+                if (c.getGrade()!=null){
+                    cyaer.add(c.getGrade());
+                }
+                if (c.getPolitical()!=null){
+                    political.add(c.getPolitical());
+                }
+                if (c.getPosition()!=null){
+                    position.add(c.getPosition());
+                }
             }
         }
+        filtermessage.put("className", className);
+        filtermessage.put("specialtyName", specialtyName);
+        filtermessage.put("gradeName", cyaer);
+        filtermessage.put("politicalName", political);
+        filtermessage.put("positionName", position);
+        System.out.println(new Date());
         json = Result.build(ResultType.Success).appendData("filterMessage", filtermessage).convertIntoJSON();
         response.getWriter().write(json);
 
@@ -724,166 +711,113 @@ public class EmployeeController {
         int flag = 0;
         String json = null;
         List<ClassmateBean> classmateBeans = new ArrayList<>();
+        List<ClassmateBean> classmateBeans2 = new ArrayList<>();
         //该领导为自己学院的领导
         List<Employee> employees = employeeService.selectByUserId(userId);
         if (employees != null) {
-            Employ employ = otherEmployService.selectEmployByEmployeeId(employees.get(0).getId(), employees.get(0).getUniversityId());
-            List<Department> departments = otherDepartmentService.selectValidById(employ.getDepartmentId());
-            if (departments != null) {
-                List<Class> classes = otherClassService.selectAllClassByDepartmentId(departments.get(0).getId());
-                if (classes != null) {
-                    flag = 0;
-                    for (Class c : classes) {
-                        if (classNames != null && !classNames.equals("")) {
-                            for (int i = 0; i < classNames.length; i++) {
-                                if (!classNames[i].equals(c.getName())) {
-                                    continue;
-                                } else {
-                                    flag = 1;
-                                    break;
-                                }
-                            }
-                            if (flag != 1) {
-                                continue;
-                            }
-                        }
-                        List<Classmate> classmates = otherClassmateService.selectByClassId(c.getId());
-                        if (classmates != null && classmates.size() > 0) {
-                            for (Classmate cm : classmates) {
-                                Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
-                                User user = userService.selectUserById(student.getUserId());
-                                List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
-                                ClassmateBean classmateBean = new ClassmateBean();
-                                //学生的用户id
-                                classmateBean.setUserId(user.getId());
-                                //学生id
-                                classmateBean.setStudentId(student.getId());
-                                //学号
-                                classmateBean.setStudentNo(student.getStuNo());
-                                //姓名
-                                classmateBean.setStudentName(user.getUserName());
-                                //入学日期
-                                classmateBean.setBeginLearnDate(student.getBeginLearnDate());
-                                //主修专业
-                                Specialty select = specialtyService.select(student.getSpecialtyId());
-                                classmateBean.setSpecialty(select.getName());
-                                //所在年级
-                                classmateBean.setGrade(student.getGrade());
-                                //所在的班级
-                                classmateBean.setClassName(c.getName());
-                                //性别  0:女 1:男 2：不详
-                                if (user.getUserSex().equals(0)) {
-                                    classmateBean.setSex("女");
-                                } else {
-                                    classmateBean.setSex("男");
-                                }
-                                //}
-                                //联系方式
-                                Ecomm ecomm = ecommService.selectById(student.getPhoneEcommId());
-                               if (ecomm!=null){
-                                   classmateBean.setPhone(ecomm.getContent());
-                               }
-                                //政治面貌
-                                PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
-                                classmateBean.setPolitical(politicalAffiliation.getPolitical());
-                                //}
-                                //岗位
-                                if (classmatePositions != null) {
-                                    //List<Position> positions = positionService.selectAll();
-                                    StringBuffer positionName = new StringBuffer();
-                                    //for (Position p : positions) {
-                                    for (ClassmatePosition cp : classmatePositions) {
-                                        Position position = positionService.select(cp.getPositionId());
-                                        if (position != null) {
-                                            positionName.append(position.getName());
-                                        }
-                                    }
-                                    //}
-                                    classmateBean.setPosition(String.valueOf(positionName));
-                                }
-                                //开启判断//班级判断在前面//所有年级//所有专业//所有班级//所有岗位//所有政治面貌
-                                flag = 0;
-                                if (cyears != null && !cyears.equals("")) {
-                                    for (int i = 0; i < cyears.length; i++) {
-                                        if (!classmateBean.getGrade().equals(cyears[i])) {
-                                            continue;
-                                        } else {
-                                            flag = 1;
-                                            break;
-                                        }
-                                    }
-                                    if (flag != 1) {
-                                        continue;
-                                    }
-                                }
-                                flag = 0;
-                                if (specialtys != null && !specialtys.equals("")) {
-                                    for (int i = 0; i < specialtys.length; i++) {
-                                        if (!specialtys[i].equals(classmateBean.getSpecialty())) {
-                                            continue;
-                                        } else {
-                                            flag = 1;
-                                            break;
-                                        }
-                                    }
-                                    if (flag != 1) {
-                                        continue;
-                                    }
-                                }
-                                if (user_sex != null && !user_sex.equals("")) {
-                                    if (!user_sex.equals(classmateBean.getSex())) {
-                                        continue;
-                                    }
-                                }
-                                if (studentName != null && !studentName.equals("")) {
-                                    if (!studentName.equals(classmateBean.getStudentName())) {
-                                        continue;
-                                    }
-                                }
-                                if (studentNo != null && !studentNo.equals("")) {
-                                    if (!studentNo.equals(classmateBean.getStudentNo())) {
-                                        continue;
-                                    }
-                                }
-                                flag = 0;
-                                if (politicals != null && !politicals.equals("")) {
-                                    for (int i = 0; i < politicals.length; i++) {
-                                        if (!politicals[i].equals(classmateBean.getPolitical())) {
-                                            continue;
-                                        } else {
-                                            flag = 1;
-                                            break;
-                                        }
-                                    }
-                                    if (flag != 1) {
-                                        continue;
-                                    }
-                                }
-                                flag = 0;
-                                if (positions != null && !positions.equals("")) {
-                                    if (classmateBean.getPosition() != null) {
-                                        for (int i = 0; i < positions.length; i++) {
-                                            int indexOf = classmateBean.getPosition().indexOf(positions[i]);
-                                            if (indexOf <= 2 && indexOf >= 0) {
-                                                flag = 1;
-                                                break;
-                                            }
-                                        }
-                                    } else {
-                                        continue;
-                                    }
-                                }
-                                if (flag != 1 && positions != null) {
-                                    continue;
-                                }
-                                classmateBeans.add(classmateBean);
-                            }
-                        }
+            classmateBeans = employeeService.selecClassMateBeantByUserId(employees.get(0).getUserId());
+            for (ClassmateBean c:classmateBeans) {
+                if (c.getSex()!=null){
+                    if (c.getSex().equals(String.valueOf(0))){
+                        c.setSex("女");
+                    }else if (c.getSex().equals(String.valueOf(1))){
+                        c.setSex("男");
                     }
                 }
+                //开启判断//班级判断在前面//所有年级//所有专业//所有班级//所有岗位//所有政治面貌
+                flag=0;
+                if (classNames!=null){
+                    for (int i=0;i<classNames.length;i++) {
+                        if (classNames[i].equals(c.getClassName())){
+                            flag = 1;
+                        }
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                flag=0;
+                if (cyears!=null){
+                    for (int i=0;i<cyears.length;i++){
+                        if (cyears[i].equals(c.getGrade())){
+                            flag = 1;
+                        }
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                flag=0;
+                if (specialtys!=null){
+                    for (int i=0;i<specialtys.length;i++){
+                        if (specialtys[i].equals(c.getSpecialty())){
+                            flag = 1;
+                        }
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                flag=0;
+                if (user_sex!=null){
+                    //0 女   1 男
+                    if (c.getSex()!=null){
+                        if (user_sex.equals("男")){
+                            if (c.getSex().equals("男")){
+                                flag = 1;
+                            }
+                        }else if (c.getSex().equals("女")){
+                            flag = 1;
+                        }
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                flag=0;
+                if (studentName!=null){
+                    if (studentName.equals(c.getStudentName())){
+                        flag = 1;
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                flag=0;
+                if (studentNo!=null){
+                    if (studentNo.equals(c.getStudentNo())){
+                        flag = 1;
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                flag=0;
+                if (positions!=null){
+                    for (int i=0;i<positions.length;i++){
+                        if (positions[i].equals(c.getPosition())){
+                            flag = 1;
+                        }
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                flag=0;
+                if (politicals!=null){
+                    for (int i=0;i<politicals.length;i++){
+                        if (politicals[i].equals(c.getPolitical())){
+                            flag = 1;
+                        }
+                    }
+                    if (flag!=1){
+                        continue;
+                    }
+                }
+                classmateBeans2.add(c);
             }
         }
-        json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans).convertIntoJSON();
+        json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans2).convertIntoJSON();
         response.getWriter().write(json);
     }
 
@@ -895,18 +829,24 @@ public class EmployeeController {
      * @apiNote: 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
      */
     @ApiOperation(value = "进行高级搜索校内所有职员的信息的前戏", notes = "未测试")
-    @GetMapping("filter/employees/all")
+    @GetMapping("filter/allemployees/{userId}")
     @ResponseBody
-    public void selectAllEmployeesToFilter(HttpServletResponse response) throws IOException {
+    public void selectAllEmployeesToFilter(@PathVariable Long userId, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         String json = null;
         HashMap<String, Object> filtermessage = new HashMap<>();
         Set<String> departmentName = new HashSet<>();
         Set<String> subDepartmentName = new HashSet<>();
         Set<String> positionName = new HashSet<>();
+        Employee employee = new Employee();
+        List<Employee> employees1 = employeeService.selectValidEmployeeByUserId(userId);
+        if (employees1.size()>0){
+            employeeService.selectEmployeeBeanByUniId(employees1.get(0).getUniversityId());
+        }
+
         List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));
         for (Employee e : employees) {
-            //System.out.println("职员：" + e.toString());
+            System.out.println("职员：" + e.toString());
             //学院 department
             List<Department> departments = otherDepartmentService.selectValidById(e.getDepartmentId());
             //System.out.println(departments.size());

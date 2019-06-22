@@ -77,6 +77,8 @@ public class StudentController {
     private AuthService authService;
     @Autowired
     private UserinfoApplyApprovalController userinfoApplyApprovalController;
+    @Autowired
+    private OtherPositionService otherPositionService;
 
 
 
@@ -434,6 +436,7 @@ public class StudentController {
     @ResponseBody
     public  void selectClassesByClassId(@PathVariable String classCode, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
+        //System.out.println(new Date());
         String json = null;
         List<ClassmateBean> classmateBeans = new ArrayList<>();
         Class aClass = otherClassService.selectClassByClassCode(classCode);
@@ -441,9 +444,7 @@ public class StudentController {
         List<Classmate> classmates = otherClassmateService.selectByClassId(aClass.getId());
         for (Classmate cm:classmates) {
             Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
-            //UserInfo userInfo = userService.selectUserInfoAllByUserId(student.getUserId());
             User user = userService.selectUserById(student.getUserId());
-            //ClassmatePosition classmatePosition = otherClassmatePositionService.selectclassmatePositionByClassmateIdAndPositionId(cm.getId(), null);
             List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
             ClassmateBean classmateBean = new ClassmateBean();
             //用户id
@@ -477,23 +478,21 @@ public class StudentController {
             classmateBean.setPolitical(politicalAffiliation.getPolitical());
             //岗位
             if (classmatePositions!=null){
-                StringBuffer position = new StringBuffer();
-                List<Position> positions = positionService.selectAll();
-                for (Position p:positions) {
+                StringBuffer positionNames = new StringBuffer();
                     for (ClassmatePosition cp:classmatePositions) {
-                        if (p.getId().equals(cp.getPositionId())){
-//                            classmateBean.setPosition(p.getName());
-                            position.append(p.getName());
-                            //break;
+                        Position position = positionService.select(cp.getPositionId());
+                        if (position!=null) {
+                            positionNames.append(position.getName());
                         }
                     }
-                }
-                classmateBean.setPosition(String.valueOf(position));
+                //}
+                classmateBean.setPosition(String.valueOf(positionNames));
             }
             //subcalss.add(classmatePosition.getId().toString());
             classmateBeans.add(classmateBean);
         }
-        System.out.println(classmateBeans);
+        //System.out.println(classmateBeans);
+        //System.out.println(new Date());
         json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans).convertIntoJSON();
         response.getWriter().write(json);
     }
