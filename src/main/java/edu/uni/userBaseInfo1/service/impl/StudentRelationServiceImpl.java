@@ -190,16 +190,15 @@ public class StudentRelationServiceImpl implements StudentRelationService {
      * Author: mokuanyuan 16:55 2019/6/13
      * @param map
      * @param studentRelation
-     * @param oldId
-     * @param newId
+     * @param idList
      * @param loginUser
      * @param modifiedUser
      * @return boolean
      * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
      */
     @Override
-    public boolean readyForApply(HashMap<String, Object> map, StudentRelation studentRelation, Long oldId,
-                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply(HashMap<String, Object> map, StudentRelation studentRelation,long[] idList,
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudentRelation"),studentRelation);
         //检验是否把该获取的信息都获取到了
@@ -210,18 +209,18 @@ public class StudentRelationServiceImpl implements StudentRelationService {
             StudentRelation oldStudentRelation = selectById(studentRelation.getId());
             StudentRelation.copyPropertiesForApply(studentRelation,oldStudentRelation);
             studentRelation.setByWho(loginUser.getId());
-            oldId = oldStudentRelation.getId();
+            idList[0] = oldStudentRelation.getId();
             result = insert(studentRelation) ;
-            newId = studentRelation.getId();
+            idList[1] = studentRelation.getId();
 
         }
         else{
-            studentRelation.setUserId(modifiedUser.getId());
+            studentRelation.setUserId(loginUser.getId());
             studentRelation.setDatetime(new Date());
             studentRelation.setByWho(loginUser.getId());
             studentRelation.setDeleted(true);
             result = insert(studentRelation) ;
-            newId = studentRelation.getId();
+            idList[1] = studentRelation.getId();
         }
         return result;
 
@@ -241,6 +240,8 @@ public class StudentRelationServiceImpl implements StudentRelationService {
             StudentRelation oldStudentRelation = selectById(oldId);
             oldStudentRelation.setId(newId);
             newStudentRelation.setId(oldId);
+            oldStudentRelation.setDeleted(true);
+            newStudentRelation.setDeleted(false);
             if( update(oldStudentRelation) && update(newStudentRelation) )
                 result = true;
         }else{

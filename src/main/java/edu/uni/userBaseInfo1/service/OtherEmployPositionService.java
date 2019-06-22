@@ -33,10 +33,19 @@ public interface OtherEmployPositionService {
     public List<Position> selectPositionsByEmployeeId(Employee employee);
 
     /**
+     * Author: mokuanyuan 11:40 2019/6/21
+     * @param employee
+     * @param positionName
+     * @return boolean
+     * @apiNote 传入一个职员id和岗位名称，判断该职员是否担任该岗位
+     */
+    public boolean whetherPositionByEmployeeId(Employee employee,String positionName);
+
+    /**
      * Author: mokuanyuan 19:34 2019/6/19
      * @param employee
      * @return List<Integer>
-     * @apiNote: 根据职员用户id获取该职员所有拥有的权限（0:代表教师权限，1：班主任，2：学院领导(辅导员及以上职位)）
+     * @apiNote: 根据职员用户id获取该职员所有拥有的权限（0:代表教师权限，1：班主任，2：学院领导(辅导员及以上职位)） 3：人事处(工作人员，副处长，处长)
      */
     public List<Integer> selectEmployeeRoleByUserId(Employee employee);
 

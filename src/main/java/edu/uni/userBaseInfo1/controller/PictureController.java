@@ -4,10 +4,12 @@ import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.config.userBaseInfo1Config;
 import edu.uni.userBaseInfo1.service.PictureService;
 import edu.uni.userBaseInfo1.service.StudentService;
 import edu.uni.userBaseInfo1.service.UserService;
 import edu.uni.userBaseInfo1.service.UserinfoApplyService;
+import edu.uni.userBaseInfo1.utils.UserInfoFileUtil;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +46,8 @@ import java.util.List;
 @Controller
 public class PictureController {
     //把Picture的Service接口层的所有方法自动装配到该对象中
+    @Autowired
+    private userBaseInfo1Config userBaseInfo1Config;
     @Autowired
     private PictureService pictureService;
     @Autowired
@@ -114,41 +118,28 @@ public class PictureController {
         return Result.build(ResultType.ParamError);
     }
 
-    @ApiOperation(value = "处理获取图片请求")
-    @GetMapping(value = "download")
-    public void download(
-            HttpServletResponse response,
-            @ApiParam(value = "绝对地址")
-            @RequestParam(value = "path") String path) throws IOException {
-        System.out.println(path);
-
-        path=path.replace("%3A", ":").replace("%2F", "/");
-
-        File file = new File(path);
-        if(!file.exists()){
-            System.out.println("图片文件不存在");
-
-
-        }else{
-            FileInputStream fileInputStream = new FileInputStream(file);
-        }
-    }
-
     /**
      * Author: mokuanyuan 20:58 2019/6/17
-     * @param path
+     * @param fileName
      * @return byte[]
      * @apiNote: 根据图片的绝对路径获取图片
      */
     @ApiOperation(value="获取图片", notes="未测试")
-    @ApiImplicitParam(name = "path", value = "图片绝对路径", required = true, dataType = "String")
-    @GetMapping(value = "/getImage",produces = MediaType.IMAGE_JPEG_VALUE)
+    @ApiImplicitParam(name = "fileName", value = "图片名称", required = true, dataType = "Long" , paramType = "Path")
+    @GetMapping(value = "/getImage/{fileName}",produces = {MediaType.IMAGE_JPEG_VALUE , MediaType.IMAGE_PNG_VALUE  })
     @ResponseBody
-    public byte[] getImage(@ApiParam(value = "绝对地址")
-                               @RequestParam(value = "path") String path) throws IOException {
-        File file = new File(path.replace("%3A", ":")
-                .replace("%2F", "/"));
-        System.out.println(file.getName());
+    public byte[] getImage(@PathVariable String fileName) throws IOException {
+
+
+        File file = new File(userBaseInfo1Config.getAbsoluteImageDir() + fileName);
+        if ( !file.exists()) {
+            return null;
+        }
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        if( !suffix.equals(".jpg") && !suffix.equals(".jpeg") && !suffix.equals(".png") )
+            return null;
+
+        System.out.println("获取图片######   dir:" + userBaseInfo1Config.getAbsoluteImageDir() + fileName);
         FileInputStream inputStream = new FileInputStream(file);
         byte[] bytes = new byte[inputStream.available()];
         inputStream.read(bytes, 0, inputStream.available());
@@ -192,10 +183,8 @@ public class PictureController {
                         return Result.build(ResultType.Disallow,"登录用户无权查看该学生亲属用户的信息");
                     break;
             }
-
-
-        return null;
-
+        
+        return Result.build(ResultType.Success).appendData("pictures",pictureService.selectByUserId(userId));
 
     }
 

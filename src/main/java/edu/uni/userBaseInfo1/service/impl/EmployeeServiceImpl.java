@@ -139,20 +139,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private ExampleConfig config;
 
 
-    /**
-     * Author: mokuanyuan 16:55 2019/6/13
-     * @param map
-     * @param employee
-     * @param oldId
-     * @param newId
-     * @param loginUser
-     * @param modifiedUser
-     * @return boolean
-     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
-     */
-    @Override
-    public boolean readyForApply(HashMap<String, Object> map, Employee employee, Long oldId,
-                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply( HashMap<String, Object> map, Employee employee, long[] idList,
+                                  edu.uni.auth.bean.User loginUser, User modifiedUser ) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyEmployee"),employee);
         //检验是否把该获取的信息都获取到了
@@ -163,18 +151,19 @@ public class EmployeeServiceImpl implements EmployeeService {
             Employee oldEmployee = selectEmployeeById(employee.getId());
             Employee.copyPropertiesForApply(employee,oldEmployee);
             employee.setByWho(loginUser.getId());
-            oldId = oldEmployee.getId();
+            idList[0] = oldEmployee.getId();
             result = insertEmployee(employee) ;
-            newId = employee.getId();
+            idList[1] = employee.getId();
 
         }
-        else{
-            employee.setUserId(modifiedUser.getId());
-            employee.setDatetime(new Date());
-            employee.setByWho(loginUser.getId());
-            employee.setDeleted(true);
-            result = insertEmployee(employee) ;
-            newId = employee.getId();
+        else{ //不存在原本没有旧数据的情况
+//            employee.setUserId(modifiedUser.getId());
+//            employee.setDatetime(new Date());
+//            employee.setByWho(loginUser.getId());
+//            employee.setDeleted(true);
+//            result = insertEmployee(employee) ;
+//            idList[1] = employee.getId();
+            return false;
         }
         return result;
 
@@ -195,6 +184,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             Employee oldEmployee = selectEmployeeById(oldId);
             oldEmployee.setId(newId);
             newEmployee.setId(oldId);
+            oldEmployee.setDeleted(true);
+            newEmployee.setDeleted(false);
             if( updateEmployee(oldEmployee) && updateEmployee(newEmployee) )
                 result = true;
         }else{

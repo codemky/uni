@@ -23,10 +23,7 @@ import edu.uni.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author chenenru
@@ -136,13 +133,41 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
     @Override
     public boolean clickApply(HashMap<String,Object> map, Integer type, User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) {
 
+        if(loginUser == null)
+            return false;
+        //根据flag（说明是修改还是增加还是批量增加）、登录用户的用户类型、申请的信息类型获取审批业务的名称
+        String approvalName = StaticInformation.getApprovalString(loginUser.getUserType(),type);
+
+        System.out.println("生成的审批业务名称为:" +approvalName);
+
+        //查询是否存在这样的审批规定
+        long approvalId = approvalMainService.selectIdByName(loginUser.getUniversityId(), approvalName);
+        if( approvalId == -1 || approvalId == -2 )
+            return false;
+
+        //判断审批规定的合法性
+        if( !(approvalMainService.selectStepCntById(approvalId) > 0) )
+            return false;
+        if( approvalStepInchargeService.selectByMainId(approvalId).size() <= 0 )
+            return false;
+        if( approvalStepInchargeService.selectRoleIdByStepAppovalId(1,approvalId) == null )
+            return false;
+
+
         //获取申请理由
         String reason = (String) map.get("reason");
 
-        Long newId = null;
-        Long oldId = null;
+//        Long newId = new Long(-1);
+//        Long oldId = new Long(-1);
+        long[] idList = new long[2];
+        //存放新旧记录id的数组，第一个为旧纪录，第二个为新纪录，默认值为-1
+        idList[0] = -1;
+        idList[1] = -1;
+
+
+
         Long userId = null ;
-        Integer flag = 0;  //0：更新      1：批量更新   2：批量添加
+//        Integer flag = 0;  //0：更新   1：批量更新  2：批量添加
 
         //各类信息对象
         Ecomm ecomm = null;
@@ -160,51 +185,60 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
 //      信息种类	  0:联系方式	  1:地址
 //        2：照片  	3：亲属  4	：学历  5	：简历
 //        6：学生信息	 7：教职工信息	 8：	用户个人信息
-//        9：学生excel	表  10：	职员excel	表
-//        10：批量添加学生账号 12：批量添加职员账号
+//        9：批量更新学生账号  10：批量更新职员账号
+//        11：批量添加学生账号 12：批量添加职员账号
         switch (type){
             case 0:  //0为联系方式类信息
                 //为创建申请记录作相应的处理
-                ecommService.readyForApply(map,ecomm, oldId, newId, loginUser, modifiedUser); break;
+                ecomm = new Ecomm();
+                ecommService.readyForApply(map,ecomm, idList, loginUser, modifiedUser); break;
             case 1: //1为地址类型信息
-                addressService.readyForApply(map,address, oldId, newId, loginUser, modifiedUser); break;
+                address = new Address();
+                addressService.readyForApply(map,address, idList, loginUser, modifiedUser); break;
             case 2: //2为照片类型信息
-                pictureService.readyForApply(map,picture, oldId, newId, loginUser, modifiedUser); break;
+                picture = new Picture();
+                pictureService.readyForApply(map,picture, idList, loginUser, modifiedUser); break;
             case 3: //3为亲属类型信息
-                studentRelationService.readyForApply(map,studentRelation, oldId, newId, loginUser, modifiedUser); break;
+                studentRelation = new StudentRelation();
+                studentRelationService.readyForApply(map,studentRelation, idList, loginUser, modifiedUser); break;
             case 4: //4为学历类型信息
-                learningDegreeSerevice.readyForApply(map,learningDegree, oldId, newId, loginUser, modifiedUser); break;
+                learningDegree = new LearningDegree();
+                learningDegreeSerevice.readyForApply(map,learningDegree, idList, loginUser, modifiedUser); break;
             case 5: //5为简历类型信息
-                employeeHistoryService.readyForApply(map,employeeHistory, oldId, newId, loginUser, modifiedUser); break;
+                employeeHistory = new EmployeeHistory();
+                employeeHistoryService.readyForApply(map,employeeHistory, idList, loginUser, modifiedUser); break;
             case 6: //6为学生类型信息
-                studentService.readyForApply(map,student, oldId, newId, loginUser, modifiedUser); break;
+                student = new Student();
+                studentService.readyForApply(map,student, idList, loginUser, modifiedUser); break;
             case 7: //7为职员类型信息
-                employeeService.readyForApply(map,employee, oldId, newId, loginUser, modifiedUser); break;
+                employee = new Employee();
+                employeeService.readyForApply(map,employee, idList, loginUser, modifiedUser); break;
             case 8: //8为用户类型信息      //额。。关于用户的信息更新不打算做，因为user表都没有 Deleted字段。。
                 break;
             case 9: //9代表批量更新学生信息
-//                break; 9和10都是同一个操作，都是操作文件，不过flag不一样（区分是更新操作还是添加操作）
             case 10: //10代表批量更新职员信息
-                userUploadFileService.readyForApply(map,userUploadFile,oldId,newId,loginUser,modifiedUser);  flag = 1;  break;
             case 11: // 11为批量添加学生信息
-//                break; 11和12都是同一个操作，此时是添加操作
             case 12: // 12为批量添加教职工信息
-                userUploadFileService.readyForApply(map,userUploadFile,oldId,newId,loginUser,modifiedUser);  flag = 2;
+                userUploadFile = new UserUploadFile();
+                userUploadFileService.readyForApply(map,userUploadFile,idList,loginUser,modifiedUser);
 
         }
 
         UserinfoApply userinfoApply = new UserinfoApply();
         userinfoApply.setApplyReason(reason);
         userinfoApply.setUniversityId(loginUser.getUniversityId());
+        //向userinfoApply增加审批业务id
+        userinfoApply.setApprovalMainId(approvalId);
         //设置用户信息申请写入者
         userinfoApply.setByWho(loginUser.getId());
         //设置申请的信息类型种类
         userinfoApply.setInfoType(type);
         //设置新旧记录的记录id
-        userinfoApply.setOldInfoId(oldId);
-        userinfoApply.setNewInfoId(newId);
+        if(idList[0] != -1)
+            userinfoApply.setOldInfoId(idList[0]);
+        userinfoApply.setNewInfoId(idList[1]);
 
-        boolean createApply = userinfoApplyService.createForApply(userinfoApply, flag);
+        boolean createApply = userinfoApplyService.createForApply(userinfoApply);
 
         //向审批流程表插入一条数据
         UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
@@ -228,21 +262,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
      * @apiNote: 创建申请记录（由于发出申请时产生）
      */
     @Override
-    public boolean createForApply(UserinfoApply userInfo_apply , Integer flag ) {
-        edu.uni.auth.bean.User user = authService.getUser();
-        if(user == null)
-            return false;
-
-        //根据flag（说明是修改还是增加还是批量增加）、登录用户的用户类型、申请的信息类型获取审批业务的名称
-        String approvalName = StaticInformation.getApprovalString(user.getUserType(),
-                userInfo_apply.getInfoType(),flag);
-
-        System.out.println("生成的审批业务名称为:" +approvalName);
-        logUilts.info("生成的审批业务名称为:" +approvalName);
-
-        //向userinfoApply增加审批业务id
-        userInfo_apply.setApprovalMainId(approvalMainService.
-                selectIdByName(userInfo_apply.getUniversityId(), approvalName));
+    public boolean createForApply(UserinfoApply userInfo_apply) {
         //设置用户信息申请开始时间
         userInfo_apply.setStartTime(new Date());
         //设置用户信息创建时间
@@ -270,14 +290,14 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
             criteria.andInfoTypeEqualTo(userinfoApply.getInfoType());
 
         //筛选审批结果的记录
-        if(userinfoApply.getId() == null){
-            if(userinfoApply.getApplyResult() != null)
-                criteria.andApplyResultEqualTo(userinfoApply.getApplyResult());
-            if(userinfoApply.getApplyResult() == null)
-                criteria.andApplyResultIsNull();
-        }
+//        if(userinfoApply.getId() == null){
+        if(userinfoApply.getApplyResult() != null)
+            criteria.andApplyResultEqualTo(userinfoApply.getApplyResult());
+        if(userinfoApply.getApplyResult() == null)
+            criteria.andApplyResultIsNull();
+//        }
 
-        criteria.andByWhoEqualTo(userId).andDeletedEqualTo(false);
+        criteria.andByWhoEqualTo(userId).andDeletedEqualTo(false).andUniversityIdEqualTo(userinfoApply.getUniversityId());
 
         return userinfoApplyMapper.selectByExample(example);
     }

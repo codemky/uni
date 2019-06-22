@@ -1,5 +1,7 @@
 package edu.uni.userBaseInfo1.utils;
 
+import edu.uni.bean.Result;
+import edu.uni.bean.ResultType;
 import edu.uni.config.GlobalConfig;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,14 @@ public class UserInfoFileUtil {
     private String uploadRootDir;
 
     private String filePrefix;
+
+    public String getFilePrefix() {
+        return filePrefix;
+    }
+
+    public String getUploadRootDir() {
+        return uploadRootDir;
+    }
 
     public UserInfoFileUtil() {
     }
@@ -96,7 +106,21 @@ public class UserInfoFileUtil {
 //            filePath = filePath + suffix;
 
             // 防止中文乱码
-            response.setContentType("multipart/form-data");
+//            response.setContentType("multipart/form-data");
+            if(suffix.substring(1).equals("xls"))
+                response.setContentType("application/vnd.ms-excel");
+            else{
+                if(suffix.substring(1).equals("xlsx"))
+                    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                else {
+                    try {
+                        response.getWriter().write(Result.build(ResultType.ParamError,"该文件的后缀名不合法").convertIntoJSON());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
 //            response.setHeader("Content-Disposition", "attachment;filename=" + new String(filePath.getBytes("UTF-8"), "iso-8859-1"));
             response.setHeader("Content-Disposition", "attachment;filename=" +
                     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + suffix);

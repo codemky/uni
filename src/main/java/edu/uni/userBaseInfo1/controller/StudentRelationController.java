@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.userBaseInfo1.bean.*;
@@ -50,6 +51,8 @@ public class StudentRelationController {
         private UserinfoApplyService userinfoApplyService;
         @Autowired
         private UserinfoApplyApprovalService userinfoApplyApprovalService;
+        @Autowired
+        private AuthService authService;
 
         @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
         private RedisCache cache;
@@ -312,27 +315,58 @@ public class StudentRelationController {
     }*/
 
     /**
-     * Author: laizhouhao 16:08 2019/6/10
-     * @param user_id
-     * @return 用户的各种亲属信息
+     * Author: laizhouhao 16:08 2019/6/10   modified：mokuanyuan 2019/6/21 15点00分
+     * @param userId
      * @apiNote: 根据用户id获取用户的所有亲属信息
      */
     @ApiOperation( value = "根据用户id获取用户的所有亲属信息",notes = "2019年6月10日 16:26:41 已通过测试" )
-    @GetMapping("/getStuRelation/{user_id}")
-    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @GetMapping("/getStudentRelationInformation/{userId}")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = true, dataType = "Long" , paramType = "path")
     @ResponseBody
-    public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
-        //检验页面传来的id是否存在
-        if(user_id != null){
-            //获取该用户的所有亲属实体
-            List<StudentRelation> studentRelationList = studentRelationService.selectByUserId(user_id);
-            //获取用户所有有效的亲属信息
-            HashMap<String, Object>map = new HashMap<>();
-            studentRelationService.getStuRelationInfo(map, studentRelationList);
-            response.setContentType("application/json;charset=utf-8");
-            response.getWriter().write(Result.build(ResultType.Success)
-                    .appendData("Relation",map).convertIntoJSON());
+    public Result getStudentRelationInformation(@PathVariable Long userId) {
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(userId == null)
+            return Result.build(ResultType.ParamError);
+        Long tempUserId = userId;
+        if(userId == -1 ){
+            if(loginUser == null){
+                return Result.build(ResultType.Failed, "你沒有登錄");
+            }else
+                userId = loginUser.getId();
         }
+
+        User user = userService.selectUserById(userId);
+//        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId();
+        if( tempUserId != -1 )
+            switch (user.getUserType()){
+                case 1:
+                    if( !studentService.whetherSeeStudent(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生用户的信息");
+                    break;
+                case 2:
+                    return Result.build(ResultType.Disallow,"职员用户无亲属信息");
+                case 3:
+                    if( !studentService.whetherSeeRelation(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生亲属用户的信息");
+                    break;
+            }
+
+        if(user.getUserType() != 1 && user.getUserType() != 3)
+            return Result.build(ResultType.ParamError,"所查询的用户不是学生用户或者学生亲属用户");
+
+        //获取该用户的所有亲属实体
+        List<StudentRelation> studentRelationList = null;
+        if( user.getUserType() == 1  )
+            studentRelationList = studentRelationService.selectByUserId(userId);
+        if( user.getUserType() == 3 )
+            studentRelationList = studentRelationService.selectByRelationId(userId);
+
+        //获取用户所有有效的亲属信息
+        HashMap<String, Object>map = new HashMap<>();
+        studentRelationService.getStuRelationInfo(map, studentRelationList);
+
+        return Result.build(ResultType.Success).appendData("Relation",map);
+
     }
 
 

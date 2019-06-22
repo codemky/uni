@@ -250,11 +250,13 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
         map.put("school", otherUniversityService.selectValidById(learningDegree.getSchoolId()).getName());
         map.put("academic", myAcademicService.selectById(learningDegree.getAcademicId()).getName());
         map.put("degree", myAcademicDegreeService.selectById(learningDegree.getDegreeId()).getName());
-
+        map.put("beginTime",new SimpleDateFormat("yyyy-mm-dd HH:mm:ss").format(learningDegree.getBeginTime()));
+        map.put("EndTime",new SimpleDateFormat("yyyy-mm-dd HH:mm:ss").format(learningDegree.getEndTime()));
     }
 
     @Override
-    public boolean readyForApply(HashMap<String, Object> map, LearningDegree learningDegree, Long oldId, Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply(HashMap<String, Object> map, LearningDegree learningDegree,long[] idList,
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyLearningDegree"),learningDegree);
         //检验是否把该获取的信息都获取到了
@@ -265,9 +267,9 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
             LearningDegree oldLearningDegree = selectLearningDegreeById(learningDegree.getId());
             LearningDegree.copyPropertiesForApply(learningDegree,oldLearningDegree);
             learningDegree.setByWho(loginUser.getId());
-            oldId = oldLearningDegree.getId();
+            idList[0] = oldLearningDegree.getId();
             result = insertLearningDegree(learningDegree) ;
-            newId = learningDegree.getId();
+            idList[1] = learningDegree.getId();
 
         }
         else{
@@ -276,7 +278,7 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
             learningDegree.setByWho(loginUser.getId());
             learningDegree.setDeleted(true);
             result = insertLearningDegree(learningDegree) ;
-            newId = learningDegree.getId();
+            idList[1] = learningDegree.getId();
         }
         return result;
     }
@@ -295,6 +297,8 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
             LearningDegree oldLearningDegree = selectLearningDegreeById(oldId);
             oldLearningDegree.setId(newId);
             newLearningDegree.setId(oldId);
+            oldLearningDegree.setDeleted(true);
+            newLearningDegree.setDeleted(false);
             if( updateLearningDegree(oldLearningDegree) && updateLearningDegree(newLearningDegree) )
                 result = true;
         }else{

@@ -7,6 +7,7 @@ import edu.uni.userBaseInfo1.bean.UserExample;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +21,15 @@ public interface UserService {
      * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
      */
     public boolean updateForApply(Long oldId,Long newId);
+
+    /**
+     * Author: mokuanyuan 15:12 2019/6/21
+     * @param name
+     * @param identity
+     * @return List<User>
+     * @apiNote 根据真实姓名和身份证和学校id查询游客，其中姓名是模糊查询
+     */
+    public List<User> selectTouristByNameAndIdentity(String name , String identity, Long schoolId );
 
     /**
      * Author: chenenru 23:15 2019/4/29
@@ -94,7 +104,7 @@ public interface UserService {
      * @return boolean
      * @apiNote: 通过申请并且该步骤是最后一步
      */
-    boolean endForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id);
+    boolean endForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id) throws IOException;
 
     /**
      * Author: laizhouhao 16:50 2019/5/11

@@ -14,6 +14,7 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -118,6 +119,25 @@ public class UserServiceImpl implements UserService {
                 result = true;
         }
         return result;
+    }
+
+    @Override
+    public List<User> selectTouristByNameAndIdentity(String name , String identity , Long schoolId ){
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andUserTypeEqualTo(0).andUniversityIdEqualTo(schoolId);
+
+        if(name != null)
+            criteria.andUserNameLike("%" + name + "%");
+
+        if(identity != null)
+            criteria.andIdentificationEqualTo(identity);
+
+        List<User> users = userMapper.selectByExample(userExample);
+
+        System.out.println(users.toString());
+
+        return users;
     }
 
 
@@ -248,7 +268,7 @@ public class UserServiceImpl implements UserService {
      * @apiNote: 通过申请并且该步骤是最后一步
      */
     @Override
-    public boolean endForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id) {
+    public boolean endForPass(UserinfoApplyApproval userinfoApplyApproval, Long user_id) throws IOException {
         //更新用户信息审批流程表
         userinfoApplyApproval.setResult(true);
         userinfoApplyApproval.setCheckWho(user_id);

@@ -36,14 +36,13 @@ public interface StudentService {
          * Author: mokuanyuan 16:55 2019/6/13
          * @param map
          * @param student
-         * @param oldId
-         * @param newId
+         * @param idList
          * @param loginUser
          * @param modifiedUser
          * @return boolean
          * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
          */
-        public boolean readyForApply(HashMap<String, Object> map, Student student, Long oldId, Long newId ,
+        public boolean readyForApply(HashMap<String, Object> map, Student student, long[] idList,
                                      edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser);
 
         /**
@@ -180,6 +179,7 @@ public interface StudentService {
          * @apiNote: 根据用户id查找有效的学生信息
          */
         List<Student> selectValidStudentByUserId(Long user_id);
+
         /**
          * Author: mokuanyuan 18:33 2019/6/11
          * @param student
@@ -187,7 +187,7 @@ public interface StudentService {
          * @return boolean
          * @apiNote: 用户点击申请修改学生主要信息
          */
-        boolean clickApplyStudent(Student student , UserinfoApply userInfo_apply);
+//        boolean clickApplyStudent(Student student , UserinfoApply userInfo_apply);
 
         /**
          * Author: chenenru 15:44 2019/5/16

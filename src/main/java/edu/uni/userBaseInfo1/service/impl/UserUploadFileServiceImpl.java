@@ -36,33 +36,22 @@ public class UserUploadFileServiceImpl implements UserUploadFileService {
     @Autowired
     private ExampleConfig config;
 
-    /**
-     * Author: mokuanyuan 16:55 2019/6/13
-     * @param map
-     * @param userUploadFile
-     * @param oldId
-     * @param newId
-     * @param loginUser
-     * @param modifiedUser
-     * @return boolean
-     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
-     */
-    @Override
-    public boolean readyForApply(HashMap<String, Object> map, UserUploadFile userUploadFile, Long oldId,
-                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply(HashMap<String, Object> map, UserUploadFile userUploadFile, long[] idList,
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyUserUploadFile"),userUploadFile);
         //检验是否把该获取的信息都获取到了
         if(!UserUploadFile.isValidForApply(userUploadFile))
             return false;
         boolean result = false;
-        if(userUploadFile.getId() != -1){  //不是-1代表原本有旧数据
-            UserUploadFile oldUserUploadFile = selectUserUploadFileById(userUploadFile.getId());
-            UserUploadFile.copyPropertiesForApply(userUploadFile,oldUserUploadFile);
-            userUploadFile.setByWho(loginUser.getId());
-            oldId = oldUserUploadFile.getId();
-            result = insertUserUploadFile(userUploadFile) ;
-            newId = userUploadFile.getId();
+        if(userUploadFile.getId() != -1){  //上传文件不存在有旧纪录的情况
+//            UserUploadFile oldUserUploadFile = selectUserUploadFileById(userUploadFile.getId());
+//            UserUploadFile.copyPropertiesForApply(userUploadFile,oldUserUploadFile);
+//            userUploadFile.setByWho(loginUser.getId());
+//            idList[0] = oldUserUploadFile.getId();
+//            result = insertUserUploadFile(userUploadFile) ;
+//            newId = userUploadFile.getId();
+            return  false;
 
         }
         else{
@@ -70,7 +59,7 @@ public class UserUploadFileServiceImpl implements UserUploadFileService {
             userUploadFile.setByWho(loginUser.getId());
             userUploadFile.setDeleted(true);
             result = insertUserUploadFile(userUploadFile) ;
-            newId = userUploadFile.getId();
+            idList[1] = userUploadFile.getId();
         }
         return result;
 

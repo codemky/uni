@@ -62,6 +62,8 @@ public class EcommServiceImpl implements EcommService {
             Ecomm oldEcomm = selectById(oldId);
             oldEcomm.setId(newId);
             newEcomm.setId(oldId);
+            oldEcomm.setDeleted(true);
+            newEcomm.setDeleted(false);
             if( update(oldEcomm) && update(newEcomm) )
                 result = true;
         }else{
@@ -72,19 +74,7 @@ public class EcommServiceImpl implements EcommService {
         return result;
     }
 
-    /**
-     * Author: mokuanyuan 16:55 2019/6/13
-     * @param map
-     * @param ecomm
-     * @param oldId
-     * @param newId
-     * @param loginUser
-     * @param modifiedUser
-     * @return boolean
-     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
-     */
-    @Override
-    public boolean readyForApply(HashMap<String, Object> map, Ecomm ecomm, Long oldId, Long newId ,
+    public boolean readyForApply(HashMap<String, Object> map, Ecomm ecomm, long[] idList ,
                                  edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyEcomm"),ecomm);
@@ -96,10 +86,9 @@ public class EcommServiceImpl implements EcommService {
             Ecomm oldEcomm = selectById(ecomm.getId());
             Ecomm.copyPropertiesForApply(ecomm,oldEcomm);
             ecomm.setByWho(loginUser.getId());
-            oldId = oldEcomm.getId();
+            idList[0] = oldEcomm.getId();
             result = insert(ecomm) > 0 ? true : false;
-            newId = ecomm.getId();
-
+            idList[1] = ecomm.getId();
         }
         else{
             ecomm.setUserId(modifiedUser.getId());
@@ -107,7 +96,7 @@ public class EcommServiceImpl implements EcommService {
             ecomm.setByWho(loginUser.getId());
             ecomm.setDeleted(true);
             result = insert(ecomm) > 0 ? true : false;
-            newId = ecomm.getId();
+            idList[1] = ecomm.getId();
         }
         return result;
     }

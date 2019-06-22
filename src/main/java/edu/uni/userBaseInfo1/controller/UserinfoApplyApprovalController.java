@@ -139,7 +139,8 @@ public class UserinfoApplyApprovalController {
      */
     @ApiOperation( value = "根据审核结果和信息类型和用户角色查询所有的审批记录",notes = "未测试" )
     @PostMapping("/getByRoleName")
-    @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户信息审批流程详情实体", required = true, dataType = "UserinfoApplyApproval")
+    @ApiImplicitParam(name = "userinfoApplyApproval", value = "用户信息审批流程详情实体",
+            required = true, dataType = "UserinfoApplyApproval")
     @ResponseBody
     public Result selectByRoleName(@RequestBody UserinfoApplyApproval userinfoApplyApproval,
                                  HttpServletResponse response) throws IOException {
@@ -156,10 +157,12 @@ public class UserinfoApplyApprovalController {
 //        Long user_id = (long) 1720 ;
         Long user_id = loginUser.getId();
 
-        List<Role> rolesBean = roleService.selectByUidAndUniversityId(schoolId, user_id);
+        //获取登录用户在某个学校的所有权限
+        List<Role> rolesBean = roleService.selectByUidAndUniversityId(user_id,loginUser.getUniversityId());
         List<String > roles = new ArrayList<>();
         rolesBean.forEach( item -> { roles.add(item.getName()); } );
 
+        //根据审核结果和信息类型和用户角色查询所有的审批记录
         List<UserinfoApplyApproval> userinfoApplyApprovalList =
                 userinfoApplyApprovalService.selectAllByApprovalAndRole(userinfoApplyApproval,roles);
 

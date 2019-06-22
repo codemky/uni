@@ -1,5 +1,7 @@
 package edu.uni.userBaseInfo1.service.impl;
 
+import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.metadata.Sheet;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.administrativestructure.service.DepartmentService;
@@ -12,14 +14,26 @@ import edu.uni.auth.service.RoleService;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.place.service.FieldService;
 import edu.uni.professionalcourses.service.SpecialtyService;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.StudentUpload;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.model.EmployeeModel;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.model.StudentModel;
+import edu.uni.userBaseInfo1.alibaba.easyexcel.test.util.FileUtil;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.config.userBaseInfo1Config;
 import edu.uni.userBaseInfo1.mapper.UserinfoApplyApprovalMapper;
 import edu.uni.userBaseInfo1.service.*;
+import edu.uni.userBaseInfo1.utils.UserInfoFileUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -105,6 +119,8 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
     private AuthService authService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private userBaseInfo1Config userBaseInfo1Config;
 
 
 
@@ -119,9 +135,27 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
      * @param infoType
      * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
      */
-    public boolean updateDataForApplyPass(Long newId,Long oldId,Integer infoType){
+    public boolean updateDataForApplyPass(Long newId,Long oldId,Integer infoType) throws IOException {
 //        Object newInfo = new Object();
 //        Object oldInfo = new Object();
+
+        UserInfoFileUtil userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
+        UserUploadFile userUploadFile = null;
+        File file =null;
+        StringBuffer stringBuffer = null;
+        StudentUpload studentUpload = null;
+        List<Object> data = null;
+
+
+        if( infoType == 9 || infoType == 10 || infoType == 11 || infoType == 12 ){
+            userUploadFile = userUploadFileService.selectUserUploadFileById(newId);
+            file = new File(userInfoFileUtil.getUploadRootDir() + userUploadFile.getFileName());
+            if( !file.exists() )
+                System.out.println("最终审批后。。   #########根据路径信息获取的文件为空！");
+            stringBuffer = new StringBuffer();
+            studentUpload = new StudentUpload();
+            data = new ArrayList<>();
+        }
 
 //        指定要审核的信息种类	  0:联系方式	  1:地址
 //        2：照片  	3：亲属  4	：学历  5	：简历
@@ -147,17 +181,36 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
             case 7: // 7为职员信息
                 result = employeeService.updateForApply(oldId,newId); break;
             case 8: // 8为用户信息
-                result = userService.updateForApply(oldId,newId); break;
+                break;
             case 9: // 9为批量更新学生信息
-                result = userUploadFileService.updateForApply(oldId,newId); break;
+                stringBuffer = studentUpload.UpdateStudent(new FileInputStream(file));
+                break;
             case 10: // 10为批量更新教职工信息
-                result = userUploadFileService.updateForApply(oldId,newId); break;
+                stringBuffer = studentUpload.UpdateEmployee(new FileInputStream(file));
+                break;
             case 11: // 11为批量添加学生信息
-                //作批量插入处理
+                data = EasyExcelFactory.read(new FileInputStream(file), new Sheet(1, 1, StudentModel.class));
+                for (Object o : data)
+                    stringBuffer.append(studentUpload.insertStudent(o));
                 break;
             case 12: // 12为批量添加教职工信息
-                //做批量更新处理
+                data = EasyExcelFactory.read(new FileInputStream(file), new Sheet(1, 1, EmployeeModel.class));
+                for (Object o : data)
+                    stringBuffer.append(studentUpload.insertEmployee(o));
         }
+
+        if( infoType == 11 || infoType == 12 )
+            if(stringBuffer.toString().equals("插入成功")){
+                userUploadFile.setDeleted(false);
+                return true;
+            }
+
+        if(infoType == 9 || infoType == 10)
+            if(stringBuffer.toString().equals("更新成功")){
+                userUploadFile.setDeleted(false);
+                return true;
+            }
+
         return result;
 
     }
@@ -221,7 +274,7 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
         if(userinfoApplyApproval.getInfoType() != null)
             criteria.andInfoTypeEqualTo(userinfoApplyApproval.getInfoType());
 
-        if(roles != null)
+        if(roles != null && roles.size() >0 )
             criteria.andRoleNameIn(roles);
 
         List<UserinfoApplyApproval> userinfoApplyApprovals =

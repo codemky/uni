@@ -34,21 +34,8 @@ public class PictureServiceImpl implements PictureService {
     @Autowired
     private ExampleConfig config;
 
-
-    /**
-     * Author: mokuanyuan 16:55 2019/6/13
-     * @param map
-     * @param picture
-     * @param oldId
-     * @param newId
-     * @param loginUser
-     * @param modifiedUser
-     * @return boolean
-     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
-     */
-    @Override
-    public boolean readyForApply(HashMap<String, Object> map, Picture picture, Long oldId,
-                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply(HashMap<String, Object> map, Picture picture, long[] idList,
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyPicture"),picture);
         //检验是否把该获取的信息都获取到了
@@ -59,18 +46,18 @@ public class PictureServiceImpl implements PictureService {
             Picture oldPicture = selectById(picture.getId());
             Picture.copyPropertiesForApply(picture,oldPicture);
             picture.setByWho(loginUser.getId());
-            oldId = oldPicture.getId();
+            idList[0] = oldPicture.getId();
             result = insert(picture) ;
-            newId = picture.getId();
-
+            idList[1] = picture.getId();
         }
         else{
-            picture.setUserId(modifiedUser.getId());
+            picture.setUserId(loginUser.getId());
             picture.setDatetime(new Date());
             picture.setByWho(loginUser.getId());
+            picture.setUniversityId(loginUser.getUniversityId());
             picture.setDeleted(true);
             result = insert(picture) ;
-            newId = picture.getId();
+            idList[1] = picture.getId();
         }
         return result;
 
@@ -91,6 +78,8 @@ public class PictureServiceImpl implements PictureService {
             Picture oldPicture = selectById(oldId);
             oldPicture.setId(newId);
             newPicture.setId(oldId);
+            oldPicture.setDeleted(true);
+            newPicture.setDeleted(false);
             if( update(oldPicture) && update(newPicture) )
                 result = true;
         }else{
@@ -130,7 +119,9 @@ public class PictureServiceImpl implements PictureService {
      */
     @Override
     public List<Picture> selectByUserId(Long userId) {
-        return pictureMapper.selectByUserId(userId);
+        PictureExample pictureExample = new PictureExample();
+        pictureExample.createCriteria().andDeletedEqualTo(false).andUserIdEqualTo(userId);
+        return pictureMapper.selectByExample(pictureExample);
     }
 
     /**

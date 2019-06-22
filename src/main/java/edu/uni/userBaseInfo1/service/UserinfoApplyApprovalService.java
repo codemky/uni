@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
 import edu.uni.userBaseInfo1.bean.UserinfoApplyApproval;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 public interface UserinfoApplyApprovalService {
@@ -16,7 +18,7 @@ public interface UserinfoApplyApprovalService {
      * @param infoType
      * @apiNote: 当审批的最后一步都通过后进行的操作，把相应的信息记录进行更新操作
      */
-    public boolean updateDataForApplyPass(Long newId,Long oldId,Integer infoType);
+    public boolean updateDataForApplyPass(Long newId,Long oldId,Integer infoType) throws IOException;
 
 
     /**

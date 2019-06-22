@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author chenenru
@@ -184,49 +185,43 @@ public class UserController {
     }
 
 
+
     @ApiOperation(value="获取用户这部分的信息", notes="未测试")
     @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Long" , paramType = "path")
     @GetMapping("/getUserInformation/{userId}")
     @ResponseBody
     public Result getUserInformation(@PathVariable Long userId) throws IOException{
-        edu.uni.auth.bean.User loginUser = authService.getUser();
         if(userId == null)
-            return Result.build(ResultType.ParamError);
-        if(userId == -1 ) { // -1 代表的是查询自己的信息
-            if (loginUser == null) {
-                return Result.build(ResultType.Failed, "你沒有登錄");
-            } else {
-                userId = loginUser.getId();
-            }
-        }
-//        }else{  //否则表示某个登录后的用户查看某个用户信息，此时需要检验这个登录用户的角色是否有权限查看这个用户信息
-//            User user = userService.selectUserById(userId);
-//            if( user == null )
-//                return Result.build(ResultType.ParamError,"该学生信息不存在或已过时");
-//            if( user.getUserType() != 1 ) //用户Id需要时学生类型，不然查了也是白查
-//                return Result.build(ResultType.ParamError,"所查看的用户不是学生");
-//            //判断该学生与该登录用户的二级学院关系
-//            if( !userinfoApplyApprovalController.isDepartmentSame(user.getId(), loginUser.getId()))
-//                return Result.build(ResultType.Disallow,"登录用户和所查学生不在同一个二级学院“”");
-//            //判断该登录用户是否包含某几个角色
-//            if( !otherRoleService.isPlayDepartmentLeader(loginUser.getId()) )
-//                return Result.build(ResultType.Disallow,"登录用户的操作权限不允许");
-//
-//        }
+            return Result.build(ResultType.ParamError,"获取的用户id为空");
+
+        Long tempUserId = userId;
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if (loginUser == null)
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        if (userId == -1)   // -1 代表的是查询自己的信息
+            userId = loginUser.getId();
+
+        // 1.判断被查询者的用户类型 是学生还是职员还是学生亲属  2.判断被查询者的角色是不是领导角色  3.判断被查询者和查询者是不是从属于同一个单位
+        // ①如果被查询者类型为学生时，判断是否是自己的班主任或者是学院领导即可
+        // ②如果被查询者类型为教职工时，判断查询者是否是和被查询者时同一个学校并且是该学校的人事处工作人员
+        // ③如果被查询者类型为学生亲属时，判断是不是自己的孩子，或者判断是否是自己孩子的学校的班主任或者学院领导
         User user = userService.selectUserById(userId);
-
-
-//        boolean isOperate = false;
-//        HashMap<String , Object> studentMap = new HashMap<>();
-//
-//        if(user.getUserType() == 1) {
-//            List<Student> students = studentService.selectByUserId(userId);
-//            if (students.size() > 0) {
-//                studentService.selectByUserIdToMap(studentMap, students.get(0));
-//                isOperate = true;
-//            }
-//        }
-//
+//        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId();
+        if( tempUserId != -1 )
+            switch (user.getUserType()){
+                case 1:
+                    if( !studentService.whetherSeeStudent(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生用户的信息");
+                    break;
+                case 2:
+                    if( !studentService.whetherSeeEmployee(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该职员用户的信息");
+                    break;
+                case 4:
+                    if( !studentService.whetherSeeRelation(tempUserId,loginUser.getId()))
+                        return Result.build(ResultType.Disallow,"登录用户无权查看该学生亲属用户的信息");
+                    break;
+            }
 
         HashMap<String , Object> map = new HashMap<>();
         map.put("userName",user.getUserName());
@@ -240,6 +235,32 @@ public class UserController {
             return Result.build(ResultType.Success).appendData("user",map);
 //        else
 //            return Result.build(ResultType.ParamError);
+    }
+
+
+    /**
+     * Author: mokuanyuan 15点09分 2019/6/21
+     * @param map
+     * @return Result
+     * @apiNote: 用户搜索游客，可以按姓名（模糊查询）和身份证查询，只能查看到自己所属学校的游客
+     */
+    @ApiOperation(value="用户搜索游客，可以按姓名（模糊查询）和身份证查询，只能查看到自己所属学校的游客", notes="未测试")
+    @ApiImplicitParam( name = "map"  )
+    @PostMapping("/getTouristByNameAndIdentity")
+    @ResponseBody
+    public Result getTourist(@RequestBody Map<String,Object> map) {
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if(loginUser == null){
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
+
+        System.out.println(map.toString());
+        //获取前台参数
+        String name = (String) map.get("name");
+        String identity = (String) map.get("identity");
+
+        return Result.build(ResultType.Success).appendData
+                ("Tourist",userService.selectTouristByNameAndIdentity(name,identity,(long) 1));
     }
 
 

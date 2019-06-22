@@ -107,7 +107,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.LearningDegree" >
+  <insert id="insert" parameterType="edu.uni.userBaseInfo1.bean.LearningDegree" useGeneratedKeys="true">
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>

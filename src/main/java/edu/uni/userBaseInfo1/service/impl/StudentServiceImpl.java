@@ -117,6 +117,8 @@ public class StudentServiceImpl implements StudentService {
             Student oldStudent = selectById(oldId);
             oldStudent.setId(newId);
             newStudent.setId(oldId);
+            oldStudent.setDeleted(true);
+            newStudent.setDeleted(false);
             if( update(oldStudent) && update(newStudent) )
                 result = true;
         }else{
@@ -127,19 +129,8 @@ public class StudentServiceImpl implements StudentService {
         return result;
     }
 
-    /**
-     * Author: mokuanyuan 16:55 2019/6/13
-     * @param map
-     * @param student
-     * @param oldId
-     * @param newId
-     * @param loginUser
-     * @param modifiedUser
-     * @return boolean
-     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
-     */
-    @Override
-    public boolean readyForApply(HashMap<String, Object> map, Student student, Long oldId, Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply(HashMap<String, Object> map, Student student, long[] idList,
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),student);
         //检验是否把该获取的信息都获取到了
         if(Student.isValidForApply(student) == false )
@@ -149,9 +140,9 @@ public class StudentServiceImpl implements StudentService {
             Student oldStudent = selectById(student.getId());
             Student.copyPropertiesForApply(student,oldStudent);
             student.setByWho(loginUser.getId()); //写入者为申请修改者
-            oldId = oldStudent.getId();
+            idList[0] = oldStudent.getId();
             result = insert(student);
-            newId = student.getId();
+            idList[1] = student.getId();
 
         }
         else{ //一般来说不会单独添加学生信息的，就算是添加一个学生信息也只能通过批量增加学生的方法添加
@@ -441,42 +432,42 @@ public class StudentServiceImpl implements StudentService {
     }
 
 
-    /**
-     * Author: mokuanyuan 18:33 2019/6/11
-     * @param student
-     * @param userInfo_apply
-     * @return boolean
-     * @apiNote: 用户点击申请修改学生主要信息
-     */
-    @Override
-    public boolean clickApplyStudent(Student student , UserinfoApply userInfo_apply) {
-        //旧记录id
-        Long oldId = student.getId();
-        //将要插入的记录设置为无效
-        student.setDeleted(true);
-        //将新纪录插入student表
-        studentMapper.insert(student);
-        //设置用户信息申请种类  学生信息的信息种类为6
-        userInfo_apply.setInfoType(6);
-        //设置新旧记录的记录id
-        userInfo_apply.setOldInfoId(oldId);
-        userInfo_apply.setNewInfoId(student.getId());
-
-        boolean createApply = userinfoApplyService.createForApply(userInfo_apply, 0);
-
-        //向审批流程表插入一条数据
-        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
-        boolean createApplyApproval = userinfoApplyApprovalService.createForApply(applyApproval, userInfo_apply);
-
-        if(createApply == false)
-            logUilts.warn("创建申请表记录失败");
-        if(createApplyApproval == false)
-            logUilts.warn("创建申请流程表记录失败");
-
-        System.out.println(userInfo_apply + "\n" + applyApproval);
-
-        return createApply && createApplyApproval ;
-    }
+//    /**
+//     * Author: mokuanyuan 18:33 2019/6/11
+//     * @param student
+//     * @param userInfo_apply
+//     * @return boolean
+//     * @apiNote: 用户点击申请修改学生主要信息
+//     */
+//    @Override
+//    public boolean clickApplyStudent(Student student , UserinfoApply userInfo_apply) {
+//        //旧记录id
+//        Long oldId = student.getId();
+//        //将要插入的记录设置为无效
+//        student.setDeleted(true);
+//        //将新纪录插入student表
+//        studentMapper.insert(student);
+//        //设置用户信息申请种类  学生信息的信息种类为6
+//        userInfo_apply.setInfoType(6);
+//        //设置新旧记录的记录id
+//        userInfo_apply.setOldInfoId(oldId);
+//        userInfo_apply.setNewInfoId(student.getId());
+//
+//        boolean createApply = userinfoApplyService.createForApply(userInfo_apply, 0);
+//
+//        //向审批流程表插入一条数据
+//        UserinfoApplyApproval applyApproval = new UserinfoApplyApproval();
+//        boolean createApplyApproval = userinfoApplyApprovalService.createForApply(applyApproval, userInfo_apply);
+//
+//        if(createApply == false)
+//            logUilts.warn("创建申请表记录失败");
+//        if(createApplyApproval == false)
+//            logUilts.warn("创建申请流程表记录失败");
+//
+//        System.out.println(userInfo_apply + "\n" + applyApproval);
+//
+//        return createApply && createApplyApproval ;
+//    }
 
     /**
      * Author: chenenru 15:44 2019/5/16

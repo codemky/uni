@@ -23,6 +23,7 @@ import sun.java2d.loops.MaskFill;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -839,8 +840,8 @@ public class StudentUpload {
      * @apiNote: 更新批量的职员信息
      */
     @Transactional(rollbackFor = {Exception.class})
-    public StringBuffer UpdateEmployee(MultipartFile file) throws IOException {
-        List<EmployeeModel> employeeModels = ExcelUtil.readExcel(file.getInputStream(), EmployeeModel.class);
+    public StringBuffer UpdateEmployee(InputStream inputStream) throws IOException {
+        List<EmployeeModel> employeeModels = ExcelUtil.readExcel(inputStream, EmployeeModel.class);
         int i = 0;
         int flag = 0;
         s.delete(0, s.length());
@@ -1056,8 +1057,8 @@ public class StudentUpload {
      * @return
      * @apiNote: 校验批量更新的学生信息
      */
-    public StringBuffer checkUpdateStudent(MultipartFile file) throws IOException {
-        List<StudentModel> studentModels = ExcelUtil.readExcel(file.getInputStream(), StudentModel.class);
+    public StringBuffer checkUpdateStudent(InputStream inputStream) throws IOException {
+        List<StudentModel> studentModels = ExcelUtil.readExcel(inputStream, StudentModel.class);
         int i = 0;
         int flag = 0;
         s.delete(0, s.length());
@@ -1218,8 +1219,8 @@ public class StudentUpload {
      * @apiNote: 更新批量的学生信息
      */
     @Transactional(rollbackFor = {Exception.class})
-    public StringBuffer UpdateStudent(MultipartFile file) throws IOException {
-        List<StudentModel> studentModels = ExcelUtil.readExcel(file.getInputStream(), StudentModel.class);
+    public StringBuffer UpdateStudent(InputStream inputStream) throws IOException {
+        List<StudentModel> studentModels = ExcelUtil.readExcel(inputStream, StudentModel.class);
         int i = 0;
         int flag = 0;
         s.delete(0, s.length());

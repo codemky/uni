@@ -162,16 +162,15 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
      * Author: mokuanyuan 16:55 2019/6/13
      * @param map
      * @param employeeHistory
-     * @param oldId
-     * @param newId
+     * @param idList
      * @param loginUser
      * @param modifiedUser
      * @return boolean
      * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
      */
     @Override
-    public boolean readyForApply(HashMap<String, Object> map, EmployeeHistory employeeHistory, Long oldId,
-                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply(HashMap<String, Object> map, EmployeeHistory employeeHistory, long[] idList,
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyEmployeeHistory"),employeeHistory);
         //检验是否把该获取的信息都获取到了
@@ -182,9 +181,9 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
             EmployeeHistory oldEmployeeHistory = selectById(employeeHistory.getId());
             EmployeeHistory.copyPropertiesForApply(employeeHistory,oldEmployeeHistory);
             employeeHistory.setByWho(loginUser.getId());
-            oldId = oldEmployeeHistory.getId();
+            idList[0] = oldEmployeeHistory.getId();
             result = insert(employeeHistory) ;
-            newId = employeeHistory.getId();
+            idList[1] = employeeHistory.getId();
 
         }
         else{
@@ -193,7 +192,7 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
             employeeHistory.setByWho(loginUser.getId());
             employeeHistory.setDeleted(true);
             result = insert(employeeHistory) ;
-            newId = employeeHistory.getId();
+            idList[1] = employeeHistory.getId();
         }
         return result;
 
@@ -213,6 +212,8 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
             EmployeeHistory oldEmployeeHistory = selectById(oldId);
             oldEmployeeHistory.setId(newId);
             newEmployeeHistory.setId(oldId);
+            oldEmployeeHistory.setDeleted(true);
+            newEmployeeHistory.setDeleted(false);
             if( update(oldEmployeeHistory) && update(newEmployeeHistory) )
                 result = true;
         }else{

@@ -18,15 +18,13 @@ public interface PictureService {
      * Author: mokuanyuan 16:55 2019/6/13
      * @param map
      * @param picture
-     * @param oldId
-     * @param newId
+     * @param idList
      * @param loginUser
      * @param modifiedUser
      * @return boolean
      * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
      */
-    public boolean readyForApply(HashMap<String, Object> map, Picture picture, Long oldId,
-                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser);
+    public boolean readyForApply(HashMap<String, Object> map, Picture picture, long[] idList, edu.uni.auth.bean.User loginUser, User modifiedUser);
 
     /**
      * Author: mokuanyuan 14:52 2019/6/12

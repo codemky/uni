@@ -296,20 +296,7 @@ public class AddressServiceImpl implements AddressService {
 
     }
 
-    /**
-     * Author: mokuanyuan 16:55 2019/6/13
-     * @param map
-     * @param address
-     * @param oldId
-     * @param newId
-     * @param loginUser
-     * @param modifiedUser
-     * @return boolean
-     * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
-     */
-    @Override
-    public boolean readyForApply(HashMap<String, Object> map, Address address, Long oldId,
-                                 Long newId, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+    public boolean readyForApply(HashMap<String, Object> map, Address address,long[] idList, edu.uni.auth.bean.User loginUser, User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyAddress"),address);
         //检验是否把该获取的信息都获取到了
@@ -320,18 +307,18 @@ public class AddressServiceImpl implements AddressService {
             Address oldAddress = selectById(address.getId());
             Address.copyPropertiesForApply(address,oldAddress);
             address.setByWho(loginUser.getId());
-            oldId = oldAddress.getId();
+            idList[0] = oldAddress.getId();
             result = insert(address) ;
-            newId = address.getId();
+            idList[1] = address.getId();
 
         }
         else{
-            address.setUserId(modifiedUser.getId());
+            address.setUserId(loginUser.getId());
             address.setDatetime(new Date());
             address.setByWho(loginUser.getId());
             address.setDeleted(true);
-            result = insert(address) ;
-            newId = address.getId();
+            result = insert(address);
+            idList[1] = address.getId();
         }
         return result;
 
@@ -351,6 +338,8 @@ public class AddressServiceImpl implements AddressService {
             Address oldAddress = selectById(oldId);
             oldAddress.setId(newId);
             newAddress.setId(oldId);
+            oldAddress.setDeleted(true);
+            newAddress.setDeleted(false);
             if( update(oldAddress) && update(newAddress) )
                 result = true;
         }else{
@@ -392,7 +381,7 @@ public class AddressServiceImpl implements AddressService {
                 map = new HashMap<>();
                 map.put("id", addrCityService.selectAddrCityById(address.get(i).getCity()).getId() );
                 map.put("name", addrCityService.selectAddrCityById(address.get(i).getCity()).getCityZh() );
-                map.put("code",addrCityService.selectAddrCityById( address.get(i).getState()).getCode());
+                map.put("code",addrCityService.selectAddrCityById( address.get(i).getCity()).getCode());
                 tempList.add(map);
 
                 //县或区
@@ -406,7 +395,7 @@ public class AddressServiceImpl implements AddressService {
                 map = new HashMap<>();
                 map.put("id", addrStreetService.selectAddrStreetById(address.get(i).getStreet()).getId() );
                 map.put("name", addrStreetService.selectAddrStreetById(address.get(i).getStreet()).getStreetZh() );
-                map.put("code",addrStreetService.selectAddrStreetById(address.get(i).getArea()).getCode());
+                map.put("code",addrStreetService.selectAddrStreetById(address.get(i).getStreet()).getCode());
                 tempList.add(map);
 
                 map = new HashMap<>();

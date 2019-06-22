@@ -69,6 +69,20 @@ public class OtherEmployPositionServiceImpl implements OtherEmployPositionServic
     }
 
     @Override
+    public boolean whetherPositionByEmployeeId(Employee employee, String positionName) {
+        List<EmployPosition> employPositions = selectByEmployeeId(employee);
+        if( employPositions.size() > 0 ){
+            for( EmployPosition employPosition : employPositions )
+                if( positionMapper.selectByPrimaryKey(employPosition.getPositionId()).getName().equals(positionName) )
+                    return true;
+            return false;
+        }
+        else
+            return false;
+
+    }
+
+    @Override
     public List<Integer> selectEmployeeRoleByUserId(Employee employee) {
         if(employee == null)
             return null;
