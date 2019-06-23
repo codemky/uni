@@ -103,6 +103,8 @@ public class EmployeeController {
     private MySecondLevelDisciplineService mySecondLevelDisciplineService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
 
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -116,15 +118,15 @@ public class EmployeeController {
         public static final String ListAll_CacheName = "ub1_e_employee_listAll";
     }
 
-    @ApiOperation(value="获取职员这部分的信息", notes="未测试")
-    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Long" , paramType = "path")
+    @ApiOperation(value = "获取职员这部分的信息", notes = "未测试")
+    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Long", paramType = "path")
     @GetMapping("/getEmployeeInformation/{userId}")
     @ResponseBody
-    public Result getEmployeeInformation(@PathVariable Long userId) throws IOException{
+    public Result getEmployeeInformation(@PathVariable Long userId) throws IOException {
         edu.uni.auth.bean.User loginUser = authService.getUser();
-        if(userId == null)
+        if (userId == null)
             return Result.build(ResultType.ParamError);
-        if(userId == -1 ) { // -1 代表的是查询自己的信息
+        if (userId == -1) { // -1 代表的是查询自己的信息
             if (loginUser == null) {
                 return Result.build(ResultType.Failed, "你沒有登錄");
             } else {
@@ -147,11 +149,11 @@ public class EmployeeController {
 //        }
 
         List<Employee> employees = employeeService.selectByUserId(userId);
-        if( employees.size() == 0)
+        if (employees.size() == 0)
             return Result.build(ResultType.ParamError);
 
-        HashMap<String , Object> map = new HashMap<>();
-        employeeService.selectByUserIdToMap(map,employees.get(0));
+        HashMap<String, Object> map = new HashMap<>();
+        employeeService.selectByUserIdToMap(map, employees.get(0));
 
 
 //        boolean isOperate = false;
@@ -166,7 +168,7 @@ public class EmployeeController {
 //        }
 //
 //        if(isOperate)
-        return Result.build(ResultType.Success).appendData("employee",map);
+        return Result.build(ResultType.Success).appendData("employee", map);
 //        else
 //            return Result.build(ResultType.ParamError);
     }
@@ -174,6 +176,7 @@ public class EmployeeController {
 
     /**
      * Author: mokuanyuan 20:49 2019/6/18
+     *
      * @param schoolId
      * @apiNote: 根据学校id获取该学校的所有部门
      */
@@ -181,18 +184,19 @@ public class EmployeeController {
     @GetMapping("employee/getDepartments/{schoolId}")
     @ApiImplicitParam(name = "id", value = "Department表的一个id", required = false, dataType = "Long", paramType = "path")
     @ResponseBody
-    public Result getDepartment(Long schoolId){
-        if(schoolId == null)
-            return Result.build(ResultType.ParamError,"学校id为空");
+    public Result getDepartment(Long schoolId) {
+        if (schoolId == null)
+            return Result.build(ResultType.ParamError, "学校id为空");
 
 //        List<Department> departments = otherDepartmentService.selectAllValidDepartment(schoolId);
 
-        return Result.build(ResultType.Success).appendData("Departments",otherDepartmentService.selectAllValidDepartment(schoolId));
+        return Result.build(ResultType.Success).appendData("Departments", otherDepartmentService.selectAllValidDepartment(schoolId));
 
     }
 
     /**
      * Author: mokuanyuan 20:49 2019/6/18
+     *
      * @param map
      * @apiNote: 以一个学校id和部门id获取所有的科室
      */
@@ -200,41 +204,40 @@ public class EmployeeController {
     @GetMapping("employee/getSubDepartments")
     @ApiImplicitParam(name = "map")
     @ResponseBody
-    public Result getDepartment(HashMap<String,Object> map){
+    public Result getDepartment(HashMap<String, Object> map) {
         Long schoolId = (Long) map.get("schoolId");
         Long departmentId = (Long) map.get("departmentId");
 
-        if( schoolId == null || departmentId == null )
-            return Result.build(ResultType.ParamError,"学校id或者部门id为空");
+        if (schoolId == null || departmentId == null)
+            return Result.build(ResultType.ParamError, "学校id或者部门id为空");
 
 
         return Result.build(ResultType.Success).appendData("Subdepartments",
-                otherSubdepartmentService.selectBySchoolIdAndDepartmentId(schoolId,departmentId));
+                otherSubdepartmentService.selectBySchoolIdAndDepartmentId(schoolId, departmentId));
 
     }
 
     /**
      * Author: mokuanyuan 17:24 2019/6/7
+     *
      * @apiNote: 根据schoolId查询该学校的所有，该方法用于点击申请时先把部分信息发给前端
      */
-    @ApiOperation(value="当职员点击申请时交付给前端的部分信息", notes="未测试")
+    @ApiOperation(value = "当职员点击申请时交付给前端的部分信息", notes = "未测试")
     @GetMapping("/getSometimeInfoForApply")
     @ResponseBody
-    public Result getSometimeInfoForApply() throws IOException{
+    public Result getSometimeInfoForApply() throws IOException {
 
         Result result = Result.build(ResultType.Success);
 
         //所有的政治面貌
-        result.appendData("political",politicalAffiliationService.selectAllPoliticalAffiliations());
+        result.appendData("political", politicalAffiliationService.selectAllPoliticalAffiliations());
 
         //所有的二级学科的信息
-        result.appendData("disciplines",mySecondLevelDisciplineService.selectAllSecondLevelDisciplines());
+        result.appendData("disciplines", mySecondLevelDisciplineService.selectAllSecondLevelDisciplines());
 
         return result;
 
     }
-
-
 
 
     /**
@@ -278,6 +281,7 @@ public class EmployeeController {
 
     /**
      * Author: chenenru 23:44 2019/4/29
+     *
      * @param response
      * @return
      * @apiNote: 获取所有职员记录的内容
@@ -299,6 +303,7 @@ public class EmployeeController {
 
     /**
      * Author: chenenru 23:47 2019/4/29
+     *
      * @param employee
      * @return Result
      * @apiNote: 新增职员信息
@@ -488,98 +493,100 @@ public class EmployeeController {
 
     /**
      * Author: chenenru 11:24 2019/5/16
-     *
-     * @param userId
      * @return
      * @apiNote: 根据userId查询employee表获取到employeeId,
      * 根据employeeId对class表查询employeeId==headteacher的所有班级，
      * 根据year进行排序，选择某一年级，得到这一年级的所带的所有班级名，选择班级名得到具体的班级的id,
      * 根据classmate表就可以查询某一个班级的所有学生
      */
-    @ApiOperation(value = "查看所带班级（主修专业）所有学生的所有信息", notes = "未测试")
-    @ApiImplicitParam(name = "userId", value = "userId", required = false, dataType = "Long", paramType = "path")
-    @GetMapping("employee/allClassmates/{userId}")
+    @ApiOperation(value = "班主任查看所带班级（主修专业）所有学生的所有信息", notes = "未测试")
+    @GetMapping("employee/allClassmates")
     @ResponseBody
-    public void selectAllClassmatesByUserId(@PathVariable Long userId, Integer year, String className, HttpServletResponse response) throws IOException {
-        String cacheName = CacheNameHelper.ListAll_CacheName + "employee" + userId + year + className;
-        String json = cache.get(cacheName);
-        if (json == null) {
-            if (userId != null) {
-                UserInfo userInfo = new UserInfo();
-                Employee employee = employeeService.selectByUserId(userId).get(0);
-                //userInfo.setEmployees(employee);
-                System.out.println(" ." + year + ". ." + className + ".");
-                List<Class> classes = otherClassService.selectClassesByEmployeeId(employee.getId(), year, className);
-                List<Student> students = new ArrayList<>();
-                List<Classmate> classmates = new ArrayList<>();
-                List<User> users = new ArrayList<>();
-                for (Class cclass : classes) {
-                    classmates = otherClassmateService.selectByClassId(cclass.getId());
-                    for (Classmate classmate : classmates) {
-                        Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
-                        User user = userService.selectUserById(student.getUserId());
-                        students.add(student);
-                        users.add(user);
-                    }
-                    System.out.println("class:" + cclass.getId());
-                    System.out.println("classmates:" + classmates.iterator().toString());
-                    System.out.println("students:" + students.iterator().toString());
-                }
-                userInfo.setClasses(classes);
-                userInfo.setClassmates(classmates);
-                userInfo.setStudents(students);
-                userInfo.setUsers(users);
-                json = Result.build(ResultType.Success).appendData("userInfo", userInfo).convertIntoJSON();
-                cache.set(cacheName, json);
-            }
-        }
-        response.getWriter().write(json);
+    public Result selectAllClassmatesByUserId(Integer year, String className, HttpServletResponse response) throws IOException {
 
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer==null)
+            return Result.build(ResultType.Failed,"你还没登录");
+
+        if (loginUSer.getUserType()!=2)
+            return Result.build(ResultType.Failed,"你不是教职工用户");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
+        if(employees.size() == 0)
+            return Result.build(ResultType.Failed,"你的教职工信息为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+        if( !roles.contains(1) )
+            return Result.build(ResultType.Failed,"你没有班主任的权限");
+
+        UserInfo userInfo = new UserInfo();
+        List<Class> classes = otherClassService.selectClassesByEmployeeId(employees.get(0).getId(), year, className);
+        List<Student> students = new ArrayList<>();
+        List<Classmate> classmates = new ArrayList<>();
+        List<User> users = new ArrayList<>();
+        for (Class cclass : classes) {
+            classmates = otherClassmateService.selectByClassId(cclass.getId());
+            for (Classmate classmate : classmates) {
+                Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
+                User user = userService.selectUserById(student.getUserId());
+                students.add(student);
+                users.add(user);
+            }
+            System.out.println("class:" + cclass.getId());
+            System.out.println("classmates:" + classmates.iterator().toString());
+            System.out.println("students:" + students.iterator().toString());
+        }
+        userInfo.setClasses(classes);
+        userInfo.setClassmates(classmates);
+        userInfo.setStudents(students);
+        userInfo.setUsers(users);
+        return Result.build(ResultType.Success).appendData("userInfo", userInfo);
     }
 
-    @ApiOperation(value = "查询所授课班级学生信息", notes = "未测试")
-    @ApiImplicitParam(name = "userId", value = "userId", required = false, dataType = "Long", paramType = "path")
-    @GetMapping("employee/class/allClassmates/{userId}")
+    @ApiOperation(value = "教师查询所授课班级学生信息", notes = "未测试")
+    @GetMapping("employee/class/allClassmates")
     @ResponseBody
-    public void selectStudentsByUserId(@PathVariable Long userId, HttpServletResponse response) throws IOException {
+    public Result selectStudentsByUserId(HttpServletResponse response) throws IOException {
 
-        String cacheName = CacheNameHelper.ListAll_CacheName + "class" + "employee" + userId;
-        //String json = cache.get(cacheName);
-        String json = null;
-        if (json == null) {
-            if (userId != null) {
-                Employee employee = employeeService.selectByUserId(userId).get(0);
-                List<Long> longs = new ArrayList<>();
-                UserInfo userInfo = new UserInfo();
-                List<Class> classes = new ArrayList<>();
-                longs.add(employee.getId());
-                List<Curriculum> curricula = curriculumService.selectCurriculumByCondition(null, longs, null, null);
-                System.out.println("curricula---->" + curricula);
-                List<Student> students = new ArrayList<>();
-                List<Classmate> classmates = new ArrayList<>();
-                List<User> users = new ArrayList<>();
-                for (Curriculum c : curricula) {
-                    Class aClass = otherClassService.selectClassByClassId(c.getClassId());
-                    classes.add(aClass);
-                    List<Classmate> classmates1 = otherClassmateService.selectByClassId(aClass.getId());
-                    System.out.println("classmate---->" + classmates1);
-                    for (Classmate classmate : classmates1) {
-                        Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
-                        User user = userService.selectUserById(student.getUserId());
-                        students.add(student);
-                        users.add(user);
-                        classmates.add(classmate);
-                    }
-                }
-                userInfo.setClasses(classes);
-                userInfo.setClassmates(classmates);
-                userInfo.setStudents(students);
-                userInfo.setUsers(users);
-                json = Result.build(ResultType.Success).appendData("userInfo", userInfo).convertIntoJSON();
-                cache.set(cacheName, json);
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
+
+        if (loginUSer.getUserType() != 2)
+            return Result.build(ResultType.Failed, "你不是教职工用户");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
+        if (employees.size() == 0)
+            return Result.build(ResultType.Failed, "你的教职工信息为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+        if (!roles.contains(0))
+            return Result.build(ResultType.Failed, "你没有教师的权限");
+        List<Long> longs = new ArrayList<>();
+        UserInfo userInfo = new UserInfo();
+        List<Class> classes = new ArrayList<>();
+        longs.add(employees.get(0).getId());
+        List<Curriculum> curricula = curriculumService.selectCurriculumByCondition(null, longs, null, null);
+        List<Student> students = new ArrayList<>();
+        List<Classmate> classmates = new ArrayList<>();
+        List<User> users = new ArrayList<>();
+        for (Curriculum c : curricula) {
+            Class aClass = otherClassService.selectClassByClassId(c.getClassId());
+            classes.add(aClass);
+            List<Classmate> classmates1 = otherClassmateService.selectByClassId(aClass.getId());
+            for (Classmate classmate : classmates1) {
+                Student student = studentService.selectValidStudentByStuId(classmate.getStudentId());
+                User user = userService.selectUserById(student.getUserId());
+                students.add(student);
+                users.add(user);
+                classmates.add(classmate);
             }
         }
-        response.getWriter().write(json);
+        userInfo.setClasses(classes);
+        userInfo.setClassmates(classmates);
+        userInfo.setStudents(students);
+        userInfo.setUsers(users);
+        return Result.build(ResultType.Success).appendData("userInfo", userInfo);
     }
 
     /**
@@ -653,33 +660,45 @@ public class EmployeeController {
     @ApiOperation(value = "领导进行高级搜索班级学生的前戏", notes = "未测试")
     @GetMapping("filter/classmates/all")
     @ResponseBody
-    public void selectAllClassmatesToFilter(Long userId, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        System.out.println(new Date());
-        String json = null;
+    public Result selectAllClassmatesToFilter(HttpServletResponse response) throws IOException {
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
+
+        if (loginUSer.getUserType() != 2)
+            return Result.build(ResultType.Failed, "你不是教职工用户");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
+        if (employees.size() == 0)
+            return Result.build(ResultType.Failed, "你的教职工信息为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+        if (!roles.contains(2))
+            return Result.build(ResultType.Failed, "你没有学院领导的权限");
+
         HashMap<String, Object> filtermessage = new HashMap<>();
         Set<String> className = new HashSet<>();
         Set<String> specialtyName = new HashSet<>();
         Set<String> cyaer = new HashSet<>();
         Set<String> political = new HashSet<>();
         Set<String> position = new HashSet<>();
-        List<Employee> employees = employeeService.selectByUserId(userId);
+
         if (employees != null) {
             List<ClassmateBean> classmateBeans = employeeService.selecClassMateBeantByUserId(employees.get(0).getUserId());
-            for (ClassmateBean c:classmateBeans) {
-                if (c.getClassName()!=null){
+            for (ClassmateBean c : classmateBeans) {
+                if (c.getClassName() != null) {
                     className.add(c.getClassName());
                 }
-                if (c.getSpecialty()!=null){
+                if (c.getSpecialty() != null) {
                     specialtyName.add(c.getSpecialty());
                 }
-                if (c.getGrade()!=null){
+                if (c.getGrade() != null) {
                     cyaer.add(c.getGrade());
                 }
-                if (c.getPolitical()!=null){
+                if (c.getPolitical() != null) {
                     political.add(c.getPolitical());
                 }
-                if (c.getPosition()!=null){
+                if (c.getPosition() != null) {
                     position.add(c.getPosition());
                 }
             }
@@ -689,9 +708,8 @@ public class EmployeeController {
         filtermessage.put("gradeName", cyaer);
         filtermessage.put("politicalName", political);
         filtermessage.put("positionName", position);
-        System.out.println(new Date());
-        json = Result.build(ResultType.Success).appendData("filterMessage", filtermessage).convertIntoJSON();
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("filterMessage", filtermessage);
+
 
     }
 
@@ -703,123 +721,134 @@ public class EmployeeController {
      * @apiNote: //所有班级名称class，所有年级student,所有主修专业Specialty，性别user，姓名user，学号student，所有政治面貌politicalAffiliation，所有岗位Position
      */
     @ApiOperation(value = "领导查询某班的所有学生，进行高级搜索", notes = "未测试")
-    @PostMapping("filter/allClassmates/{userId}")
+    @PostMapping("filter/allClassmates")
     @ResponseBody
-    public void selectAllClassmatesByFilter(@PathVariable Long userId, String[] classNames,
-                                            String[] cyears, String[] specialtys, String user_sex, String studentName, String studentNo,
-                                            String[] politicals, String[] positions, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
+    public Result selectAllClassmatesByFilter(String[] classNames,
+                                              String[] cyears, String[] specialtys, String user_sex, String studentName, String studentNo,
+                                              String[] politicals, String[] positions, HttpServletResponse response) throws IOException {
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
+
+        if (loginUSer.getUserType() != 2)
+            return Result.build(ResultType.Failed, "你不是教职工用户");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
+        if (employees.size() == 0)
+            return Result.build(ResultType.Failed, "你的教职工信息为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+        if (!roles.contains(2))
+            return Result.build(ResultType.Failed, "你没有学院领导的权限");
+
         int flag = 0;
-        String json = null;
         List<ClassmateBean> classmateBeans = new ArrayList<>();
         List<ClassmateBean> classmateBeans2 = new ArrayList<>();
-        //该领导为自己学院的领导
-        List<Employee> employees = employeeService.selectByUserId(userId);
+
         if (employees != null) {
             classmateBeans = employeeService.selecClassMateBeantByUserId(employees.get(0).getUserId());
-            for (ClassmateBean c:classmateBeans) {
-                if (c.getSex()!=null){
-                    if (c.getSex().equals(String.valueOf(0))){
+            for (ClassmateBean c : classmateBeans) {
+                if (c.getSex() != null) {
+                    if (c.getSex().equals(String.valueOf(0))) {
                         c.setSex("女");
-                    }else if (c.getSex().equals(String.valueOf(1))){
+                    } else if (c.getSex().equals(String.valueOf(1))) {
                         c.setSex("男");
                     }
                 }
                 //开启判断//班级判断在前面//所有年级//所有专业//所有班级//所有岗位//所有政治面貌
-                flag=0;
-                if (classNames!=null){
-                    for (int i=0;i<classNames.length;i++) {
-                        if (classNames[i].equals(c.getClassName())){
+                flag = 0;
+                if (classNames != null) {
+                    for (int i = 0; i < classNames.length; i++) {
+                        if (classNames[i].equals(c.getClassName())) {
                             flag = 1;
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag=0;
-                if (cyears!=null){
-                    for (int i=0;i<cyears.length;i++){
-                        if (cyears[i].equals(c.getGrade())){
+                flag = 0;
+                if (cyears != null) {
+                    for (int i = 0; i < cyears.length; i++) {
+                        if (cyears[i].equals(c.getGrade())) {
                             flag = 1;
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag=0;
-                if (specialtys!=null){
-                    for (int i=0;i<specialtys.length;i++){
-                        if (specialtys[i].equals(c.getSpecialty())){
+                flag = 0;
+                if (specialtys != null) {
+                    for (int i = 0; i < specialtys.length; i++) {
+                        if (specialtys[i].equals(c.getSpecialty())) {
                             flag = 1;
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag=0;
-                if (user_sex!=null){
+                flag = 0;
+                if (user_sex != null) {
                     //0 女   1 男
-                    if (c.getSex()!=null){
-                        if (user_sex.equals("男")){
-                            if (c.getSex().equals("男")){
+                    if (c.getSex() != null) {
+                        if (user_sex.equals("男")) {
+                            if (c.getSex().equals("男")) {
                                 flag = 1;
                             }
-                        }else if (c.getSex().equals("女")){
+                        } else if (c.getSex().equals("女")) {
                             flag = 1;
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag=0;
-                if (studentName!=null){
-                    if (studentName.equals(c.getStudentName())){
+                flag = 0;
+                if (studentName != null) {
+                    if (studentName.equals(c.getStudentName())) {
                         flag = 1;
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag=0;
-                if (studentNo!=null){
-                    if (studentNo.equals(c.getStudentNo())){
+                flag = 0;
+                if (studentNo != null) {
+                    if (studentNo.equals(c.getStudentNo())) {
                         flag = 1;
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag=0;
-                if (positions!=null){
-                    for (int i=0;i<positions.length;i++){
-                        if (positions[i].equals(c.getPosition())){
+                flag = 0;
+                if (positions != null) {
+                    for (int i = 0; i < positions.length; i++) {
+                        if (positions[i].equals(c.getPosition())) {
                             flag = 1;
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag=0;
-                if (politicals!=null){
-                    for (int i=0;i<politicals.length;i++){
-                        if (politicals[i].equals(c.getPolitical())){
+                flag = 0;
+                if (politicals != null) {
+                    for (int i = 0; i < politicals.length; i++) {
+                        if (politicals[i].equals(c.getPolitical())) {
                             flag = 1;
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
                 classmateBeans2.add(c);
             }
         }
-        json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans2).convertIntoJSON();
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans2);
     }
 
     /**
@@ -829,57 +858,49 @@ public class EmployeeController {
      * @return
      * @apiNote: 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
      */
-    @ApiOperation(value = "进行高级搜索校内所有职员的信息的前戏", notes = "未测试")
+    @ApiOperation(value = "人事处进行高级搜索校内所有职员的信息的前戏", notes = "未测试")
     @GetMapping("filter/employees/all")
     @ResponseBody
-    public void selectAllEmployeesToFilter(Long userId, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        String json = null;
+    public Result selectAllEmployeesToFilter(HttpServletResponse response) throws IOException {
+
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
+
+        if (loginUSer.getUserType() != 2)
+            return Result.build(ResultType.Failed, "你不是教职工用户");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
+        if (employees.size() == 0)
+            return Result.build(ResultType.Failed, "你的教职工信息为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+        if (!roles.contains(3))
+            return Result.build(ResultType.Failed, "你没有人事处的权限");
+
         HashMap<String, Object> filtermessage = new HashMap<>();
         Set<String> departmentName = new HashSet<>();
         Set<String> subDepartmentName = new HashSet<>();
         Set<String> positionName = new HashSet<>();
         List<EmployeeBean> employeeBeans = new ArrayList<>();
-        List<Employee> employees = employeeService.selectValidEmployeeByUserId(userId);
-        if (employees.size()>0){
+        if (employees.size() > 0) {
             employeeBeans = employeeService.selectEmployeeBeanByUniId(employees.get(0).getUniversityId());
-            for (EmployeeBean e:employeeBeans) {
-                if (e.getDepartmentName()!=null){
+            for (EmployeeBean e : employeeBeans) {
+                if (e.getDepartmentName() != null) {
                     departmentName.add(e.getDepartmentName());
                 }
-                if (e.getSubDepartmentName()!=null){
+                if (e.getSubDepartmentName() != null) {
                     subDepartmentName.add(e.getSubDepartmentName());
                 }
-                if (e.getPositionName()!=null){
+                if (e.getPositionName() != null) {
                     positionName.add(e.getPositionName());
                 }
             }
         }
-        /*List<Employee> employees = employeeService.selectValidEmployeeByUniId(Long.valueOf(1));
-        for (Employee e : employees) {
-            System.out.println("职员：" + e.toString());
-            //学院 department
-            List<Department> departments = otherDepartmentService.selectValidById(e.getDepartmentId());
-            //System.out.println(departments.size());
-            if (departments != null) {
-                departmentName.add(departments.get(0).getName());
-            }
-            //科室 subdeparment
-            Subdepartment subdepartment = subdepartmentService.select(e.getSubdepartmentId());
-            if (subdepartment != null) {
-                subDepartmentName.add(subdepartment.getName());
-            }
-            //行政岗位 position employee_position
-            Position position = positionService.select(e.getPositionId());
-            if (position != null) {
-                positionName.add(position.getName());
-            }
-        }*/
         filtermessage.put("departmentName", departmentName);
         filtermessage.put("subDepartmentName", subDepartmentName);
         filtermessage.put("positionName", positionName);
-        json = Result.build(ResultType.Success).appendData("filtermessage", filtermessage).convertIntoJSON();
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("filtermessage", filtermessage);
     }
 
     /**
@@ -890,77 +911,88 @@ public class EmployeeController {
      * @apiNote: 列名从左到右 : 员工编号，照片，姓名，学校，当前所属学院，当前所在科室，行政岗位，按钮（详细信息）
      * 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
      */
-    @ApiOperation(value = "领导查询校内所有职员的信息，进行高级搜索", notes = "未测试")
-    @PostMapping("filter/allemployees/{userId}")
+    @ApiOperation(value = "人事处查询校内所有职员的信息，进行高级搜索", notes = "未测试")
+    @PostMapping("filter/allemployees")
     @ResponseBody
-    public void selectAllClassmatesByFilter(@PathVariable Long userId ,String[] employeeNames, String[] departmentNames, String[] subDepartmentNames, String[] positionNames, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        String json = null;
+    public Result selectAllClassmatesByFilter(String[] employeeNames, String[] departmentNames, String[] subDepartmentNames, String[] positionNames, HttpServletResponse response) throws IOException {
+
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
+
+        if (loginUSer.getUserType() != 2)
+            return Result.build(ResultType.Failed, "你不是教职工用户");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
+        if (employees.size() == 0)
+            return Result.build(ResultType.Failed, "你的教职工信息为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+        if (!roles.contains(3))
+            return Result.build(ResultType.Failed, "你没有人事处的权限");
+
         int flag = 0;
-        edu.uni.auth.bean.User AuthUser = authService.getUser();
-        List<Employee> employees = employeeService.selectValidEmployeeByUserId(userId);
-        List<EmployeeBean> employeeBeans =new ArrayList<>();
+        List<EmployeeBean> employeeBeans = new ArrayList<>();
         List<EmployeeBean> employeeBean = new ArrayList<>();
-        if (employees.size()>0) {
+        if (employees.size() > 0) {
             employeeBeans = employeeService.selectEmployeeBeanByUniId(employees.get(0).getUniversityId());
             for (EmployeeBean e : employeeBeans) {
                 flag = 0;
-                if (employeeNames!=null){
-                    if (e.getUsername()!=null){
-                        for(int i=0;i<employeeNames.length;i++){
-                            if (employeeNames[i].equals(e.getUsername())){
+                if (employeeNames != null) {
+                    if (e.getUsername() != null) {
+                        for (int i = 0; i < employeeNames.length; i++) {
+                            if (employeeNames[i].equals(e.getUsername())) {
                                 flag = 1;
                             }
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
                 flag = 0;
-                if (departmentNames!=null){
-                    if (e.getDepartmentName()!=null){
-                        for (int i=0;i<departmentNames.length;i++){
-                            if (e.getDepartmentName().equals(departmentNames[i])){
+                if (departmentNames != null) {
+                    if (e.getDepartmentName() != null) {
+                        for (int i = 0; i < departmentNames.length; i++) {
+                            if (e.getDepartmentName().equals(departmentNames[i])) {
                                 flag = 1;
                             }
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
                 flag = 0;
-                if (subDepartmentNames!=null){
-                    if (e.getSubDepartmentName()!=null){
-                        for (int i=0;i<subDepartmentNames.length;i++){
-                            if (e.getSubDepartmentName().equals(subDepartmentNames[i])){
+                if (subDepartmentNames != null) {
+                    if (e.getSubDepartmentName() != null) {
+                        for (int i = 0; i < subDepartmentNames.length; i++) {
+                            if (e.getSubDepartmentName().equals(subDepartmentNames[i])) {
                                 flag = 1;
                             }
                         }
                     }
-                    if (flag !=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
-                flag =0;
-                if (positionNames!=null){
-                    if (e.getPositionName()!=null){
-                        for (int i=0;i<positionNames.length;i++){
-                            if (e.getPositionName().equals(positionNames[i])){
+                flag = 0;
+                if (positionNames != null) {
+                    if (e.getPositionName() != null) {
+                        for (int i = 0; i < positionNames.length; i++) {
+                            if (e.getPositionName().equals(positionNames[i])) {
                                 flag = 1;
                             }
                         }
                     }
-                    if (flag!=1){
+                    if (flag != 1) {
                         continue;
                     }
                 }
                 employeeBean.add(e);
             }
         }
-        json = Result.build(ResultType.Success).appendData("employeeBean", employeeBean).convertIntoJSON();
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("employeeBean", employeeBean);
     }
 
     /**

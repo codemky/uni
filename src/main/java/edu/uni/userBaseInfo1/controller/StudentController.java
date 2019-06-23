@@ -79,6 +79,8 @@ public class StudentController {
     private UserinfoApplyApprovalController userinfoApplyApprovalController;
     @Autowired
     private OtherPositionService otherPositionService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
 
 
 
@@ -535,28 +537,38 @@ public class StudentController {
         }
     }
 
-    @ApiOperation(value="学生根据自己的userId查询班级学生信息", notes="未测试")
-    @PostMapping("student/allClassmates/{userId}")
+    @ApiOperation(value="学生根据userId查询自己的班级学生信息", notes="未测试")
+    @PostMapping("student/allClassmates")
     @ResponseBody
-    public  void selectClassesByClassId(@PathVariable Long userId, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        String json = null;
-        List<Student> students = studentService.selectByUserId(userId);
-        List<Classmate> classmates = new ArrayList<>();
+    public  Result selectClassesByClassId(HttpServletResponse response) throws IOException {
         HashMap<Long,Object> classmateMessages = new HashMap<>();
-        if (students.size()>0){
-            classmates = otherClassmateService.selectByClassId(students.get(0).getClassId());
-            for (int i=0;i<classmates.size();i++){
-                Student student = studentService.selectById(classmates.get(i).getStudentId());
-                User user = userService.selectUserById(student.getUserId());
-                HashMap<String,String> classmateMessage = new HashMap<>();
-                classmateMessage.put("stuno",student.getStuNo());
-                classmateMessage.put("userName",user.getUserName());
-                classmateMessages.put(classmates.get(i).getId(),classmateMessage);
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer==null)
+            return Result.build(ResultType.Failed,"你还没登录");
+
+        if (loginUSer.getUserType()!=1)
+            return Result.build(ResultType.Failed,"你不是学生用户");
+
+        List<Student> students = studentService.selectByUserId(loginUSer.getId());
+        if(students.size() == 0)
+            return Result.build(ResultType.Failed,"你的学生信息为空");
+
+        /*List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(students.get(0));
+        if( !roles.contains(2) )
+            return Result.build(ResultType.Failed,"你没有学院领导的权限");*/
+
+            if (students.size()>0){
+                List<Classmate> classmates = otherClassmateService.selectByClassId(students.get(0).getClassId());
+                for (int i=0;i<classmates.size();i++){
+                    Student student = studentService.selectById(classmates.get(i).getStudentId());
+                    User user = userService.selectUserById(student.getUserId());
+                    HashMap<String,String> classmateMessage = new HashMap<>();
+                    classmateMessage.put("stuno",student.getStuNo());
+                    classmateMessage.put("userName",user.getUserName());
+                    classmateMessages.put(classmates.get(i).getId(),classmateMessage);
+                }
             }
-        }
-        json = Result.build(ResultType.Success).appendData("classmateMessages", classmateMessages).convertIntoJSON();
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("classmateMessages", classmateMessages);
     }
 
 
