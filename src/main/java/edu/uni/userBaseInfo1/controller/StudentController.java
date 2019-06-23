@@ -83,14 +83,12 @@ public class StudentController {
     private OtherEmployPositionService otherEmployPositionService;
 
 
-
-
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
 
     //内部类，专门用来管理每个get方法所对应缓存的名称。
-    static class CacheNameHelper{
+    static class CacheNameHelper {
         // ub1_s_student_{学生主要信息记录id}
         public static final String Receive_CacheNamePrefix = "ub1_s_student_";
         // ub1_s_student_listAll
@@ -98,12 +96,12 @@ public class StudentController {
     }
 
 
-    @ApiOperation(value="根据学校id和专业名称（模糊）查询相应的专业", notes="未测试")
-    @ApiImplicitParam(name = "map"  )
+    @ApiOperation(value = "根据学校id和专业名称（模糊）查询相应的专业", notes = "未测试")
+    @ApiImplicitParam(name = "map")
     @PostMapping("/ajaxGetSpecialtiesBySchoolIdAndName")
     @ResponseBody
-    public void GetSpecialtiesBySchoolIdAndName(@RequestBody Map<String,Object> map ,
-                                                HttpServletResponse response) throws  IOException{
+    public void GetSpecialtiesBySchoolIdAndName(@RequestBody Map<String, Object> map,
+                                                HttpServletResponse response) throws IOException {
 
         String specialtyName = (String) map.get("specialtyName");
         Long schoolId = (long) (1);
@@ -111,72 +109,73 @@ public class StudentController {
         response.setContentType("application/json;charset=utf-8");
         List<Specialty> specialties = otherSpecialtyService.selectBySchoolIdAndSpecialtyName(schoolId, specialtyName);
 
-        response.getWriter().write(Result.build(ResultType.Success).appendData("specialties",specialties).convertIntoJSON());
+        response.getWriter().write(Result.build(ResultType.Success).appendData("specialties", specialties).convertIntoJSON());
 
     }
 
     /**
      * Author: mokuanyuan 17:24 2019/6/7
+     *
      * @apiNote: 根据user_id查询学生主要信息，该方法用于点击申请时先把部分信息发给前端
      */
-    @ApiOperation(value="当学生点击申请时交付给前端的部分信息", notes="未测试")
-    @ApiImplicitParam(name = "schoolId", value = "学校ID", required = false, dataType = "Integer" )
+    @ApiOperation(value = "当学生点击申请时交付给前端的部分信息", notes = "未测试")
+    @ApiImplicitParam(name = "schoolId", value = "学校ID", required = false, dataType = "Integer")
     @GetMapping("/getSometimeInfoForApply")
     @ResponseBody
-    public void getSometimeInfoForApply(HttpServletResponse response) throws IOException{
+    public void getSometimeInfoForApply(HttpServletResponse response) throws IOException {
 
         Integer schoolId = 1;
         response.setContentType("application/json;charset=utf-8");
         Result result = Result.build(ResultType.Success);
 
         List<PoliticalAffiliation> politicalAffiliations = politicalAffiliationService.selectAllPoliticalAffiliations();
-        result.appendData("political",politicalAffiliations);
+        result.appendData("political", politicalAffiliations);
 
         List<Field> fields = otherFieldService.selectAllDormitoriesBySchoolId((long) schoolId);
-        result.appendData("Dormitories",fields);
+        result.appendData("Dormitories", fields);
 
         response.getWriter().write(result.convertIntoJSON());
 
     }
 
-    @ApiOperation(value="获取学生这部分的信息", notes="未测试")
-    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Integer" , paramType = "path")
+    @ApiOperation(value = "获取学生这部分的信息", notes = "未测试")
+    @ApiImplicitParam(name = "userId", value = "用户ID", required = false, dataType = "Integer", paramType = "path")
     @GetMapping("/getStudentInformation/{userId}")
     @ResponseBody
-    public Result getStudentInformation(@PathVariable Long userId ,
-                                        HttpServletResponse response) throws IOException{
+    public Result getStudentInformation(@PathVariable Long userId,
+                                        HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json;charset=utf-8");
         edu.uni.auth.bean.User loginUser = authService.getUser();
-        if(userId == null)
+        if (userId == null)
             return Result.build(ResultType.ParamError);
-        if(userId == -1 ){ // -1 代表的是查询自己的信息
-            if(loginUser == null){
+        if (userId == -1) { // -1 代表的是查询自己的信息
+            if (loginUser == null) {
                 return Result.build(ResultType.Failed, "你沒有登錄");
-            }else{
+            } else {
                 userId = loginUser.getId();
             }
-        }else{  //否则表示某个登录后的用户查看某个学生信息，此时需要检验这个登录用户的角色是否有权限查看这个学生信息
+        } else {  //否则表示某个登录后的用户查看某个学生信息，此时需要检验这个登录用户的角色是否有权限查看这个学生信息
             User user = userService.selectUserById(userId);
-            if( user == null )
-                return Result.build(ResultType.ParamError,"该学生信息不存在或已过时");
-            if( user.getUserType() != 1 ) //用户Id需要时学生类型，不然查了也是白查
-                return Result.build(ResultType.ParamError,"所查看的用户不是学生");
+            if (user == null)
+                return Result.build(ResultType.ParamError, "该学生信息不存在或已过时");
+            if (user.getUserType() != 1) //用户Id需要时学生类型，不然查了也是白查
+                return Result.build(ResultType.ParamError, "所查看的用户不是学生");
             //判断该学生与该登录用户的二级学院关系
-            if( !userinfoApplyApprovalController.isDepartmentSame(user.getId(), loginUser.getId()))
-                return Result.build(ResultType.Disallow,"登录用户和所查学生不在同一个二级学院“”");
+            if (!userinfoApplyApprovalController.isDepartmentSame(user.getId(), loginUser.getId()))
+                return Result.build(ResultType.Disallow, "登录用户和所查学生不在同一个二级学院“”");
             //判断该登录用户是否包含某几个角色
-            if( !otherRoleService.isPlayDepartmentLeader(loginUser.getId()) )
-                return Result.build(ResultType.Disallow,"登录用户的操作权限不允许");
+            if (!otherRoleService.isPlayDepartmentLeader(loginUser.getId()))
+                return Result.build(ResultType.Disallow, "登录用户的操作权限不允许");
 
         }
         User user = userService.selectUserById(userId);
 
 
         boolean isOperate = false;
-        HashMap<String , Object> studentMap = new HashMap<>();
+        HashMap<String, Object> studentMap = new HashMap<>();
 
-        if(user.getUserType() == 1) {
+        if (user.getUserType() == 1) {
             List<Student> students = studentService.selectByUserId(userId);
             if (students.size() > 0) {
                 studentService.selectByUserIdToMap(studentMap, students.get(0));
@@ -184,32 +183,32 @@ public class StudentController {
             }
         }
 
-        if(isOperate)
-            return Result.build(ResultType.Success).appendData("student",studentService.selectByUserId(userId).get(0))
-                    .appendData("studentInfo",studentMap);
+        if (isOperate)
+            return Result.build(ResultType.Success).appendData("student", studentService.selectByUserId(userId).get(0))
+                    .appendData("studentInfo", studentMap);
         else
             return Result.build(ResultType.ParamError);
     }
 
 
-
     /**
      * Author: laizhouhao 18:36 2019/5/6
+     *
      * @param user_id
      * @return response
      * @apiNote: 根据用户的id查询对应的学生主要信息
      */
-    @ApiOperation( value = "根据用户的id查询对应的学生主要信息",notes = "2019年5月6日 18:37:01 已通过测试" )
+    @ApiOperation(value = "根据用户的id查询对应的学生主要信息", notes = "2019年5月6日 18:37:01 已通过测试")
     @GetMapping("studentByUserId/{user_id}")
     @ResponseBody
-    public void selectByUserId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
+    public void selectByUserId(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
-        String cacheName = StudentController.CacheNameHelper.ListAll_CacheName+user_id;
+        String cacheName = StudentController.CacheNameHelper.ListAll_CacheName + user_id;
         String json = cache.get(cacheName);
-        if(json == null){
+        if (json == null) {
             json = Result.build(ResultType.Success)
-                    .appendData("students",studentService.selectByUserId(user_id)).convertIntoJSON();
-            cache.set(cacheName,json);
+                    .appendData("students", studentService.selectByUserId(user_id)).convertIntoJSON();
+            cache.set(cacheName, json);
         }
         response.getWriter().write(json);
     }
@@ -217,42 +216,44 @@ public class StudentController {
     /**
      * Author: laizhouhao 10:29 2019/4/30
      * return response
+     *
      * @apiNote: 查询所有学生主要信息记录
      */
-    @ApiOperation( value = "查询所有学生主要信息记录",notes = "2019-5-5 15:53:53已通过测试" )
+    @ApiOperation(value = "查询所有学生主要信息记录", notes = "2019-5-5 15:53:53已通过测试")
     @GetMapping("students/listAll")
     @ResponseBody
     public void selectAll(HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         String cacheName = edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName;
         String json = cache.get(cacheName);
-        if(json == null){
+        if (json == null) {
             json = Result.build(ResultType.Success)
-                    .appendData("students",studentService.selectAll()).convertIntoJSON();
-            cache.set(cacheName,json);
+                    .appendData("students", studentService.selectAll()).convertIntoJSON();
+            cache.set(cacheName, json);
         }
         response.getWriter().write(json);
     }
 
     /**
      * Author: laizhouhao 10:30 2019/4/30
+     *
      * @param student
      * @return 新增学生主要信息结果
      * @apiNote 新增学生主要信息
      */
-    @ApiOperation(value="新增学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiOperation(value = "新增学生主要信息", notes = "2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "student", value = "学生主要信息详情实体", required = true, dataType = "Student")
     @PostMapping("/student")  //post请求方式
     @ResponseBody
-    public Result create(@RequestBody(required = false) Student student){
+    public Result create(@RequestBody(required = false) Student student) {
         //检验页面传来的对象是否存在
-        if(student != null){
+        if (student != null) {
             boolean success = studentService.insert(student);
-            if(success){
+            if (success) {
                 // 清空相关缓存
                 cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
-            }else{
+            } else {
                 return Result.build(ResultType.Failed);
             }
         }
@@ -261,44 +262,46 @@ public class StudentController {
 
     /**
      * Author: laizhouhao 10:33 2019/4/30
+     *
      * @param id
      * @return 删除操作结果
      * @apiNote 根据id删除学生主要信息
      */
-    @ApiOperation(value="根据id删除学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiOperation(value = "根据id删除学生主要信息", notes = "2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "id", value = "学生id", required = true, dataType = "Long", paramType = "path")
     @DeleteMapping("/student/{id}")   //delete请求
     @ResponseBody
-    public Result destroy(@PathVariable Long id){
+    public Result destroy(@PathVariable Long id) {
         boolean success = studentService.delete(id);
-        if(success){
+        if (success) {
             // 清空相关缓存
             cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
             return Result.build(ResultType.Success);
-        }else{
+        } else {
             return Result.build(ResultType.Failed);
         }
     }
 
     /**
      * Author: laizhouhao 10:34 2019/4/30
+     *
      * @param student
      * @return 更新操作结果
      * @apiNote 更新学生主要信息
      */
-    @ApiOperation(value="更新学生主要信息", notes="2019-5-5 15:53:53已通过测试")
+    @ApiOperation(value = "更新学生主要信息", notes = "2019-5-5 15:53:53已通过测试")
     @ApiImplicitParam(name = "student", value = "学生主要信息实体", required = true, dataType = "Student")
     @PutMapping("/student")   //Put请求
     @ResponseBody
-    public Result update(@RequestBody(required = false) Student student){
-        if(student != null && student.getId() != null){
+    public Result update(@RequestBody(required = false) Student student) {
+        if (student != null && student.getId() != null) {
             boolean success = studentService.update(student);
-            if(success){
+            if (success) {
                 //清除相应的缓存
                 cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.Receive_CacheNamePrefix + student.getId());
                 cache.delete(edu.uni.userBaseInfo1.controller.StudentController.CacheNameHelper.ListAll_CacheName);
                 return Result.build(ResultType.Success);
-            }else{
+            } else {
                 return Result.build(ResultType.Failed);
             }
         }
@@ -307,18 +310,19 @@ public class StudentController {
 
     /**
      * Author: laizhouhao 16:08 2019/5/7
+     *
      * @param user_id
      * @return response
      * @apiNote: 根据学生的用户id查找学生个人详细信息
      */
-    @ApiOperation( value = "根据学生的用户id查找学生个人详细信息",notes = "未测试" )
+    @ApiOperation(value = "根据学生的用户id查找学生个人详细信息", notes = "未测试")
     @GetMapping("info/studentDetailInfo/All/{user_id}")
-    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long", paramType = "path")
     @ResponseBody
     public void receiveStudentDetailInfo(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
         //检验页面传来的id是否存在
-        if(user_id != null){
+        if (user_id != null) {
             UserInfo userInfo = new UserInfo();
             //获取学生在用户表的主要信息
 
@@ -334,22 +338,22 @@ public class StudentController {
             userInfo.setStudents(studentList);
             //获取政治面貌
             List<PoliticalAffiliation> politicalAffiliationList = new ArrayList<>();
-            if(studentList.size()>=1) {
+            if (studentList.size() >= 1) {
                 politicalAffiliationList.add(politicalAffiliationService
                         .selectPoliticalAffiliationById(studentList.get(0).getPoliticalId()));
             }
             userInfo.setPoliticalAffiliations(politicalAffiliationList);
             System.out.println(userInfo);
             //拼接缓存键名（字符串）
-            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix +"studentDetailInfo"+ user_id;
+            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix + "studentDetailInfo" + user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);
             //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
+            if (json == null) {
                 json = Result.build(ResultType.Success)
-                        .appendData("userInfo",userInfo).convertIntoJSON();
-                cache.set(cacheName,json);
+                        .appendData("userInfo", userInfo).convertIntoJSON();
+                cache.set(cacheName, json);
             }
             //到最后通过response对象返回json格式字符串的数据
             response.getWriter().write(json);
@@ -357,28 +361,28 @@ public class StudentController {
     }
 
 
-    @ApiOperation( value = "根据学生的用户id查找学生对应的学院",notes = "未测试" )
+    @ApiOperation(value = "根据学生的用户id查找学生对应的学院", notes = "未测试")
     @GetMapping("info/studentDetailInfo/department/{user_id}")
-    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long", paramType = "path")
     @ResponseBody
-    public void selectDepartmentIdByStudentId(@PathVariable Long user_id,HttpServletResponse response) throws IOException{
+    public void selectDepartmentIdByStudentId(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=utf-8");
-        if(user_id != null){
+        if (user_id != null) {
             Student student = studentService.selectByUserId(user_id).get(0);
             Class aClass = otherClassService.selectClassByClassId(student.getClassId());
-            System.out.println(aClass.getDepartmentId()+"--->");
+            System.out.println(aClass.getDepartmentId() + "--->");
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix +"department"+ user_id;
+            String cacheName = StudentController.CacheNameHelper.Receive_CacheNamePrefix + "department" + user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);
             //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
+            if (json == null) {
                 json = Result.build(ResultType.Success)
-                        .appendData("class",aClass).convertIntoJSON();
-                cache.set(cacheName,json);
+                        .appendData("class", aClass).convertIntoJSON();
+                cache.set(cacheName, json);
             }
             //到最后通过response对象返回json格式字符串的数据
             response.getWriter().write(json);
@@ -387,64 +391,61 @@ public class StudentController {
     }
 
 
-    @ApiOperation(value="根据年级和专业id查询相应的班级", notes="未测试")
-    @ApiImplicitParam(name = "map"  )
+    @ApiOperation(value = "根据年级和专业id查询相应的班级", notes = "未测试")
+    @ApiImplicitParam(name = "map")
     @PostMapping("/ajaxGetClassByGradeAndSpecialtyId")
     @ResponseBody
-    public void GetClassByGradeAndSpecialtyId(@RequestBody Map<String ,Object>  map , HttpServletResponse response) throws IOException{
+    public void GetClassByGradeAndSpecialtyId(@RequestBody Map<String, Object> map, HttpServletResponse response) throws IOException {
 
         Integer grade = (Integer) map.get("grade");
         Integer specialtyId = (Integer) map.get("specialtyId");
 
         response.setContentType("application/json;charset=utf-8");
-        List<Class> classes = otherClassService.selectClassByGradeAndSpecialtyId(grade, (long)specialtyId);
+        List<Class> classes = otherClassService.selectClassByGradeAndSpecialtyId(grade, (long) specialtyId);
 
-        response.getWriter().write(Result.build(ResultType.Success).appendData("classes",classes).convertIntoJSON());
+        response.getWriter().write(Result.build(ResultType.Success).appendData("classes", classes).convertIntoJSON());
 
     }
 
 
     /**
      * Author: laizhouhao 22:06 2019/6/2
+     *
      * @param stu_no
      * @return 学生详细信息
      * @apiNote: 根据学号获取学生详细信息
      */
-    @ApiOperation(value="根据学号获取学生详细信息", notes="2019年6月11日 12:17:39 已通过测试")
-    @ApiImplicitParam(name = "stu_no", value = "学号", required = false, dataType = "String" , paramType = "path")
+    @ApiOperation(value = "根据学号获取学生详细信息", notes = "2019年6月11日 12:17:39 已通过测试")
+    @ApiImplicitParam(name = "stu_no", value = "学号", required = false, dataType = "String", paramType = "path")
     @GetMapping(value = "/getStuInfoDetailByStuNO/{stu_no}")
     @ResponseBody
-    public void selectStudentDetailByStuNo(@PathVariable String stu_no,HttpServletResponse response) throws IOException {
+    public void selectStudentDetailByStuNo(@PathVariable String stu_no, HttpServletResponse response) throws IOException {
         if (stu_no != null) {
             //根据学号查询出该学生
             Student student = new Student();
             student = studentService.selectValidStuByStuNo(stu_no);
             //查找该学生的详细信息
-            HashMap<String,Object>map = new LinkedHashMap<>();
-            userService.selectStuDetailInfoByStuNo(map,student);
+            HashMap<String, Object> map = new LinkedHashMap<>();
+            userService.selectStuDetailInfoByStuNo(map, student);
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             String json = Result.build(ResultType.Success)
-                        .appendData("studentInfo", map).convertIntoJSON();
+                    .appendData("studentInfo", map).convertIntoJSON();
 
             //到最后通过response对象返回json格式字符串的数据
             response.getWriter().write(json);
         }
     }
 
-    @ApiOperation(value="根据班级的编码查询所有的学生信息", notes="未测试")
-    @ApiImplicitParam(name = "classCode", value = "classCode", required = false, dataType = "Long" , paramType = "path")
+    @ApiOperation(value = "这才是教师根据班级的编码查询所有的学生信息", notes = "未测试")
+    @ApiImplicitParam(name = "classCode", value = "classCode", required = false, dataType = "Long", paramType = "path")
     @GetMapping("student/allClassmates/{classCode}")
     @ResponseBody
-    public  void selectClassesByClassId(@PathVariable String classCode, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        //System.out.println(new Date());
-        String json = null;
+    public Result selectClassesByClassId(@PathVariable String classCode, HttpServletResponse response) throws IOException {
         List<ClassmateBean> classmateBeans = new ArrayList<>();
         Class aClass = otherClassService.selectClassByClassCode(classCode);
-        //System.out.println("bji---->"+aClass.getId());
         List<Classmate> classmates = otherClassmateService.selectByClassId(aClass.getId());
-        for (Classmate cm:classmates) {
+        for (Classmate cm : classmates) {
             Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
             User user = userService.selectUserById(student.getUserId());
             List<ClassmatePosition> classmatePositions = otherClassmatePositionService.selectclassmatePositionByClassmateId(cm.getId());
@@ -467,9 +468,9 @@ public class StudentController {
             //所在班级
             classmateBean.setClassName(aClass.getName());
             //性别
-            if (user.getUserSex().equals(0)){
+            if (user.getUserSex().equals(0)) {
                 classmateBean.setSex("女");
-            }else {
+            } else {
                 classmateBean.setSex("男");
             }
             //联系方式
@@ -479,99 +480,94 @@ public class StudentController {
             PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
             classmateBean.setPolitical(politicalAffiliation.getPolitical());
             //岗位
-            if (classmatePositions!=null){
+            if (classmatePositions != null) {
                 StringBuffer positionNames = new StringBuffer();
-                    for (ClassmatePosition cp:classmatePositions) {
-                        Position position = positionService.select(cp.getPositionId());
-                        if (position!=null) {
-                            positionNames.append(position.getName());
-                        }
+                for (ClassmatePosition cp : classmatePositions) {
+                    Position position = positionService.select(cp.getPositionId());
+                    if (position != null) {
+                        positionNames.append(position.getName());
                     }
+                }
                 //}
                 classmateBean.setPosition(String.valueOf(positionNames));
             }
-            //subcalss.add(classmatePosition.getId().toString());
             classmateBeans.add(classmateBean);
         }
-        //System.out.println(classmateBeans);
-        //System.out.println(new Date());
-        json = Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans).convertIntoJSON();
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans);
     }
 
     /**
      * Author: laizhouhao 19:35 2019/6/10
+     *
      * @param user_id
      * @return 学生信息
      * @apiNote: 根据用户id查找用户的详细信息
      */
-    @ApiOperation( value = "根据用户id查找学生的详细信息",notes = "2019年6月10日 19:45:11 已通过" )
+    @ApiOperation(value = "根据用户id查找学生的详细信息", notes = "2019年6月10日 19:45:11 已通过")
     @GetMapping("/getStudentInfo/{user_id}")
-    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long" , paramType = "path")
+    @ApiImplicitParam(name = "user_id", value = "用户user_id", required = false, dataType = "Long", paramType = "path")
     @ResponseBody
     public void receiveUserPictureAddr(@PathVariable Long user_id, HttpServletResponse response) throws IOException {
         //检验页面传来的id是否存在
-        if(user_id != null){
+        if (user_id != null) {
             //查找出学生实体
-            List<Student>studentList = new ArrayList<>();
+            List<Student> studentList = new ArrayList<>();
             studentList = studentService.selectByUserId(user_id);
             //查找出学生信息
-            HashMap<String,Object>map = new HashMap<>();
+            HashMap<String, Object> map = new HashMap<>();
             studentService.getStudent(map, studentList);
 
             //设置返回的数据格式
             response.setContentType("application/json;charset=utf-8");
             //拼接缓存键名（字符串）
-            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix +"studentInfo"+ user_id;
+            String cacheName = UserController.CacheNameHelper.Receive_CacheNamePrefix + "studentInfo" + user_id;
             //尝试在缓存中通过键名获取相应的键值
             //因为在Redis中，数据是以”“” "键-值"对 的形式储存的
             String json = cache.get(cacheName);
             //如果在缓存中找不到，那就从数据库里找
-            if(json == null){
+            if (json == null) {
                 json = Result.build(ResultType.Success)
-                        .appendData("studentInfo",map).convertIntoJSON();
-                cache.set(cacheName,json);
+                        .appendData("studentInfo", map).convertIntoJSON();
+                cache.set(cacheName, json);
             }
             //到最后通过response对象返回json格式字符串的数据
             response.getWriter().write(json);
         }
     }
 
-    @ApiOperation(value="学生根据userId查询自己的班级学生信息", notes="未测试")
+    @ApiOperation(value = "学生根据userId查询自己的班级学生信息", notes = "未测试")
     @PostMapping("student/allClassmates")
     @ResponseBody
-    public  Result selectClassesByClassId(HttpServletResponse response) throws IOException {
-        HashMap<Long,Object> classmateMessages = new HashMap<>();
+    public Result selectClassesByClassId(HttpServletResponse response) throws IOException {
+        HashMap<Long, Object> classmateMessages = new HashMap<>();
         edu.uni.auth.bean.User loginUSer = authService.getUser();
-        if (loginUSer==null)
-            return Result.build(ResultType.Failed,"你还没登录");
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
 
-        if (loginUSer.getUserType()!=1)
-            return Result.build(ResultType.Failed,"你不是学生用户");
+        if (loginUSer.getUserType() != 1)
+            return Result.build(ResultType.Failed, "你不是学生用户");
 
         List<Student> students = studentService.selectByUserId(loginUSer.getId());
-        if(students.size() == 0)
-            return Result.build(ResultType.Failed,"你的学生信息为空");
+        if (students.size() == 0)
+            return Result.build(ResultType.Failed, "你的学生信息为空");
 
         /*List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(students.get(0));
         if( !roles.contains(2) )
             return Result.build(ResultType.Failed,"你没有学院领导的权限");*/
 
-            if (students.size()>0){
-                List<Classmate> classmates = otherClassmateService.selectByClassId(students.get(0).getClassId());
-                for (int i=0;i<classmates.size();i++){
-                    Student student = studentService.selectById(classmates.get(i).getStudentId());
-                    User user = userService.selectUserById(student.getUserId());
-                    HashMap<String,String> classmateMessage = new HashMap<>();
-                    classmateMessage.put("stuno",student.getStuNo());
-                    classmateMessage.put("userName",user.getUserName());
-                    classmateMessages.put(classmates.get(i).getId(),classmateMessage);
-                }
+        if (students.size() > 0) {
+            List<Classmate> classmates = otherClassmateService.selectByClassId(students.get(0).getClassId());
+            for (int i = 0; i < classmates.size(); i++) {
+                Student student = studentService.selectById(classmates.get(i).getStudentId());
+                User user = userService.selectUserById(student.getUserId());
+                HashMap<String, String> classmateMessage = new HashMap<>();
+                classmateMessage.put("stuno", student.getStuNo());
+                classmateMessage.put("userName", user.getUserName());
+                classmateMessages.put(classmates.get(i).getId(), classmateMessage);
             }
+        }
         return Result.build(ResultType.Success).appendData("classmateMessages", classmateMessages);
     }
-
-
 
 
 //    /**

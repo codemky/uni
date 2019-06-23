@@ -493,6 +493,7 @@ public class EmployeeController {
 
     /**
      * Author: chenenru 11:24 2019/5/16
+     *
      * @return
      * @apiNote: 根据userId查询employee表获取到employeeId,
      * 根据employeeId对class表查询employeeId==headteacher的所有班级，
@@ -505,19 +506,19 @@ public class EmployeeController {
     public Result selectAllClassmatesByUserId(Integer year, String className, HttpServletResponse response) throws IOException {
 
         edu.uni.auth.bean.User loginUSer = authService.getUser();
-        if (loginUSer==null)
-            return Result.build(ResultType.Failed,"你还没登录");
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
 
-        if (loginUSer.getUserType()!=2)
-            return Result.build(ResultType.Failed,"你不是教职工用户");
+        if (loginUSer.getUserType() != 2)
+            return Result.build(ResultType.Failed, "你不是教职工用户");
 
         List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
-        if(employees.size() == 0)
-            return Result.build(ResultType.Failed,"你的教职工信息为空");
+        if (employees.size() == 0)
+            return Result.build(ResultType.Failed, "你的教职工信息为空");
 
         List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
-        if( !roles.contains(1) )
-            return Result.build(ResultType.Failed,"你没有班主任的权限");
+        if (!roles.contains(1))
+            return Result.build(ResultType.Failed, "你没有班主任的权限");
 
         UserInfo userInfo = new UserInfo();
         List<Class> classes = otherClassService.selectClassesByEmployeeId(employees.get(0).getId(), year, className);
@@ -543,7 +544,7 @@ public class EmployeeController {
         return Result.build(ResultType.Success).appendData("userInfo", userInfo);
     }
 
-    @ApiOperation(value = "教师查询所授课班级学生信息", notes = "未测试")
+    /*@ApiOperation(value = "这不是教师查询所授课班级学生信息(这个接口已经被抛弃)", notes = "未测试")
     @GetMapping("employee/class/allClassmates")
     @ResponseBody
     public Result selectStudentsByUserId(HttpServletResponse response) throws IOException {
@@ -587,7 +588,7 @@ public class EmployeeController {
         userInfo.setStudents(students);
         userInfo.setUsers(users);
         return Result.build(ResultType.Success).appendData("userInfo", userInfo);
-    }
+    }*/
 
     /**
      * Author: laizhouhao 18:52 2019/5/17

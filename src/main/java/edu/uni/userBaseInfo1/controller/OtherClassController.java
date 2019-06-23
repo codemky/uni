@@ -4,6 +4,7 @@ import edu.uni.administrativestructure.bean.Class;
 import edu.uni.administrativestructure.bean.Classmate;
 import edu.uni.administrativestructure.bean.ClassmatePosition;
 import edu.uni.administrativestructure.service.ClassmatePositionService;
+import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
 import edu.uni.educateAffair.bean.Curriculum;
@@ -54,17 +55,34 @@ public class OtherClassController {
     private OtherClassmatePositionService otherClassmatePositionService;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private OtherEmployPositionService otherEmployPositionService;
 
 
-    @ApiOperation(value="查询所授课班级学生信息之班级信息", notes="未测试")
-    @ApiImplicitParam(name = "userId", value = "userId", required = false, dataType = "Long" , paramType = "path")
-    @GetMapping("employee/class/allClassmates/{userId}")
+    @ApiOperation(value="教师查询所授课班级学生信息之班级信息", notes="未测试")
+    @GetMapping("employee/class/allClassmates")
     @ResponseBody
-    public  void selectClassesByUserId(@PathVariable Long userId, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        Employee employee = employeeService.selectByUserId(userId).get(0);
+    public  Result selectClassesByUserId(HttpServletResponse response) throws IOException {
+
+        edu.uni.auth.bean.User loginUSer = authService.getUser();
+        if (loginUSer == null)
+            return Result.build(ResultType.Failed, "你还没登录");
+
+        if (loginUSer.getUserType() != 2)
+            return Result.build(ResultType.Failed, "你不是教职工用户");
+
+        List<Employee> employees = employeeService.selectByUserId(loginUSer.getId());
+        if (employees.size() == 0)
+            return Result.build(ResultType.Failed, "你的教职工信息为空");
+
+        List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
+        if (!roles.contains(0))
+            return Result.build(ResultType.Failed, "你没有教师的权限");
+
         List<Long> longs = new ArrayList<>();
-        longs.add(employee.getId());
+        longs.add(employees.get(0).getId());
         List<Curriculum> curricula = curriculumService.selectCurriculumByCondition(null, longs, null, null);
         ClassBean classBean = new ClassBean();
         Set<ClassBean> classBeans = new HashSet<>();
@@ -94,7 +112,6 @@ public class OtherClassController {
             classBeans.add(classBean);
         }
         //System.out.println(classBean);
-        json = Result.build(ResultType.Success).appendData("classBeans", classBeans).convertIntoJSON();
-        response.getWriter().write(json);
+        return Result.build(ResultType.Success).appendData("classBeans", classBeans);
     }
 }
