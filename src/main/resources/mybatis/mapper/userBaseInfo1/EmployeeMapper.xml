@@ -412,8 +412,8 @@
         select user.id as id,student.id as studentId,student.stu_no as studentNo,user.user_name as studentName,user.regist as
         regist,
         specialty.name as specialty,student.grade as grade,user.user_sex as sex,ecomm.content as content,
-        political_affiliation.political as political,position.name as positionName,class.name as className
-        from employee
+        political_affiliation.political as political,group_concat(position.name) as positionName,class.name as className
+        from user,employee
         LEFT JOIN department on employee.department_id =department.id
         LEFT JOIN class on class.department_id = department.id
         LEFT JOIN classmate on classmate.class_id = class.id
@@ -422,9 +422,8 @@
         LEFT JOIN student on student.id =classmate.student_id
         LEFT JOIN specialty on student.specialty_id = specialty.id
         LEFT JOIN ecomm on ecomm.id =student.phone_ecomm_id
-        LEFT JOIN user on user.id = student.user_id
         LEFT JOIN political_affiliation on student.political_id = political_affiliation.id
-        where employee.user_id=#{userId,jdbcType=BIGINT}
+        where employee.user_id=#{userId,jdbcType=BIGINT} and user.id = student.user_id
         <if test="studentName != null">
             AND user.user_name LIKE #{studentName}
         </if>
@@ -474,6 +473,7 @@
                 #{positionsListId}
             </foreach>
         </if>
+        Group by user.id
     </select>
     <select id="selectEmployeeBean" parameterType="java.lang.Long" resultMap="employeeBeanMap">
         select employee.emp_no as employeeNo,user.name as username,university.name as universityName,
