@@ -7,6 +7,7 @@ import edu.uni.userBaseInfo1.bean.Employee;
 import edu.uni.userBaseInfo1.bean.RequestMessage;
 import edu.uni.userBaseInfo1.bean.User;
 import edu.uni.userBaseInfo1.utils.UserInfo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
 import java.util.List;
@@ -165,7 +166,16 @@ public interface EmployeeService {
      * @return
      * @apiNote: 领导查询班级学生
      */
-    List<ClassmateBean> selecClassMateBeantByUserId(Long userId);
+    List<ClassmateBean> selectClassMateBeantByUserId(Long userId);
+    List<ClassmateBean> selectClassmateBeanByFilter(Long userId,
+                                                    List<String> classNamesList,
+                                                    List<String> cyearsList,
+                                                    List<String> specialtysList,
+                                                    Integer user_sex,
+                                                    String studentName,
+                                                    String studentNo,
+                                                    List<String> politicalsList,
+                                                    List<String> positionsList);
     /**
      * Author: chenenru 20:51 2019/6/22
      * @param
@@ -173,5 +183,10 @@ public interface EmployeeService {
      * @apiNote: 领导查询职员
      */
     List<EmployeeBean> selectEmployeeBeanByUniId(Long uniId);
+
+    List<EmployeeBean> selectEmployeeBeanByAllFilter(Long uniId, String employeeName,
+                                                     List<String> departmentNameList,
+                                                     List<String> subDepartmentNameList,
+                                                     List<String> positionNameList);
 
 }

@@ -458,14 +458,43 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<ClassmateBean> selecClassMateBeantByUserId(Long userId) {
+    public List<ClassmateBean> selectClassMateBeantByUserId(Long userId) {
         List<ClassmateBean> classmateBeans = employeeMapper.selectClassmateBean(userId);
+        return classmateBeans;
+    }
+
+    @Override
+    public List<ClassmateBean> selectClassmateBeanByFilter(Long userId, List<String> classNamesList, List<String> cyearsList,
+                                                           List<String> specialtysList, Integer user_sex, String studentName,
+                                                           String studentNo, List<String> politicalsList, List<String> positionsList) {
+        System.out.println("controller层：");
+        System.out.println("传过来的classNames："+classNamesList);
+        System.out.println("传过来的cyears："+cyearsList);
+        System.out.println("传过来的specialtys："+specialtysList);
+        System.out.println("传过来的user_sex："+user_sex);
+        System.out.println("传过来的studentName："+studentName);
+        System.out.println("传过来的studentNo："+studentNo);
+        System.out.println("传过来的politicals："+politicalsList);
+        System.out.println("传过来的positions："+positionsList);
+        List<ClassmateBean> classmateBeans = employeeMapper.selectClassmateBeanByFilter(userId, classNamesList, cyearsList, specialtysList, user_sex, studentName,
+                studentNo, politicalsList, positionsList);
         return classmateBeans;
     }
 
     @Override
     public List<EmployeeBean> selectEmployeeBeanByUniId(Long uniId) {
         List<EmployeeBean> employeeBeans = employeeMapper.selectEmployeeBean(uniId);
+        return employeeBeans;
+    }
+
+    @Override
+    public List<EmployeeBean> selectEmployeeBeanByAllFilter(Long uniId, String employeeName, List<String> departmentNameList, List<String> subDepartmentNameList, List<String> positionNameList) {
+        System.out.println("serviceImpl层：");
+        System.out.println("传过来的employeeName："+employeeName);
+        System.out.println("传过来的学院名："+departmentNameList);
+        System.out.println("传过来的科室名："+subDepartmentNameList);
+        System.out.println("传过来的岗位名："+positionNameList);
+        List<EmployeeBean> employeeBeans = employeeMapper.selectEmployeeBeanByFilter(uniId, employeeName, departmentNameList, subDepartmentNameList, positionNameList);
         return employeeBeans;
     }
 

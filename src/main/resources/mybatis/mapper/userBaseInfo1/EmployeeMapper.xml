@@ -18,20 +18,6 @@
         <result column="by_who" property="byWho" jdbcType="BIGINT"/>
         <result column="deleted" property="deleted" jdbcType="BIT"/>
     </resultMap>
-    <resultMap id="classmateBeanMap" type="edu.uni.userBaseInfo1.PageBean.ClassmateBean">
-        <id column="id" property="userId" jdbcType="BIGINT"></id>
-        <result column="studentId" property="studentId" jdbcType="BIGINT"></result>
-        <result column="stu_no" property="studentNo" jdbcType="VARCHAR"></result>
-        <result column="studentName" property="studentName" jdbcType="CHAR"></result>
-        <result column="regist" property="beginLearnDate" jdbcType="TIMESTAMP"></result>
-        <result column="specialty" property="specialty" jdbcType="VARCHAR"></result>
-        <result column="grade" property="grade" jdbcType="CHAR"></result>
-        <result column="user_sex" property="sex" jdbcType="INTEGER"></result>
-        <result column="content" property="phone" jdbcType="CHAR"></result>
-        <result column="political" property="political" jdbcType="CHAR"></result>
-        <result column="position" property="position" jdbcType="VARCHAR"></result>
-        <result column="className" property="className" jdbcType="VARCHAR"></result>
-    </resultMap>
     <resultMap id="employeeBeanMap" type="edu.uni.userBaseInfo1.PageBean.EmployeeBean">
         <result column="employeeNo" property="employeeNo" jdbcType="VARCHAR"></result>
         <result column="username" property="username" jdbcType="VARCHAR"></result>
@@ -391,10 +377,24 @@
       deleted = #{deleted,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+    <resultMap id="classmateBeanMap" type="edu.uni.userBaseInfo1.PageBean.ClassmateBean">
+        <id column="id" property="userId" jdbcType="BIGINT"></id>
+        <result column="studentId" property="studentId" jdbcType="BIGINT"></result>
+        <result column="studentNo" property="studentNo" jdbcType="VARCHAR"></result>
+        <result column="studentName" property="studentName" jdbcType="CHAR"></result>
+        <result column="regist" property="beginLearnDate" jdbcType="TIMESTAMP"></result>
+        <result column="specialty" property="specialty" jdbcType="VARCHAR"></result>
+        <result column="grade" property="grade" jdbcType="CHAR"></result>
+        <result column="sex" property="sex" jdbcType="INTEGER"></result>
+        <result column="content" property="phone" jdbcType="CHAR"></result>
+        <result column="political" property="political" jdbcType="CHAR"></result>
+        <result column="positionName" property="position" jdbcType="VARCHAR"></result>
+        <result column="className" property="className" jdbcType="VARCHAR"></result>
+    </resultMap>
     <select id="selectClassmateBean" parameterType="java.lang.Long" resultMap="classmateBeanMap">
-    select user.id as id,student.id as studentId,student.stu_no,user.name as studentName,user.regist,
-    specialty.name as specialty,student.grade,user.user_sex,ecomm.content,
-    political_affiliation.political as political,position.name as position,class.name as className
+    select user.id as id,student.id as studentId,student.stu_no as studentNo,user.user_name as studentName,user.regist as regist,
+    specialty.name as specialty,student.grade as grade,user.user_sex as sex,ecomm.content as content,
+    political_affiliation.political as political,position.name as positionName,class.name as className
     from employee
     LEFT JOIN department on employee.department_id =department.id
     LEFT JOIN class on class.department_id = department.id
@@ -408,16 +408,122 @@
     LEFT JOIN political_affiliation on student.political_id = political_affiliation.id
     where employee.user_id=#{userId,jdbcType=BIGINT}
   </select>
+    <select id="selectClassmateBeanByFilter" resultMap="classmateBeanMap">
+        select user.id as id,student.id as studentId,student.stu_no as studentNo,user.user_name as studentName,user.regist as
+        regist,
+        specialty.name as specialty,student.grade as grade,user.user_sex as sex,ecomm.content as content,
+        political_affiliation.political as political,position.name as positionName,class.name as className
+        from employee
+        LEFT JOIN department on employee.department_id =department.id
+        LEFT JOIN class on class.department_id = department.id
+        LEFT JOIN classmate on classmate.class_id = class.id
+        LEFT JOIN classmate_position on classmate.id = classmate_position.classmate_id
+        LEFT JOIN position on classmate_position.position_id = position.id
+        LEFT JOIN student on student.id =classmate.student_id
+        LEFT JOIN specialty on student.specialty_id = specialty.id
+        LEFT JOIN ecomm on ecomm.id =student.phone_ecomm_id
+        LEFT JOIN user on user.id = student.user_id
+        LEFT JOIN political_affiliation on student.political_id = political_affiliation.id
+        where employee.user_id=#{userId,jdbcType=BIGINT}
+        <if test="studentName != null">
+            AND user.user_name LIKE #{studentName}
+        </if>
+        <if test="studentNo != null">
+            AND student.stu_no LIKE #{studentNo}
+        </if>
+        <if test="user_sex != null">
+            AND user.user_sex = #{user_sex}
+        </if>
+        <if test="classNamesList != null">
+            AND class.name
+            IN
+            <foreach collection="classNamesList" item="classNamesListId" index="index" open="(" close=")"
+                     separator=",">
+                #{classNamesListId}
+            </foreach>
+        </if>
+        <if test="cyearsList != null">
+            AND student.grade
+            IN
+            <foreach collection="cyearsList" item="cyearsListId" index="index" open="(" close=")"
+                     separator=",">
+                #{cyearsListId}
+            </foreach>
+        </if>
+        <if test="specialtysList != null">
+            AND specialty.name
+            IN
+            <foreach collection="specialtysList" item="specialtysListId" index="index" open="(" close=")"
+                     separator=",">
+                #{specialtysListId}
+            </foreach>
+        </if>
+        <if test="politicalsList != null">
+            AND political_affiliation.political
+            IN
+            <foreach collection="politicalsList" item="politicalsListId" index="index" open="(" close=")"
+                     separator=",">
+                #{politicalsListId}
+            </foreach>
+        </if>
+        <if test="positionsList != null">
+            AND position.name
+            IN
+            <foreach collection="positionsList" item="positionsListId" index="index" open="(" close=")"
+                     separator=",">
+                #{positionsListId}
+            </foreach>
+        </if>
+    </select>
     <select id="selectEmployeeBean" parameterType="java.lang.Long" resultMap="employeeBeanMap">
-    select employee.emp_no as employeeNo,user.name as username,university.name asuniversityName,
-    department.name as departmentName,subdepartment.name as subDepartmentName,position.name as positionName
-    from employee
-    LEFT JOIN uni.user on user.id = employee.user_id
-    LEFT JOIN university on employee.university_id = university.id
-    LEFT JOIN department on employee.department_id = department.id
-    LEFT JOIN subdepartment on employee.subdepartment_id = subdepartment.id
-    LEFT JOIN position on employee.position_id = position.id
-    where employee.university_id = #{uniId,jdbcType=BIGINT}
-    GROUP BY employee.emp_no
+        select employee.emp_no as employeeNo,user.name as username,university.name as universityName,
+        department.name as departmentName,subdepartment.name as subDepartmentName,position.name as positionName
+        from employee
+        LEFT JOIN uni.user on user.id = employee.user_id
+        LEFT JOIN university on employee.university_id = university.id
+        LEFT JOIN department on employee.department_id = department.id
+        LEFT JOIN subdepartment on employee.subdepartment_id = subdepartment.id
+        LEFT JOIN position on employee.position_id = position.id
+        where employee.university_id = #{uniId,jdbcType=BIGINT}
+        GROUP BY employee.emp_no
+    </select>
+    <select id="selectEmployeeBeanByFilter" resultMap="employeeBeanMap">
+        select employee.emp_no as employeeNo,user.name as username,university.name as universityName,
+        department.name as departmentName,subdepartment.name as subDepartmentName,position.name as positionName
+        from employee
+        LEFT JOIN uni.user on user.id = employee.user_id
+        LEFT JOIN university on employee.university_id = university.id
+        LEFT JOIN department on employee.department_id = department.id
+        LEFT JOIN subdepartment on employee.subdepartment_id = subdepartment.id
+        LEFT JOIN position on employee.position_id = position.id
+        where employee.university_id = #{uniId,jdbcType=BIGINT}
+        <if test="employeeName != null">
+            AND user.name LIKE #{employeeName}
+        </if>
+        <if test="departmentNameList != null">
+            AND department.name
+            IN
+            <foreach collection="departmentNameList" item="departmentNameListId" index="index" open="(" close=")"
+                     separator=",">
+                #{departmentNameListId}
+            </foreach>
+        </if>
+        <if test="subDepartmentNameList != null">
+            AND subdepartment.name
+            IN
+            <foreach collection="subDepartmentNameList" item="subDepartmentNameListId" index="index" open="(" close=")"
+                     separator=",">
+                #{subDepartmentNameListId}
+            </foreach>
+        </if>
+        <if test="positionNameList != null">
+            AND position.name
+            IN
+            <foreach collection="positionNameList" item="positionNameListId" index="index" open="(" close=")"
+                     separator=",">
+                #{positionNameListId}
+            </foreach>
+        </if>
+        GROUP BY employee.emp_no
     </select>
 </mapper>

@@ -25,6 +25,7 @@ import edu.uni.userBaseInfo1.utils.UserInfo;
 import edu.uni.utils.RedisCache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.web.session.HttpServletSession;
@@ -521,6 +522,7 @@ public class EmployeeController {
             return Result.build(ResultType.Failed, "你没有班主任的权限");
 
         UserInfo userInfo = new UserInfo();
+
         List<Class> classes = otherClassService.selectClassesByEmployeeId(employees.get(0).getId(), year, className);
         List<Student> students = new ArrayList<>();
         List<Classmate> classmates = new ArrayList<>();
@@ -533,9 +535,6 @@ public class EmployeeController {
                 students.add(student);
                 users.add(user);
             }
-            System.out.println("class:" + cclass.getId());
-            System.out.println("classmates:" + classmates.iterator().toString());
-            System.out.println("students:" + students.iterator().toString());
         }
         userInfo.setClasses(classes);
         userInfo.setClassmates(classmates);
@@ -685,7 +684,7 @@ public class EmployeeController {
         Set<String> position = new HashSet<>();
 
         if (employees != null) {
-            List<ClassmateBean> classmateBeans = employeeService.selecClassMateBeantByUserId(employees.get(0).getUserId());
+            List<ClassmateBean> classmateBeans = employeeService.selectClassMateBeantByUserId(employees.get(0).getUserId());
             for (ClassmateBean c : classmateBeans) {
                 if (c.getClassName() != null) {
                     className.add(c.getClassName());
@@ -719,14 +718,18 @@ public class EmployeeController {
      *
      * @param
      * @return
-     * @apiNote: //所有班级名称class，所有年级student,所有主修专业Specialty，性别user，姓名user，学号student，所有政治面貌politicalAffiliation，所有岗位Position
+     * @apiNote: 年级，专业，班级，学号，姓名（可以模糊）进行搜索 性别 政治面貌 岗位
+     * //所有班级名称class，所有年级student,所有主修专业Specialty，性别user，姓名user，学号student，所有政治面貌politicalAffiliation，所有岗位Position
      */
     @ApiOperation(value = "领导查询某班的所有学生，进行高级搜索", notes = "未测试")
     @PostMapping("filter/allClassmates")
     @ResponseBody
-    public Result selectAllClassmatesByFilter(String[] classNames,
-                                              String[] cyears, String[] specialtys, String user_sex, String studentName, String studentNo,
-                                              String[] politicals, String[] positions, HttpServletResponse response) throws IOException {
+    public Result selectAllClassmatesByFilter(@RequestParam(value = "classNames",required = false) List<String> classNames,
+                                              @RequestParam(value = "cyears",required = false) List<String> cyears,
+                                              @RequestParam(value = "specialtys",required = false) List<String> specialtys,
+                                              String user_sex, String studentName, String studentNo,
+                                              @RequestParam(value = "politicals",required = false) List<String> politicals,
+                                              @RequestParam(value = "positions",required = false) List<String> positions, HttpServletResponse response) throws IOException {
         edu.uni.auth.bean.User loginUSer = authService.getUser();
         if (loginUSer == null)
             return Result.build(ResultType.Failed, "你还没登录");
@@ -742,114 +745,46 @@ public class EmployeeController {
         if (!roles.contains(2))
             return Result.build(ResultType.Failed, "你没有学院领导的权限");
 
-        int flag = 0;
-        List<ClassmateBean> classmateBeans = new ArrayList<>();
-        List<ClassmateBean> classmateBeans2 = new ArrayList<>();
+        System.out.println("controller层：");
+        System.out.println("传过来的classNames："+classNames);
+        System.out.println("传过来的cyears："+cyears);
+        System.out.println("传过来的specialtys："+specialtys);
+        System.out.println("传过来的user_sex："+user_sex);
+        System.out.println("传过来的studentName："+studentName);
+        System.out.println("传过来的studentNo："+studentNo);
+        System.out.println("传过来的politicals："+politicals);
+        System.out.println("传过来的positions："+positions);
 
+        int flag = 0;
+        Integer sex = null;
+        List<ClassmateBean> classmateBeans = new ArrayList<>();
         if (employees != null) {
-            classmateBeans = employeeService.selecClassMateBeantByUserId(employees.get(0).getUserId());
-            for (ClassmateBean c : classmateBeans) {
-                if (c.getSex() != null) {
-                    if (c.getSex().equals(String.valueOf(0))) {
-                        c.setSex("女");
-                    } else if (c.getSex().equals(String.valueOf(1))) {
-                        c.setSex("男");
+            if (studentName!=null)
+                studentName = "%"+studentName+"%";
+            if (studentNo!=null)
+                studentNo = "%"+studentNo+"%";
+            if (user_sex!=null){
+                if (user_sex.equals("男")){
+                    sex = 1;
+                }
+                if (user_sex.equals("女")){
+                    sex = 0;
+                }
+            }
+            classmateBeans = employeeService.selectClassmateBeanByFilter(employees.get(0).getUserId(),classNames,cyears,
+                    specialtys,sex,studentName, studentNo, politicals, positions);
+            for (int i=0;i<classmateBeans.size();i++){
+                if (classmateBeans.get(i).getSex()!=null){
+                    if (classmateBeans.get(i).getSex().equals(String.valueOf(1))){
+                        classmateBeans.get(i).setSex("男");
+                    }
+                    if (classmateBeans.get(i).getSex().equals(String.valueOf(0))){
+                        classmateBeans.get(i).setSex("女");
                     }
                 }
-                //开启判断//班级判断在前面//所有年级//所有专业//所有班级//所有岗位//所有政治面貌
-                flag = 0;
-                if (classNames != null) {
-                    for (int i = 0; i < classNames.length; i++) {
-                        if (classNames[i].equals(c.getClassName())) {
-                            flag = 1;
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (cyears != null) {
-                    for (int i = 0; i < cyears.length; i++) {
-                        if (cyears[i].equals(c.getGrade())) {
-                            flag = 1;
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (specialtys != null) {
-                    for (int i = 0; i < specialtys.length; i++) {
-                        if (specialtys[i].equals(c.getSpecialty())) {
-                            flag = 1;
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (user_sex != null) {
-                    //0 女   1 男
-                    if (c.getSex() != null) {
-                        if (user_sex.equals("男")) {
-                            if (c.getSex().equals("男")) {
-                                flag = 1;
-                            }
-                        } else if (c.getSex().equals("女")) {
-                            flag = 1;
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (studentName != null) {
-                    if (studentName.equals(c.getStudentName())) {
-                        flag = 1;
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (studentNo != null) {
-                    if (studentNo.equals(c.getStudentNo())) {
-                        flag = 1;
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (positions != null) {
-                    for (int i = 0; i < positions.length; i++) {
-                        if (positions[i].equals(c.getPosition())) {
-                            flag = 1;
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (politicals != null) {
-                    for (int i = 0; i < politicals.length; i++) {
-                        if (politicals[i].equals(c.getPolitical())) {
-                            flag = 1;
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                classmateBeans2.add(c);
             }
         }
-        return Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans2);
+        return Result.build(ResultType.Success).appendData("classmateBeans", classmateBeans);
     }
 
     /**
@@ -910,12 +845,20 @@ public class EmployeeController {
      * @param
      * @return
      * @apiNote: 列名从左到右 : 员工编号，照片，姓名，学校，当前所属学院，当前所在科室，行政岗位，按钮（详细信息）
-     * 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索
+     * 还有关于搜索进行筛选的内容：可以通过学院，科室，岗位，姓名（可以模糊）进行搜索 @RequestParam("departmentNames[]")
      */
     @ApiOperation(value = "人事处查询校内所有职员的信息，进行高级搜索", notes = "未测试")
+    /*@ApiImplicitParams({
+            @ApiImplicitParam(name = "departmentNames", required = false, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "subDepartmentNames", required = false, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "positionNames", required = false, dataType = "String", paramType = "path")
+    }
+    )*/
     @PostMapping("filter/allemployees")
     @ResponseBody
-    public Result selectAllClassmatesByFilter(String[] employeeNames, String[] departmentNames, String[] subDepartmentNames, String[] positionNames, HttpServletResponse response) throws IOException {
+    public Result selectAllClassmatesByFilter(String employeeName, @RequestParam(value = "departmentNames",required = false) List<String> departmentNames,
+                                              @RequestParam(value = "subDepartmentNames",required = false) List<String> subDepartmentNames,
+                                              @RequestParam(value = "positionNames",required = false) List<String> positionNames, HttpServletResponse response) throws IOException {
 
         edu.uni.auth.bean.User loginUSer = authService.getUser();
         if (loginUSer == null)
@@ -931,69 +874,24 @@ public class EmployeeController {
         List<Integer> roles = otherEmployPositionService.selectEmployeeRoleByUserId(employees.get(0));
         if (!roles.contains(3))
             return Result.build(ResultType.Failed, "你没有人事处的权限");
+        System.out.println("controller层：");
+        System.out.println("传过来的employeeName："+employeeName);
+        System.out.println("传过来的学院名："+departmentNames);
+        System.out.println("传过来的科室名："+subDepartmentNames);
+        System.out.println("传过来的岗位名："+positionNames);
 
         int flag = 0;
         List<EmployeeBean> employeeBeans = new ArrayList<>();
-        List<EmployeeBean> employeeBean = new ArrayList<>();
         if (employees.size() > 0) {
-            employeeBeans = employeeService.selectEmployeeBeanByUniId(employees.get(0).getUniversityId());
-            for (EmployeeBean e : employeeBeans) {
-                flag = 0;
-                if (employeeNames != null) {
-                    if (e.getUsername() != null) {
-                        for (int i = 0; i < employeeNames.length; i++) {
-                            if (employeeNames[i].equals(e.getUsername())) {
-                                flag = 1;
-                            }
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (departmentNames != null) {
-                    if (e.getDepartmentName() != null) {
-                        for (int i = 0; i < departmentNames.length; i++) {
-                            if (e.getDepartmentName().equals(departmentNames[i])) {
-                                flag = 1;
-                            }
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (subDepartmentNames != null) {
-                    if (e.getSubDepartmentName() != null) {
-                        for (int i = 0; i < subDepartmentNames.length; i++) {
-                            if (e.getSubDepartmentName().equals(subDepartmentNames[i])) {
-                                flag = 1;
-                            }
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                flag = 0;
-                if (positionNames != null) {
-                    if (e.getPositionName() != null) {
-                        for (int i = 0; i < positionNames.length; i++) {
-                            if (e.getPositionName().equals(positionNames[i])) {
-                                flag = 1;
-                            }
-                        }
-                    }
-                    if (flag != 1) {
-                        continue;
-                    }
-                }
-                employeeBean.add(e);
+            System.out.println("学校的id：" + employees.get(0).getUniversityId());
+            if (employeeName!=null){
+                employeeName = "%"+employeeName+"%";
             }
+            employeeBeans = employeeService.selectEmployeeBeanByAllFilter(employees.get(0).getUniversityId(), employeeName,
+                    departmentNames, subDepartmentNames, positionNames);
+            System.out.println("教职员的数量："+employeeBeans.size());
         }
-        return Result.build(ResultType.Success).appendData("employeeBean", employeeBean);
+        return Result.build(ResultType.Success).appendData("employeeBean", employeeBeans);
     }
 
     /**
