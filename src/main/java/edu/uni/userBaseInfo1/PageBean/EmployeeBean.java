@@ -17,6 +17,7 @@ public class EmployeeBean {
      *       "employeeNo": "2010011",
      *       "username": "运营者2"
      */
+    private Long employeeId;
     private String employeeNo;
     private String username;
     private String universityName;
@@ -27,13 +28,22 @@ public class EmployeeBean {
     public EmployeeBean() {
     }
 
-    public EmployeeBean(String employeeNo, String username, String universityName, String departmentName, String subDepartmentName, String positionName) {
+    public EmployeeBean(Long employeeId, String employeeNo, String username, String universityName, String departmentName, String subDepartmentName, String positionName) {
+        this.employeeId = employeeId;
         this.employeeNo = employeeNo;
         this.username = username;
         this.universityName = universityName;
         this.departmentName = departmentName;
         this.subDepartmentName = subDepartmentName;
         this.positionName = positionName;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getEmployeeNo() {
@@ -87,7 +97,8 @@ public class EmployeeBean {
     @Override
     public String toString() {
         return "EmployeeBean{" +
-                "employeeNo='" + employeeNo + '\'' +
+                "employeeId=" + employeeId +
+                ", employeeNo='" + employeeNo + '\'' +
                 ", username='" + username + '\'' +
                 ", universityName='" + universityName + '\'' +
                 ", departmentName='" + departmentName + '\'' +
