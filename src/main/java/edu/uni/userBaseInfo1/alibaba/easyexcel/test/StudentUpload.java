@@ -736,7 +736,7 @@ public class StudentUpload {
             if (e.getUserNumber() != null && e.getIdentification() != null) {
                 Employee employee = employeeService.selectValidEmployeeByEmpNoAndUniId(e.getUserNumber(), Long.valueOf(1));
                 User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), e.getIdentification());
-                if (employee.getUserId().equals(user.getId())) {
+                if (employee!=null&&user!=null&&employee.getUserId().equals(user.getId())) {
                     if (e.getDepartmentName() != null) {
                         //为专业服务的
                         departments = departmentService.selectDepartmentByName(e.getDepartmentName());
@@ -830,7 +830,7 @@ public class StudentUpload {
                         }
                     }
                 } else {
-                    s.append("第" + i + "行第2、5列参数不正确，请改正");
+                    s.append("第" + i + "行第2、5列参数不正确或者该账号不存在，请改正");
                 }
             } else {
                 s.append("第" + i + "行第2、5列参数不能为空，请改正");
@@ -882,7 +882,7 @@ public class StudentUpload {
             if (e.getUserNumber() != null && e.getIdentification() != null) {
                 Employee employee = employeeService.selectValidEmployeeByEmpNoAndUniId(e.getUserNumber(), Long.valueOf(1));
                 User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), e.getIdentification());
-                if (employee.getUserId().equals(user.getId())) {
+                if (employee!=null&&user!=null&&employee.getUserId().equals(user.getId())) {
                     if (e.getUserName() != null) {
                         user.setUserName(e.getUserName());
                     }
@@ -1040,7 +1040,7 @@ public class StudentUpload {
                         }
                     }
                 } else {
-                    s.append("第" + i + "行第2、5列参数不正确，请改正");
+                    s.append("第" + i + "行第2、5列参数不正确或者改账号不存在，请改正");
                 }
             } else {
                 s.append("第" + i + "行第2、5列参数不能为空，请改正");
@@ -1110,7 +1110,7 @@ public class StudentUpload {
             if (st.getUserNumber() != null && st.getIdentification() != null) {
                 Student student = studentService.selectValidStuByStuNoAndUniId(st.getUserNumber(), Long.valueOf(1));
                 User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), st.getIdentification());
-                if (student.getUserId().equals(user.getId())) {
+                if (student!=null&&user!=null&&student.getUserId().equals(user.getId())) {
                     if (st.getDepartmentName() != null) {
                         //为专业服务的
                         departments = departmentService.selectDepartmentByName(st.getDepartmentName());
@@ -1205,7 +1205,7 @@ public class StudentUpload {
                         }
                     }
                 } else {
-                    s.append("第" + i + "行第2、5列参数不正确，请改正");
+                    s.append("第" + i + "行第2、5列参数不正确或者改账号不存在，请改正");
                 }
             } else {
                 s.append("第" + i + "行第2、5列参数不能为空，请改正");
@@ -1261,7 +1261,7 @@ public class StudentUpload {
             if (st.getUserNumber() != null && st.getIdentification() != null) {
                 Student student = studentService.selectValidStuByStuNoAndUniId(st.getUserNumber(), Long.valueOf(1));
                 User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), st.getIdentification());
-                if (student.getUserId().equals(user.getId())) {
+                if (student!=null&&user!=null&&student.getUserId().equals(user.getId())) {
                     if (st.getUserName() != null) {
                         user.setUserName(st.getUserName());
                     }
