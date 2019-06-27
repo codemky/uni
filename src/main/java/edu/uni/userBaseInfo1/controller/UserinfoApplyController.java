@@ -180,15 +180,15 @@ public class UserinfoApplyController {
         //查询是否存在这样的审批规定
         Long approvalId = approvalMainService.selectIdByName(loginUser.getUniversityId(), approvalName);
         if( approvalId == -1 || approvalId == -2 )
-            return Result.build(ResultType.Disallow,"该申请所对应的规定不存在");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的规定不存在");
 
         //判断审批规定的合法性
         if( !(approvalMainService.selectStepCntById(approvalId) > 0) )
-            return Result.build(ResultType.Disallow,"审批规定的步骤数异常");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的步骤数异常");
         if( approvalStepInchargeService.selectByMainId(approvalId).size() <= 0 )
-            return Result.build(ResultType.Disallow,"审批规定对应的步骤记录数异常");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的步骤记录数量异常");
         if( approvalStepInchargeService.selectRoleIdByStepAppovalId(1,approvalId) == null )
-            return Result.build(ResultType.Disallow,"找不到第一步审批的角色id");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的第一步审批的角色id异常");
 
 
         //根据信息类型设置不同的文件路径
@@ -312,15 +312,15 @@ public class UserinfoApplyController {
         System.out.println("生成的审批业务名称为:" +approvalName);
         long approvalId = approvalMainService.selectIdByName(loginUser.getUniversityId(), approvalName);
         if( approvalId == -1 || approvalId == -2 )
-            return Result.build(ResultType.Disallow,"该申请所对应的规定出错");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的规定不存在");
 
         //判断审批规定的合法性
         if( !(approvalMainService.selectStepCntById(approvalId) > 0) )
-            return Result.build(ResultType.Disallow,"审批规定的步骤数异常");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的步骤数异常");
         if( approvalStepInchargeService.selectByMainId(approvalId).size() <= 0 )
-            return Result.build(ResultType.Disallow,"审批规定对应的步骤记录数异常");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的步骤记录数量异常");
         if( approvalStepInchargeService.selectRoleIdByStepAppovalId(1,approvalId) == null )
-            return Result.build(ResultType.Disallow,"找不到第一步审批的角色id");
+            return Result.build(ResultType.Disallow,"审批业务名称为: '" + approvalName + "'的第一步审批的角色id异常");
 
         if(modifiedUserId != null) {
             user = userService.selectUserById(modifiedUserId);
