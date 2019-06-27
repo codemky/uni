@@ -33,7 +33,7 @@
         <result column="className" property="className" jdbcType="VARCHAR"></result>
     </resultMap>
     <resultMap id="employeeBeanMap" type="edu.uni.userBaseInfo1.PageBean.EmployeeBean">
-        <id column="id" property="employeeId" jdbcType="BIGINT"></id>
+        <id column="id" property="userId" jdbcType="BIGINT"></id>
         <result column="employeeNo" property="employeeNo" jdbcType="VARCHAR"></result>
         <result column="username" property="username" jdbcType="VARCHAR"></result>
         <result column="universityName" property="universityName" jdbcType="VARCHAR"></result>
