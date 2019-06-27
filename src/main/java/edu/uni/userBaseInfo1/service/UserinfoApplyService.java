@@ -5,6 +5,7 @@ import edu.uni.auth.bean.User;
 import edu.uni.userBaseInfo1.bean.Student;
 import edu.uni.userBaseInfo1.bean.UserinfoApply;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface UserinfoApplyService  {
      * @return boolean
      * @apiNote: 在任何申请页面点击确认申请时
      */
-    public boolean clickApply(HashMap<String,Object> map, Integer type, User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser);
+    public boolean clickApply(HashMap<String,Object> map, Integer type, User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) throws ParseException;
 
     /**
      * Author: mokuanyuan 21:21 2019/6/10

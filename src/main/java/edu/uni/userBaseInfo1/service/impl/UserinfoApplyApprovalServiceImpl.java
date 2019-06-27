@@ -200,13 +200,13 @@ public class UserinfoApplyApprovalServiceImpl implements UserinfoApplyApprovalSe
         }
 
         if( infoType == 11 || infoType == 12 )
-            if(stringBuffer.toString().equals("插入成功")){
+            if(stringBuffer.toString().contains("插入成功")){
                 userUploadFile.setDeleted(false);
                 return true;
             }
 
         if(infoType == 9 || infoType == 10)
-            if(stringBuffer.toString().equals("更新成功")){
+            if(stringBuffer.toString().contains("更新成功")){
                 userUploadFile.setDeleted(false);
                 return true;
             }

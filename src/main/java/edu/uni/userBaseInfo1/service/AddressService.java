@@ -44,6 +44,14 @@ public interface AddressService {
     public List<Address> filterAddress(List<Address> addresses);
 
     /**
+     * Author: mokuanyuan 16:19 2019/6/25
+     * @param cityName
+     * @return List<AddrCity>
+     * @apiNote 根据城市名称查询所有的城市
+     */
+    public List<AddrCity> selectCityByName(String cityName);
+
+    /**
      * Author: laizhouhao 15:41 2019/4/29
      * @param pageNum
      * @return List<Address>

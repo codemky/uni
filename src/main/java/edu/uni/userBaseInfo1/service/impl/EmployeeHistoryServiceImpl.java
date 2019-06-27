@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
  * @Description employeeHistory实体类的service层接口的实现类
  * @Date 15:49 2019/4/29
  **/
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -170,9 +172,22 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
      */
     @Override
     public boolean readyForApply(HashMap<String, Object> map, EmployeeHistory employeeHistory, long[] idList,
-                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) throws ParseException {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyEmployeeHistory"),employeeHistory);
+
+
+        Map<String ,Object> historyMap = (Map) map.get("applyEmployeeHistory");
+        DateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date beginTime = DateFormat.parse((String) historyMap.get("beginTime"));
+        Date endTime = DateFormat.parse((String) historyMap.get("endTime"));
+        Integer id = (Integer) historyMap.get("id");
+        String descript = (String) historyMap.get("descript");
+        employeeHistory.setId((long) id);
+        employeeHistory.setDescript(descript);
+        employeeHistory.setBeginTime(beginTime);
+        employeeHistory.setEndTime(endTime);
+
         //检验是否把该获取的信息都获取到了
         if(!EmployeeHistory.isValidForApply(employeeHistory))
             return false;
@@ -217,6 +232,14 @@ public class EmployeeHistoryServiceImpl implements EmployeeHistoryService {
             if( update(oldEmployeeHistory) && update(newEmployeeHistory) )
                 result = true;
         }else{
+            Long userId = newEmployeeHistory.getUserId();
+            if(userId != null){
+                List<EmployeeHistory> employeeHistoryList = seleValidEmpHisByUserId(userId);
+                employeeHistoryList.forEach( item -> {
+                    if(item.getId() != newEmployeeHistory.getId() )
+                        delete(item.getId());
+                });
+            }
             newEmployeeHistory.setDeleted(false);
             if( update(newEmployeeHistory) )
                 result = true;

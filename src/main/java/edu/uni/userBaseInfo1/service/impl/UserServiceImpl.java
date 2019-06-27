@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean insertUser(User user) {
-        return userMapper.insertSelective(user) > 0 ? true : false;
+        return userMapper.insert(user) > 0;
     }
     /**
      * Author: chenenru 23:28 2019/4/29

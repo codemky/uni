@@ -209,7 +209,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         map.put("employee_history",employeeHistoryService.selectById(employee.getEmployHistoryId()));
         map.put("discipline",mySecondLevelDisciplineService.selectSecondLevelDisciplineById(employee.getDisciplineId()));
         map.put("political",politicalAffiliationService.selectPoliticalAffiliationById(employee.getPoliticalId()));
-        map.put("position",otherEmployPositionService.selectPositionsByEmployeeId(employee));
+//        map.put("position",otherEmployPositionService.selectPositionsByEmployeeId(employee));
 
     }
 
@@ -276,7 +276,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public boolean insertEmployee(Employee employee) {
-        return  employeeMapper.insertSelective(employee) > 0 ? true : false;
+        return  employeeMapper.insert(employee) > 0 ? true : false;
     }
     /**
      * Author: chenenru 0:10 2019/4/30

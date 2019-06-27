@@ -7,6 +7,7 @@ import edu.uni.administrativestructure.bean.Position;
 import edu.uni.administrativestructure.bean.Subdepartment;
 import edu.uni.administrativestructure.service.PositionService;
 import edu.uni.administrativestructure.service.SubdepartmentService;
+import edu.uni.auth.shrio.CustomCredentialMatcher;
 import edu.uni.professionalcourses.bean.Specialty;
 import edu.uni.userBaseInfo1.alibaba.easyexcel.test.model.EmployeeModel;
 import edu.uni.userBaseInfo1.alibaba.easyexcel.test.model.StudentModel;
@@ -28,6 +29,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
+
+import static edu.uni.auth.controller.UserControllerOfAuth.getRandomString;
 
 /**
  * @Author chenenru
@@ -299,7 +302,10 @@ public class StudentUpload {
         }
         user.setUserBirthday(userBirthday);
         user.setUserName(userName);
-        user.setPwd(userPassword);
+        String salt = getRandomString(35);
+        // 加密
+        String pwd = CustomCredentialMatcher.encodePassword(userPassword, salt);
+        user.setPwd(pwd);
         user.setSalt(usersecretKey);
         user.setUniversityId((long) 1);//应该从session里面获取用户的university_id
         user.setUserType(1);
@@ -876,7 +882,7 @@ public class StudentUpload {
             if (e.getUserNumber() != null && e.getIdentification() != null) {
                 Employee employee = employeeService.selectValidEmployeeByEmpNoAndUniId(e.getUserNumber(), Long.valueOf(1));
                 User user = userService.selectUserByUniIdAndIde(Long.valueOf(1), e.getIdentification());
-                if (student.getUserId().equals(user.getId())) {
+                if (employee.getUserId().equals(user.getId())) {
                     if (e.getUserName() != null) {
                         user.setUserName(e.getUserName());
                     }

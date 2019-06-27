@@ -106,6 +106,8 @@ public class EmployeeController {
     private AuthService authService;
     @Autowired
     private OtherEmployPositionService otherEmployPositionService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
 
 
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
@@ -134,20 +136,9 @@ public class EmployeeController {
                 userId = loginUser.getId();
             }
         }
-//        }else{  //否则表示某个登录后的用户查看某个用户信息，此时需要检验这个登录用户的角色是否有权限查看这个用户信息
-//            User user = userService.selectUserById(userId);
-//            if( user == null )
-//                return Result.build(ResultType.ParamError,"该学生信息不存在或已过时");
-//            if( user.getUserType() != 1 ) //用户Id需要时学生类型，不然查了也是白查
-//                return Result.build(ResultType.ParamError,"所查看的用户不是学生");
-//            //判断该学生与该登录用户的二级学院关系
-//            if( !userinfoApplyApprovalController.isDepartmentSame(user.getId(), loginUser.getId()))
-//                return Result.build(ResultType.Disallow,"登录用户和所查学生不在同一个二级学院“”");
-//            //判断该登录用户是否包含某几个角色
-//            if( !otherRoleService.isPlayDepartmentLeader(loginUser.getId()) )
-//                return Result.build(ResultType.Disallow,"登录用户的操作权限不允许");
-//
-//        }
+
+        if( !otherRoleService.isPlaySchoolLeader(loginUser.getId()) )
+            return Result.build(ResultType.Failed, "你没有人事处的权限无法查看职员详情");
 
         List<Employee> employees = employeeService.selectByUserId(userId);
         if (employees.size() == 0)
@@ -157,21 +148,7 @@ public class EmployeeController {
         employeeService.selectByUserIdToMap(map, employees.get(0));
 
 
-//        boolean isOperate = false;
-//        HashMap<String , Object> studentMap = new HashMap<>();
-//
-//        if(user.getUserType() == 1) {
-//            List<Student> students = studentService.selectByUserId(userId);
-//            if (students.size() > 0) {
-//                studentService.selectByUserIdToMap(studentMap, students.get(0));
-//                isOperate = true;
-//            }
-//        }
-//
-//        if(isOperate)
-        return Result.build(ResultType.Success).appendData("employee", map);
-//        else
-//            return Result.build(ResultType.ParamError);
+        return Result.build(ResultType.Success).appendData("employee", map).appendData("employeeBase",employees.get(0));
     }
 
 
@@ -182,8 +159,8 @@ public class EmployeeController {
      * @apiNote: 根据学校id获取该学校的所有部门
      */
     @ApiOperation(value = "以一个学校id获取该学校所有的有效部门", notes = "2019-5-2 11:05:35已通过测试")
-    @GetMapping("employee/getDepartments/{schoolId}")
-    @ApiImplicitParam(name = "id", value = "Department表的一个id", required = false, dataType = "Long", paramType = "path")
+    @GetMapping("getDepartments/{schoolId}")
+    @ApiImplicitParam(name = "schoolId", value = "学校id", required = false, dataType = "Long", paramType = "path")
     @ResponseBody
     public Result getDepartment(Long schoolId) {
         if (schoolId == null)
@@ -197,21 +174,18 @@ public class EmployeeController {
 
     /**
      * Author: mokuanyuan 20:49 2019/6/18
-     *
-     * @param map
-     * @apiNote: 以一个学校id和部门id获取所有的科室
+     * @param schoolId
+     * @param departmentId
+     * @apiNote 以一个学校id和部门id获取所有的科室
      */
     @ApiOperation(value = "以一个学校id和部门id获取所有的科室", notes = "2019-5-2 11:05:35已通过测试")
     @GetMapping("employee/getSubDepartments")
-    @ApiImplicitParam(name = "map")
     @ResponseBody
-    public Result getDepartment(HashMap<String, Object> map) {
-        Long schoolId = (Long) map.get("schoolId");
-        Long departmentId = (Long) map.get("departmentId");
+    public Result getDepartment(@RequestParam("schoolId") Long schoolId ,
+                                @RequestParam("departmentId") Long departmentId ) {
 
         if (schoolId == null || departmentId == null)
             return Result.build(ResultType.ParamError, "学校id或者部门id为空");
-
 
         return Result.build(ResultType.Success).appendData("Subdepartments",
                 otherSubdepartmentService.selectBySchoolIdAndDepartmentId(schoolId, departmentId));
@@ -230,13 +204,37 @@ public class EmployeeController {
 
         Result result = Result.build(ResultType.Success);
 
+        edu.uni.auth.bean.User loginUser = authService.getUser();
+        if (loginUser == null) {
+            return Result.build(ResultType.Failed, "你沒有登錄");
+        }
+        result.appendData("schoolId",loginUser.getUniversityId());
+//        University university = otherUniversityService.selectValidById(loginUser.getUniversityId());
+//        result.appendData("schoolName",university.getName());
+        List<Department> departments = otherDepartmentService.selectAllValidDepartment(loginUser.getUniversityId());
+
+        result.appendData("departments",departments);
+
         //所有的政治面貌
         result.appendData("political", politicalAffiliationService.selectAllPoliticalAffiliations());
 
-        //所有的二级学科的信息
-        result.appendData("disciplines", mySecondLevelDisciplineService.selectAllSecondLevelDisciplines());
 
         return result;
+
+    }
+
+
+    /**
+     * Author: mokuanyuan 17:24 2019/6/7
+     *
+     * @apiNote: 根据schoolId查询该学校的所有，该方法用于点击申请时先把部分信息发给前端
+     */
+    @ApiOperation(value = "根据专业名称搜索二级学科", notes = "未测试")
+    @GetMapping("/getDisciplinesByName")
+    @ResponseBody
+    public Result getDisciplinesByName(@RequestParam("name") String name) throws IOException {
+
+        return Result.build(ResultType.Success).appendData("disciplines", mySecondLevelDisciplineService.selectByName(name));
 
     }
 

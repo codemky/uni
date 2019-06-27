@@ -245,6 +245,12 @@ public class StudentRelationServiceImpl implements StudentRelationService {
             if( update(oldStudentRelation) && update(newStudentRelation) )
                 result = true;
         }else{
+            User user = userService.selectUserById(newStudentRelation.getRelaId());
+            if(user != null){
+                user.setUserType(4);
+                userService.updateUser(user);
+            }
+
             newStudentRelation.setDeleted(false);
             if( update(newStudentRelation) )
                 result = true;
@@ -273,6 +279,9 @@ public class StudentRelationServiceImpl implements StudentRelationService {
                     relationMap.put("relationUserId",relationUserId);
 
                     relationMap.put("relationName",relationUser.getUserName());
+
+                    relationMap.put("id",studentRelationList.get(i).getId());
+
                     //写入亲属人性别
                     String relationSex = "不详";
                     if(relationUser.getUserType() == 0)

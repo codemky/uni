@@ -193,7 +193,7 @@ public class Address {
 
     public static boolean isValidForApply(Address address){
         return address.getId() != null && address.getCountry() != null && address.getState() != null &&
-                address.getArea() != null && address.getStreet() != null && address.getDeleted() != null &&
+                address.getArea() != null && address.getStreet() != null && address.getCity() != null &&
                 address.getZipCode() != null && address.getTelephone() != null && address.getFlag() != null;
     }
 

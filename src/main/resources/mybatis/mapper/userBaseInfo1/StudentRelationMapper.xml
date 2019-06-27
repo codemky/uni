@@ -125,7 +125,7 @@
       #{relationship,jdbcType=INTEGER}, #{datetime,jdbcType=TIMESTAMP}, #{byWho,jdbcType=BIGINT}, 
       #{deleted,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.StudentRelation" >
+  <insert id="insertSelective" parameterType="edu.uni.userBaseInfo1.bean.StudentRelation" useGeneratedKeys="true">
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>

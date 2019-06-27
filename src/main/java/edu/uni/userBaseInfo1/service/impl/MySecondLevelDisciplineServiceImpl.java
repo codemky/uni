@@ -113,4 +113,11 @@ public class MySecondLevelDisciplineServiceImpl implements MySecondLevelDiscipli
                 .selectByExample(secondLevelDisciplineExample);
         return secondLevelDisciplineList==null?null:secondLevelDisciplineList.get(0);
     }
+
+    @Override
+    public List<SecondLevelDiscipline> selectByName(String name) {
+        SecondLevelDisciplineExample example = new SecondLevelDisciplineExample();
+        example.createCriteria().andDeletedEqualTo(false).andNameLike("%" + name + "%");
+        return secondLevelDisciplineMapper.selectByExample(example);
+    }
 }

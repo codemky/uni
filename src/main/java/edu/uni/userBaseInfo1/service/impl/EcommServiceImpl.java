@@ -67,6 +67,15 @@ public class EcommServiceImpl implements EcommService {
             if( update(oldEcomm) && update(newEcomm) )
                 result = true;
         }else{
+            Long userId = newEcomm.getUserId();
+            if(userId != null){
+                List<Ecomm> ecommList = selectValidEcomByUserId(userId);
+                ecommList.forEach( item -> {
+                    if(item.getId() != newEcomm.getId() &&
+                            item.getFlag() == newEcomm.getFlag() )
+                        delete(item.getId());
+                });
+            }
             newEcomm.setDeleted(false);
             if( update(newEcomm) )
                 result = true;
@@ -91,7 +100,7 @@ public class EcommServiceImpl implements EcommService {
             idList[1] = ecomm.getId();
         }
         else{
-            ecomm.setUserId(modifiedUser.getId());
+            ecomm.setUserId(loginUser.getId());
             ecomm.setDatetime(new Date());
             ecomm.setByWho(loginUser.getId());
             ecomm.setDeleted(true);
@@ -150,7 +159,7 @@ public class EcommServiceImpl implements EcommService {
     public int insert(Ecomm ecomm) {
 //        return  ecommMapper.insert(ecomm);
         //System.out.println("ecomm==="+ecomm);
-         return ecommMapper.insertSelective(ecomm);
+         return ecommMapper.insert(ecomm);
 
     }
 

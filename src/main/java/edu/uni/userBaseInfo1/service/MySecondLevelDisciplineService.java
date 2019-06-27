@@ -55,4 +55,12 @@ public interface MySecondLevelDisciplineService {
      * @apiNote: 根据id获取有效的二级学科信息
      */
     SecondLevelDiscipline selectValidSecondLevelDisciplineById(Long id);
+
+    /**
+     * Author: mokuanyuan 16:30 2019/6/27
+     * @param name
+     * @return List<SecondLevelDiscipline>
+     * @apiNote 根据名称模糊搜索二级学科
+     */
+    List<SecondLevelDiscipline> selectByName(String name);
 }

@@ -6,6 +6,7 @@ import edu.uni.place.bean.Fieldtype;
 import edu.uni.place.bean.FieldtypeExample;
 import edu.uni.place.mapper.FieldMapper;
 import edu.uni.place.mapper.FieldtypeMapper;
+import edu.uni.place.service.SchoolareaService;
 import edu.uni.userBaseInfo1.service.OtherFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class OtherFieldServiceImpl implements OtherFieldService {
 
     @Autowired
     private FieldtypeMapper fieldtypeMapper;
+
+    @Autowired
+    private SchoolareaService schoolareaService;
 
     /**
      * Author: mokuanyuan 21:18 2019/6/9

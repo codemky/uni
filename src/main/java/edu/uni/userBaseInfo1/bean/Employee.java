@@ -198,8 +198,7 @@ public class Employee {
     public static boolean isValidForApply(Employee employee){
         return employee.getId() != null && employee.getEmpNo() != null &&
                 employee.getDepartmentId() != null && employee.getSubdepartmentId() != null &&
-                employee.getEmployHistoryId() != null && employee.getDisciplineId() != null &&
-                employee.getPoliticalId() != null ;
+                employee.getDisciplineId() != null && employee.getPoliticalId() != null ;
     }
 
     public static void copyPropertiesForApply(Employee new_employee, Employee old_employee){

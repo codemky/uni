@@ -119,7 +119,6 @@ public class StudentController {
      * @apiNote: 根据user_id查询学生主要信息，该方法用于点击申请时先把部分信息发给前端
      */
     @ApiOperation(value = "当学生点击申请时交付给前端的部分信息", notes = "未测试")
-    @ApiImplicitParam(name = "schoolId", value = "学校ID", required = false, dataType = "Integer")
     @GetMapping("/getSometimeInfoForApply")
     @ResponseBody
     public void getSometimeInfoForApply(HttpServletResponse response) throws IOException {
@@ -444,7 +443,12 @@ public class StudentController {
     public Result selectClassesByClassId(@PathVariable String classCode, HttpServletResponse response) throws IOException {
         List<ClassmateBean> classmateBeans = new ArrayList<>();
         Class aClass = otherClassService.selectClassByClassCode(classCode);
+        if(aClass == null)
+            return Result.build(ResultType.Failed,"该编码代表的班级不存在");
         List<Classmate> classmates = otherClassmateService.selectByClassId(aClass.getId());
+        if(classmates.size() == 0)
+            return Result.build(ResultType.Failed,"该班级还没有学生");
+
         for (Classmate cm : classmates) {
             Student student = studentService.selectValidStudentByStuId(cm.getStudentId());
             User user = userService.selectUserById(student.getUserId());
@@ -473,9 +477,6 @@ public class StudentController {
             } else {
                 classmateBean.setSex("男");
             }
-            //联系方式
-            Ecomm ecomm = ecommService.selectById(student.getPhoneEcommId());
-            classmateBean.setPhone(ecomm.getContent());
             //政治面貌
             PoliticalAffiliation politicalAffiliation = politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId());
             classmateBean.setPolitical(politicalAffiliation.getPolitical());

@@ -13,9 +13,9 @@ public class UserinfoApplyApproval {
     private Boolean result;
     private String reason;
     private Long checkWho;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date checkTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date datetime;
     private Long byWho;
     private Boolean deleted;

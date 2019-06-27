@@ -19,11 +19,10 @@ import edu.uni.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author laizhouhao
@@ -98,7 +97,6 @@ public class StudentServiceImpl implements StudentService {
         map.put("grade",student.getGrade());
         map.put("specialty", specialtyService.select(student.getSpecialtyId()).getName());
         map.put("political", politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId()).getPolitical());
-        map.put("dormitory", fieldService.select(student.getLiveRoom()).getName());
         map.put("class",otherClassService.select(student.getClassId()).getName());
 
     }
@@ -130,8 +128,31 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public boolean readyForApply(HashMap<String, Object> map, Student student, long[] idList,
-                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) throws ParseException {
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyStudent"),student);
+
+        Map<String ,Object> studentMap = (Map) map.get("applyStudent");
+        DateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date beginLearnDate = DateFormat.parse((String) studentMap.get("beginLearnDate"));
+        Integer specialtyId = (Integer) studentMap.get("specialtyId");
+        Integer classId = (Integer) studentMap.get("classId");
+        Integer politicalId = (Integer) studentMap.get("politicalId");
+        Integer universityId = (Integer) studentMap.get("universityId");
+        Integer id = (Integer) studentMap.get("id");
+        String grade = (String) studentMap.get("grade");
+        String stuNo = (String) studentMap.get("stuNo");
+        student.setBeginLearnDate(beginLearnDate);
+        student.setSpecialtyId((long) specialtyId);
+        student.setClassId((long) classId);
+        student.setPoliticalId((long) politicalId);
+        student.setUniversityId((long) universityId);
+        student.setId((long) id);
+        student.setGrade(grade);
+        student.setStuNo(stuNo);
+
+
+
+
         //检验是否把该获取的信息都获取到了
         if(Student.isValidForApply(student) == false )
             return false;

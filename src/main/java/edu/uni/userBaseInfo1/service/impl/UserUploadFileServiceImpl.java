@@ -39,7 +39,7 @@ public class UserUploadFileServiceImpl implements UserUploadFileService {
     public boolean readyForApply(HashMap<String, Object> map, UserUploadFile userUploadFile, long[] idList,
                                  edu.uni.auth.bean.User loginUser, User modifiedUser) {
         //通过工具类获取在map包装好的对象属性
-        userinfoTransMapBean.transMap2Bean((Map) map.get("applyUserUploadFile"),userUploadFile);
+        userinfoTransMapBean.transMap2Bean((Map) map.get("applyExcel"),userUploadFile);
         //检验是否把该获取的信息都获取到了
         if(!UserUploadFile.isValidForApply(userUploadFile))
             return false;
@@ -137,7 +137,7 @@ public class UserUploadFileServiceImpl implements UserUploadFileService {
      */
     @Override
     public boolean insertUserUploadFile(UserUploadFile UserUploadFile) {
-        return  userUploadFileMapper.insertSelective(UserUploadFile) > 0 ? true : false;
+        return  userUploadFileMapper.insert(UserUploadFile) > 0 ? true : false;
     }
     /**
      * Author: chenenru 0:10 2019/4/30

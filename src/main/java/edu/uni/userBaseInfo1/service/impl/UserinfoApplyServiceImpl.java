@@ -23,6 +23,7 @@ import edu.uni.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -131,7 +132,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
      * @apiNote: 在任何申请页面点击确认申请时
      */
     @Override
-    public boolean clickApply(HashMap<String,Object> map, Integer type, User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) {
+    public boolean clickApply(HashMap<String,Object> map, Integer type, User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) throws ParseException {
 
         if(loginUser == null)
             return false;
@@ -180,6 +181,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
         Employee employee = null;
         edu.uni.userBaseInfo1.bean.User user = null;
         UserUploadFile userUploadFile = null;
+        boolean resultOfApply = false;
 
 
 //      信息种类	  0:联系方式	  1:地址
@@ -191,28 +193,28 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
             case 0:  //0为联系方式类信息
                 //为创建申请记录作相应的处理
                 ecomm = new Ecomm();
-                ecommService.readyForApply(map,ecomm, idList, loginUser, modifiedUser); break;
+                resultOfApply = ecommService.readyForApply(map,ecomm, idList, loginUser, modifiedUser); break;
             case 1: //1为地址类型信息
                 address = new Address();
-                addressService.readyForApply(map,address, idList, loginUser, modifiedUser); break;
+                resultOfApply = addressService.readyForApply(map,address, idList, loginUser, modifiedUser); break;
             case 2: //2为照片类型信息
                 picture = new Picture();
-                pictureService.readyForApply(map,picture, idList, loginUser, modifiedUser); break;
+                resultOfApply = pictureService.readyForApply(map,picture, idList, loginUser, modifiedUser); break;
             case 3: //3为亲属类型信息
                 studentRelation = new StudentRelation();
-                studentRelationService.readyForApply(map,studentRelation, idList, loginUser, modifiedUser); break;
+                resultOfApply = studentRelationService.readyForApply(map,studentRelation, idList, loginUser, modifiedUser); break;
             case 4: //4为学历类型信息
                 learningDegree = new LearningDegree();
-                learningDegreeSerevice.readyForApply(map,learningDegree, idList, loginUser, modifiedUser); break;
+                resultOfApply = learningDegreeSerevice.readyForApply(map,learningDegree, idList, loginUser, modifiedUser); break;
             case 5: //5为简历类型信息
                 employeeHistory = new EmployeeHistory();
-                employeeHistoryService.readyForApply(map,employeeHistory, idList, loginUser, modifiedUser); break;
+                resultOfApply = employeeHistoryService.readyForApply(map,employeeHistory, idList, loginUser, modifiedUser); break;
             case 6: //6为学生类型信息
                 student = new Student();
-                studentService.readyForApply(map,student, idList, loginUser, modifiedUser); break;
+                resultOfApply = studentService.readyForApply(map,student, idList, loginUser, modifiedUser); break;
             case 7: //7为职员类型信息
                 employee = new Employee();
-                employeeService.readyForApply(map,employee, idList, loginUser, modifiedUser); break;
+                resultOfApply = employeeService.readyForApply(map,employee, idList, loginUser, modifiedUser); break;
             case 8: //8为用户类型信息      //额。。关于用户的信息更新不打算做，因为user表都没有 Deleted字段。。
                 break;
             case 9: //9代表批量更新学生信息
@@ -220,7 +222,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
             case 11: // 11为批量添加学生信息
             case 12: // 12为批量添加教职工信息
                 userUploadFile = new UserUploadFile();
-                userUploadFileService.readyForApply(map,userUploadFile,idList,loginUser,modifiedUser);
+                resultOfApply = userUploadFileService.readyForApply(map,userUploadFile,idList,loginUser,modifiedUser);
 
         }
 
@@ -251,7 +253,7 @@ public class UserinfoApplyServiceImpl implements UserinfoApplyService {
 
         System.out.println(userinfoApply + "\n" + applyApproval);
 
-        return createApply && createApplyApproval ;
+        return resultOfApply && createApply && createApplyApproval ;
     }
 
 

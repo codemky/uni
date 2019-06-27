@@ -107,6 +107,14 @@ public interface PictureService {
     Picture selectPictureByUserId(Long user_id);
 
     /**
+     * Author: mokuanyuan 15:18 2019/6/24
+     * @param userId
+     * @return List<Picture>
+     * @apiNote 根据用户id查询有效的照片信息
+     */
+    List<Picture> selectValidByUserId(Long userId);
+
+    /**
      * Author: laizhouhao 21:59 2019/6/9
      * @param pictureList
      * @return 用户的照片信息

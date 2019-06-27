@@ -5,6 +5,7 @@ import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.utils.UserInfo;
 import org.hibernate.validator.constraints.br.CNPJ;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public interface StudentService {
          * @apiNote: 用户点击申请时进行的一些系列为了创建申请记录所做的准备
          */
         public boolean readyForApply(HashMap<String, Object> map, Student student, long[] idList,
-                                     edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser);
+                                     edu.uni.auth.bean.User loginUser, edu.uni.userBaseInfo1.bean.User modifiedUser) throws ParseException;
 
         /**
          * Author: mokuanyuan 15:42 2019/6/20

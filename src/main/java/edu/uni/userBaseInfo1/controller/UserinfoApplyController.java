@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -151,14 +152,14 @@ public class UserinfoApplyController {
         public static final String ListAll_CacheName = "ub1_u_userinfoApply_listAll";
     }
 
-    @ApiOperation(value="在任何申请页面点击确认申请时", notes="2019年5月11日 14:33:14 已通过测试")
+    @ApiOperation(value="在任何申请页面点击确认申请时，带文件上传", notes="2019年5月11日 14:33:14 已通过测试")
     @ApiImplicitParam( name = "map"  )
     @PostMapping("/applyModifyWithFile")
     @ResponseBody
     public Result applyModifyWithFile (@RequestParam("file") MultipartFile file, @RequestParam("reason") String reason,
                                        @RequestParam(name = "flag",required = false) String flag, @RequestParam("type") String type,
                                        @RequestParam(name = "fileInfo",required = false) String fileInfo,@RequestParam("id") String id ,
-                                       HttpServletRequest request) {
+                                       HttpServletRequest request) throws ParseException {
         edu.uni.auth.bean.User loginUser = authService.getUser();
         if(loginUser == null){
             return Result.build(ResultType.Failed, "你沒有登錄");
@@ -238,7 +239,9 @@ public class UserinfoApplyController {
                 case 12: stringBuffer = excelController.checkoutEmployeeExcel(file.getInputStream(), request);  break;
             }
 
-            if( !stringBuffer.toString().equals("校验通过“") && !type.equals("2") ){
+            System.out.println("StringBuffer######:" + stringBuffer.toString());
+
+            if( stringBuffer.toString().contains("报错信息") && !type.equals("2") ){
                 userInfoFileUtil.deleteFile(userInfoFileUtil.getUploadRootDir() + userInfoFileUtil.getFilePrefix());
                 return Result.build(ResultType.Failed,"校验不通过").appendData("message",stringBuffer);
             }
@@ -262,6 +265,7 @@ public class UserinfoApplyController {
                 imageMap.put("pictureName",userInfoFileUtil.getFilePrefix() + suffix);
                 imageMap.put("flag",Integer.parseInt(flag) );
                 map.put("applyPicture",imageMap);
+                map.put("fileName",userInfoFileUtil.getFilePrefix() + suffix);
                 break;
             case 9: case 10: case 11: case 12:
                 HashMap<String, Object> excelMap = new HashMap<>();
@@ -269,6 +273,7 @@ public class UserinfoApplyController {
                 excelMap.put("fileInfo",fileInfo);
                 excelMap.put("fileName",userInfoFileUtil.getFilePrefix() + suffix);
                 map.put("applyExcel",excelMap);
+                map.put("fileName",userInfoFileUtil.getFilePrefix() + suffix);
         }
 
         return applyModifyNoneFile(map);
@@ -280,11 +285,11 @@ public class UserinfoApplyController {
      * @return Result
      * @apiNote: 在任何申请页面点击确认申请时
      */
-    @ApiOperation(value="在任何申请页面点击确认申请时", notes="2019年5月11日 14:33:14 已通过测试")
+    @ApiOperation(value="在任何申请页面点击确认申请时，不带文件", notes="2019年5月11日 14:33:14 已通过测试")
     @ApiImplicitParam( name = "map"  )
     @PostMapping("/applyModifyNoneFile")
     @ResponseBody
-    public Result applyModifyNoneFile(@RequestBody Map<String,Object> map) {
+    public Result applyModifyNoneFile(@RequestBody Map<String,Object> map) throws ParseException {
 
         User user = null;
         edu.uni.auth.bean.User loginUser = authService.getUser();
@@ -328,11 +333,13 @@ public class UserinfoApplyController {
             // 6和代表的是学生信息，无论是修改还是增加，而且9代表的是批量更新学生，11代表批量增加学生
             // 操作学生信息的发起者只能是辅导员,而且学生（被修改者）和辅导员（做出修改者）要在同一个学院
             // 如果不符合以上的条件，那么操作则被服务器拒绝或提示没有权限
-            if( modifiedUserId == null ) //必须提供被修改的学生用户的user_id
-                return Result.build(ResultType.ParamError,"被修改的学生用户的user_id为空！");
+            if( type == 6 || type == 9 )
+                if( modifiedUserId == null ) //必须提供被修改的学生用户的user_id
+                    return Result.build(ResultType.ParamError,"被修改的学生用户的user_id为空！");
             //判断被修改这和修改者是否在同一个学院
-            if( ! userinfoApplyApprovalController.isDepartmentSame(user.getId(),loginUser.getId()))
-                return Result.build(ResultType.Disallow,"修改者和被修改者不是一个学院！");
+            if( type == 6 || type == 9 )
+                if( ! userinfoApplyApprovalController.isDepartmentSame(user.getId(),loginUser.getId()))
+                    return Result.build(ResultType.Disallow,"修改者和被修改者不是一个学院！");
             //再判断修改者是否有扮演辅导员这个角色
             if( ! otherRoleService.isPlayOneRole(loginUser.getId(),"辅导员") )
                 return Result.build(ResultType.Disallow,"修改者没有辅导员权限！");
@@ -345,14 +352,26 @@ public class UserinfoApplyController {
             // 如果不符合以上的条件，那么操作则被服务器拒绝或提示没有权限
             if( ! otherRoleService.isPlayOneRole(loginUser.getId(),"人事处工作人员"))
                 return Result.build(ResultType.Disallow,"该职员没有人事处工作人员权限");
-            if( modifiedUserId == null ) //必须提供被修改的学生用户的user_id
+            if( modifiedUserId == null && ( type == 4 || type == 5 || type == 7 )  ) //必须提供被修改的学生用户的user_id
                 return Result.build(ResultType.ParamError,"被修改的职员用户的user_id为空！");
 
         }
 
+        boolean applyResult = userinfoApplyService.clickApply((HashMap<String, Object>) map,type,loginUser,user);
+        if( !applyResult && (type == 2 || type == 9 ||  type == 10 ||  type == 11 ||  type == 12) ){
+            UserInfoFileUtil userInfoFileUtil = null;
+            String fileName = (String)map.get("fileName");
+            if( type == 2 )
+                userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteImageDir());
+            else
+                userInfoFileUtil = new UserInfoFileUtil(userBaseInfo1Config.getAbsoluteExcelDir());
+            userInfoFileUtil.deleteFile(userInfoFileUtil.getUploadRootDir() + fileName );
+        }
 
-        return userinfoApplyService.clickApply((HashMap<String, Object>) map,type,loginUser,user) ?
-                Result.build(ResultType.Success,"申请操作成功！") : Result.build(ResultType.Failed,"申请操作失败！");
+
+
+        return applyResult ? Result.build(ResultType.Success,"申请操作成功！")
+                : Result.build(ResultType.Failed,"申请操作失败！");
 
     }
 

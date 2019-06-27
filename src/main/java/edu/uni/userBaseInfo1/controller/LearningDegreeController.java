@@ -1,8 +1,13 @@
 package edu.uni.userBaseInfo1.controller;
 
+import edu.uni.administrativestructure.bean.University;
+import edu.uni.administrativestructure.service.UniversityService;
 import edu.uni.auth.service.AuthService;
 import edu.uni.bean.Result;
 import edu.uni.bean.ResultType;
+import edu.uni.place.bean.Field;
+import edu.uni.professionalcourses.bean.Academic;
+import edu.uni.professionalcourses.bean.AcademicDegree;
 import edu.uni.userBaseInfo1.bean.*;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.utils.RedisCache;
@@ -59,6 +64,10 @@ public class LearningDegreeController {
     ApprovalStepInchargeService approvalStepInchargeService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private PoliticalAffiliationService politicalAffiliationService;
+    @Autowired
+    private OtherUniversityService otherUniversityService;
     @Autowired  //把缓存工具类RedisCache相应的方法自动装配到该对象
     private RedisCache cache;
 
@@ -70,6 +79,27 @@ public class LearningDegreeController {
         public static final String ListAll_CacheName = "ub1_l_learningDegree_listAll";
     }
 
+
+
+    @ApiOperation(value = "当职员点击申请时交付给前端的部分信息", notes = "未测试")
+    @GetMapping("/getSometimeInfoForApply")
+    @ResponseBody
+    public void getSometimeInfoForApply(HttpServletResponse response) throws IOException {
+
+        Integer schoolId = 1;
+        response.setContentType("application/json;charset=utf-8");
+        Result result = Result.build(ResultType.Success);
+
+        List<AcademicDegree> academicDegrees = myAcademicDegreeService.selectAll();
+        List<Academic> academics = myAcademicService.selectAll();
+        List<University> universities = otherUniversityService.selectAllValidUniversities();
+        result.appendData("academicDegrees",academicDegrees);
+        result.appendData("academics",academics);
+        result.appendData("universities",universities);
+
+        response.getWriter().write(result.convertIntoJSON());
+
+    }
 
 
 
@@ -109,6 +139,10 @@ public class LearningDegreeController {
 
 
     }
+
+
+
+
 
     /**
      * Author: chenenru 23:41 2019/4/29

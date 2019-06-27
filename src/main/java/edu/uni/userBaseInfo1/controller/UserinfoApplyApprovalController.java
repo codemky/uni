@@ -272,20 +272,38 @@ public class UserinfoApplyApprovalController {
             case 3: //3为学生亲属
                 if( old_id != null){
                     StudentRelation studentRelation = studentRelationService.selectById(old_id);
-                    result.appendData("relation",studentRelation);
+//                    result.appendData("relation",studentRelation);
                     if(studentRelation !=null){
                         User user = userService.selectUserById(studentRelation.getRelaId());
-                        if(user !=null)
-                            result.appendData("old_info",user);
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("relationName",user.getUserName());
+                        switch (studentRelation.getRelationship()){
+                            case 0 : map.put("relationType","母");break;
+                            case 1 : map.put("relationType","父");break;
+                            case 2 : map.put("relationType","兄");break;
+                            case 3 : map.put("relationType","弟");break;
+                            case 4 : map.put("relationType","姐");break;
+                            case 5 : map.put("relationType","妹");
+                        }
+                        result.appendData("old_info",map);
                     }
                 }
 
                 StudentRelation studentRelation = studentRelationService.selectById(new_id);
-                result.appendData("relation",studentRelation);
+//                result.appendData("relation",studentRelation);
                 if(studentRelation!=null){
                     User user = userService.selectUserById(studentRelation.getRelaId());
-                    if(user!=null)
-                        result.appendData("new_info",user);
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("relationName",user.getUserName());
+                    switch (studentRelation.getRelationship()){
+                        case 0 : map.put("relationType","母");break;
+                        case 1 : map.put("relationType","父");break;
+                        case 2 : map.put("relationType","兄");break;
+                        case 3 : map.put("relationType","弟");break;
+                        case 4 : map.put("relationType","姐");break;
+                        case 5 : map.put("relationType","妹");
+                    }
+                    result.appendData("new_info",map);
                 }
                 break;
             case 4: //4为学历
@@ -326,7 +344,6 @@ public class UserinfoApplyApprovalController {
                     map.put("specialty",specialtyService.select(student.getSpecialtyId()).getName());
                     map.put("class",otherClassService.select(student.getClassId()).getName());
                     map.put("political",politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId()).getPolitical());
-                    map.put("live_room",fieldService.select(student.getLiveRoom()).getName());
 //                    Address home_address = addressService.selectById(student.getHomeAddressId());
 //                    HashMap<String, Object> address_map = new HashMap<>();
 //                    addressService.selectAllInfoToMap(address_map,home_address);
@@ -344,7 +361,6 @@ public class UserinfoApplyApprovalController {
                 new_map.put("specialty",specialtyService.select(student.getSpecialtyId()).getName());
                 new_map.put("class",otherClassService.select(student.getClassId()).getName());
                 new_map.put("political",politicalAffiliationService.selectPoliticalAffiliationById(student.getPoliticalId()).getPolitical());
-                new_map.put("live_room",fieldService.select(student.getLiveRoom()).getName());
 //                Address home_address = addressService.selectById(student.getHomeAddressId());
 //                HashMap<String, Object> address_new_map = new HashMap<>();
 //                addressService.selectAllInfoToMap(address_new_map,home_address);
@@ -360,17 +376,16 @@ public class UserinfoApplyApprovalController {
                     map.put("employee_no",employee.getEmpNo());
                     map.put("department", departmentService.select(employee.getDepartmentId()).getName());
                     map.put("subdepartment", subdepartmentService.select(employee.getSubdepartmentId()).getName());
-                    map.put("employ_history",employeeHistoryService.selectById(employee.getEmployHistoryId()));
                     map.put("discipline",mySecondLevelDisciplineService.
                             selectSecondLevelDisciplineById(employee.getDisciplineId()).getName());
                     map.put("political",politicalAffiliationService.
-                            selectPoliticalAffiliationById(employee.getPositionId()).getPolitical());
-                    List<EmployPosition> employPositions =
-                            otherEmployPositionService.selectByEmployeeId(employee);
-                    List<String> positions = new ArrayList<>();
-                    for(EmployPosition employPosition : employPositions)
-                        positions.add(positionService.select(employPosition.getPositionId()).getName());
-                    map.put("positions",positions);
+                            selectPoliticalAffiliationById(employee.getPoliticalId()));
+//                    List<EmployPosition> employPositions =
+//                            otherEmployPositionService.selectByEmployeeId(employee);
+//                    List<String> positions = new ArrayList<>();
+//                    for(EmployPosition employPosition : employPositions)
+//                        positions.add(positionService.select(employPosition.getPositionId()).getName());
+//                    map.put("positions",positions);
                     result.appendData("old_info",map);
                 }
                 Employee employee = employeeService.selectEmployeeById(new_id);
@@ -379,17 +394,16 @@ public class UserinfoApplyApprovalController {
                 new_employee.put("employee_no",employee.getEmpNo());
                 new_employee.put("department", departmentService.select(employee.getDepartmentId()).getName());
                 new_employee.put("subdepartment", subdepartmentService.select(employee.getSubdepartmentId()).getName());
-                new_employee.put("employ_history",employeeHistoryService.selectById(employee.getEmployHistoryId()));
                 new_employee.put("discipline",mySecondLevelDisciplineService.
                         selectSecondLevelDisciplineById(employee.getDisciplineId()).getName());
                 new_employee.put("political",politicalAffiliationService.
-                        selectPoliticalAffiliationById(employee.getPositionId()).getPolitical());
-                List<EmployPosition> employPositions =
-                        otherEmployPositionService.selectByEmployeeId(employee);
-                List<String> positions = new ArrayList<>();
-                for(EmployPosition employPosition : employPositions)
-                    positions.add(positionService.select(employPosition.getPositionId()).getName());
-                new_employee.put("positions",positions);
+                        selectPoliticalAffiliationById(employee.getPoliticalId()));
+//                List<EmployPosition> employPositions =
+//                        otherEmployPositionService.selectByEmployeeId(employee);
+//                List<String> positions = new ArrayList<>();
+//                for(EmployPosition employPosition : employPositions)
+//                    positions.add(positionService.select(employPosition.getPositionId()).getName());
+//                new_employee.put("positions",positions);
                 result.appendData("new_info",new_employee);
                 break;
             case 8: //8为用户个人信息

@@ -1,5 +1,6 @@
 package edu.uni.userBaseInfo1.service.impl;
 
+import com.alibaba.fastjson.parser.deserializer.ASMDeserializerFactory;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import edu.uni.administrativestructure.service.UniversityService;
@@ -14,6 +15,8 @@ import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -129,7 +132,7 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
      */
     @Override
     public boolean insertLearningDegree(LearningDegree LearningDegree) {
-        return  learningDegreeMapper.insertSelective(LearningDegree) > 0 ? true : false;
+        return  learningDegreeMapper.insert(LearningDegree) > 0 ? true : false;
     }
     /**
      * Author: chenenru 0:10 2019/4/30
@@ -256,9 +259,30 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
 
     @Override
     public boolean readyForApply(HashMap<String, Object> map, LearningDegree learningDegree,long[] idList,
-                                 edu.uni.auth.bean.User loginUser, User modifiedUser) {
+                                 edu.uni.auth.bean.User loginUser, User modifiedUser) throws ParseException {
         //通过工具类获取在map包装好的对象属性
         userinfoTransMapBean.transMap2Bean((Map) map.get("applyLearningDegree"),learningDegree);
+
+        Map<String ,Object> degreeMap = (Map) map.get("applyLearningDegree");
+        DateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date beginTime = DateFormat.parse((String) degreeMap.get("beginTime"));
+        Date endTime = DateFormat.parse((String) degreeMap.get("endTime"));
+        Integer id = (Integer) degreeMap.get("id");
+        Integer countryId = (Integer) degreeMap.get("countryId");
+        Integer cityId = (Integer) degreeMap.get("cityId");
+        Integer schoolId = (Integer) degreeMap.get("schoolId");
+        Integer academicId = (Integer) degreeMap.get("academicId");
+        Integer degreeId = (Integer) degreeMap.get("degreeId");
+        learningDegree.setId((long) id);
+        learningDegree.setCountryId((long) countryId);
+        learningDegree.setCityId((long) cityId);
+        learningDegree.setSchoolId((long) schoolId);
+        learningDegree.setAcademicId((long) academicId);
+        learningDegree.setDegreeId((long) degreeId);
+        learningDegree.setBeginTime(beginTime);
+        learningDegree.setEndTime(endTime);
+
+
         //检验是否把该获取的信息都获取到了
         if(!LearningDegree.isValidForApply(learningDegree))
             return false;
@@ -302,6 +326,14 @@ public class LearningDegreeSereviceImpl implements LearningDegreeSerevice {
             if( updateLearningDegree(oldLearningDegree) && updateLearningDegree(newLearningDegree) )
                 result = true;
         }else{
+            Long userId = newLearningDegree.getUserId();
+            if(userId != null){
+                List<LearningDegree> newLearningList = selectValidLeaDeByUserId(userId);
+                newLearningList.forEach( item -> {
+                    if(item.getId() != newLearningDegree.getId()  )
+                        deleteLearningDegree(item.getId());
+                });
+            }
             newLearningDegree.setDeleted(false);
             if( updateLearningDegree(newLearningDegree) )
                 result = true;

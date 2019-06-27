@@ -6,6 +6,7 @@ import edu.uni.auth.bean.Role;
 import edu.uni.auth.mapper.RoleMapper;
 import edu.uni.example.config.ExampleConfig;
 import edu.uni.userBaseInfo1.bean.*;
+import edu.uni.userBaseInfo1.mapper.AddrCityMapper;
 import edu.uni.userBaseInfo1.mapper.AddressMapper;
 import edu.uni.userBaseInfo1.service.*;
 import edu.uni.userBaseInfo1.utils.userinfoTransMapBean;
@@ -45,6 +46,8 @@ public class AddressServiceImpl implements AddressService {
     private AddrAreaService addrAreaService;
     @Autowired
     private AddrStreetService addrStreetService;
+    @Autowired
+    private AddrCityMapper addrCityMapper;
 
 
     //配置类，规定了上传文件的路径和分页查询每一页的记录数
@@ -111,6 +114,13 @@ public class AddressServiceImpl implements AddressService {
             }
 
         return addressList;
+    }
+
+    @Override
+    public List<AddrCity> selectCityByName(String cityName) {
+        AddrCityExample addrCityExample = new AddrCityExample();
+        addrCityExample.createCriteria().andCityZhLike("%" + cityName + "%");
+        return addrCityMapper.selectByExample(addrCityExample);
     }
 
     /**
@@ -297,11 +307,21 @@ public class AddressServiceImpl implements AddressService {
     }
 
     public boolean readyForApply(HashMap<String, Object> map, Address address,long[] idList, edu.uni.auth.bean.User loginUser, User modifiedUser) {
+        HashMap<String,Object> addressMap = (HashMap<String,Object>) map.get("applyAddress");
+//        String countryCode = (String) addressMap.get("country");
+//        String stateCode = (String) addressMap.get("state");
+//        String cityCode = (String) addressMap.get("city");
+//        String areaCode = (String) addressMap.get("area");
+//        String streeCode = (String) addressMap.get("stree");
+
+
         //通过工具类获取在map包装好的对象属性
-        userinfoTransMapBean.transMap2Bean((Map) map.get("applyAddress"),address);
+        userinfoTransMapBean.transMap2Bean(addressMap,address);
+
         //检验是否把该获取的信息都获取到了
         if(!Address.isValidForApply(address))
             return false;
+
         boolean result = false;
         if(address.getId() != -1){  //不是-1代表原本有旧数据
             Address oldAddress = selectById(address.getId());
@@ -310,7 +330,6 @@ public class AddressServiceImpl implements AddressService {
             idList[0] = oldAddress.getId();
             result = insert(address) ;
             idList[1] = address.getId();
-
         }
         else{
             address.setUserId(loginUser.getId());
@@ -343,6 +362,15 @@ public class AddressServiceImpl implements AddressService {
             if( update(oldAddress) && update(newAddress) )
                 result = true;
         }else{
+            Long userId = newAddress.getUserId();
+            if(userId != null){
+                List<Address> addressList = selectValidAddressByUserId(userId);
+                addressList.forEach( item -> {
+                    if(item.getId() != newAddress.getId() &&
+                            item.getFlag() == newAddress.getFlag() )
+                        delete(item.getId());
+                });
+            }
             newAddress.setDeleted(false);
             if( update(newAddress) )
                 result = true;

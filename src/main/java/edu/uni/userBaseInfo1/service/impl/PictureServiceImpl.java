@@ -83,6 +83,15 @@ public class PictureServiceImpl implements PictureService {
             if( update(oldPicture) && update(newPicture) )
                 result = true;
         }else{
+            Long userId = newPicture.getUserId();
+            if(userId != null){
+                List<Picture> pictureList = selectValidByUserId(userId);
+                pictureList.forEach( item -> {
+                    if(item.getId() != newPicture.getId() &&
+                            item.getFlag() == newPicture.getFlag() )
+                        delete(item.getId());
+                });
+            }
             newPicture.setDeleted(false);
             if( update(newPicture) )
                 result = true;
@@ -205,6 +214,14 @@ public class PictureServiceImpl implements PictureService {
         //根据照片查询
         List<Picture> pictures = pictureMapper.selectByExample(pictureExample);
         return pictures.size()>=1?pictures.get(0):null;
+    }
+
+    @Override
+    public List<Picture> selectValidByUserId(Long userId) {
+        PictureExample pictureExample = new PictureExample();
+        pictureExample.createCriteria().andUserIdEqualTo(userId)
+                .andDeletedEqualTo(false);
+        return pictureMapper.selectByExample(pictureExample);
     }
 
     /**

@@ -168,27 +168,6 @@ public class Student {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", universityId=" + universityId +
-                ", stuNo='" + stuNo + '\'' +
-                ", beginLearnDate=" + beginLearnDate +
-                ", grade='" + grade + '\'' +
-                ", specialtyId=" + specialtyId +
-                ", classId=" + classId +
-                ", politicalId=" + politicalId +
-                ", liveRoom=" + liveRoom +
-                ", homeAddressId=" + homeAddressId +
-                ", phoneEcommId=" + phoneEcommId +
-                ", datetime=" + datetime +
-                ", byWho=" + byWho +
-                ", deleted=" + deleted +
-                '}';
-    }
-
     public Student() {
     }
 
@@ -213,7 +192,28 @@ public class Student {
     public static boolean isValidForApply(Student student){
         return student.getId() != null && student.getStuNo() != null && student.getBeginLearnDate() != null &&
                 student.getGrade() != null && student.getSpecialtyId() != null && student.getClassId() != null &&
-                student.getPoliticalId() != null && student.getLiveRoom() != null;
+                student.getPoliticalId() != null ;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", universityId=" + universityId +
+                ", stuNo='" + stuNo + '\'' +
+                ", beginLearnDate=" + beginLearnDate +
+                ", grade='" + grade + '\'' +
+                ", specialtyId=" + specialtyId +
+                ", classId=" + classId +
+                ", politicalId=" + politicalId +
+                ", liveRoom=" + liveRoom +
+                ", homeAddressId=" + homeAddressId +
+                ", phoneEcommId=" + phoneEcommId +
+                ", datetime=" + datetime +
+                ", byWho=" + byWho +
+                ", deleted=" + deleted +
+                '}';
     }
 
     public static void copyPropertiesForApply(Student new_student, Student old_student){
